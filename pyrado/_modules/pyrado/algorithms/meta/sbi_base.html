@@ -1,0 +1,1172 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.algorithms.meta.sbi_base &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+        
+      <li>pyrado.algorithms.meta.sbi_base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.algorithms.meta.sbi_base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sbi.utils</span> <span class="k">as</span> <span class="nn">sbiutils</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">colorama</span> <span class="kn">import</span> <span class="n">Fore</span><span class="p">,</span> <span class="n">Style</span>
+<span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">NeuralInference</span>
+<span class="kn">from</span> <span class="nn">sbi.inference.posteriors.direct_posterior</span> <span class="kn">import</span> <span class="n">DirectPosterior</span>
+<span class="kn">from</span> <span class="nn">sbi.utils.user_input_checks</span> <span class="kn">import</span> <span class="n">prepare_for_sbi</span>
+<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
+<span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span><span class="p">,</span> <span class="n">InterruptableAlgorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_delay</span> <span class="kn">import</span> <span class="n">ActDelayWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DomainRandWrapper</span><span class="p">,</span>
+    <span class="n">DomainRandWrapperBuffer</span><span class="p">,</span>
+    <span class="n">remove_all_dr_wrappers</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span><span class="p">,</span> <span class="n">typed_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.real_base</span> <span class="kn">import</span> <span class="n">RealEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="n">Embedding</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_rollout_sampler</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RealRolloutSamplerForSBI</span><span class="p">,</span>
+    <span class="n">RecRolloutSamplerForSBI</span><span class="p">,</span>
+    <span class="n">SimRolloutSamplerForSBI</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.discrete</span> <span class="kn">import</span> <span class="n">DiscreteSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">completion_context</span><span class="p">,</span> <span class="n">print_cbt</span>
+
+
+<div class="viewcode-block" id="SBIBase"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase">[docs]</a><span class="k">class</span> <span class="nc">SBIBase</span><span class="p">(</span><span class="n">InterruptableAlgorithm</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all Simulation-Based Inference (SBI) algorithms, wrapping the sbi package</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This class currently only works with (direct) posterior estimators and currently excludes likelihood- and</span>
+<span class="sd">        density-ratio-estimators. This might be added later.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        [1] https://github.com/mackelab/sbi/blob/main/tutorials/03_multiround_inference.ipynb (multi-round sbi)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">env_sim</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+        <span class="n">env_real</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+        <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">prior</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span>
+        <span class="n">embedding</span><span class="p">:</span> <span class="n">Embedding</span><span class="p">,</span>
+        <span class="n">num_checkpoints</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">init_checkpoint</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_real_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_sim_per_round</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop_on_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">use_rec_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">reset_sbi_routine_each_iter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">reset_proposal_each_iter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">num_eval_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">subrtn_sbi_training_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">simulation_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">subrtn_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Algorithm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">subrtn_policy_snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+        <span class="n">train_initial_policy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">thold_succ_subrtn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">warmstart</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
+<span class="sd">        :param env_sim: randomized simulation environment a.k.a. source domain</span>
+<span class="sd">        :param env_real: real-world environment a.k.a. target domain, this can be a `RealEnv` (sim-to-real setting), a</span>
+<span class="sd">                         `SimEnv` (sim-to-sim setting), or a directory to load a pre-recorded set of rollouts from</span>
+<span class="sd">        :param policy: policy used for sampling the rollout, if subrtn_policy is not `None` this policy is not oly used</span>
+<span class="sd">                       for generating the target domain rollouts, but also optimized in simulation</span>
+<span class="sd">        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)</span>
+<span class="sd">        :param prior: distribution used by sbi as a prior</span>
+<span class="sd">        :param embedding: embedding used for pre-processing the data before passing it to the posterior</span>
+<span class="sd">        :param num_checkpoints: total number of checkpoints</span>
+<span class="sd">        :param init_checkpoint: initial value of the cyclic counter, defaults to 0, use negative values can to mark</span>
+<span class="sd">                                sections that should only be executed once</span>
+<span class="sd">        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs</span>
+<span class="sd">        :param num_real_rollouts: number of real-world rollouts received by sbi, i.e. from every rollout exactly one</span>
+<span class="sd">                                  data set is computed</span>
+<span class="sd">        :param num_sim_per_round: number of simulations done by sbi per round (i.e. iteration over the same target domain data set)</span>
+<span class="sd">        :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial</span>
+<span class="sd">                            state of the simulation is reset, and thus for every set the features of the trajectories</span>
+<span class="sd">                            are computed separately. Either specify `num_segments` or `len_segments`.</span>
+<span class="sd">        :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial</span>
+<span class="sd">                             state of the simulation is reset, and thus for every set the features of the trajectories</span>
+<span class="sd">                             are computed separately. Either specify `num_segments` or `len_segments`.</span>
+<span class="sd">        :param stop_on_done: if `True`, the rollouts are stopped as soon as they hit the state or observation space</span>
+<span class="sd">                             boundaries. This behavior is save, but can lead to short trajectories which are eventually</span>
+<span class="sd">                             padded with zeroes. Chose `False` to ignore the boundaries (dangerous on the real system).</span>
+<span class="sd">        :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout</span>
+<span class="sd">                            during simulation (feed-forward). If `False` there policy is used to generate (potentially)</span>
+<span class="sd">                            state-dependent actions (feed-back).</span>
+<span class="sd">        :param reset_sbi_routine_each_iter: if `True` the sbi subroutine instance is recreated every iteration.</span>
+<span class="sd">                                            Use this flag to train the posterior each iteration from scratch.</span>
+<span class="sd">        :param num_sbi_rounds: set to an integer &gt; 1 to use multi-round sbi. This way the posteriors (saved as</span>
+<span class="sd">                               `..._round_NUMBER...` will be tailored to the data of that round, where `NUMBER`</span>
+<span class="sd">                               counts up each round (modulo `num_real_rollouts`). If `num_sbi_rounds` = 1, the posterior</span>
+<span class="sd">                               is called amortized (it has never seen any target domain data).</span>
+<span class="sd">        :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`</span>
+<span class="sd">        :param posterior_hparam: hyper parameters for creating the posterior&#39;s density estimator</span>
+<span class="sd">        :param subrtn_sbi_training_hparam: dict forwarded to sbi&#39;s `PosteriorEstimator.train()` function like</span>
+<span class="sd">                                           `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.</span>
+<span class="sd">        :param simulation_batch_size: batch size forwarded to the sbi toolbox, requires batched simulator</span>
+<span class="sd">        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi</span>
+<span class="sd">        :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)</span>
+<span class="sd">        :param subrtn_policy_snapshot_mode: snapshot mode for saving during policy optimization</span>
+<span class="sd">        :param train_initial_policy: choose if a policy should be pretrained in the first iteration before collecting</span>
+<span class="sd">                                     real rollouts. Choose `False`, if you want to use a pre-defined policy.</span>
+<span class="sd">        :param thold_succ_subrtn: success threshold on the simulated system&#39;s return for the subroutine, repeat the</span>
+<span class="sd">                                  subroutine until the threshold is exceeded or the for a given number of iterations</span>
+<span class="sd">        :param warmstart: initialize the policy (and value function) parameters with the one of the previous iteration.</span>
+<span class="sd">                          This behavior can also be overruled by passing `init_policy_params` (and</span>
+<span class="sd">                          `valuefcn_param_init`) explicitly.</span>
+<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
+<span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env_sim</span><span class="p">),</span> <span class="n">SimEnv</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">DomainRandWrapper</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">ActDelayWrapper</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The given env_sim must be a non-randomized simulation environment, &quot;</span>
+                <span class="s2">&quot;except for wrappers that add a domain parameter!&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="n">Normal</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The sbi framework requires MultivariateNormal instead of Normal distributions for the prior.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">prior</span><span class="o">.</span><span class="n">event_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">prior</span><span class="o">.</span><span class="n">event_shape</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="n">dp_mapping</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">posterior_hparam</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">posterior_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior_hparam</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">posterior_hparam</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">subrtn_sbi_training_hparam</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">subrtn_sbi_training_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subrtn_sbi_training_hparam</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subrtn_sbi_training_hparam</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="c1"># Call InterruptableAlgorithm&#39;s constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">num_checkpoints</span><span class="o">=</span><span class="n">num_checkpoints</span><span class="p">,</span>
+            <span class="n">init_checkpoint</span><span class="o">=</span><span class="n">init_checkpoint</span><span class="p">,</span>
+            <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">,</span>
+            <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_sbi</span> <span class="o">=</span> <span class="n">env_sim</span>  <span class="c1"># will be randomized explicitly by sbi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">env_sim</span><span class="p">),</span> <span class="n">randomizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="s2">&quot;cyclic&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span> <span class="o">=</span> <span class="n">env_real</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dp_mapping</span> <span class="o">=</span> <span class="n">dp_mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span> <span class="o">=</span> <span class="n">embedding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_sim_per_round</span> <span class="o">=</span> <span class="n">num_sim_per_round</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_real_rollouts</span> <span class="o">=</span> <span class="n">num_real_rollouts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_segments</span> <span class="o">=</span> <span class="n">num_segments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">len_segments</span> <span class="o">=</span> <span class="n">len_segments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_on_done</span> <span class="o">=</span> <span class="n">stop_on_done</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_rec_act</span> <span class="o">=</span> <span class="n">use_rec_act</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_sbi_routine_each_iter</span> <span class="o">=</span> <span class="n">reset_sbi_routine_each_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_proposal_each_iter</span> <span class="o">=</span> <span class="n">reset_proposal_each_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">=</span> <span class="n">num_sbi_rounds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_samples</span> <span class="o">=</span> <span class="n">num_eval_samples</span> <span class="ow">or</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_batch_size</span> <span class="o">=</span> <span class="n">simulation_batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize_posterior</span> <span class="o">=</span> <span class="n">normalize_posterior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_training_hparam</span> <span class="o">=</span> <span class="n">subrtn_sbi_training_hparam</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span> <span class="o">=</span> <span class="n">posterior_hparam</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thold_succ_subrtn</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">thold_succ_subrtn</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_subrtn_rep</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># number of tries to exceed thold_succ_subrtn during training in simulation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warmstart</span> <span class="o">=</span> <span class="n">warmstart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
+
+        <span class="c1"># Temporary containers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curr_domain_param_eval</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Initialize sbi simulator and prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># to be set in step()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># to be set in step()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_sbi</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
+
+        <span class="c1"># Optional policy optimization subroutine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span> <span class="o">=</span> <span class="n">subrtn_policy</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy_snapshot_mode</span> <span class="o">=</span> <span class="n">subrtn_policy_snapshot_mode</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s2">&quot;subrtn_policy&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train_initial_policy</span> <span class="o">=</span> <span class="n">train_initial_policy</span>
+            <span class="c1"># Check that the behavioral policy is the one that is being updated</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The policy is the policy subroutine is not the same as the one used by &quot;</span>
+                    <span class="s2">&quot;the system identification (sbi) subroutine!&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Save initial environments, the embedding, and the prior</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="p">,</span> <span class="s2">&quot;env_sim.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span> <span class="s2">&quot;env_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="s2">&quot;embedding.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="s2">&quot;prior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s2">&quot;init_policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">subroutine_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Algorithm</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the policy optimization subroutine.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">subroutine_sbi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NeuralInference</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the system identification subroutine coming from the sbi module.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sbi_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the simulator wrapped for sbi.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Embedding</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the embedding used to compute the features from the rollouts.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span>
+
+    <span class="k">def</span> <span class="nf">_setup_sbi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prior</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">rollouts_real</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare simulator and prior for usage in sbi.</span>
+
+<span class="sd">        :param prior: distribution used by sbi as a prior</span>
+<span class="sd">        :param rollouts_real: list of rollouts recorded from the target domain, which are used to sync the simulations&#39;</span>
+<span class="sd">                              initial states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rollout_sampler</span> <span class="o">=</span> <span class="n">SimRolloutSamplerForSBI</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_sbi</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dp_mapping</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_segments</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">len_segments</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop_on_done</span><span class="p">,</span>
+            <span class="n">rollouts_real</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">use_rec_act</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Call sbi&#39;s preparation function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span> <span class="o">=</span> <span class="n">prepare_for_sbi</span><span class="p">(</span><span class="n">rollout_sampler</span><span class="p">,</span> <span class="n">prior</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_subrtn_sbi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subrtn_sbi_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">NeuralInference</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the SBI subroutine instance. This method is called in the constructor of NPDR or if you wish to</span>
+<span class="sd">        retrain the posterior from scratch each iteration.</span>
+
+<span class="sd">        :param subrtn_sbi_class: get the SBI class which you want to train with. If `None`, the class is inferred from</span>
+<span class="sd">                                 `self._subrtn_sbi`.</span>
+<span class="sd">        :param kwargs: e.g. `num_components` for BayesSim</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">subrtn_sbi_class</span><span class="p">,</span> <span class="n">NeuralInference</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The given subrtn_sbi_class must be a subclass of NeuralInference, but is </span><span class="si">{</span><span class="n">subrtn_sbi_class</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE (untested)</span>
+        <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">sbiutils</span><span class="o">.</span><span class="n">posterior_nn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span><span class="p">)</span>  <span class="c1"># embedding for nflows is always nn.Identity</span>
+        <span class="n">summary_writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">writer</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">summary_writer</span><span class="p">,</span> <span class="n">SummaryWriter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span> <span class="o">=</span> <span class="n">subrtn_sbi_class</span><span class="p">(</span>
+            <span class="n">prior</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span><span class="p">,</span>
+            <span class="n">density_estimator</span><span class="o">=</span><span class="n">density_estimator</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="n">summary_writer</span><span class="o">=</span><span class="n">summary_writer</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SBIBase.get_latest_proposal_prev_iter"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_latest_proposal_prev_iter">[docs]</a>    <span class="k">def</span> <span class="nf">get_latest_proposal_prev_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">sbiutils</span><span class="o">.</span><span class="n">BoxUniform</span><span class="p">,</span> <span class="n">DirectPosterior</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get either the prior or the conditioned posterior from the (last round of) previous iteration.</span>
+
+<span class="sd">        :return: proposal for simulating with sbi</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;reset_proposal_each_iter&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_proposal_each_iter</span><span class="p">):</span>
+            <span class="n">proposal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">proposal</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span></div>
+
+<div class="viewcode-block" id="SBIBase.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.step">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="SBIBase.collect_data_real"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.collect_data_real">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">collect_data_real</span><span class="p">(</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+        <span class="n">embedding</span><span class="p">:</span> <span class="n">Embedding</span><span class="p">,</span>
+        <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the data</span>
+<span class="sd">        computed from the recorded rollouts.</span>
+<span class="sd">        This method is static to facilitate evaluation of specific policies in hindsight.</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved</span>
+<span class="sd">        :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance,</span>
+<span class="sd">                    in case you want to use pre-recorded rollouts pass the path to the parent folder as string</span>
+<span class="sd">        :param policy: policy to evaluate</span>
+<span class="sd">        :param embedding: embedding used for pre-processing the data before passing it to the posterior</span>
+<span class="sd">        :param num_rollouts: number of rollouts to collect on the target system</span>
+<span class="sd">        :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial</span>
+<span class="sd">                             state of the simulation is reset, and thus for every set the features of the trajectories</span>
+<span class="sd">                             are computed separately. Either specify `num_segments` or `len_segments`.</span>
+<span class="sd">        :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial</span>
+<span class="sd">                             state of the simulation is reset, and thus for every set the features of the trajectories</span>
+<span class="sd">                             are computed separately. Either specify `num_segments` or `len_segments`.</span>
+<span class="sd">        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate</span>
+<span class="sd">        :return: data from the real-world rollouts a.k.a. set of $x_o$ of shape [num_iter, num_rollouts_per_iter,</span>
+<span class="sd">                 time_series_length, dim_data], and the real-world rollouts</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">RealEnv</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">SimEnv</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
+
+        <span class="c1"># Evaluate sequentially (necessary for sim-to-real experiments)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rollout_worker</span> <span class="o">=</span> <span class="n">RecRolloutSamplerForSBI</span><span class="p">(</span>
+                <span class="n">env</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">num_segments</span><span class="p">,</span> <span class="n">len_segments</span><span class="p">,</span> <span class="n">rand_init_rollout</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rollout_worker</span> <span class="o">=</span> <span class="n">RealRolloutSamplerForSBI</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">num_segments</span><span class="p">,</span> <span class="n">len_segments</span><span class="p">)</span>
+
+        <span class="c1"># Initialize data containers</span>
+        <span class="n">data_real</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">rollouts_real</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">num_found_rollouts</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="n">rollouts_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">data_real</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                        <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">data_real</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> entries in data_real.pt, but </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">)</span><span class="si">}</span><span class="s2"> rollouts in &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;rollouts_real.pkl!&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">num_found_rollouts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">)</span>
+                <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">num_found_rollouts</span><span class="si">}</span><span class="s2"> rollout(s) in </span><span class="si">{</span><span class="n">save_dir</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># in the first attempt no files can be found</span>
+
+        <span class="n">collect_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Collecting data&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;Collecting data using </span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_policy&quot;</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">num_found_rollouts</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="p">),</span>
+            <span class="n">total</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">CYAN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="n">collect_str</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rollouts&quot;</span><span class="p">,</span>
+            <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="c1"># Do the rollout</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">rollout</span> <span class="o">=</span> <span class="n">rollout_worker</span><span class="p">()</span>
+
+            <span class="c1"># Fill data container</span>
+            <span class="k">if</span> <span class="n">data_real</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rollouts_real</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">data_real</span> <span class="o">=</span> <span class="n">data</span>  <span class="c1"># data is of shape [1, dim_feat]</span>
+                <span class="n">rollouts_real</span> <span class="o">=</span> <span class="p">[</span><span class="n">rollout</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data_real</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">data_real</span><span class="p">,</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># stack to final shape [1, num_rollouts * dim_feat]</span>
+                <span class="n">rollouts_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rollout</span><span class="p">)</span>
+
+            <span class="c1"># Optionally save the data (do this at every iteration to continue)</span>
+            <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data_real</span><span class="p">,</span> <span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">,</span> <span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data_real</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_rollouts</span> <span class="o">*</span> <span class="n">embedding</span><span class="o">.</span><span class="n">dim_output</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data_real</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_rollouts</span> <span class="o">*</span> <span class="n">embedding</span><span class="o">.</span><span class="n">dim_output</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">data_real</span><span class="p">,</span> <span class="n">rollouts_real</span></div>
+
+<div class="viewcode-block" id="SBIBase.load_posterior"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_posterior">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">load_posterior</span><span class="p">(</span>
+        <span class="n">load_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">idx_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">idx_round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the posterior of a given iteration (and round).</span>
+
+<span class="sd">        :param load_dir: experiment&#39;s directory to crawl through</span>
+<span class="sd">        :param idx_iter: iteration to load, to load the latest pass -1</span>
+<span class="sd">        :param idx_round: round to load, to load the latest pass -1, ignored if the experiment was not multi-round</span>
+<span class="sd">        :param obj: object for state dict loading, forwarded to `pyrado.load()`, by default no state dict loading</span>
+<span class="sd">        :param verbose: if `True`, print the path of what has been loaded, forwarded to `pyrado.load()`</span>
+<span class="sd">        :return: loaded sbi posterior, or `None` if there is no posterior with the given iteration / round index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">load_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">load_dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx_iter</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx_iter</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx_round</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx_round</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">idx_iter</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Check what is the latest iteration</span>
+            <span class="n">cnt_iter_max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">load_dir</span><span class="p">):</span>
+                <span class="n">dirs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># prevents walk() from going into subdirectories</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;iter_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_posterior.pt&quot;</span><span class="p">):</span>
+                        <span class="n">cnt_iter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;iter_&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;iter_&quot;</span><span class="p">)])</span>
+                        <span class="n">cnt_iter_max</span> <span class="o">=</span> <span class="n">cnt_iter</span> <span class="k">if</span> <span class="n">cnt_iter</span> <span class="o">&gt;</span> <span class="n">cnt_iter_max</span> <span class="k">else</span> <span class="n">cnt_iter_max</span>
+            <span class="n">idx_iter</span> <span class="o">=</span> <span class="n">cnt_iter_max</span>
+
+        <span class="c1"># Check if the experiment was run in a multi-round setting</span>
+        <span class="n">multi_round_setting</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">load_dir</span><span class="p">):</span>
+            <span class="n">dirs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># prevents walk() from going into subdirectories</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;iter_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;round&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">multi_round_setting</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">multi_round_setting</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">idx_round</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Check what is the latest round</span>
+                <span class="n">cnt_round_max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">load_dir</span><span class="p">):</span>
+                    <span class="n">dirs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># prevents walk() from going into subdirectories</span>
+                    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s2">&quot;round&quot;</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_posterior.pt&quot;</span><span class="p">):</span>
+                            <span class="n">cnt_round</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;round_&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;round_&quot;</span><span class="p">)])</span>
+                            <span class="n">cnt_round_max</span> <span class="o">=</span> <span class="n">cnt_round</span> <span class="k">if</span> <span class="n">cnt_round</span> <span class="o">&gt;</span> <span class="n">cnt_round_max</span> <span class="k">else</span> <span class="n">cnt_round_max</span>
+                <span class="n">idx_round</span> <span class="o">=</span> <span class="n">cnt_round_max</span>
+
+        <span class="c1"># Check before loading, and print a warning message if there can not be a posterior with the obtained indices</span>
+        <span class="k">if</span> <span class="n">idx_iter</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid iteration index </span><span class="si">{</span><span class="n">idx_iter</span><span class="si">}</span><span class="s2">! Check if there is a posterior in </span><span class="si">{</span><span class="n">load_dir</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx_round</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">multi_round_setting</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid round index </span><span class="si">{</span><span class="n">idx_round</span><span class="si">}</span><span class="s2">! Check if there is a posterior in </span><span class="si">{</span><span class="n">load_dir</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Load the current posterior</span>
+        <span class="n">str_round</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_round_</span><span class="si">{</span><span class="n">idx_round</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">multi_round_setting</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">posterior</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="n">idx_iter</span><span class="si">}{</span><span class="n">str_round</span><span class="si">}</span><span class="s2">_posterior.pt&quot;</span><span class="p">,</span> <span class="n">load_dir</span><span class="o">=</span><span class="n">load_dir</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;No posterior was loaded.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+            <span class="n">posterior</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">posterior</span></div>
+
+<div class="viewcode-block" id="SBIBase.eval_posterior"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.eval_posterior">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">eval_posterior</span><span class="p">(</span>
+        <span class="n">posterior</span><span class="p">:</span> <span class="n">DirectPosterior</span><span class="p">,</span>
+        <span class="n">data_real</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">calculate_log_probs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates the posterior by computing parameter samples given observed data, its log probability</span>
+<span class="sd">        and the simulated trajectory.</span>
+
+<span class="sd">        :param posterior: posterior to evaluate, e.g. a normalizing flow, that samples domain parameters conditioned on</span>
+<span class="sd">                          the provided data</span>
+<span class="sd">        :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape</span>
+<span class="sd">                          [num_iter, num_rollouts_per_iter * dim_feat]</span>
+<span class="sd">        :param num_samples: number of samples to draw from the posterior</span>
+<span class="sd">        :param calculate_log_probs: if `True`, the log-probabilities are computed, else `None` is returned</span>
+<span class="sd">        :param normalize_posterior: if `True`, the normalization of the posterior density is enforced by sbi</span>
+<span class="sd">        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi&#39;s `DirectPosterior.sample()` function</span>
+<span class="sd">        :return: domain parameters sampled form the posterior of shape [batch_size, num_samples, dim_domain_param], as</span>
+<span class="sd">                 well as the log-probabilities of these domain parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_real</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data_real</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The data must be a 2-dim PyTorch tensor, but is of shape </span><span class="si">{</span><span class="n">data_real</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">data_real</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># Sample domain parameters for all batches and stack them</span>
+        <span class="n">default_sampling_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">mcmc_method</span><span class="o">=</span><span class="s2">&quot;slice_np_vectorized&quot;</span><span class="p">,</span>
+            <span class="n">mcmc_parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">warmup_steps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_chains</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">init_strategy</span><span class="o">=</span><span class="s2">&quot;sir&quot;</span><span class="p">),</span>  <span class="c1"># default: slice_np, 20</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">subrtn_sbi_sampling_hparam</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">subrtn_sbi_sampling_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">subrtn_sbi_sampling_hparam</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="n">default_sampling_hparam</span><span class="p">,</span> <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="c1"># Sample domain parameters from the posterior</span>
+        <span class="n">domain_params</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">posterior</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,),</span> <span class="n">x</span><span class="o">=</span><span class="n">x_o</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">)</span> <span class="k">for</span> <span class="n">x_o</span> <span class="ow">in</span> <span class="n">data_real</span><span class="p">],</span>
+            <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check shape</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">domain_params</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The sampled domain parameters must be a 3-dim tensor where the 1st dimension is </span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2"> and &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the 2nd dimension is </span><span class="si">{</span><span class="n">num_samples</span><span class="si">}</span><span class="s2">, but it is of shape </span><span class="si">{</span><span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Compute the log probability if desired</span>
+        <span class="k">if</span> <span class="n">calculate_log_probs</span><span class="p">:</span>
+            <span class="c1"># Batch-wise computation and stacking</span>
+            <span class="k">with</span> <span class="n">completion_context</span><span class="p">(</span><span class="s2">&quot;Evaluating posterior&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">):</span>
+                <span class="n">log_probs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">posterior</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_o</span><span class="p">,</span> <span class="n">norm_posterior</span><span class="o">=</span><span class="n">normalize_posterior</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">dp</span><span class="p">,</span> <span class="n">x_o</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">domain_params</span><span class="p">,</span> <span class="n">data_real</span><span class="p">)</span>
+                    <span class="p">],</span>
+                    <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Check shape</span>
+            <span class="k">if</span> <span class="n">log_probs</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">log_probs</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log_probs</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">domain_params</span><span class="p">,</span> <span class="n">log_probs</span></div>
+
+<div class="viewcode-block" id="SBIBase.get_ml_posterior_samples"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_ml_posterior_samples">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">get_ml_posterior_samples</span><span class="p">(</span>
+        <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">posterior</span><span class="p">:</span> <span class="n">DirectPosterior</span><span class="p">,</span>
+        <span class="n">data_real</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">num_eval_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_ml_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">calculate_log_probs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">return_as_tensor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the posterior conditioned on the data `data_real`, and extract the `num_ml_samples` most likely</span>
+<span class="sd">        domain parameter sets.</span>
+
+<span class="sd">        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)</span>
+<span class="sd">        :param posterior: posterior to evaluate, e.g. a normalizing flow, that samples domain parameters conditioned on</span>
+<span class="sd">                          the provided data</span>
+<span class="sd">        :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape</span>
+<span class="sd">                          [num_iter, num_rollouts_per_iter, time_series_length, dim_data]</span>
+<span class="sd">        :param num_eval_samples: number of samples to draw from the posterior</span>
+<span class="sd">        :param num_ml_samples: number of most likely samples, i.e. 1 equals argmax</span>
+<span class="sd">        :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned</span>
+<span class="sd">        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi</span>
+<span class="sd">        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi&#39;s `DirectPosterior.sample()` function</span>
+<span class="sd">        :param return_as_tensor: if `True`, return the most likely domain parameter sets as a tensor of shape</span>
+<span class="sd">                                 [num_iter, num_ml_samples, dim_domain_param], else as a list of dict</span>
+<span class="sd">        :return: most likely domain parameters sets sampled form the posterior, and the associated log probabilities</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_ml_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">num_ml_samples</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_ml_samples</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s2">&quot;0 (int)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_eval_samples</span> <span class="o">&lt;</span> <span class="n">num_ml_samples</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_ml_samples</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="n">num_eval_samples</span><span class="p">)</span>
+
+        <span class="c1"># Evaluate the posterior</span>
+        <span class="n">domain_params</span><span class="p">,</span> <span class="n">log_probs</span> <span class="o">=</span> <span class="n">SBIBase</span><span class="o">.</span><span class="n">eval_posterior</span><span class="p">(</span>
+            <span class="n">posterior</span><span class="p">,</span>
+            <span class="n">data_real</span><span class="p">,</span>
+            <span class="n">num_eval_samples</span><span class="p">,</span>
+            <span class="n">calculate_log_probs</span><span class="p">,</span>
+            <span class="n">normalize_posterior</span><span class="p">,</span>
+            <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Extract the most likely domain parameter sets for every target domain data set</span>
+        <span class="n">domain_params_ml</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">log_probs_ml</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">log_probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_ml_samples</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">idcs_sorted</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">log_probs</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="p">:],</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">idcs_ml</span> <span class="o">=</span> <span class="n">idcs_sorted</span><span class="p">[:</span><span class="n">num_ml_samples</span><span class="p">]</span>
+            <span class="n">log_probs_ml</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">log_probs</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="n">idcs_ml</span><span class="p">]</span>
+            <span class="n">dp_vals</span> <span class="o">=</span> <span class="n">domain_params</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="n">idcs_ml</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="k">if</span> <span class="n">return_as_tensor</span><span class="p">:</span>
+                <span class="c1"># Return as tensor</span>
+                <span class="n">domain_params_ml</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp_vals</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Return as dict</span>
+                <span class="n">dp_vals</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">dp_vals</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                <span class="n">domain_param_ml</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">dpv</span><span class="p">))</span> <span class="k">for</span> <span class="n">dpv</span> <span class="ow">in</span> <span class="n">dp_vals</span><span class="p">]</span>
+                <span class="n">domain_params_ml</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain_param_ml</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_as_tensor</span><span class="p">:</span>
+            <span class="n">domain_params_ml</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">domain_params_ml</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">domain_params_ml</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_ml_samples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                    <span class="n">given</span><span class="o">=</span><span class="n">domain_params_ml</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_ml_samples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">))</span>
+                <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Check the first element</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">domain_params_ml</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="n">num_ml_samples</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">domain_params_ml</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The max likelihood domain parameter sets need to be of length </span><span class="si">{</span><span class="n">num_ml_samples</span><span class="si">}</span><span class="s2">, but are &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">domain_params_ml</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, and the domain parameter sets need to be of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span><span class="si">}</span><span class="s2">, but &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">domain_params_ml</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">!&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">domain_params_ml</span><span class="p">,</span> <span class="n">log_probs_ml</span></div>
+
+<div class="viewcode-block" id="SBIBase.eval_policy"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.eval_policy">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">eval_policy</span><span class="p">(</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
+        <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate a policy either in the source or in the target domain.</span>
+<span class="sd">        This method is static to facilitate evaluation of specific policies in hindsight.</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved</span>
+<span class="sd">        :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance</span>
+<span class="sd">        :param policy: policy to evaluate</span>
+<span class="sd">        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate</span>
+<span class="sd">        :param num_rollouts: number of rollouts to collect on the target system</span>
+<span class="sd">        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate</span>
+<span class="sd">        :param num_workers: number of environments for the parallel sampler (only used for SimEnv)</span>
+<span class="sd">        :return: estimated return in the target domain</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_policy ...&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">RealEnv</span><span class="p">):</span>
+            <span class="c1"># Evaluate sequentially when evaluating on a real-world device</span>
+            <span class="n">rets_real</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">):</span>
+                <span class="n">rets_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">())</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">SimEnv</span><span class="p">):</span>
+            <span class="c1"># Create a parallel sampler when evaluating in a simulation</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">)</span>
+            <span class="n">ros</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">rets_real</span> <span class="o">=</span> <span class="p">[</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">])</span>
+
+        <span class="n">rets_real</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">rets_real</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Save and print the evaluation results</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">rets_real</span><span class="p">,</span> <span class="s2">&quot;returns_real.pt&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Target domain performance&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="n">tabulate</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="p">[</span><span class="s2">&quot;mean return&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span>
+                        <span class="p">[</span><span class="s2">&quot;std return&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)],</span>
+                        <span class="p">[</span><span class="s2">&quot;min return&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)],</span>
+                        <span class="p">[</span><span class="s2">&quot;max return&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)],</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SBIBase.fill_domain_param_buffer"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.fill_domain_param_buffer">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">fill_domain_param_buffer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">DomainRandWrapper</span><span class="p">,</span> <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">domain_params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill the environments domain parameter buffer according to the domain parameter map, and reset the ring index.</span>
+
+<span class="sd">        :param env: environment in which the domain parameters are inserted</span>
+<span class="sd">        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)</span>
+<span class="sd">        :param domain_params: tensor of domain parameters [num_samples x dim domain param]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DomainRandWrapperBuffer</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">domain_params</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The domain parameter must be a 2-dim PyTorch tensor, where the second dimension matched the &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;domain parameter mapping, but it has the shape </span><span class="si">{</span><span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">domain_params</span> <span class="o">=</span> <span class="n">domain_params</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">dp</span><span class="p">))</span> <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">domain_params</span><span class="p">]</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">ring_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filled the environment&#39;s buffer with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span><span class="si">}</span><span class="s2"> domain parameters sets.&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SBIBase.train_policy_sim"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.train_policy_sim">[docs]</a>    <span class="k">def</span> <span class="nf">train_policy_sim</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">domain_params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cnt_rep</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">use_rec_init_states</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train a policy in simulation for given hyper-parameters from the domain randomizer.</span>
+
+<span class="sd">        :param domain_params: domain parameters sampled from the posterior [shape N x D where N is the number of</span>
+<span class="sd">                              samples and D is the number of domain parameters]</span>
+<span class="sd">        :param prefix: set a prefix to the saved file name, use &quot;&quot; for no prefix</span>
+<span class="sd">        :param cnt_rep: current repetition count, coming from the wrapper function</span>
+<span class="sd">        :param use_rec_init_states: if `True`, the previous rollout will be loaded to extract the initial states, and</span>
+<span class="sd">                                    sync them with the recorded ones</span>
+<span class="sd">        :return: estimated return of the trained policy in the target domain</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">domain_params</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_mapping</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">domain_params</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_mapping</span><span class="p">)))</span>
+
+        <span class="c1"># Insert the domain parameters into the wrapped environment&#39;s buffer</span>
+        <span class="n">SBIBase</span><span class="o">.</span><span class="n">fill_domain_param_buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dp_mapping</span><span class="p">,</span> <span class="n">domain_params</span><span class="p">)</span>
+
+        <span class="c1"># Set the initial state spaces of the simulation environment to match the observed initial states</span>
+        <span class="k">if</span> <span class="n">use_rec_init_states</span><span class="p">:</span>
+            <span class="n">rollouts_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+            <span class="n">init_states_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts_real</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">init_states_real</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                    <span class="n">given</span><span class="o">=</span><span class="n">init_states_real</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">inner_env</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="p">)</span><span class="o">.</span><span class="n">init_space</span> <span class="o">=</span> <span class="n">DiscreteSpace</span><span class="p">(</span><span class="n">init_states_real</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The simulation environment&#39;s initial states have been set to the recorded ones.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Reset the subroutine algorithm which includes resetting the exploration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">sample_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="c1"># Propagate the updated training environment to the SamplerPool&#39;s workers</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="p">,</span> <span class="s2">&quot;sampler&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">KeyErr</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="n">container</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="p">)</span>
+
+        <span class="c1"># Do a warm start, but randomly reset the policy parameters if training failed once</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warmstart</span> <span class="ow">and</span> <span class="n">cnt_rep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Train a policy in simulation using the subroutine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy_snapshot_mode</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">))</span>
+
+        <span class="c1"># Return the estimated return of the trained policy in simulation</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="o">.</span><span class="n">ring_idx</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># don&#39;t reset the buffer to eval on the same domains as trained</span>
+        <span class="n">avg_ret_sim</span> <span class="o">=</span> <span class="n">SBIBase</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_samples</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">avg_ret_sim</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SBIBase.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># The policy is not being updated by a policy optimization subroutine</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not supposed be run as a subroutine!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SBIBase.load_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="n">Policy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+        <span class="n">ex_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">parsed_args</span><span class="p">,</span> <span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># Environment</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;env_sim.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;randomizer&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DomainRandWrapperBuffer</span><span class="p">)</span>
+            <span class="n">typed_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">)</span><span class="o">.</span><span class="n">fill_buffer</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded the domain randomizer</span><span class="se">\n</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">randomizer</span><span class="si">}</span><span class="se">\n</span><span class="s2">and filled it with 10 random instances.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Loaded environment has no randomizer, or it is None.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">remove_all_dr_wrappers</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Policy</span>
+        <span class="n">policy</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">policy_name</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Algorithm specific</span>
+        <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;prior.pt&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># By default load the latest posterior (latest iteration and the last round)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;posterior&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SBIBase</span><span class="o">.</span><span class="n">load_posterior</span><span class="p">(</span>
+                <span class="n">ex_dir</span><span class="p">,</span> <span class="n">parsed_args</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span> <span class="n">parsed_args</span><span class="o">.</span><span class="n">round</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="c1"># Load the complete data or the data of the given iteration</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">parsed_args</span><span class="o">.</span><span class="n">iter</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">iter</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;data_real&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span></div>
+
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Remove the unpickleable sbi-related members from this algorithm instance</span>
+        <span class="n">tmp_sbi_simulator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_sbi_simulator&quot;</span><span class="p">)</span>
+        <span class="n">tmp_subrtn_sbi_summary_writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_summary_writer&quot;</span><span class="p">)</span>
+        <span class="n">tmp_subrtn_sbi_build_neural_net</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_build_neural_net&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Remove the policy optimization subroutine, since it contains non-leaf tensors. These cause an error during the</span>
+        <span class="c1"># subsequent deepcopying</span>
+        <span class="n">tmp_subrtn_policy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_subrtn_policy&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># Call Algorithm&#39;s __getstate__() without the unpickleable sbi-related members.</span>
+        <span class="c1"># Make a deepcopy of the state dict such that we can return the pickleable version and insert the sbi variables.</span>
+        <span class="n">state_dict_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">())</span>
+
+        <span class="c1"># Inset them back to the current state dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_sbi_simulator&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_sbi_simulator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">_summary_writer</span> <span class="o">=</span> <span class="n">tmp_subrtn_sbi_summary_writer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">_build_neural_net</span> <span class="o">=</span> <span class="n">tmp_subrtn_sbi_build_neural_net</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_policy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_subrtn_policy</span>
+
+        <span class="c1"># Inset the subroutine from Pyrado back to the pickled state dict</span>
+        <span class="n">state_dict_copy</span><span class="p">[</span><span class="s2">&quot;_subrtn_policy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_subrtn_policy</span>
+
+        <span class="k">return</span> <span class="n">state_dict_copy</span>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="c1"># Call Algorithm&#39;s __setstate__()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># Reconstruct the simulator for sbi</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rollouts_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rollouts_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">):</span>
+                <span class="n">rollouts_real</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_sbi</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;_sbi_prior&quot;</span><span class="p">],</span> <span class="n">rollouts_real</span><span class="p">)</span>  <span class="c1"># sbi_prior is fine as it is</span>
+
+        <span class="c1"># Reconstruct the tensorboard printer with the once from this algorithm</span>
+        <span class="n">summary_writer</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;_logger&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">printers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">writer</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">summary_writer</span><span class="p">,</span> <span class="n">SummaryWriter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">_summary_writer</span> <span class="o">=</span> <span class="n">summary_writer</span>
+
+        <span class="c1"># Set the internal sbi construction callable given the predefined posterior hyper-parameter.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">_build_neural_net</span> <span class="o">=</span> <span class="n">sbiutils</span><span class="o">.</span><span class="n">posterior_nn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
