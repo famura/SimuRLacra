@@ -80,6 +80,7 @@ class ADR(Algorithm):
         svpg_warmup: int = 0,
         num_workers: int = 4,
         num_trajs_per_config: int = 8,
+        log_exploration: bool = False,
         randomized_params: Sequence[str] = None,
         logger: Optional[StepLogger] = None,
     ):
@@ -126,8 +127,8 @@ class ADR(Algorithm):
         self.batch_size = batch_size
         self.num_trajs_per_config = num_trajs_per_config
         self.warm_up_time = svpg_warmup
+        self.log_exploration = log_exploration
 
-        self.pool = SamplerPool(num_workers)
         self.curr_time_step = 0
 
         randomized_params = adr_hp["randomized_params"]
@@ -151,7 +152,7 @@ class ADR(Algorithm):
             )
         )
 
-        # Initialize SVPG
+        # Initialize SVPG adapter
 
         self.svpg_wrapper = SVPGAdapter(
             env,
@@ -165,6 +166,7 @@ class ADR(Algorithm):
             num_workers=num_workers,
         )
 
+        # Generate SVPG with default architecture using SVPGBuilder
         self.svpg = SVPGBuilder(ex_dir, self.svpg_wrapper, svpg_hp).svpg
 
     @property
@@ -203,15 +205,25 @@ class ADR(Algorithm):
             rewards = []
             infos = []
             rand_trajs_now = []
+            exploration_logbook = []
             with to.no_grad():
                 while not done:
                     action = p.expl_strat(to.as_tensor(state, dtype=to.get_default_dtype())).detach().cpu().numpy()
                     state, reward, done, info = svpg_env.step(action, i)
-                    print(state, " => ", reward)
+                    state_dict = svpg_env.array_to_dict((state + 0.5) * svpg_env.nominal())
+                    print(state_dict, " => ", reward)
+
+                    # Log visited states as dict
+                    if self.log_exploration:
+                        exploration_logbook.append(state_dict)
+
+                    # Store rollout results
                     states.append(state)
                     rewards.append(reward)
                     actions.append(action)
                     infos.append(info)
+
+                    # Extract trajectories from info
                     rand_trajs_now.extend(info["rand"])
                     rand_trajs += info["rand"]
                     ref_trajs += info["ref"]
@@ -250,7 +262,7 @@ class ADR(Algorithm):
         self.convert_and_detach(flattened_randomized)
         # np.save(f'{self.save_dir}actions{self.curr_iter}', flattened_randomized.actions)
         self.make_snapshot(snapshot_mode, float(ret_avg), meta_info)
-        # self._subrtn.make_snapshot(snapshot_mode="best", curr_avg_ret=float(ret_avg))
+        self._subrtn.make_snapshot(snapshot_mode="best", curr_avg_ret=float(ret_avg))
         self.curr_time_step += 1
 
     def convert_and_detach(self, arg0):
@@ -259,11 +271,14 @@ class ADR(Algorithm):
         arg0.actions = arg0.actions.float().detach()
 
     def save_snapshot(self, meta_info: dict = None):
+        super().save_snapshot(meta_info)
+
         if meta_info is not None:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subrtn!")
 
         # This algorithm instance is not a subrtn of another algorithm
         pyrado.save(self.env, "env.pkl", self.save_dir)
+        self._subrtn.save_snapshot(meta_info=meta_info)
         # self.svpg.save_snapshot(meta_info)
 
 
@@ -355,11 +370,17 @@ class SVPGAdapter(EnvWrapper, Serializable):
             param_norm = self.inner_parameter_state[i] + 0.5
             random_parameters = [self.array_to_dict(param_norm * self.nominal())] * self.num_trajs
             nominal_parameters = [self.nominal_dict()] * self.num_trajs
+
+            # Sample trajectories from random and reference environments
             rand = eval_domain_params(self.pool, self.wrapped_env, self.inner_policy, random_parameters)
             ref = eval_domain_params(self.pool, self.wrapped_env, self.inner_policy, nominal_parameters)
+
+            # Calculate the rewards for each trajectory
             rewards = [self.discriminator.get_reward(traj) for traj in rand]
             reward = np.mean(rewards)
             info = dict(rand=rand, ref=ref)
+
+            # Handle step count management
             done = self.count[i] >= self.max_steps - 1
             self.count[i] += 1
             self.horizon_count += 1

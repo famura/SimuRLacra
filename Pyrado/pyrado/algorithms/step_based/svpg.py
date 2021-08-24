@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from queue import Queue
+from multiprocessing import Queue
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -96,63 +96,6 @@ class SVPG(Algorithm):
         self.particle = particle
         self.current_particle = 0
 
-        class OptimizerHook:
-            """This class mocks the optimizer interface partially to intercept the gradient updates of svpg."""
-
-            def __init__(self, particle):
-                """
-                Constructor
-
-                :param particle: blueprint algorithm in which the optimizer is replaced by the mocked one
-                """
-                self.optim = particle.optim
-                self.buffer = Queue()
-                self.particle = particle
-
-            def real_step(self, *args, **kwargs):
-                """Call the original optimizer with given args and kwargs."""
-                self.optim.step(*args, **kwargs)
-
-            def iter_steps(self) -> Tuple[List, Dict, to.Tensor, to.Tensor]:
-                """
-                Generate the steps in the buffer queue.
-
-                :yield: the next step in the queue
-                """
-                while not self.buffer.empty():
-                    yield self.buffer.get()
-
-            def empty(self) -> bool:
-                """
-                Check if the buffer is empty.
-
-                :return: buffer is empty
-                """
-                return self.buffer.empty()
-
-            def get_next_step(self) -> Tuple[List, Dict, to.Tensor, to.Tensor]:
-                """
-                Retrieve the next step from the queue. It contains all calls to the wrapped optimizer which have
-                been intercepted.
-
-                :return: next buffer step
-                """
-                return self.buffer.get()
-
-            def step(self, *args, **kwargs):
-                """Store the args of the mocked call in the queue."""
-                self.buffer.put(
-                    (
-                        args,
-                        kwargs,
-                        to.clone(self.particle.policy.param_values),
-                        to.clone(self.particle.policy.param_grad),
-                    )
-                )
-
-            def zero_grad(self, *args, **kwargs):
-                self.optim.zero_grad(*args, **kwargs)
-
         self.optims = []
         # Store particle states
         for i in range(self.num_particles):
@@ -162,25 +105,20 @@ class SVPG(Algorithm):
 
         self.particle_steps = [0] * self.num_particles
 
-        for i in range(self.num_particles):
-            self.particle.__setstate__(self.particle_states[i])
-            self.particle.policy.param_values = self.particle_policy_states[i]
-            self.particle.policy.init_param()
-            self.particle_states[i] = self.particle.__getstate__()
-            self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
-            self.current_particle = i
+        for particle in self.iter_particles:
+            particle.policy.init_param()
+            particle._critic._vfcn.init_param()
+        self.particle._logger = self.logger
 
     @property
     def iter_particles(self):
         """Iterate particles by sequentially loading and yielding them."""
         for i in range(self.num_particles):
-            self.particle.__setstate__(self.particle_states[i])
-            self.particle.policy.param_values = self.particle_policy_states[i]
+            self.load_particle(i)
             self.particle.optim = self.optims[i]
             self.current_particle = i
             yield self.particle
-            self.particle_states[i] = self.particle.__getstate__()
-            self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
+            self.store_particle()
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         parameters = [[] for i in range(self.num_particles)]
@@ -188,23 +126,29 @@ class SVPG(Algorithm):
         kwargs = [[] for i in range(self.num_particles)]
         args = [[] for i in range(self.num_particles)]
         for i, particle in enumerate(self.iter_particles):
-            particle.step(snapshot_mode="no")
-            while not particle.optim.empty():
-                args_i, kwargs_i, params, grads = particle.optim.get_next_step()
+            particle.step(snapshot_mode="no", meta_info={"iter": self.curr_iter, "particle": i, "prefix": "SVPG"})
+            for args_i, kwargs_i, params, grads in particle.optim.iter_steps():
                 policy_grads[i].append(grads)
                 parameters[i].append(params)
                 args[i].append(args_i)
                 kwargs[i].append(kwargs_i)
+            particle.optim.reset()
+            self.logger.add_value("particle", i)
+            avg_ret = self.logger._current_values["avg return"]
+            self.make_snapshot(snapshot_mode, avg_ret, meta_info)
+            self.logger.record_step()
 
         # assert all(len(p) == len(parameters[0]) for p in parameters)
         params = to.stack([to.stack(parameters[i]).mean(axis=0) for i in range(self.num_particles)])
         policy_grds = to.stack([to.stack(policy_grads[i]).mean(axis=0) for i in range(self.num_particles)])
+
         Kxx, dx_Kxx = self.kernel(params)
         grad_theta = (to.mm(Kxx, policy_grds / self.temperature) + dx_Kxx) / self.num_particles
         for i, particle in enumerate(self.iter_particles):
             particle.policy.param_values = params[i]
-            particle.policy.param_grad = grad_theta[i]
+            particle.policy.param_grad = policy_grds[i]
             particle.optim.real_step(*args[i][0], **kwargs[i][0])
+        self.logger.record_step()
 
     def kernel(self, X: to.Tensor) -> Tuple[to.Tensor, to.Tensor]:
         """
@@ -298,3 +242,54 @@ class SVPGBuilder:
         self.svpg = SVPG(ex_dir, env, particle_example, **hyperparams["algo"])
 
         self.svpg.save_name = "subrtn_svpg"
+
+
+class OptimizerHook:
+    """This class mocks the optimizer interface partially to intercept the gradient updates of svpg."""
+
+    def __init__(self, particle):
+        """
+        Constructor
+
+        :param particle: blueprint algorithm in which the optimizer is replaced by the mocked one
+        """
+        self.optim = particle.optim
+        self.buffer = []
+        self.particle = particle
+
+    def real_step(self, *args, **kwargs):
+        """Call the original optimizer with given args and kwargs."""
+        self.optim.step(*args, **kwargs)
+
+    def iter_steps(self) -> Tuple[List, Dict, to.Tensor, to.Tensor]:
+        """
+        Generate the steps in the buffer queue.
+
+        :yield: the next step in the queue
+        """
+        yield from self.buffer
+
+    def empty(self) -> bool:
+        """
+        Check if the buffer is empty.
+
+        :return: buffer is empty
+        """
+        return len(self.buffer) == 0
+
+    def reset(self):
+        self.buffer = []
+
+    def step(self, *args, **kwargs):
+        """Store the args of the mocked call in the queue."""
+        self.buffer.append(
+            (
+                args,
+                kwargs,
+                to.clone(self.particle.policy.param_values).detach(),
+                to.clone(self.particle.policy.param_grad).detach(),
+            )
+        )
+
+    def zero_grad(self, *args, **kwargs):
+        self.optim.zero_grad(*args, **kwargs)

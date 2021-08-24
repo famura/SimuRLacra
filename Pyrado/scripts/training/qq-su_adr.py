@@ -95,7 +95,7 @@ if __name__ == "__main__":
         max_iter=200,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
-        num_epoch=7,
+        num_epoch=10,
         batch_size=500,
         std_init=0.7573286998997557,
         lr=6.999956625305722e-04,
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     #
     ###
 
-    adr_hp = dict(randomized_params=["length_rot_pole", "gravity_const"], evaluation_steps=10, step_length=0.05)
+    adr_hp = dict(randomized_params=["length_rot_pole", "gravity_const"], evaluation_steps=20, step_length=0.05)
 
     svpg_hp = {
         "actor": dict(
@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
     reward_generator_hp = dict(batch_size=64, reward_multiplier=1.0)
 
-    rest_hp = dict(max_iter=20, num_discriminator_epoch=10, batch_size=64)
+    rest_hp = dict(max_iter=30, num_discriminator_epoch=10, batch_size=64, num_trajs_per_config=50)
 
     adr = ADR(ex_dir, env, subroutine, adr_hp, svpg_hp, reward_generator_hp, **rest_hp)
 
