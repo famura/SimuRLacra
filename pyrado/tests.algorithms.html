@@ -346,12 +346,32 @@
 <dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.ExposingReturnStatisticBasedStoppingCriterion">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ExposingReturnStatisticBasedStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_statistic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ReturnStatistic.median</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_lookbacks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#ExposingReturnStatisticBasedStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.ExposingReturnStatisticBasedStoppingCriterion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion</span></code></a></p>
+<p>Constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>return_statistic</strong> – statistic to compute; defaults to median</p></li>
+<li><p><strong>num_lookbacks</strong> – over how many iterations the statistic should be computed; for example, a value of two
+means that the rollouts of both the current and the previous iteration will be used for
+computing the statistic; defaults to one</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MockSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_sequences</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="sampling.html#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></code></a></p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_rollouts</strong> – minimum number of complete rollouts to sample</p></li>
+<li><p><strong>min_steps</strong> – minimum total number of steps to sample</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler.reinit">
 <span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler.reinit" title="Permalink to this definition">¶</a></dt>

@@ -36,6 +36,7 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -246,6 +247,15 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">BallOnBeamDiscSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/ball_on_beam.html#BallOnBeamDiscSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.ball_on_beam.BallOnBeamDiscSim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.ball_on_beam.BallOnBeamSim" title="pyrado.environments.pysim.ball_on_beam.BallOnBeamSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.ball_on_beam.BallOnBeamSim</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Ball-on-beam simulation environment with discrete actions</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – forwarded to BallOnBeamSim’s constructor</p></li>
+<li><p><strong>kwargs</strong> – forwarded to BallOnBeamSim’s constructor</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.ball_on_beam.BallOnBeamDiscSim.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bob-d'</span></em><a class="headerlink" href="#pyrado.environments.pysim.ball_on_beam.BallOnBeamDiscSim.name" title="Permalink to this definition">¶</a></dt>
@@ -259,6 +269,16 @@
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.base.SimPyEnv" title="pyrado.environments.pysim.base.SimPyEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.base.SimPyEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment in which a ball rolls on a beam (1 dim). The ball is randomly initialized on the beam and is to be
 stabilized on the center of the beam. In this setup, the agent can control the torque applied to the beam.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.ball_on_beam.BallOnBeamSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/ball_on_beam.html#BallOnBeamSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.ball_on_beam.BallOnBeamSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
@@ -284,6 +304,16 @@ stabilized on the center of the beam. In this setup, the agent can control the t
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SimPyEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/base.html#SimPyEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Base class for simulated environments implemented in pure Python</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.base.SimPyEnv.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.act_space" title="Permalink to this definition">¶</a></dt>
@@ -398,6 +428,13 @@ Do not instantiate this yourself but rather use <cite>gym.make()</cite> like thi
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;SimulacraPySimEnv-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">sim_env</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Initialize the environment. You are not supposed to call this function directly, but use
+<cite>gym.make(“SimulacraPySimEnv-v0”, env=sim_env)</cite> where <cite>sim_env</cite> is your Pyrado environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – Pyrado environment to wrap</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#PysimGymWrapper.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.close" title="Permalink to this definition">¶</a></dt>
@@ -504,6 +541,7 @@ info: contains auxiliary diagnostic information (helpful for debugging, and some
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">OneMassOscillatorDomainParamEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epoch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorDomainParamEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Class to estimate the domain parameters of the OneMassOscillator environment</p>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorDomainParamEstimator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator.forward" title="Permalink to this definition">¶</a></dt>
@@ -534,6 +572,12 @@ registered hooks while the latter silently ignores them.</p>
 <dt class="sig sig-object py" id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDyn">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">OneMassOscillatorDyn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorDyn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDyn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dt</strong> – simulation step size [s]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -541,6 +585,16 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">OneMassOscillatorSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.base.SimPyEnv" title="pyrado.environments.pysim.base.SimPyEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.base.SimPyEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Model of a linear one-mass-oscillator (spring-mass-damper system) without gravity influence</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
@@ -566,6 +620,18 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">GymEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/openai_classical_control.html#GymEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>A Wrapper to use the classical control environments of OpenAI Gym like Pyrado environments</p>
+<p>Constructor</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Pyrado only supports the classical control environments from OpenAI Gym.
+See <a class="reference external" href="https://github.com/openai/gym/tree/master/gym/envs/classic_control">https://github.com/openai/gym/tree/master/gym/envs/classic_control</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env_name</strong> – name of the OpenAI Gym environment, e.g. ‘MountainCar-v0’, ‘CartPole-v1’, ‘Acrobot-v1’,
+‘MountainCarContinuous-v0’,’Pendulum-v0’</p>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.openai_classical_control.GymEnv.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.act_space" title="Permalink to this definition">¶</a></dt>
@@ -696,6 +762,13 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">BallOnBeamVis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#BallOnBeamVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.BallOnBeamVis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
 <p>Visualisation for the BallOnBeamSim class using panda3d</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
+</dd>
+</dl>
+<p>:param rendering</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pandavis.BallOnBeamVis.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#BallOnBeamVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.BallOnBeamVis.update" title="Permalink to this definition">¶</a></dt>
@@ -717,6 +790,12 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">OneMassOscillatorVis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#OneMassOscillatorVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.OneMassOscillatorVis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
 <p>Visualisation for the OneMassOscillatorSim class using panda3d</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pandavis.OneMassOscillatorVis.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#OneMassOscillatorVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.OneMassOscillatorVis.update" title="Permalink to this definition">¶</a></dt>
@@ -738,6 +817,12 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PandaVis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PandaVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PandaVis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">direct.showbase.ShowBase.ShowBase</span></code></p>
 <p>Base class for all visualizations with panda3d</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rendering</strong> – boolean indicating whether to use RenderPipeline or default Panda3d as visualization-module.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pandavis.PandaVis.draw_trace">
 <span class="sig-name descname"><span class="pre">draw_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PandaVis.draw_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PandaVis.draw_trace" title="Permalink to this definition">¶</a></dt>
@@ -776,6 +861,12 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PendulumVis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PendulumVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PendulumVis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
 <p>Visualisation for the PendulumSim class using panda3d</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pandavis.PendulumVis.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PendulumVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PendulumVis.update" title="Permalink to this definition">¶</a></dt>
@@ -797,6 +888,12 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QBallBalancerVis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QBallBalancerVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QBallBalancerVis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
 <p>Visualisation for the QBallBalancerSim class using panda3d</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pandavis.QBallBalancerVis.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QBallBalancerVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QBallBalancerVis.update" title="Permalink to this definition">¶</a></dt>
@@ -818,6 +915,12 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QCartPoleVis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QCartPoleVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QCartPoleVis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
 <p>Visualisation for the QCartPoleSim class using panda3d</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pandavis.QCartPoleVis.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QCartPoleVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QCartPoleVis.update" title="Permalink to this definition">¶</a></dt>
@@ -839,6 +942,12 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QQubeVis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QQubeVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QQubeVis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
 <p>Visualisation for the QQubeSim class using panda3d</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pandavis.QQubeVis.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QQubeVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QQubeVis.update" title="Permalink to this definition">¶</a></dt>
@@ -863,6 +972,17 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PendulumSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pendulum.html#PendulumSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pendulum.PendulumSim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.base.SimPyEnv" title="pyrado.environments.pysim.base.SimPyEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.base.SimPyEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Under-actuated inverted pendulum environment similar to the one from OpenAI Gym</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>init_state</strong> – set an pole angle and pole angular velocity for the <cite>SingularStateSpace</cite></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pendulum.PendulumSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/pendulum.html#PendulumSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pendulum.PendulumSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
@@ -906,6 +1026,16 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QBallBalancerKin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qbb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_opt_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RenderMode(text=False,</span> <span class="pre">video=False,</span> <span class="pre">render=False)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerKin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Calculates and visualizes the kinematics from the servo shaft angles (th_x, th_x) to the plate angles (a, b).</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qbb</strong> – QBallBalancerSim object</p></li>
+<li><p><strong>num_opt_iter</strong> – number of optimizer iterations for the IK</p></li>
+<li><p><strong>mode</strong> – the render mode: a for animating (pyplot), or `` for no animation</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.plate_ang">
 <span class="sig-name descname"><span class="pre">plate_ang</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tip</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerKin.plate_ang"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.plate_ang" title="Permalink to this definition">¶</a></dt>
@@ -958,6 +1088,18 @@ the coriolis forces and linear-viscous friction. However, the 2 dim system is st
 This is the case, since the two rods (connected to the servos) are pushing the plate at the center lines.
 As a result, the angles alpha and beta are w.r.t. to the inertial frame, i.e. they are not 2 sequential rations.</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>simple_dynamics</strong> – if <a href="#id1"><span class="problematic" id="id2">`</span></a>True, use a dynamics model without Coriolis forces and without friction effects</p></li>
+<li><p><strong>load_experimental_tholds</strong> – use the voltage thresholds determined from experiments</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
@@ -1011,6 +1153,21 @@ As a result, the angles alpha and beta are w.r.t. to the inertial frame, i.e. th
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QCartPoleSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple_dynamics</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wild_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_cartpole.html#QCartPoleSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.base.SimPyEnv" title="pyrado.environments.pysim.base.SimPyEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.base.SimPyEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Base Environment for the Quanser Cart-Pole swing-up and stabilization task</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>long</strong> – set to <cite>True</cite> if using the long pole, else <cite>False</cite></p></li>
+<li><p><strong>simple_dynamics</strong> – if <cite>True, use the simpler dynamics model from Quanser. If `False</cite>, use a dynamics model
+which includes friction</p></li>
+<li><p><strong>wild_init</strong> – if <cite>True</cite> the init state space is increased drastically, e.g. the initial pendulum angle
+can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span>. Only applicable to <cite>QCartPoleSwingUpSim</cite>.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_cartpole.html#QCartPoleSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
@@ -1064,6 +1221,19 @@ As a result, the angles alpha and beta are w.r.t. to the inertial frame, i.e. th
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim" title="pyrado.environments.pysim.quanser_cartpole.QCartPoleSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.quanser_cartpole.QCartPoleSim</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment in which a pole has to be stabilized in the upright position (inverted pendulum) by moving a cart on
 a rail. The pole can rotate around an axis perpendicular to direction in which the cart moves.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>long</strong> – set to <cite>True</cite> if using the long pole, else <cite>False</cite></p></li>
+<li><p><strong>simple_dynamics</strong> – if <cite>True, use the simpler dynamics model from Quanser. If `False</cite>, use a dynamics model
+which includes friction</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_cartpole.QCartPoleStabSim.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'qcp-st'</span></em><a class="headerlink" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleStabSim.name" title="Permalink to this definition">¶</a></dt>
@@ -1077,6 +1247,21 @@ a rail. The pole can rotate around an axis perpendicular to direction in which t
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim" title="pyrado.environments.pysim.quanser_cartpole.QCartPoleSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.quanser_cartpole.QCartPoleSim</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment in which a pole has to be swung up and stabilized in the upright position (inverted pendulum) by
 moving a cart on a rail. The pole can rotate around an axis perpendicular to direction in which the cart moves.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>long</strong> – set to <cite>True</cite> if using the long pole, else <cite>False</cite></p></li>
+<li><p><strong>simple_dynamics</strong> – if <cite>True</cite>, use the simpler dynamics model from Quanser. If <cite>False</cite>, use a dynamics model
+which includes friction</p></li>
+<li><p><strong>wild_init</strong> – if <cite>True</cite> the init state space is increased drastically, e.g. the initial pendulum angle
+can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_cartpole.QCartPoleSwingUpSim.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'qcp-su'</span></em><a class="headerlink" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSwingUpSim.name" title="Permalink to this definition">¶</a></dt>
@@ -1092,6 +1277,16 @@ moving a cart on a rail. The pole can rotate around an axis perpendicular to dir
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QQubeSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_qube.html#QQubeSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_qube.QQubeSim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.base.SimPyEnv" title="pyrado.environments.pysim.base.SimPyEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.base.SimPyEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Base Environment for the Quanser Qube swing-up and stabilization task</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_qube.QQubeSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_qube.html#QQubeSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_qube.QQubeSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
@@ -1132,6 +1327,16 @@ The goal is to stabilize the pendulum at the upright position (alpha = +-pi).</p
 <p class="admonition-title">Note</p>
 <p>This environment is only for testing purposes, or to find the PD gains for stabilizing the pendulum at the top.</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_qube.QQubeStabSim.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'qq-st'</span></em><a class="headerlink" href="#pyrado.environments.pysim.quanser_qube.QQubeStabSim.name" title="Permalink to this definition">¶</a></dt>
@@ -1145,6 +1350,16 @@ The goal is to stabilize the pendulum at the upright position (alpha = +-pi).</p
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.quanser_qube.QQubeSim" title="pyrado.environments.pysim.quanser_qube.QQubeSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.quanser_qube.QQubeSim</span></code></a></p>
 <p>Environment which models Quanser’s Furuta pendulum called Quanser Qube.
 The goal is to swing up the pendulum and stabilize at the upright position (alpha = +-pi).</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – simulation step size [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_qube.QQubeSwingUpSim.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'qq-su'</span></em><a class="headerlink" href="#pyrado.environments.pysim.quanser_qube.QQubeSwingUpSim.name" title="Permalink to this definition">¶</a></dt>

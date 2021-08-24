@@ -245,6 +245,31 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">A2C</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">critic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.step_based.gae.GAE" title="pyrado.algorithms.step_based.gae.GAE"><span class="pre">pyrado.algorithms.step_based.gae.GAE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vfcn_coeff</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entropy_coeff</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_grad_norm</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scheduler_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/a2c.html#A2C"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.a2c.A2C" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic" title="pyrado.algorithms.step_based.actor_critic.ActorCritic"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.step_based.actor_critic.ActorCritic</span></code></a></p>
 <p>Advantage Actor Critic (A2C)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>critic</strong> – advantage estimation function <span class="math notranslate nohighlight">\(A(s,a) = Q(s,a) - V(s)\)</span></p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of rollouts sampled per policy update batch</p></li>
+<li><p><strong>min_steps</strong> – minimum number of state transitions sampled per policy update batch</p></li>
+<li><p><strong>vfcn_coeff</strong> – weighting factor of the value function term in the combined loss, specific to PPO2</p></li>
+<li><p><strong>entropy_coeff</strong> – weighting factor of the entropy term in the combined loss, specific to PPO2</p></li>
+<li><p><strong>batch_size</strong> – number of samples per policy update batch</p></li>
+<li><p><strong>std_init</strong> – initial standard deviation on the actions for the exploration noise</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm of the gradients for clipping, set to <cite>None</cite> to disable gradient clipping</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>lr</strong> – (initial) learning rate for the optimizer which can be by modified by the scheduler.
+By default, the learning rate is constant.</p></li>
+<li><p><strong>lr_scheduler</strong> – learning rate scheduler that does one step per epoch (pass through the whole data set)</p></li>
+<li><p><strong>lr_scheduler_hparam</strong> – hyper-parameters for the learning rate scheduler</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.a2c.A2C.loss_fcn">
 <span class="sig-name descname"><span class="pre">loss_fcn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_probs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adv</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_targ</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/a2c.html#A2C.loss_fcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.a2c.A2C.loss_fcn" title="Permalink to this definition">¶</a></dt>
@@ -290,6 +315,19 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ActorCritic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">actor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">critic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.step_based.gae.GAE" title="pyrado.algorithms.step_based.gae.GAE"><span class="pre">pyrado.algorithms.step_based.gae.GAE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/actor_critic.html#ActorCritic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class of all actor critic algorithms</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>actor</strong> – policy taking the actions in the environment</p></li>
+<li><p><strong>critic</strong> – estimates the value of states (e.g. advantage or return)</p></li>
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.actor_critic.ActorCritic.critic">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">critic</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.algorithms.step_based.gae.GAE</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.critic" title="Permalink to this definition">¶</a></dt>
@@ -407,6 +445,37 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p class="admonition-title">See also</p>
 <p>[1] V. Mnih et.al., “Human-level control through deep reinforcement learning”, Nature, 2015</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – (current) Q-network updated by this algorithm</p></li>
+<li><p><strong>memory_size</strong> – number of transitions in the replay memory buffer</p></li>
+<li><p><strong>eps_init</strong> – initial value for the probability of taking a random action, constant if <cite>eps_schedule_gamma=1</cite></p></li>
+<li><p><strong>eps_schedule_gamma</strong> – temporal discount factor for the exponential decay of epsilon</p></li>
+<li><p><strong>gamma</strong> – temporal discount factor for the state values</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_updates_per_step</strong> – number of (batched) updates per algorithm steps</p></li>
+<li><p><strong>target_update_intvl</strong> – number of iterations that pass before updating the <cite>qfcn_targ</cite> network</p></li>
+<li><p><strong>num_init_memory_steps</strong> – number of samples used to initially fill the replay buffer with, pass <cite>None</cite> to
+fill the buffer completely</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of rollouts sampled per policy update batch</p></li>
+<li><p><strong>min_steps</strong> – minimum number of state transitions sampled per policy update batch</p></li>
+<li><p><strong>batch_size</strong> – number of samples per policy update batch</p></li>
+<li><p><strong>eval_intvl</strong> – interval in which the evaluation rollouts are collected, also the interval in which the
+logger prints the summary statistics</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm of the gradients for clipping, set to <cite>None</cite> to disable gradient clipping</p></li>
+<li><p><strong>lr</strong> – (initial) learning rate for the optimizer which can be by modified by the scheduler.
+By default, the learning rate is constant.</p></li>
+<li><p><strong>lr_scheduler</strong> – learning rate scheduler that does one step per epoch (pass through the whole data set)</p></li>
+<li><p><strong>lr_scheduler_hparam</strong> – hyper-parameters for the learning rate scheduler</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.dql.DQL.init_modules">
 <span class="sig-name descname"><span class="pre">init_modules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warmstart</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.init_modules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.init_modules" title="Permalink to this definition">¶</a></dt>
@@ -514,6 +583,26 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>[1] J. Schulmann, P. Moritz, S. Levine, M. Jordan, P. Abbeel, ‘High-Dimensional Continuous Control Using
 Generalized Advantage Estimation’, ICLR 2016</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vfcn</strong> – value function, which can be a <cite>FNN</cite> or a <cite>Policy</cite></p></li>
+<li><p><strong>gamma</strong> – temporal discount factor</p></li>
+<li><p><strong>lamda</strong> – regulates the trade-off between bias (max for 0) and variance (max for 1), see [1]</p></li>
+<li><p><strong>num_epoch</strong> – number of iterations over all gathered samples during one estimator update</p></li>
+<li><p><strong>batch_size</strong> – number of samples per estimator update batch</p></li>
+<li><p><strong>standardize_adv</strong> – if <cite>True</cite>, the advantages are standardized to be <span class="math notranslate nohighlight">\(~ N(0,1)\)</span></p></li>
+<li><p><strong>standardizer</strong> – pass <cite>None</cite> to use stateless standardisation, alternatively pass <cite>RunningStandardizer()</cite>
+to use a standardizer wich keeps track of past values</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm of the gradients for clipping, set to <cite>None</cite> to disable gradient clipping</p></li>
+<li><p><strong>lr</strong> – (initial) learning rate for the optimizer which can be by modified by the scheduler.
+By default, the learning rate is constant.</p></li>
+<li><p><strong>lr_scheduler</strong> – learning rate scheduler that does one step per epoch (pass through the whole data set)</p></li>
+<li><p><strong>lr_scheduler_hparam</strong> – hyper-parameters for the learning rate scheduler</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.gae.GAE.gae">
 <span class="sig-name descname"><span class="pre">gae</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concat_ros</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_grad</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/gae.html#GAE.gae"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.gae" title="Permalink to this definition">¶</a></dt>
@@ -612,6 +701,36 @@ The default implementation resets the learning rate scheduler if there is one.</
 </dl>
 <p>[2] D.P. Kingma, J. Ba, “Adam: A Method for Stochastic Optimization”, ICLR, 2015</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>critic</strong> – advantage estimation function <span class="math notranslate nohighlight">\(A(s,a) = Q(s,a) - V(s)\)</span></p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of rollouts sampled per policy update batch</p></li>
+<li><p><strong>min_steps</strong> – minimum number of state transitions sampled per policy update batch</p></li>
+<li><p><strong>num_epoch</strong> – number of iterations over all gathered samples during one policy update</p></li>
+<li><p><strong>eps_clip</strong> – max/min probability ratio, see [1]</p></li>
+<li><p><strong>batch_size</strong> – number of samples per policy update batch</p></li>
+<li><p><strong>std_init</strong> – initial standard deviation on the actions for the exploration noise</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm of the gradients for clipping, set to <cite>None</cite> to disable gradient clipping</p></li>
+<li><p><strong>lr</strong> – (initial) learning rate for the optimizer which can be by modified by the scheduler.
+By default, the learning rate is constant.</p></li>
+<li><p><strong>lr_scheduler</strong> – learning rate scheduler that does one step per epoch (pass through the whole data set)</p></li>
+<li><p><strong>lr_scheduler_hparam</strong> – hyper-parameters for the learning rate scheduler</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Adam optimizer computes individual learning rates for all parameters. Thus, the learning rate scheduler
+schedules the maximum learning rate.</p>
+</div>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.ppo.PPO.expl_strat">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.exploration.stochastic_action.NormalActNoiseExplStrat</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO.expl_strat" title="Permalink to this definition">¶</a></dt>
@@ -672,6 +791,38 @@ PPO2 differs from PPO by also clipping the value function and standardizing the 
 <div><p>arXiv, 2017</p>
 </div></blockquote>
 <p>[3] D.P. Kingma, J. Ba, “Adam: A Method for Stochastic Optimization”, ICLR, 2015</p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>critic</strong> – advantage estimation function <span class="math notranslate nohighlight">\(A(s,a) = Q(s,a) - V(s)\)</span></p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of rollouts sampled per policy update batch</p></li>
+<li><p><strong>min_steps</strong> – minimum number of state transitions sampled per policy update batch</p></li>
+<li><p><strong>num_epoch</strong> – number of iterations over all gathered samples during one policy update</p></li>
+<li><p><strong>eps_clip</strong> – max/min probability ratio, see [1]</p></li>
+<li><p><strong>vfcn_coeff</strong> – weighting factor of the value function term in the combined loss, specific to PPO2</p></li>
+<li><p><strong>entropy_coeff</strong> – weighting factor of the entropy term in the combined loss, specific to PPO2</p></li>
+<li><p><strong>batch_size</strong> – number of samples per policy update batch</p></li>
+<li><p><strong>std_init</strong> – initial standard deviation on the actions for the exploration noise</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm of the gradients for clipping, set to <cite>None</cite> to disable gradient clipping</p></li>
+<li><p><strong>lr</strong> – (initial) learning rate for the optimizer which can be by modified by the scheduler.
+By default, the learning rate is constant.</p></li>
+<li><p><strong>lr_scheduler</strong> – learning rate scheduler that does one step per epoch (pass through the whole data set)</p></li>
+<li><p><strong>lr_scheduler_hparam</strong> – hyper-parameters for the learning rate scheduler</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Adam optimizer computes individual learning rates for all parameters. Thus, the learning rate scheduler
+schedules the maximum learning rate.</p>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.ppo.PPO2.expl_strat">
@@ -743,6 +894,46 @@ PPO2 differs from PPO by also clipping the value function and standardizing the 
 <p>The update order of the policy, the Q-functions, (and the entropy coefficient) is different in almost every
 implementation out there. Here we follow the one from [3].</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>qfcn_1</strong> – state-action value function <span class="math notranslate nohighlight">\(Q(s,a)\)</span>, the associated target Q-functions is created from a
+re-initialized copies of this one</p></li>
+<li><p><strong>qfcn_2</strong> – state-action value function <span class="math notranslate nohighlight">\(Q(s,a)\)</span>, the associated target Q-functions is created from a
+re-initialized copies of this one</p></li>
+<li><p><strong>memory_size</strong> – number of transitions in the replay memory buffer, e.g. 1000000</p></li>
+<li><p><strong>gamma</strong> – temporal discount factor for the state values</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_updates_per_step</strong> – number of (batched) gradient updates per algorithm step</p></li>
+<li><p><strong>tau</strong> – interpolation factor in averaging for target networks, update used for the soft update a.k.a. polyak
+update, between 0 and 1</p></li>
+<li><p><strong>ent_coeff_init</strong> – initial weighting factor of the entropy term in the loss function</p></li>
+<li><p><strong>learn_ent_coeff</strong> – adapt the weighting factor of the entropy term</p></li>
+<li><p><strong>target_update_intvl</strong> – number of iterations that pass before updating the target network</p></li>
+<li><p><strong>num_init_memory_steps</strong> – number of samples used to initially fill the replay buffer with, pass <cite>None</cite> to
+fill the buffer completely</p></li>
+<li><p><strong>standardize_rew</strong> – if <cite>True</cite>, the rewards are standardized to be <span class="math notranslate nohighlight">\(~ N(0,1)\)</span></p></li>
+<li><p><strong>rew_scale</strong> – scaling factor for the rewards, defaults no scaling</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of rollouts sampled per policy update batch</p></li>
+<li><p><strong>min_steps</strong> – minimum number of state transitions sampled per policy update batch</p></li>
+<li><p><strong>batch_size</strong> – number of samples per policy update batch</p></li>
+<li><p><strong>eval_intvl</strong> – interval in which the evaluation rollouts are collected, also the interval in which the
+logger prints the summary statistics</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm of the gradients for clipping, set to <cite>None</cite> to disable gradient clipping</p></li>
+<li><p><strong>lr</strong> – (initial) learning rate for the optimizer which can be by modified by the scheduler.
+By default, the learning rate is constant.</p></li>
+<li><p><strong>lr_scheduler</strong> – learning rate scheduler type for the policy and the Q-functions that does one step
+per <cite>update()</cite> call</p></li>
+<li><p><strong>lr_scheduler_hparam</strong> – hyper-parameters for the learning rate scheduler</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.sac.SAC.ent_coeff">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ent_coeff</span></span><em class="property"><span class="pre">:</span> <span class="pre">torch.Tensor</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.ent_coeff" title="Permalink to this definition">¶</a></dt>
@@ -838,6 +1029,21 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p class="admonition-title">See also</p>
 <p>[1] Yang Liu, Prajit Ramachandran, Qiang Liu, Jian Peng, “Stein Variational Policy Gradient”, arXiv, 2017</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>particle</strong> – the particle to populate with different parameters during training</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_particles</strong> – number of SVPG particles</p></li>
+<li><p><strong>temperature</strong> – SVPG temperature</p></li>
+<li><p><strong>horizon</strong> – horizon for each particle</p></li>
+<li><p><strong>logger</strong> – defaults to <cite>None</cite></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.iter_particles">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iter_particles</span></span><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.iter_particles" title="Permalink to this definition">¶</a></dt>
@@ -933,6 +1139,31 @@ contains a dict of information about the current iteration of the meta-algorithm
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ValueBased</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="policies.html#pyrado.policies.base.TwoHeadedPolicy" title="pyrado.policies.base.TwoHeadedPolicy"><span class="pre">pyrado.policies.base.TwoHeadedPolicy</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_updates_per_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_update_intvl</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_memory_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_intvl</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_grad_norm</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/value_based.html#ValueBased"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class of all value-based algorithms</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>memory_size</strong> – number of transitions in the replay memory buffer, e.g. 1000000</p></li>
+<li><p><strong>gamma</strong> – temporal discount factor for the state values</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_updates_per_step</strong> – number of (batched) gradient updates per algorithm step</p></li>
+<li><p><strong>target_update_intvl</strong> – number of iterations that pass before updating the target network</p></li>
+<li><p><strong>num_init_memory_steps</strong> – number of samples used to initially fill the replay buffer with, pass <cite>None</cite> to
+fill the buffer completely</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of rollouts sampled per policy update batch</p></li>
+<li><p><strong>min_steps</strong> – minimum number of state transitions sampled per policy update batch</p></li>
+<li><p><strong>batch_size</strong> – number of samples per policy update batch</p></li>
+<li><p><strong>eval_intvl</strong> – interval in which the evaluation rollouts are collected, also the interval in which the
+logger prints the summary statistics</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm of the gradients for clipping, set to <cite>None</cite> to disable gradient clipping</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.value_based.ValueBased.expl_strat">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union[pyrado.exploration.stochastic_action.SACExplStrat,</span> <span class="pre">pyrado.exploration.stochastic_action.EpsGreedyExplStrat]</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.expl_strat" title="Permalink to this definition">¶</a></dt>

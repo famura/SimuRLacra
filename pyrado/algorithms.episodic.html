@@ -255,6 +255,36 @@ iterations and that the covariance matrix is not scaled with the returns, thus a
 Annals OR, 2005
 [2] I. Szita, A. Lörnicz, “Learning Tetris Using the NoisyCross-Entropy Method”, Neural Computation, 2006</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>pop_size</strong> – number of solutions in the population</p></li>
+<li><p><strong>num_init_states_per_domain</strong> – number of rollouts to cover the variance over initial states</p></li>
+<li><p><strong>num_domains</strong> – number of rollouts due to the variance over domain parameters</p></li>
+<li><p><strong>num_is_samples</strong> – number of samples (policy parameter sets &amp; returns) for importance sampling,
+indirectly specifies the performance quantile <span class="math notranslate nohighlight">\(1 - \rho\)</span> [1]</p></li>
+<li><p><strong>expl_std_init</strong> – initial standard deviation for the exploration strategy</p></li>
+<li><p><strong>expl_std_min</strong> – minimal standard deviation for the exploration strategy</p></li>
+<li><p><strong>extra_expl_std_init</strong> – additional standard deviation for the parameter exploration added to the diagonal
+entries of the covariance matirx, set to 0 to disable this functionality</p></li>
+<li><p><strong>extra_expl_decay_iter</strong> – limit for the linear decay of the additional standard deviation, i.e. last
+iteration in which the additional exploration noise is applied</p></li>
+<li><p><strong>soft_update_factor</strong> – a number between 0 an 1 to do linearly scale the updates of the policy, by default
+full updates are done, i.e. the new policy parameters are the mean of the
+importance samples</p></li>
+<li><p><strong>full_cov</strong> – pass <cite>True</cite> to compute a full covariance matrix for sampling the next policy parameter values,
+else a diagonal covariance is used</p></li>
+<li><p><strong>symm_sampling</strong> – use an exploration strategy which samples symmetric populations</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.cem.CEM.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'cem'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.cem.CEM.name" title="Permalink to this definition">¶</a></dt>
@@ -287,6 +317,23 @@ Annals OR, 2005
 <p>HC is a heuristic-based policy search method that samples a population of policy parameters per iteration
 and evaluates them on multiple rollouts. If one of the new parameters is better than the current one it is kept.
 If the exploration parameters grow too large, they are reset.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_init_states_per_domain</strong> – number of rollouts to cover the variance over initial states</p></li>
+<li><p><strong>num_domains</strong> – number of rollouts due to the variance over domain parameters</p></li>
+<li><p><strong>expl_factor</strong> – scalar value which determines how the exploration strategy adapts its search space</p></li>
+<li><p><strong>pop_size</strong> – number of solutions in the population</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HC.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'hc'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HC.name" title="Permalink to this definition">¶</a></dt>
@@ -318,6 +365,16 @@ If the exploration parameters grow too large, they are reset.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">HCHyper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HCHyper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HCHyper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.hc.HC" title="pyrado.algorithms.episodic.hc.HC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.hc.HC</span></code></a></p>
 <p>Hill Climbing variant using an exploration strategy that samples policy parameters from a hyper-sphere</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expl_r_init</strong> – initial radius of the hyper sphere for the exploration strategy</p></li>
+<li><p><strong>args</strong> – forwarded the superclass constructor</p></li>
+<li><p><strong>kwargs</strong> – forwarded the superclass constructor</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HCHyper.update_expl_strat">
 <span class="sig-name descname"><span class="pre">update_expl_strat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rets_avg_ros</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HCHyper.update_expl_strat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HCHyper.update_expl_strat" title="Permalink to this definition">¶</a></dt>
@@ -330,6 +387,16 @@ If the exploration parameters grow too large, they are reset.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">HCNormal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HCNormal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HCNormal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.hc.HC" title="pyrado.algorithms.episodic.hc.HC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.hc.HC</span></code></a></p>
 <p>Hill Climbing variant using an exploration strategy with normally distributed noise on the policy parameters</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expl_std_init</strong> – initial standard deviation for the exploration strategy</p></li>
+<li><p><strong>args</strong> – forwarded the superclass constructor</p></li>
+<li><p><strong>kwargs</strong> – forwarded the superclass constructor</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HCNormal.update_expl_strat">
 <span class="sig-name descname"><span class="pre">update_expl_strat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rets_avg_ros</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HCNormal.update_expl_strat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HCNormal.update_expl_strat" title="Permalink to this definition">¶</a></dt>
@@ -351,6 +418,28 @@ If the exploration parameters grow too large, they are reset.</p>
 JMLR, 2014</p>
 <p>[2] This implementation was inspired by <a class="reference external" href="https://github.com/pybrain/pybrain/blob/master/pybrain/optimization/distributionbased/snes.py">https://github.com/pybrain/pybrain/blob/master/pybrain/optimization/distributionbased/snes.py</a></p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_init_states_per_domain</strong> – number of rollouts to cover the variance over initial states</p></li>
+<li><p><strong>num_domains</strong> – number of rollouts due to the variance over domain parameters</p></li>
+<li><p><strong>expl_std_init</strong> – initial standard deviation for the exploration strategy</p></li>
+<li><p><strong>expl_std_min</strong> – minimal standard deviation for the exploration strategy</p></li>
+<li><p><strong>pop_size</strong> – number of solutions in the population</p></li>
+<li><p><strong>eta_mean</strong> – step size factor for the mean</p></li>
+<li><p><strong>eta_std</strong> – step size factor for the standard deviation</p></li>
+<li><p><strong>symm_sampling</strong> – use an exploration strategy which samples symmetric populations</p></li>
+<li><p><strong>transform_returns</strong> – use a rank-transformation of the returns to update the policy</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.nes.NES.compute_utilities">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">compute_utilities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_mean</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_std</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/nes.html#NES.compute_utilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.nes.NES.compute_utilities" title="Permalink to this definition">¶</a></dt>
@@ -398,6 +487,23 @@ JMLR, 2014</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ParameterExploring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
 <p>Base for all algorithms that explore directly in the policy parameter space</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_init_states_per_domain</strong> – number of rollouts to cover the variance over initial states</p></li>
+<li><p><strong>num_domains</strong> – number of rollouts due to the variance over domain parameters</p></li>
+<li><p><strong>pop_size</strong> – number of solutions in the population, pass <cite>None</cite> to use a default that scales logarithmically
+with the number of policy parameters</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.env">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">env</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.environments.base.Env</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.env" title="Permalink to this definition">¶</a></dt>
@@ -487,6 +593,27 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>[1] F. Sehnke, C. Osendorfer, T. Rueckstiess, A. Graves, J. Peters, J. Schmidhuber, “Parameter-exploring
 Policy Gradients”, Neural Networks, 2010</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>pop_size</strong> – number of solutions in the population</p></li>
+<li><p><strong>num_init_states_per_domain</strong> – number of rollouts to cover the variance over initial states</p></li>
+<li><p><strong>num_domains</strong> – number of rollouts due to the variance over domain parameters</p></li>
+<li><p><strong>expl_std_init</strong> – initial standard deviation for the exploration strategy</p></li>
+<li><p><strong>expl_std_min</strong> – minimal standard deviation for the exploration strategy</p></li>
+<li><p><strong>clip_ratio_std</strong> – maximal ratio for the change of the exploration strategy’s standard deviation</p></li>
+<li><p><strong>transform_returns</strong> – use a rank-transformation of the returns to update the policy</p></li>
+<li><p><strong>lr</strong> – learning rate</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.pepg.PEPG.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'pepg'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.pepg.PEPG.name" title="Permalink to this definition">¶</a></dt>
@@ -544,6 +671,26 @@ The original implementation is tailored to movement primitives like DMPs.</p>
 <p class="admonition-title">See also</p>
 <p>[1] J. Kober and J. Peters, “Policy Search for Motor Primitives in Robotics”, Machine Learning, 2011</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>pop_size</strong> – number of solutions in the population</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_init_states_per_domain</strong> – number of rollouts to cover the variance over initial states</p></li>
+<li><p><strong>num_domains</strong> – number of rollouts due to the variance over domain parameters</p></li>
+<li><p><strong>num_is_samples</strong> – number of samples (policy parameter sets &amp; returns) for importance sampling</p></li>
+<li><p><strong>expl_std_init</strong> – initial standard deviation for the exploration strategy</p></li>
+<li><p><strong>expl_std_min</strong> – minimal standard deviation for the exploration strategy</p></li>
+<li><p><strong>symm_sampling</strong> – use an exploration strategy which samples symmetric populations</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.power.PoWER.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'power'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.power.PoWER.name" title="Permalink to this definition">¶</a></dt>
@@ -586,6 +733,22 @@ Be sure to call this function if you override it.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">LQR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ball_z_dim_mismatch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/predefined_lqr.html#LQR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.predefined_lqr.LQR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
 <p>Linear Quadratic Regulator created using the control module</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy which this algorithm is creating</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of rollouts sampled per policy update batch</p></li>
+<li><p><strong>min_steps</strong> – minimum number of state transitions sampled per policy update batch</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>ball_z_dim_mismatch</strong> – only useful for BallOnPlate5DSim,
+set to True if the controller does not have the z component (relative position)
+of the ball in the state vector, i.e. state is 14-dim instead of 16-dim</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.predefined_lqr.LQR.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'lqr'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.predefined_lqr.LQR.name" title="Permalink to this definition">¶</a></dt>
@@ -652,6 +815,33 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd>
 </dl>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>eps</strong> – bound on the KL divergence between policy updates, e.g. 0.1</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>pop_size</strong> – number of solutions in the population</p></li>
+<li><p><strong>num_init_states_per_domain</strong> – number of rollouts to cover the variance over initial states</p></li>
+<li><p><strong>num_domains</strong> – number of rollouts due to the variance over domain parameters</p></li>
+<li><p><strong>expl_std_init</strong> – initial standard deviation for the exploration strategy</p></li>
+<li><p><strong>expl_std_min</strong> – minimal standard deviation for the exploration strategy</p></li>
+<li><p><strong>symm_sampling</strong> – use an exploration strategy which samples symmetric populations</p></li>
+<li><p><strong>softmax_transform</strong> – pass <cite>True</cite> to use a softmax to transform the returns, else use a shifted exponential</p></li>
+<li><p><strong>use_map</strong> – use maximum a-posteriori likelihood (<cite>True</cite>) or maximum likelihood (<cite>False</cite>) update rule</p></li>
+<li><p><strong>optim_mode</strong> – choose the type of optimizer: ‘torch’ for a SGD-based optimizer or ‘scipy’ for the SLSQP
+optimizer from scipy (recommended)</p></li>
+<li><p><strong>num_epoch_dual</strong> – number of epochs for the minimization of the dual functions, ignored if
+<cite>optim_mode = ‘scipy’</cite></p></li>
+<li><p><strong>lr_dual</strong> – learning rate for the dual’s optimizer, ignored if <cite>optim_mode = ‘scipy’</cite></p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.dual_evaluation">
 <span class="sig-name descname"><span class="pre">dual_evaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.dual_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.dual_evaluation" title="Permalink to this definition">¶</a></dt>
@@ -787,6 +977,23 @@ As stated in [2, sec 4.1], we could calculate weights using any rank preserving 
 <p class="admonition-title">Note</p>
 <p>This algorithm was designed as a subroutine of SimOpt. However, it could also be used independently.</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subrtn</strong> – wrapped algorithm to fit the domain parameter distribution</p></li>
+<li><p><strong>behavior_policy</strong> – lower level policy used to generate the rollouts</p></li>
+<li><p><strong>num_rollouts_per_distr</strong> – number of rollouts per domain distribution parameter set</p></li>
+<li><p><strong>metric</strong> – functional mapping from differences in observations to value</p></li>
+<li><p><strong>obs_dim_weight</strong> – (diagonal) weight matrix for the different observation dimensions for the default metric</p></li>
+<li><p><strong>std_obs_filt</strong> – number of standard deviations for the Gaussian filter applied to the observaitons</p></li>
+<li><p><strong>w_abs</strong> – weight for the mean absolute errors for the default metric</p></li>
+<li><p><strong>w_sq</strong> – weight for the mean squared errors for the default metric</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>base_seed</strong> – seed to set for the parallel sampler in every iteration</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key">
 <span class="sig-name descname"><span class="pre">iteration_key</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'sysiderl_iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key" title="Permalink to this definition">¶</a></dt>

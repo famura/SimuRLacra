@@ -238,6 +238,7 @@
 </dd>
 </dl>
 </div>
+<p>Constructor</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultExample.est_expec_return">
 <span class="sig-name descname"><span class="pre">est_expec_return</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">th</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_V</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultExample.est_expec_return"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultExample.est_expec_return" title="Permalink to this definition">¶</a></dt>
@@ -298,6 +299,15 @@
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>In this special environment, the action is equal to the policy parameter. Therefore, it makes only sense to
 use it in combination with a linear policy that has only one constant feature.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
+<li><p><strong>example_config</strong> – configuration for the ‘illustrative example’ in the journal</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.act_space" title="Permalink to this definition">¶</a></dt>
@@ -422,6 +432,7 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RosenSim</span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>This environment wraps the Rosenbrock function to use it as a test case for Pyrado algorithms.</p>
+<p>Constructor</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.act_space" title="Permalink to this definition">¶</a></dt>
@@ -554,6 +565,7 @@ We use the domain parameters to capture the</p>
 </dd>
 </dl>
 </div>
+<p>Constructor</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.act_space" title="Permalink to this definition">¶</a></dt>

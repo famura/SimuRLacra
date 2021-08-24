@@ -298,6 +298,18 @@ Other estimates of the bias-correction factor than stat_emp possible, see [4].</
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></code></a>, <a class="reference internal" href="logger.html#pyrado.logger.step.LoggerAware" title="pyrado.logger.step.LoggerAware"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.LoggerAware</span></code></a></p>
 <p>Samples rollouts to optimize the CVaR of the discounted return.
 This is done by sampling more rollouts, and then only using the epsilon-qunatile of them.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_sampler</strong> – the inner sampler used to sample the full data set</p></li>
+<li><p><strong>epsilon</strong> – quantile of rollouts that will be kept</p></li>
+<li><p><strong>gamma</strong> – discount factor to compute the discounted return, default is 1 (no discount)</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of complete rollouts to sample</p></li>
+<li><p><strong>min_steps</strong> – minimum total number of steps to sample</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.sampling.cvar_sampler.CVaRSampler.reinit">
 <span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler.reinit" title="Permalink to this definition">¶</a></dt>
@@ -557,6 +569,21 @@ padded with zeroes. Chose <cite>False</cite> to ignore the boundaries (dangerous
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ParallelRolloutSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">env</span></em>, <em class="sig-param"><span class="pre">policy</span></em>, <em class="sig-param"><span class="pre">num_workers:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">min_rollouts:</span> <span class="pre">Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">min_steps:</span> <span class="pre">Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">show_progress_bar:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></em>, <em class="sig-param"><span class="pre">seed:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">&lt;object</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parallel_rollout_sampler.html#ParallelRolloutSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Class for sampling from multiple environments in parallel</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment to sample from</p></li>
+<li><p><strong>policy</strong> – policy to act in the environment (can also be an exploration strategy)</p></li>
+<li><p><strong>num_workers</strong> – number of parallel samplers</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of complete rollouts to sample</p></li>
+<li><p><strong>min_steps</strong> – minimum total number of steps to sample</p></li>
+<li><p><strong>show_progress_bar</strong> – it <cite>True</cite>, display a progress bar using <cite>tqdm</cite></p></li>
+<li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding; defaults to the last seed
+that was set with <cite>pyrado.set_seed</cite></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.reinit">
 <span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parallel_rollout_sampler.html#ParallelRolloutSampler.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.reinit" title="Permalink to this definition">¶</a></dt>
@@ -604,6 +631,20 @@ initial state space</p></li>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ParameterExplorationSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterExplorationSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Parallel sampler for parameter exploration</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment to sample from</p></li>
+<li><p><strong>policy</strong> – policy used for sampling</p></li>
+<li><p><strong>num_init_states_per_domain</strong> – number of rollouts to cover the variance over initial states</p></li>
+<li><p><strong>num_domains</strong> – number of rollouts due to the variance over domain parameters</p></li>
+<li><p><strong>num_workers</strong> – number of parallel samplers</p></li>
+<li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding; defaults to the last seed
+that was set with <cite>pyrado.set_seed</cite></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.num_rollouts_per_param">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_rollouts_per_param</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.num_rollouts_per_param" title="Permalink to this definition">¶</a></dt>
@@ -652,6 +693,7 @@ initial state space</p></li>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ParameterSample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <p>Stores policy parameters and associated rollouts.</p>
+<p>Create new instance of ParameterSample(params, rollouts)</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.parameter_exploration_sampler.ParameterSample.mean_undiscounted_return">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mean_undiscounted_return</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSample.mean_undiscounted_return" title="Permalink to this definition">¶</a></dt>
@@ -685,6 +727,12 @@ initial state space</p></li>
 <p>Result of a parameter exploration sampling run.
 On one hand, this is a list of ParameterSamples.
 On the other hand, this allows to query combined tensors of parameters and mean returns.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>samples</strong> – list of parameter samples</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.mean_returns">
 <span class="sig-name descname"><span class="pre">mean_returns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSamplingResult.mean_returns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.mean_returns" title="Permalink to this definition">¶</a></dt>
@@ -774,6 +822,15 @@ There are two ways to regulate the sampling process:
 2. the minimum number of steps in all rollouts</p>
 <p>At least one of these bounds must be specified. If both are set, the sampler will only terminate once both are
 fulfilled.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_rollouts</strong> – minimum number of complete rollouts to sample</p></li>
+<li><p><strong>min_steps</strong> – minimum total number of steps to sample</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.sampling.sampler.SamplerBase.reinit">
 <em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler.html#SamplerBase.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sampler.SamplerBase.reinit" title="Permalink to this definition">¶</a></dt>
@@ -952,6 +1009,26 @@ states and actions as done in [1]</p>
 <dt>[1] F. Ramos, R.C. Possas, D. Fox, “BayesSim: adaptive domain randomization via probabilistic inference for</dt><dd><p>robotics simulators”, RSS, 2019</p>
 </dd>
 </dl>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>dim_data</strong> – number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the
+state and action spaces’ flat dimensions. This number is doubled if the embedding
+target domain data.</p></li>
+<li><p><strong>len_rollouts</strong> – number of time steps per rollout without considering a potential downsampling later
+(must be the same for all rollouts)</p></li>
+<li><p><strong>downsampling_factor</strong> – skip evey <cite>downsampling_factor</cite> time series sample, the downsampling is done in the
+base class before calling <cite>summary_statistic()</cite></p></li>
+<li><p><strong>state_mask_labels</strong> – list or tuple of integers or stings to select specific states from their space.
+By default <cite>None</cite> all states are passed to sbi.</p></li>
+<li><p><strong>act_mask_labels</strong> – list or tuple of integers or stings to select specific actions from their space.
+By default <cite>None</cite> all actions are passed to sbi.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_embeddings.AllStepsEmbedding.dim_output">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dim_output</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
@@ -997,6 +1074,23 @@ states and actions as done in [1]</p>
 <dt>[1] F. Ramos, R.C. Possas, D. Fox, “BayesSim: adaptive domain randomization via probabilistic inference for</dt><dd><p>robotics simulators”, RSS, 2019</p>
 </dd>
 </dl>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>dim_data</strong> – number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the
+states and action spaces’ flat dimensions. This number is doubled if the embedding
+target domain data.</p></li>
+<li><p><strong>downsampling_factor</strong> – skip evey <cite>downsampling_factor</cite> time series sample, no downsampling by default</p></li>
+<li><p><strong>state_mask_labels</strong> – list or tuple of integers or stings to select specific states from their space.
+By default <cite>None</cite> all states are passed to sbi.</p></li>
+<li><p><strong>act_mask_labels</strong> – list or tuple of integers or stings to select specific actions from their space.
+By default <cite>None</cite> all actions are passed to sbi.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_embeddings.BayesSimEmbedding.dim_output">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dim_output</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
@@ -1040,6 +1134,26 @@ This method guarantees output which has the same size for every trajectory.</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
 <p>Embedding for simulation-based inference with time series data which returns the change in the states between
 consecutive time steps of the rollouts</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>dim_data</strong> – number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the
+state and action spaces’ flat dimensions. This number is doubled if the embedding
+target domain data.</p></li>
+<li><p><strong>len_rollouts</strong> – number of time steps per rollout without considering a potential downsampling later
+(must be the same for all rollouts)</p></li>
+<li><p><strong>downsampling_factor</strong> – skip evey <cite>downsampling_factor</cite> time series sample, the downsampling is done in the
+base class before calling <cite>summary_statistic()</cite></p></li>
+<li><p><strong>state_mask_labels</strong> – list or tuple of integers or stings to select specific states from their space.
+By default <cite>None</cite> all states are passed to sbi.</p></li>
+<li><p><strong>act_mask_labels</strong> – list or tuple of integers or stings to select specific actions from their space.
+By default <cite>None</cite> all actions are passed to sbi.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.dim_output">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dim_output</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
@@ -1078,6 +1192,27 @@ consecutive time steps of the rollouts</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
 <p>Embedding for simulation-based inference with time series data which uses the dtw-python package to compute the
 Dynamic Time Warping (DTW) distance between the states as features of the data</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>dim_data</strong> – number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the
+states and action spaces’ flat dimensions. This number is doubled if the embedding
+target domain data.</p></li>
+<li><p><strong>step_pattern</strong> – method passed to dtw-python for computing the distance. Here the same default as in the
+dtw-python package is used (“symmetric2”). To for example use  the Rabiner-Juang type VI-c
+unsmoothed recursion step pattern pass <cite>dtw.stepPattern.rabinerJuangStepPattern(6, “c”)</cite></p></li>
+<li><p><strong>downsampling_factor</strong> – skip evey <cite>downsampling_factor</cite> time series sample, the downsampling is done in the
+base class before calling <cite>summary_statistic()</cite></p></li>
+<li><p><strong>state_mask_labels</strong> – list or tuple of integers or stings to select specific states from their space.
+By default <cite>None</cite> all states are passed to sbi.</p></li>
+<li><p><strong>act_mask_labels</strong> – list or tuple of integers or stings to select specific actions from their space.
+By default <cite>None</cite> all actions are passed to sbi.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.dim_output">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dim_output</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
@@ -1128,6 +1263,23 @@ real states (1st part of the 2nd half of the 1st dim)</p>
 <p>The features of each rollout are concatenated, and since the inference procedure requires a consistent size of
 the inputs, it is necessary that all rollouts yield the same number of features, i.e. have equal length!</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>dim_data</strong> – number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the
+states and action spaces’ flat dimensions. This number is doubled if the embedding
+target domain data.</p></li>
+<li><p><strong>downsampling_factor</strong> – skip evey <cite>downsampling_factor</cite> time series sample, no downsampling by default</p></li>
+<li><p><strong>state_mask_labels</strong> – list or tuple of integers or stings to select specific states from their space.
+By default <cite>None</cite> all states are passed to sbi.</p></li>
+<li><p><strong>act_mask_labels</strong> – list or tuple of integers or stings to select specific actions from their space.
+By default <cite>None</cite> all actions are passed to sbi.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_embeddings.Embedding.device">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.device" title="Permalink to this definition">¶</a></dt>
@@ -1223,6 +1375,23 @@ over the rollouts.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">LastStepEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_mask_labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_mask_labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#LastStepEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.LastStepEmbedding" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
 <p>Embedding for simulation-based inference with time series data which selects the last state of the rollouts</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>dim_data</strong> – number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the
+states and action spaces’ flat dimensions. This number is doubled if the embedding
+target domain data.</p></li>
+<li><p><strong>downsampling_factor</strong> – skip evey <cite>downsampling_factor</cite> time series sample, no downsampling by default</p></li>
+<li><p><strong>state_mask_labels</strong> – list or tuple of integers or stings to select specific states from their space.
+By default <cite>None</cite> all states are passed to sbi.</p></li>
+<li><p><strong>act_mask_labels</strong> – list or tuple of integers or stings to select specific actions from their space.
+By default <cite>None</cite> all actions are passed to sbi.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_embeddings.LastStepEmbedding.dim_output">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dim_output</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.LastStepEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
@@ -1261,6 +1430,37 @@ over the rollouts.</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
 <p>Embedding for simulation-based inference with time series data which uses an recurrent neural network, e.g. RNN,
 LSTM, or GRU, to compute features of the rollouts</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>dim_data</strong> – number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the
+state and action spaces’ flat dimensions. This number is doubled if the embedding
+target domain data.</p></li>
+<li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>num_recurrent_layers</strong> – number of equally sized hidden layers</p></li>
+<li><p><strong>recurrent_network_type</strong> – PyTorch recurrent network class, e.g. <cite>nn.RNN</cite>, <cite>nn.LSTM</cite>, or <cite>nn.GRU</cite></p></li>
+<li><p><strong>output_size</strong> – size of the features at every time step, which are eventually reshaped into a vector</p></li>
+<li><p><strong>only_last_output</strong> – if <cite>True</cite>, only the last output of the network is used as a feature for sbi, else
+there will be an output every <cite>downsampling_factor</cite> time steps. Moreover, if <cite>True</cite> the
+constructor does not need to know how long the rollouts are.</p></li>
+<li><p><strong>len_rollouts</strong> – number of time steps per rollout without considering a potential downsampling later
+(must be the same for all rollouts)</p></li>
+<li><p><strong>output_nonlin</strong> – nonlinearity for output layer</p></li>
+<li><p><strong>dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>recurrent_net_kwargs</strong> – any extra kwargs are passed to the recurrent net’s constructor</p></li>
+<li><p><strong>downsampling_factor</strong> – skip evey <cite>downsampling_factor</cite> time series sample, the downsampling is done in the
+base class before calling <cite>summary_statistic()</cite></p></li>
+<li><p><strong>state_mask_labels</strong> – list or tuple of integers or stings to select specific states from their space.
+By default <cite>None</cite> all states are passed to sbi.</p></li>
+<li><p><strong>act_mask_labels</strong> – list or tuple of integers or stings to select specific actions from their space.
+By default <cite>None</cite> all actions are passed to sbi.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_embeddings.RNNEmbedding.dim_output">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dim_output</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.RNNEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
@@ -1306,6 +1506,26 @@ LSTM, or GRU, to compute features of the rollouts</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RealRolloutSamplerForSBI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_on_done</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#RealRolloutSamplerForSBI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI" title="pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Wrapper to make SimuRLacra’s real environments similar to the sbi simulator</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment which the policy operates, in sim-to-real settings this is a real-world device, i.e.
+<cite>RealEnv</cite>, but in a sim-to-sim experiment this can be a (randomized) <cite>SimEnv</cite></p></li>
+<li><p><strong>policy</strong> – policy used for sampling the rollout</p></li>
+<li><p><strong>embedding</strong> – embedding used for pre-processing the data before (later) passing it to the posterior</p></li>
+<li><p><strong>num_segments</strong> – number of segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>len_segments</strong> – length of the segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>stop_on_done</strong> – if <cite>True</cite>, the rollouts are stopped as soon as they hit the state or observation space
+boundaries. This behavior is save, but can lead to short trajectories which are eventually
+padded with zeroes. Chose <cite>False</cite> to ignore the boundaries (dangerous on the real system).</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -1313,6 +1533,22 @@ LSTM, or GRU, to compute features of the rollouts</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RecRolloutSamplerForSBI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rand_init_rollout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#RecRolloutSamplerForSBI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI" title="pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Wrapper to yield pre-recorded rollouts similar to the sbi simulator</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollouts_dir</strong> – directory where to find the of pre-recorded rollouts</p></li>
+<li><p><strong>num_segments</strong> – number of segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>embedding</strong> – embedding used for pre-processing the data before (later) passing it to the posterior</p></li>
+<li><p><strong>len_segments</strong> – length of the segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>rand_init_rollout</strong> – if <cite>True</cite>, chose the first rollout at random, and then cycle through the list</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI.num_rollouts">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_rollouts</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI.num_rollouts" title="Permalink to this definition">¶</a></dt>
@@ -1338,6 +1574,27 @@ was a callable that only needs the simulator parameters as inputs</p>
 <p>The features of each rollout are concatenated, and since the inference procedure requires a consistent size of
 the inputs, it is necessary that all rollouts yield the same number of features, i.e. have equal length!</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment which the policy operates, in sim-to-real settings this is a real-world device, buy in
+a sim-to-sim experiment this can be a (randomized) <cite>SimEnv</cite>. We strip all domain randomization
+wrappers from this env since we want to randomize it manually here.</p></li>
+<li><p><strong>policy</strong> – policy used for sampling the rollout</p></li>
+<li><p><strong>embedding</strong> – embedding used for pre-processing the data before (later) passing it to the posterior</p></li>
+<li><p><strong>num_segments</strong> – number of segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>len_segments</strong> – length of the segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>stop_on_done</strong> – if <cite>True</cite>, the rollouts are stopped as soon as they hit the state or observation space
+boundaries. This behavior is save, but can lead to short trajectories which are eventually
+padded with zeroes. Chose <cite>False</cite> to ignore the boundaries (dangerous on the real system).</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI.get_dim_data">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">get_dim_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#RolloutSamplerForSBI.get_dim_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI.get_dim_data" title="Permalink to this definition">¶</a></dt>
@@ -1359,6 +1616,32 @@ the inputs, it is necessary that all rollouts yield the same number of features,
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SimRolloutSamplerForSBI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_mapping</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_on_done</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rollouts_real</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rec_act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#SimRolloutSamplerForSBI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.SimRolloutSamplerForSBI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI" title="pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Wrapper to make SimuRLacra’s simulation environments usable as simulators for the sbi package</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment which the policy operates, which must not be a randomized environment since we want to
+randomize it manually via the domain parameters coming from the sbi package</p></li>
+<li><p><strong>policy</strong> – policy used for sampling the rollout</p></li>
+<li><p><strong>dp_mapping</strong> – mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)</p></li>
+<li><p><strong>embedding</strong> – embedding used for pre-processing the data before (later) passing it to the posterior</p></li>
+<li><p><strong>num_segments</strong> – number of segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>len_segments</strong> – length of the segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>stop_on_done</strong> – if <cite>True</cite>, the rollouts are stopped as soon as they hit the state or observation space
+boundaries. This behavior is save, but can lead to short trajectories which are eventually
+padded with zeroes. Chose <cite>False</cite> to ignore the boundaries (dangerous on the real system).</p></li>
+<li><p><strong>rollouts_real</strong> – list of rollouts recorded from the target domain, which are used to sync the simulations’
+initial states</p></li>
+<li><p><strong>use_rec_act</strong> – if <cite>True</cite> the recorded actions form the target domain are used to generate the rollout
+during simulation (feed-forward). If <cite>False</cite> there policy is used to generate (potentially)
+state-dependent actions (feed-back).</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1528,6 +1811,15 @@ the inputs, it is necessary that all rollouts yield the same number of features,
 <p>This object is a proxy, referring a specific index in the rollout. When querying an attribute from the step,
 it will try to return the corresponding slice from the rollout. Additionally, one can prefix attributes with <cite>next_</cite>
 to access the value for the next step, i.e. <cite>next_observations</cite> the observation made at the start of the next step.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – <cite>StepSequence</cite> object to which this step belongs</p></li>
+<li><p><strong>index</strong> – index of this step in the rollout</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -1551,6 +1843,24 @@ All other variables are optional. Common optional ones are <cite>states</cite> a
 avoidance. The only reason you would add them is to profit from the optimized slicing, but using that with
 gradient tracking risks lingering incomplete graphs.</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>complete</strong> – <cite>False</cite> if the rollout is incomplete, i.e. as part of a mini-batch</p></li>
+<li><p><strong>rollout_info</strong> – data staying constant through the whole episode</p></li>
+<li><p><strong>data_format</strong> – ‘torch’ to use Tensors, ‘numpy’ to use ndarrays.
+Will use Tensors if any data argument does, else ndarrays</p></li>
+<li><p><strong>done</strong> – boolean ndarray, specifying for each step whether it led to termination.
+The last step of continuous rollouts, i.e. not mini-batches, is done if <cite>complete</cite> is <cite>True</cite>.</p></li>
+<li><p><strong>continuous</strong> – true if the steps form one continuous sequence.</p></li>
+<li><p><strong>rewards</strong> – sequence of reward values, determines sequence length</p></li>
+<li><p><strong>observations</strong> – sequence of observation values, the length must be <cite>len(rewards) + 1</cite></p></li>
+<li><p><strong>actions</strong> – sequence of action values, the length must be <cite>len(rewards)</cite></p></li>
+<li><p><strong>data</strong> – additional data lists, their length must be <cite>len(rewards)</cite> or <cite>len(rewards) + 1</cite></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.sampling.step_sequence.StepSequence.actions">
 <span class="sig-name descname"><span class="pre">actions</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.actions" title="Permalink to this definition">¶</a></dt>

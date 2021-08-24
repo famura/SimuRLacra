@@ -239,6 +239,24 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">DomainDistrParamPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trafo_mask</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer"><span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/domain_distribution.html#DomainDistrParamPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>A proxy to the Policy class in order to use the policy’s parameters as domain distribution parameters</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mapping</strong> – mapping from subsequent integers to domain distribution parameters, where the first string of
+the value tuple is the name of the domain parameter (e.g. mass, length) and the second string is
+the name of the distribution parameter (e.g. mean, std).  The integers are indices of the numpy
+array which come from the algorithm.</p></li>
+<li><p><strong>trafo_mask</strong> – every domain parameter that is set to <cite>True</cite> in this mask will be learned via a ‘virtual’
+parameter, i.e. in sqrt-space, and then finally squared to retrieve the domain parameter.
+This transformation is useful to avoid setting a negative variance.</p></li>
+<li><p><strong>prior</strong> – prior believe about the distribution parameters in from of a <cite>DomainRandomizer</cite></p></li>
+<li><p><strong>scale_params</strong> – if <cite>True</cite>, the sqrt-transformed policy parameters are scaled in the range of <span class="math notranslate nohighlight">\([-0.5, 0.5]\)</span>.
+The advantage of this is to make the parameter-based exploration easier.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/domain_distribution.html#DomainDistrParamPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.forward" title="Permalink to this definition">¶</a></dt>
@@ -312,6 +330,18 @@ The only but significant difference of this controller to the other PD controlle
 <p class="admonition-title">Note</p>
 <p>This class’s desired state specification deviates from the Pyrado policies which interact with a <cite>Task</cite>.</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>state_des</strong> – tensor of desired x and y ball position [m]</p></li>
+<li><p><strong>kp</strong> – 2x2 tensor of constant controller feedback coefficients for error [V/m]</p></li>
+<li><p><strong>kd</strong> – 2x2 tensor of constant controller feedback coefficients for error time derivative [Vs/m]</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.special.environment_specific.QBallBalancerPDCtrl.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QBallBalancerPDCtrl.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QBallBalancerPDCtrl.forward" title="Permalink to this definition">¶</a></dt>
@@ -359,6 +389,15 @@ The only but significant difference of this controller to the other PD controlle
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QCartPoleGoToLimCtrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QCartPoleGoToLimCtrl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleGoToLimCtrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Controller for going to one of the joint limits (part of the calibration routine)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_state</strong> – initial state of the system</p></li>
+<li><p><strong>positive</strong> – direction switch</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -366,6 +405,16 @@ The only but significant difference of this controller to the other PD controlle
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QCartPoleSwingUpAndBalanceCtrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">long</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QCartPoleSwingUpAndBalanceCtrl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>Swing-up and balancing controller for the Quanser Cart-Pole</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>long</strong> – flag for long or short pole</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.K_pd">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">K_pd</span></span><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.K_pd" title="Permalink to this definition">¶</a></dt>
@@ -426,6 +475,21 @@ The only but significant difference of this controller to the other PD controlle
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QQubeEnergyCtrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_energy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_gain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">th_gain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_max</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeEnergyCtrl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeEnergyCtrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>Energy-based controller used to swing the Furuta pendulum up</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>ref_energy</strong> – reference energy level [J]</p></li>
+<li><p><strong>energy_gain</strong> – P-gain on the energy [m/s/J]</p></li>
+<li><p><strong>th_gain</strong> – P-gain on angle theta</p></li>
+<li><p><strong>acc_max</strong> – maximum linear acceleration of the pendulum pivot [m/s**2]</p></li>
+<li><p><strong>reset_domain_param</strong> – if <cite>True</cite> the domain parameters are reset if the they are present as a entry in the
+kwargs passed to <cite>reset()</cite>. If <cite>False</cite> they are ignored.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.policies.special.environment_specific.QQubeEnergyCtrl.E_gain">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">E_gain</span></span><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeEnergyCtrl.E_gain" title="Permalink to this definition">¶</a></dt>
@@ -484,6 +548,12 @@ The only but significant difference of this controller to the other PD controlle
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QQubeGoToLimCtrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnt_done</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">250</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeGoToLimCtrl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeGoToLimCtrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Controller for going to one of the joint limits (part of the calibration routine)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>positive</strong> – direction switch</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -493,6 +563,19 @@ The only but significant difference of this controller to the other PD controlle
 <p>PD-controller for the Quanser Qube.
 Drives Qube to <span class="math notranslate nohighlight">\(x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]\)</span>.
 Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &lt; tol\)</span>.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>pd_gains</strong> – controller gains, the default values stabilize the pendulum at the center hanging down</p></li>
+<li><p><strong>th_des</strong> – desired rotary pole angle [rad]</p></li>
+<li><p><strong>al_des</strong> – desired pendulum pole angle [rad]</p></li>
+<li><p><strong>tols</strong> – tolerances for the desired angles <span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\alpha\)</span> [rad]</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.special.environment_specific.QQubePDCtrl.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meas</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubePDCtrl.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubePDCtrl.forward" title="Permalink to this definition">¶</a></dt>
@@ -539,6 +622,27 @@ Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Extracted Quanser’s values from q_qube2_swingup.mdl</p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>ref_energy</strong> – reference energy level</p></li>
+<li><p><strong>energy_gain</strong> – P-gain on the difference to the reference energy</p></li>
+<li><p><strong>energy_th_gain</strong> – P-gain on angle theta for the Energy controller. This term does not exist in Quanser’s
+implementation. Its purpose it to keep the Qube from moving too much around the
+vertical axis, i.e. prevent bouncing against the mechanical boundaries.</p></li>
+<li><p><strong>acc_max</strong> – maximum acceleration</p></li>
+<li><p><strong>alpha_max_pd_enable</strong> – angle threshold for enabling the PD -controller [deg]</p></li>
+<li><p><strong>pd_gains</strong> – gains for the PD-controller</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The controller’s parameters strongly depend on the frequency at which it is operating.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.forward">

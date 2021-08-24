@@ -250,6 +250,15 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ActDelayWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/action_delay.html#ActDelayWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.action_delay.ActDelayWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperAct" title="pyrado.environment_wrappers.base.EnvWrapperAct"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperAct</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which delays actions by a fixed number of time steps.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap around (only makes sense from simulation environments)</p></li>
+<li><p><strong>delay</strong> – integer action delay measured in number of time steps</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.action_delay.ActDelayWrapper.delay">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">delay</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.environment_wrappers.action_delay.ActDelayWrapper.delay" title="Permalink to this definition">¶</a></dt>
@@ -283,6 +292,15 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ActDiscreteWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_bins</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/action_discrete.html#ActDiscreteWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.action_discrete.ActDiscreteWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperAct" title="pyrado.environment_wrappers.base.EnvWrapperAct"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperAct</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper that converts a one-dimensional continuous into a discrete action space.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap</p></li>
+<li><p><strong>num_bins</strong> – number of actions to split the continuous (box) space into</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -294,6 +312,16 @@
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperAct" title="pyrado.environment_wrappers.base.EnvWrapperAct"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperAct</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which adds normally distributed i.i.d. noise to all action.
 This noise is independent for the potentially applied action-based exploration strategy.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap around (only makes sense for simulations)</p></li>
+<li><p><strong>noise_mean</strong> – mean of the noise distribution</p></li>
+<li><p><strong>noise_std</strong> – standard deviation of the noise distribution</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -304,6 +332,12 @@ This noise is independent for the potentially applied action-based exploration s
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ActNormWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/action_normalization.html#ActNormWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.action_normalization.ActNormWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperAct" title="pyrado.environment_wrappers.base.EnvWrapperAct"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperAct</span></code></a></p>
 <p>Environment wrapper which normalizes the action space, such that all action values are in range [-1, 1].</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wrapped_env</strong> – environment to wrap</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -314,6 +348,18 @@ This noise is independent for the potentially applied action-based exploration s
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">AdversarialDynamicsWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialDynamicsWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.adversarial.AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>” Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environemnt to be wrapped</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>eps</strong> – magnitude of perturbation</p></li>
+<li><p><strong>phi</strong> – probability of perturbation</p></li>
+<li><p><strong>width</strong> – width of distribution to sample from</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.get_arpl_grad">
 <span class="sig-name descname"><span class="pre">get_arpl_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialDynamicsWrapper.get_arpl_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.get_arpl_grad" title="Permalink to this definition">¶</a></dt>
@@ -365,6 +411,17 @@ env_info: contains diagnostic information about the environment</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">AdversarialObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialObservationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.adversarial.AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>” Wrapper to apply adversarial perturbations to the observations (used in ARPL)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to be wrapped</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>eps</strong> – magnitude of perturbation</p></li>
+<li><p><strong>phi</strong> – probability of perturbation</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper.get_arpl_grad">
 <span class="sig-name descname"><span class="pre">get_arpl_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialObservationWrapper.get_arpl_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper.get_arpl_grad" title="Permalink to this definition">¶</a></dt>
@@ -394,6 +451,18 @@ env_info: contains diagnostic information about the environment</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">AdversarialStateWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">torch_observation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialStateWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialStateWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.adversarial.AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>” Wrapper to apply adversarial perturbations to the state (used in ARPL)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to be wrapped</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>eps</strong> – magnitude of perturbation</p></li>
+<li><p><strong>phi</strong> – probability of perturbation</p></li>
+<li><p><strong>torch_observation</strong> – observation uses torch</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialStateWrapper.get_arpl_grad">
 <span class="sig-name descname"><span class="pre">get_arpl_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonobserved</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialStateWrapper.get_arpl_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialStateWrapper.get_arpl_grad" title="Permalink to this definition">¶</a></dt>
@@ -423,6 +492,12 @@ env_info: contains diagnostic information about the environment</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">AdversarialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class for adversarial wrappers (used in ARPL)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wrapped_env</strong> – environment to wrap</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialWrapper.decide_apply">
 <span class="sig-name descname"><span class="pre">decide_apply</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialWrapper.decide_apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper.decide_apply" title="Permalink to this definition">¶</a></dt>
@@ -448,6 +523,12 @@ env_info: contains diagnostic information about the environment</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">EnvWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/base.html#EnvWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.base.Env</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Base for all environment wrappers. Delegates all environment methods to the wrapped environment.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wrapped_env</strong> – environment to wrap</p>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.act_space" title="Permalink to this definition">¶</a></dt>
@@ -649,6 +730,12 @@ The domain parameters are automatically stored in attributes prefixed with ‘_�
 <p>Base class for environment wrappers modifying the action.
 Override _process_action to pass a modified action vector to the wrapped environment.
 If necessary, you should also override _process_action_space to report the correct one.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wrapped_env</strong> – environment to wrap</p>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapperAct.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapperAct.act_space" title="Permalink to this definition">¶</a></dt>
@@ -681,6 +768,12 @@ env_info: contains diagnostic information about the environment</p>
 <p>Base class for environment wrappers modifying the observation.
 Override _process_obs to pass a modified observation vector to the wrapped environment.
 If necessary, you should also override _process_obs_space to report the correct one.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wrapped_env</strong> – environment to wrap</p>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapperObs.obs_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapperObs.obs_space" title="Permalink to this definition">¶</a></dt>
@@ -731,6 +824,17 @@ env_info: contains diagnostic information about the environment</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">DomainRandWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomizer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer"><span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/domain_randomization.html#DomainRandWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Base class for environment wrappers which call a <cite>DomainRandomizer</cite> to randomize the domain parameters</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap</p></li>
+<li><p><strong>randomizer</strong> – <cite>DomainRandomizer</cite> object holding the probability distribution of all randomizable
+domain parameters, pass <cite>None</cite> if you want to subclass wrapping another <cite>DomainRandWrapper</cite>
+and use its randomizer</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.domain_randomization.DomainRandWrapper.randomizer">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">randomizer</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></em><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper.randomizer" title="Permalink to this definition">¶</a></dt>
@@ -745,6 +849,17 @@ env_info: contains diagnostic information about the environment</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.DomainRandWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.domain_randomization.DomainRandWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Domain randomization wrapper which randomized the wrapped env using a buffer of domain parameter sets.
 At every call of the reset method this wrapper cycles through that buffer.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap around</p></li>
+<li><p><strong>randomizer</strong> – <cite>DomainRandomizer</cite> object that manages the randomization. If <cite>None</cite>, the user has to set the
+buffer manually, the circular reset however works the same way</p></li>
+<li><p><strong>selection</strong> – method to draw samples from the buffer, either cyclic or random</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.buffer">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">buffer</span></span><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.buffer" title="Permalink to this definition">¶</a></dt>
@@ -799,6 +914,17 @@ At every call of the reset method this wrapper cycles through that buffer.</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.DomainRandWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.domain_randomization.DomainRandWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Domain randomization wrapper which randomized the wrapped env at every reset.
 Thus every rollout is done with different domain parameters.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap</p></li>
+<li><p><strong>randomizer</strong> – <cite>DomainRandomizer</cite> object holding the probability distribution of all randomizable
+domain parameters, pass <cite>None</cite> if you want to subclass wrapping another <cite>DomainRandWrapper</cite>
+and use its randomizer</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.domain_randomization.DomainRandWrapperLive.reset">
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environment_wrappers/domain_randomization.html#DomainRandWrapperLive.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperLive.reset" title="Permalink to this definition">¶</a></dt>
@@ -824,6 +950,22 @@ Thus every rollout is done with different domain parameters.</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.DomainRandWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.domain_randomization.DomainRandWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Domain randomization wrapper which wraps another <cite>DomainRandWrapper</cite> to adapt its parameters,
 called domain distribution parameters.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_rand_env</strong> – randomized environment to wrap</p></li>
+<li><p><strong>dp_mapping</strong> – mapping from index of the numpy array (coming from the algorithm) to domain parameter name
+(e.g. mass, length) and the domain distribution parameter (e.g. mean, std)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span># For the mapping arg use the this dict constructor
+```
+m = {0: (&#39;name1&#39;, &#39;parameter_type1&#39;), 1: (&#39;name2&#39;, &#39;parameter_type2&#39;)}
+```
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper.adapt_randomizer">
 <span class="sig-name descname"><span class="pre">adapt_randomizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_distr_param_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/domain_randomization.html#MetaDomainRandWrapper.adapt_randomizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper.adapt_randomizer" title="Permalink to this definition">¶</a></dt>
@@ -872,6 +1014,17 @@ send every <cite>factor</cite> action.</p>
 <p>The observations are not affected! Thus the policy still receives one observation per environment step,
 i.e. send and receive at the real device’s sampling frequency.</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap around</p></li>
+<li><p><strong>factor</strong> – downsampling factor i.e. number of time steps for which every action should be repeated</p></li>
+<li><p><strong>obs_filter_fcn</strong> – function for processing the observations in the buffer, operates along 0-dimension</p></li>
+<li><p><strong>init_obs</strong> – initial observation to see the buffer, if None the buffer is initialized with zero arrays</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.downsampling.DownsamplingWrapper.factor">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">factor</span></span><a class="headerlink" href="#pyrado.environment_wrappers.downsampling.DownsamplingWrapper.factor" title="Permalink to this definition">¶</a></dt>
@@ -905,6 +1058,15 @@ i.e. send and receive at the real device’s sampling frequency.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">GaussianObsNoiseWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_std</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_mean</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_noise.html#GaussianObsNoiseWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_noise.GaussianObsNoiseWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperObs" title="pyrado.environment_wrappers.base.EnvWrapperObs"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperObs</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which adds normally distributed i.i.d. noise to all observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap</p></li>
+<li><p><strong>noise_std</strong> – list or numpy array for the standard deviation of the noise</p></li>
+<li><p><strong>noise_mean</strong> – list or numpy array for the mean of the noise, by default all zeros, i.e. no bias</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -916,6 +1078,18 @@ i.e. send and receive at the real device’s sampling frequency.</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperObs" title="pyrado.environment_wrappers.base.EnvWrapperObs"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperObs</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which normalizes the observation space using the bounds from the environment or
 hard-coded bounds, such that all values are in range [-1, 1]</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap</p></li>
+<li><p><strong>explicit_lb</strong> – dict to override the environment’s lower bound; by default (<cite>None</cite>) this is ignored;
+the keys are space labels, the values the new bound for that labeled entry</p></li>
+<li><p><strong>explicit_ub</strong> – dict to override the environment’s upper bound; by default (<cite>None</cite>) this is ignored;
+the keys are space labels, the values the new bound for that labeled entry</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.observation_normalization.ObsNormWrapper.override_bounds">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">override_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_normalization.html#ObsNormWrapper.override_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_normalization.ObsNormWrapper.override_bounds" title="Permalink to this definition">¶</a></dt>
@@ -943,6 +1117,12 @@ and/or you want to specify a certain bound</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperObs" title="pyrado.environment_wrappers.base.EnvWrapperObs"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperObs</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which normalizes the observation space using the bounds from the environment or
 hard-coded bounds, such that all values are in range [-1, 1]</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wrapped_env</strong> – environment to wrap</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -953,6 +1133,18 @@ hard-coded bounds, such that all values are in range [-1, 1]</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ObsPartialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_selected</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_partial.html#ObsPartialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_partial.ObsPartialWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperObs" title="pyrado.environment_wrappers.base.EnvWrapperObs"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperObs</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which creates a partial observation by masking certain elements</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap</p></li>
+<li><p><strong>mask</strong> – mask out array, entries with 1 are dropped (behavior can be inverted by keep_selected=True)</p></li>
+<li><p><strong>idcs</strong> – indices to drop, ignored if mask is specified. If the observation space is labeled,
+the labels can be used as indices.</p></li>
+<li><p><strong>keep_selected</strong> – set to true to keep the mask entries with 1/the specified indices and drop the others</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -963,6 +1155,26 @@ hard-coded bounds, such that all values are in range [-1, 1]</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ObsVelFiltWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_pos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_pos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_vel</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_vel</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(50,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">den</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(1,</span> <span class="pre">50)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_velfilter.html#ObsVelFiltWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperObs" title="pyrado.environment_wrappers.base.EnvWrapperObs"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperObs</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which computes the velocities from the satets given a linear filter</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to wrap, can only be used on <cite>SimEnv</cite> since access to the state is needed, and
+we don’t want to assume that all <cite>RealEnv</cite> can reconstruct this state from the observations.
+It wouldn’t make much sense to wrap a <cite>RealEnv</cite> with this wrapper anyway, since the goal it
+to mimic the behavior of the real environments velocity filter.</p></li>
+<li><p><strong>mask_pos</strong> – state mask array to select the position quantities in the state space, entries with 1 are kept</p></li>
+<li><p><strong>idcs_pos</strong> – state indices to select, ignored if mask is specified. If the state space is labeled, these
+labels can be used as indices.</p></li>
+<li><p><strong>mask_vel</strong> – observation mask array to select the velocity quantities in the observation space,
+entries with 1 are kept</p></li>
+<li><p><strong>idcs_vel</strong> – velocity observation indices to select, ignored if mask is specified. If the observation space
+is labeled, these labels can be used as indices.</p></li>
+<li><p><strong>num</strong> – continuous-time filter numerator</p></li>
+<li><p><strong>den</strong> – continuous-time filter denominator</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.init_filter">
 <span class="sig-name descname"><span class="pre">init_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_velfilter.html#ObsVelFiltWrapper.init_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.init_filter" title="Permalink to this definition">¶</a></dt>
@@ -1002,6 +1214,16 @@ received and it is non-zero. Otherwise the filter would assume a very high initi
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">StateAugmentationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/state_augmentation.html#StateAugmentationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Augments the observation of the wrapped environment by its physics configuration</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – the environment to be wrapped</p></li>
+<li><p><strong>domain_param</strong> – list of domain parameter names to include in the observation, pass <cite>None</cite> to select all</p></li>
+<li><p><strong>fixed</strong> – fix the parameters</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.mask">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.mask" title="Permalink to this definition">¶</a></dt>

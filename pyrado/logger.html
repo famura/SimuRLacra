@@ -230,6 +230,7 @@
 <dt class="sig sig-object py" id="pyrado.logger.experiment.AugmentedSafeLoader">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">AugmentedSafeLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#AugmentedSafeLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">yaml.loader.SafeLoader</span></code></p>
+<p>Initialize the scanner.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple">
 <span class="sig-name descname"><span class="pre">construct_python_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#AugmentedSafeLoader.construct_python_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple" title="Permalink to this definition">¶</a></dt>
@@ -251,6 +252,20 @@
 This is a path-like object, and as such it can be used everywhere a normal path would be used.</p>
 <p>Experiment folder path:
 &lt;base_dir&gt;/&lt;env_name&gt;/&lt;algo_name&gt;/&lt;timestamp&gt;–&lt;extra_info&gt;</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_name</strong> – environment trained on</p></li>
+<li><p><strong>algo_name</strong> – algorithm trained with, usually also includes the policy type, e.g. ‘a2c_fnn’</p></li>
+<li><p><strong>extra_info</strong> – additional information on the experiment (free form)</p></li>
+<li><p><strong>exp_id</strong> – combined timestamp and extra_info, usually the final folder name</p></li>
+<li><p><strong>timestamp</strong> – experiment creation timestamp</p></li>
+<li><p><strong>base_dir</strong> – base storage directory</p></li>
+<li><p><strong>include_slurm_id</strong> – if a SLURM ID is present in the environment variables, include it in the experiment ID</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.logger.experiment.Experiment.matches">
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hint</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#Experiment.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.experiment.Experiment.matches" title="Permalink to this definition">¶</a></dt>
@@ -414,6 +429,7 @@ experiment was located, and machine-independent part of the path</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">IterationTracker</span></span><a class="reference internal" href="_modules/pyrado/logger/iteration.html#IterationTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.iteration.IterationTracker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Track the current iteration/step number on multiple levels (for meta-algorithms)</p>
+<p>Constructor</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.logger.iteration.IterationTracker.format">
 <span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope_sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_num_sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/iteration.html#IterationTracker.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.iteration.IterationTracker.format" title="Permalink to this definition">¶</a></dt>
@@ -494,6 +510,12 @@ experiment was located, and machine-independent part of the path</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CSVPrinter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#CSVPrinter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.step.CSVPrinter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.logger.step.StepLogPrinter" title="pyrado.logger.step.StepLogPrinter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.StepLogPrinter</span></code></a></p>
 <p>Logs step data to a CSV file</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> – csv file name</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.logger.step.CSVPrinter.print_values">
 <span class="sig-name descname"><span class="pre">print_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered_keys</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#CSVPrinter.print_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.step.CSVPrinter.print_values" title="Permalink to this definition">¶</a></dt>
@@ -581,6 +603,12 @@ Features automatic detection of child LoggerAware objects. Override to customize
 <p>Step-based progress logger. This class collects progress values during a step. At the end, the <cite>record_step</cite>
 function will pass the collected values to one or more StepLogPrinters.
 The logger also validates that no values are added unexpectedly, which i.e. a csv printer would not support.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>print_intvl</strong> – interval size, by default the logger records and prints on every call, i.e. every step</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.logger.step.StepLogger.add_value">
 <span class="sig-name descname"><span class="pre">add_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_digits</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.add_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.add_value" title="Permalink to this definition">¶</a></dt>
@@ -638,6 +666,12 @@ To properly support nesting, this method does nothing if called twice in a row w
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TensorBoardPrinter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#TensorBoardPrinter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.step.TensorBoardPrinter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.logger.step.StepLogPrinter" title="pyrado.logger.step.StepLogPrinter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.StepLogPrinter</span></code></a></p>
 <p>Class for writing tensorboard logs</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dir</strong> – folder path name</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.logger.step.TensorBoardPrinter.print_values">
 <span class="sig-name descname"><span class="pre">print_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered_keys</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#TensorBoardPrinter.print_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.step.TensorBoardPrinter.print_values" title="Permalink to this definition">¶</a></dt>

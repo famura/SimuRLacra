@@ -243,6 +243,20 @@
 is a simple policy which generates the joint position and joint velocity commands for the internal PD-controller
 of a robot (e.g. Barrett WAM). By re-using the RBF, we reduce the number of parameters, while we can at the same
 time get the velocity information from the features, i.e. the derivative of the normalized Gaussians.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – specification of environment</p></li>
+<li><p><strong>rbf_hparam</strong> – hyper-parameters for the RBF-features, see <cite>RBFFeat</cite></p></li>
+<li><p><strong>dim_mask</strong> – number of RBF features to mask out at the beginning and the end of every dimension,
+pass 1 to remove the first and the last features for the policy, pass 0 to use all
+RBF features. Masking out RBFs makes sense if you want to obtain a smooth starting behavior.</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.feed_back.dual_rfb.DualRBFLinearPolicy.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/dual_rfb.html#DualRBFLinearPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.dual_rfb.DualRBFLinearPolicy.forward" title="Permalink to this definition">¶</a></dt>
@@ -272,6 +286,19 @@ time get the velocity information from the features, i.e. the derivative of the 
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">DiscreteActQValPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#DiscreteActQValPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>State-action value (Q-value) feed-forward neural network policy for discrete actions</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>net</strong> – module that approximates the Q-values given the observations and possible (discrete) actions.
+Make sure to create this object with the correct input and output sizes by using
+<cite>DiscreteActQValPolicy.get_qfcn_input_size()</cite> and <cite>DiscreteActQValPolicy.get_qfcn_output_size()</cite>.</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#DiscreteActQValPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.forward" title="Permalink to this definition">¶</a></dt>
@@ -342,6 +369,21 @@ Since we operate on a discrete action space, we can construct a table.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">FNN</span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#FNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.FNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Feed-forward neural network</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_size</strong> – number of inputs</p></li>
+<li><p><strong>output_size</strong> – number of outputs</p></li>
+<li><p><strong>hidden_sizes</strong> – sizes of hidden layers (every entry creates one hidden layer)</p></li>
+<li><p><strong>hidden_nonlin</strong> – nonlinearity for hidden layers</p></li>
+<li><p><strong>dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>output_nonlin</strong> – nonlinearity for output layer</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.policies.feed_back.fnn.FNN.device">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyrado.policies.feed_back.fnn.FNN.device" title="Permalink to this definition">¶</a></dt>
@@ -392,6 +434,20 @@ The values are copied, modifying the return value does not propagate to the actu
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">FNNPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_sizes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_nonlin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">,</span> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_nonlin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#FNNPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.FNNPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>Feed-forward neural network policy</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>hidden_sizes</strong> – sizes of hidden layer outputs. Every entry creates one hidden layer.</p></li>
+<li><p><strong>hidden_nonlin</strong> – nonlinearity for hidden layers</p></li>
+<li><p><strong>dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>output_nonlin</strong> – nonlinearity for output layer</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.feed_back.fnn.FNNPolicy.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#FNNPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.FNNPolicy.forward" title="Permalink to this definition">¶</a></dt>
@@ -438,6 +494,17 @@ The values are copied, modifying the return value does not propagate to the actu
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">LinearPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">feats</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.features.FeatureStack" title="pyrado.policies.features.FeatureStack"><span class="pre">pyrado.policies.features.FeatureStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/feed_back/linear.html#LinearPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.linear.LinearPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>A linear policy defined by the inner product of nonlinear features of the observations with the policy parameters</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – specification of environment</p></li>
+<li><p><strong>feats</strong> – list of feature functions</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the module to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.feed_back.linear.LinearPolicy.eval_feats">
 <span class="sig-name descname"><span class="pre">eval_feats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/linear.html#LinearPolicy.eval_feats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.linear.LinearPolicy.eval_feats" title="Permalink to this definition">¶</a></dt>
@@ -501,6 +568,23 @@ The values are copied, modifying the return value does not propagate to the actu
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TwoHeadedFNNPolicy</span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/two_headed_fnn.html#TwoHeadedFNNPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.TwoHeadedPolicy" title="pyrado.policies.base.TwoHeadedPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.TwoHeadedPolicy</span></code></a></p>
 <p>Policy architecture which has a common body and two heads that have a separate last layer</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>shared_hidden_sizes</strong> – sizes of shared hidden layer outputs. Every entry creates one shared hidden layer.</p></li>
+<li><p><strong>shared_hidden_nonlin</strong> – nonlinearity for the shared hidden layers</p></li>
+<li><p><strong>head_1_size</strong> – size of the fully connected layer for head 1, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_2_size</strong> – size of the fully connected layer for head 2, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_1_output_nonlin</strong> – nonlinearity for output layer of the first head</p></li>
+<li><p><strong>head_2_output_nonlin</strong> – nonlinearity for output layer of the second head</p></li>
+<li><p><strong>shared_dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/two_headed_fnn.html#TwoHeadedFNNPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy.forward" title="Permalink to this definition">¶</a></dt>

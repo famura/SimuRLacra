@@ -739,6 +739,17 @@ This can be overwritten <cite>xtick_label_prec</cite> and <cite>ytick_label_prec
 <p>Manages multiple matplotlib figures and refreshes them when the input file changes.
 It also ensures that if you close a figure, it does not reappear on the next update.
 If all figures are closed, the update loop is stopped.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – name of file to load updates from</p></li>
+<li><p><strong>data_loader</strong> – called to load the file contents into some internal representation like a pandas <cite>DataFrame</cite></p></li>
+<li><p><strong>args</strong> – parsed command line arguments</p></li>
+<li><p><strong>update_interval</strong> – time to wait between figure updates [s]</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.plotting.live_update.LiveFigureManager.figure">
 <span class="sig-name descname"><span class="pre">figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/live_update.html#LiveFigureManager.figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.live_update.LiveFigureManager.figure" title="Permalink to this definition">¶</a></dt>
@@ -1006,6 +1017,20 @@ instances, e.g. samples from a posterior coming from <cite>NDPR</cite></p></li>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.colors.Normalize</span></code></p>
 <p>Accumulative normalizer which is useful to have one colormap consistent for multiple images.
 Adding new data will expand the limits.</p>
+<dl>
+<dt>vmin, vmax<span class="classifier">float or None</span></dt><dd><p>If <em>vmin</em> and/or <em>vmax</em> is not given, they are initialized from the
+minimum and maximum value, respectively, of the first input
+processed; i.e., <code class="docutils literal notranslate"><span class="pre">__call__(A)</span></code> calls <code class="docutils literal notranslate"><span class="pre">autoscale_None(A)</span></code>.</p>
+</dd>
+<dt>clip<span class="classifier">bool, default: False</span></dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> values falling outside the range <code class="docutils literal notranslate"><span class="pre">[vmin,</span> <span class="pre">vmax]</span></code>,
+are mapped to 0 or 1, whichever is closer, and masked values are
+set to 1.  If <code class="docutils literal notranslate"><span class="pre">False</span></code> masked values remain masked.</p>
+<p>Clipping silently defeats the purpose of setting the over, under,
+and masked colors in a colormap, so it is likely to lead to
+surprises; therefore the default is <code class="docutils literal notranslate"><span class="pre">clip=False</span></code>.</p>
+</dd>
+</dl>
+<p>Returns 0 if <code class="docutils literal notranslate"><span class="pre">vmin</span> <span class="pre">==</span> <span class="pre">vmax</span></code>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.plotting.utils.AccNorm.autoscale">
 <span class="sig-name descname"><span class="pre">autoscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#AccNorm.autoscale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.AccNorm.autoscale" title="Permalink to this definition">¶</a></dt>

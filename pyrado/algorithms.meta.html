@@ -253,6 +253,33 @@
 <p class="admonition-title">See also</p>
 <p>[1] B. Mehta, M. Diaz, F. Golemo, C.J. Pal, L. Paull, “Active Domain Randomization”, arXiv, 2019</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment to train in</p></li>
+<li><p><strong>subrtn</strong> – algorithm which performs the policy / value-function optimization</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations</p></li>
+<li><p><strong>svpg_particle_hparam</strong> – SVPG particle hyperparameters</p></li>
+<li><p><strong>num_svpg_particles</strong> – number of SVPG particles</p></li>
+<li><p><strong>num_discriminator_epoch</strong> – epochs in discriminator training</p></li>
+<li><p><strong>batch_size</strong> – batch size for training</p></li>
+<li><p><strong>svpg_learning_rate</strong> – SVPG particle optimizers’ learning rate</p></li>
+<li><p><strong>svpg_temperature</strong> – SVPG temperature coefficient (how strong is the influence of the particles on each other)</p></li>
+<li><p><strong>svpg_evaluation_steps</strong> – how many configurations to sample between training</p></li>
+<li><p><strong>svpg_horizon</strong> – how many steps until the particles are reset</p></li>
+<li><p><strong>svpg_kl_factor</strong> – kl reward coefficient</p></li>
+<li><p><strong>svpg_warmup</strong> – number of iterations without SVPG training in the beginning</p></li>
+<li><p><strong>svpg_serial</strong> – serial mode (see SVPG)</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>num_trajs_per_config</strong> – number of trajectories to sample from each config</p></li>
+<li><p><strong>max_step_length</strong> – maximum change of physics parameters per step</p></li>
+<li><p><strong>randomized_params</strong> – which parameters to randomize</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.ADR.compute_params">
 <span class="sig-name descname"><span class="pre">compute_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_instances</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#ADR.compute_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.ADR.compute_params" title="Permalink to this definition">¶</a></dt>
@@ -317,6 +344,18 @@ contains a dict of information about the current iteration of the meta-algorithm
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RewardGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_multiplier</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.003</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#RewardGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.RewardGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for generating the discriminator rewards in ADR. Generates a reward using a trained discriminator network.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>batch_size</strong> – batch size for each update step</p></li>
+<li><p><strong>reward_multiplier</strong> – factor for the predicted probability</p></li>
+<li><p><strong>lr</strong> – learning rate</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.RewardGenerator.get_reward">
 <span class="sig-name descname"><span class="pre">get_reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#RewardGenerator.get_reward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.RewardGenerator.get_reward" title="Permalink to this definition">¶</a></dt>
@@ -334,6 +373,21 @@ contains a dict of information about the current iteration of the meta-algorithm
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SVPGAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam"><span class="pre">pyrado.domain_randomization.domain_parameter.DomainParam</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">discriminator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_rollouts_per_config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Wrapper to encapsulate the domain parameter search as a reinforcement learning problem</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – the environment to wrap</p></li>
+<li><p><strong>parameters</strong> – which physics parameters should be randomized</p></li>
+<li><p><strong>inner_policy</strong> – the policy to train the subrtn on</p></li>
+<li><p><strong>discriminator</strong> – the discriminator to distinguish reference environments from randomized ones</p></li>
+<li><p><strong>step_length</strong> – the step size</p></li>
+<li><p><strong>horizon</strong> – an svpg horizon</p></li>
+<li><p><strong>num_rollouts_per_config</strong> – number of trajectories to sample per physics configuration</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.act_space" title="Permalink to this definition">¶</a></dt>
@@ -459,6 +513,33 @@ through a network.</p>
 <p>A. Mandlekar, Y. Zhu, A. Garg, L. Fei-Fei, S. Savarese, “Adversarially Robust Policy Learning:
 Active Construction of Physically-Plausible Perturbations”, IROS, 2017</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment in which the agent should be trained</p></li>
+<li><p><strong>subrtn</strong> – algorithm which performs the policy / value-function optimization</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>expl_strat</strong> – the exploration strategy</p></li>
+<li><p><strong>max_iter</strong> – the maximum number of iterations</p></li>
+<li><p><strong>num_rollouts</strong> – the number of rollouts to be performed for each update step</p></li>
+<li><p><strong>steps_num</strong> – the number of steps to be performed for each update step</p></li>
+<li><p><strong>apply_dynamics_noise</strong> – whether adversarially generated dynamics noise should be applied</p></li>
+<li><p><strong>dyn_eps</strong> – the intensity of generated dynamics noise</p></li>
+<li><p><strong>dyn_phi</strong> – the probability of applying dynamics noise</p></li>
+<li><p><strong>halfspan</strong> – the halfspan of the uniform random distribution used to sample</p></li>
+<li><p><strong>apply_proccess_noise</strong> – whether adversarially generated process noise should be applied</p></li>
+<li><p><strong>proc_eps</strong> – the intensity of generated process noise</p></li>
+<li><p><strong>proc_phi</strong> – the probability of applying process noise</p></li>
+<li><p><strong>apply_observation_noise</strong> – whether adversarially generated observation noise should be applied</p></li>
+<li><p><strong>obs_eps</strong> – the intensity of generated observation noise</p></li>
+<li><p><strong>obs_phi</strong> – the probability of applying observation noise</p></li>
+<li><p><strong>torch_observation</strong> – a function to provide a differentiable observation</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.arpl.ARPL.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'arpl'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.arpl.ARPL.name" title="Permalink to this definition">¶</a></dt>
@@ -524,6 +605,18 @@ optionally different embedding, alternates between training the policy or the in
 </dd>
 </dl>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_components</strong> – number of components for the mixture of Gaussians density estimator</p></li>
+<li><p><strong>component_perturbation</strong> – standard deviation applied to all weights and biases when, in the last round of
+SNPE-A, the Mixture of Gaussians is build from a single Gaussian.</p></li>
+<li><p><strong>subrtn_sbi_sampling_hparam</strong> – keyword arguments forwarded to sbi’s <cite>DirectPosterior.sample()</cite> function</p></li>
+<li><p><strong>kwargs</strong> – forwarded the superclass constructor</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.bayessim.BayesSim.iteration_key">
 <span class="sig-name descname"><span class="pre">iteration_key</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bayessim_iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.iteration_key" title="Permalink to this definition">¶</a></dt>
@@ -570,6 +663,47 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>F. Muratore, C. Eilers, M. Gienger, J. Peters, “Bayesian Domain Randomization for Sim-to-Real Transfer”,
 arXiv, 2020</p>
 </div>
+<p>Constructor</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to continue an experiment, use the <cite>load_dir</cite> argument for the <cite>train</cite> call. If you want to
+initialize every of the policies with a pre-trained policy parameters use <cite>policy_param_init</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env_sim</strong> – randomized simulation environment a.k.a. source domain</p></li>
+<li><p><strong>env_real</strong> – real-world environment a.k.a. target domain</p></li>
+<li><p><strong>subrtn</strong> – algorithm which performs the policy / value-function optimization</p></li>
+<li><p><strong>ddp_space</strong> – space holding the boundaries for the domain distribution parameters</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations</p></li>
+<li><p><strong>acq_fc</strong> – Acquisition Function
+‘UCB’: Upper Confidence Bound (default <span class="math notranslate nohighlight">\(eta = 0.1\)</span>)
+‘EI’: Expected Improvement
+‘PI’: Probability of Improvement</p></li>
+<li><p><strong>acq_restarts</strong> – number of restarts for optimizing the acquisition function</p></li>
+<li><p><strong>acq_samples</strong> – number of initial samples for optimizing the acquisition function</p></li>
+<li><p><strong>acq_param</strong> – hyper-parameter for the acquisition function, e.g. <span class="math notranslate nohighlight">\(eta\)</span> for UCB</p></li>
+<li><p><strong>num_init_cand</strong> – number of initial policies to train, ignored if <cite>init_dir</cite> is provided</p></li>
+<li><p><strong>mc_estimator</strong> – estimate the return with a sample average (<cite>True</cite>) or a lower confidence
+bound (<cite>False</cite>) obtained from bootstrapping</p></li>
+<li><p><strong>num_eval_rollouts_real</strong> – number of rollouts in the target domain to estimate the return</p></li>
+<li><p><strong>num_eval_rollouts_sim</strong> – number of rollouts in simulation to estimate the return after training</p></li>
+<li><p><strong>thold_succ</strong> – success threshold on the real system’s return for BayRn, stop the algorithm if exceeded</p></li>
+<li><p><strong>thold_succ_subrtn</strong> – success threshold on the simulated system’s return for the subroutine, repeat the
+subroutine until the threshold is exceeded or the for a given number of iterations</p></li>
+<li><p><strong>warmstart</strong> – initialize the policy (and value function) parameters with the one of the previous iteration.
+This behavior can also be overruled by passing <cite>init_policy_params</cite> (and
+<cite>valuefcn_param_init</cite>) explicitly.</p></li>
+<li><p><strong>policy_param_init</strong> – initial policy parameter values for the subroutine, set <cite>None</cite> to be random</p></li>
+<li><p><strong>valuefcn_param_init</strong> – initial value function parameter values for the subroutine, set <cite>None</cite> to be random</p></li>
+<li><p><strong>subrtn_snapshot_mode</strong> – snapshot mode for saving during training of the subroutine</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.bayrn.BayRn.argmax_posterior_mean">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">argmax_posterior_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cands</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cands_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddp_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><span class="pre">pyrado.spaces.box.BoxSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_restarts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.argmax_posterior_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.argmax_posterior_mean" title="Permalink to this definition">¶</a></dt>
@@ -758,6 +892,18 @@ the user. Train a policy for every candidate. Finally, store the policies and ca
 <p>[1] A. Rajeswaran, S. Ghotra, B. Ravindran, S. Levine, “EPOpt: Learning Robust Neural Network Policies using
 Model Ensembles”, ICLR, 2017</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – same environment as the subroutine runs in. Only used for checking and saving the randomizer.</p></li>
+<li><p><strong>subrtn</strong> – algorithm which performs the policy / value-function optimization</p></li>
+<li><p><strong>skip_iter</strong> – number of iterations for which all rollouts will be used (see prefix ‘full’)</p></li>
+<li><p><strong>epsilon</strong> – quantile of (worst) rollouts that will be kept</p></li>
+<li><p><strong>gamma</strong> – discount factor to compute the discounted return, default is 1 (no discount)</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.epopt.EPOpt.load_snapshot">
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/epopt.html#EPOpt.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.epopt.EPOpt.load_snapshot" title="Permalink to this definition">¶</a></dt>
@@ -841,6 +987,16 @@ contains a dict of information about the current iteration of the meta-algorithm
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">NPDR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_sbi_class</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">sbi.inference.snpe.snpe_base.PosteriorEstimator</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_sbi_sampling_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/npdr.html#NPDR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.npdr.NPDR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.meta.sbi_base.SBIBase" title="pyrado.algorithms.meta.sbi_base.SBIBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.meta.sbi_base.SBIBase</span></code></a></p>
 <p>Neural Posterior Domain Randomization (NPDR)</p>
+<p>Constructor forwarding everything to the superclass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subrtn_sbi_class</strong> – sbi algorithm calls for executing the LFI, e.g. SNPE-C</p></li>
+<li><p><strong>subrtn_sbi_sampling_hparam</strong> – keyword arguments forwarded to sbi’s <cite>DirectPosterior.sample()</cite> function like
+<cite>sample_with_mcmc</cite>, ect.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.npdr.NPDR.iteration_key">
 <span class="sig-name descname"><span class="pre">iteration_key</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'npdr_iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.npdr.NPDR.iteration_key" title="Permalink to this definition">¶</a></dt>
@@ -877,6 +1033,31 @@ contains a dict of information about the current iteration of the meta-algorithm
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PDDR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_teachers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teacher_extra</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teacher_policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teacher_algo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teacher_algo_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomizer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer"><span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/pddr.html#PDDR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.pddr.PDDR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.InterruptableAlgorithm" title="pyrado.algorithms.base.InterruptableAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.InterruptableAlgorithm</span></code></a></p>
 <p>Policy Distillation with Domain Randomization (PDDR)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>lr</strong> – (initial) learning rate for the optimizer which can be by modified by the scheduler.
+By default, the learning rate is constant.</p></li>
+<li><p><strong>std_init</strong> – initial standard deviation on the actions for the exploration noise</p></li>
+<li><p><strong>min_steps</strong> – minimum number of state transitions sampled per policy update batch</p></li>
+<li><p><strong>num_epochs</strong> – number of epochs (how often we iterate over the same batch)</p></li>
+<li><p><strong>max_iter</strong> – number of iterations (policy updates)</p></li>
+<li><p><strong>num_teachers</strong> – number of teachers that are used for distillation</p></li>
+<li><p><strong>teacher_extra</strong> – extra dict from PDDRTeachers algo. If provided, teachers are loaded from there</p></li>
+<li><p><strong>teacher_policy</strong> – policy to be updated (is duplicated for each teacher)</p></li>
+<li><p><strong>teacher_algo</strong> – algorithm class to be used for training the teachers</p></li>
+<li><p><strong>teacher_algo_hparam</strong> – hyper-params to be used for teacher_algo</p></li>
+<li><p><strong>randomizer</strong> – randomizer for sampling the teacher domain parameters; if <cite>None</cite>, the environment’s default
+one is used</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.pddr.PDDR.expl_strat">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.exploration.stochastic_action.NormalActNoiseExplStrat</span></em><a class="headerlink" href="#pyrado.algorithms.meta.pddr.PDDR.expl_strat" title="Permalink to this definition">¶</a></dt>
@@ -1021,6 +1202,64 @@ density-ratio-estimators. This might be added later.</p>
 <p class="admonition-title">See also</p>
 <p>[1] <a class="reference external" href="https://github.com/mackelab/sbi/blob/main/tutorials/03_multiround_inference.ipynb">https://github.com/mackelab/sbi/blob/main/tutorials/03_multiround_inference.ipynb</a> (multi-round sbi)</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env_sim</strong> – randomized simulation environment a.k.a. source domain</p></li>
+<li><p><strong>env_real</strong> – real-world environment a.k.a. target domain, this can be a <cite>RealEnv</cite> (sim-to-real setting), a
+<cite>SimEnv</cite> (sim-to-sim setting), or a directory to load a pre-recorded set of rollouts from</p></li>
+<li><p><strong>policy</strong> – policy used for sampling the rollout, if subrtn_policy is not <cite>None</cite> this policy is not oly used
+for generating the target domain rollouts, but also optimized in simulation</p></li>
+<li><p><strong>dp_mapping</strong> – mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)</p></li>
+<li><p><strong>prior</strong> – distribution used by sbi as a prior</p></li>
+<li><p><strong>embedding</strong> – embedding used for pre-processing the data before passing it to the posterior</p></li>
+<li><p><strong>num_checkpoints</strong> – total number of checkpoints</p></li>
+<li><p><strong>init_checkpoint</strong> – initial value of the cyclic counter, defaults to 0, use negative values can to mark
+sections that should only be executed once</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>num_real_rollouts</strong> – number of real-world rollouts received by sbi, i.e. from every rollout exactly one
+data set is computed</p></li>
+<li><p><strong>num_sim_per_round</strong> – number of simulations done by sbi per round (i.e. iteration over the same target domain data set)</p></li>
+<li><p><strong>num_segments</strong> – length of the segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>len_segments</strong> – length of the segments in which the rollouts are split into. For every segment, the initial
+state of the simulation is reset, and thus for every set the features of the trajectories
+are computed separately. Either specify <cite>num_segments</cite> or <cite>len_segments</cite>.</p></li>
+<li><p><strong>stop_on_done</strong> – if <cite>True</cite>, the rollouts are stopped as soon as they hit the state or observation space
+boundaries. This behavior is save, but can lead to short trajectories which are eventually
+padded with zeroes. Chose <cite>False</cite> to ignore the boundaries (dangerous on the real system).</p></li>
+<li><p><strong>use_rec_act</strong> – if <cite>True</cite> the recorded actions form the target domain are used to generate the rollout
+during simulation (feed-forward). If <cite>False</cite> there policy is used to generate (potentially)
+state-dependent actions (feed-back).</p></li>
+<li><p><strong>reset_sbi_routine_each_iter</strong> – if <cite>True</cite> the sbi subroutine instance is recreated every iteration.
+Use this flag to train the posterior each iteration from scratch.</p></li>
+<li><p><strong>num_sbi_rounds</strong> – set to an integer &gt; 1 to use multi-round sbi. This way the posteriors (saved as
+<cite>…_round_NUMBER…</cite> will be tailored to the data of that round, where <cite>NUMBER</cite>
+counts up each round (modulo <cite>num_real_rollouts</cite>). If <cite>num_sbi_rounds</cite> = 1, the posterior
+is called amortized (it has never seen any target domain data).</p></li>
+<li><p><strong>num_eval_samples</strong> – number of samples for evaluating the posterior in <cite>eval_posterior()</cite></p></li>
+<li><p><strong>posterior_hparam</strong> – hyper parameters for creating the posterior’s density estimator</p></li>
+<li><p><strong>subrtn_sbi_training_hparam</strong> – dict forwarded to sbi’s <cite>PosteriorEstimator.train()</cite> function like
+<cite>training_batch_size</cite>, <cite>learning_rate</cite>, <cite>retrain_from_scratch_each_round</cite>, ect.</p></li>
+<li><p><strong>simulation_batch_size</strong> – batch size forwarded to the sbi toolbox, requires batched simulator</p></li>
+<li><p><strong>normalize_posterior</strong> – if <cite>True</cite> the normalization of the posterior density is enforced by sbi</p></li>
+<li><p><strong>subrtn_policy</strong> – algorithm which performs the optimization of the behavioral policy (and value-function)</p></li>
+<li><p><strong>subrtn_policy_snapshot_mode</strong> – snapshot mode for saving during policy optimization</p></li>
+<li><p><strong>train_initial_policy</strong> – choose if a policy should be pretrained in the first iteration before collecting
+real rollouts. Choose <cite>False</cite>, if you want to use a pre-defined policy.</p></li>
+<li><p><strong>thold_succ_subrtn</strong> – success threshold on the simulated system’s return for the subroutine, repeat the
+subroutine until the threshold is exceeded or the for a given number of iterations</p></li>
+<li><p><strong>warmstart</strong> – initialize the policy (and value function) parameters with the one of the previous iteration.
+This behavior can also be overruled by passing <cite>init_policy_params</cite> (and
+<cite>valuefcn_param_init</cite>) explicitly.</p></li>
+<li><p><strong>num_workers</strong> – number of environments for parallel sampling</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.sbi_base.SBIBase.collect_data_real">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">collect_data_real</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pyrado.PathLike</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sbi_base.html#SBIBase.collect_data_real"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sbi_base.SBIBase.collect_data_real" title="Permalink to this definition">¶</a></dt>
@@ -1282,6 +1521,35 @@ discrepancy between the simulated and real observations (based on a weighted met
 <p>[1] Y. SimOpt, A. Handa, V. Makoviychuk, M. Macklin, J. Issac, N.D. Ratliff, D. Fox, “Closing the Sim-to-Real
 Loop: Adapting Simulation Randomization with Real World Experience”, ICRA, 2020</p>
 </div>
+<p>Constructor</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to continue an experiment, use the <cite>load_dir</cite> argument for the <cite>train</cite> call. If you want to
+initialize every of the policies with a pre-trained policy parameters use <cite>policy_param_init</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env_sim</strong> – randomized simulation environment a.k.a. source domain</p></li>
+<li><p><strong>env_real</strong> – real-world environment a.k.a. target domain</p></li>
+<li><p><strong>subrtn_policy</strong> – algorithm which performs the optimization of the behavioral policy (and value-function)</p></li>
+<li><p><strong>subrtn_distr</strong> – algorithm which performs the optimization of the domain parameter distribution policy</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations</p></li>
+<li><p><strong>num_eval_rollouts</strong> – number of rollouts in the target domain to estimate the return</p></li>
+<li><p><strong>thold_succ</strong> – success threshold on the real system’s return for BayRn, stop the algorithm if exceeded</p></li>
+<li><p><strong>thold_succ_subrtn</strong> – success threshold on the simulated system’s return for the subrtn, repeat the
+subrtn until the threshold is exceeded or the for a given number of iterations</p></li>
+<li><p><strong>warmstart</strong> – initialize the policy (and value function) parameters with the one of the previous iteration.
+This behavior can also be overruled by passing <cite>init_policy_params</cite> (and
+<cite>valuefcn_param_init</cite>) explicitly.</p></li>
+<li><p><strong>policy_param_init</strong> – initial policy parameter values for the subrtn, set <cite>None</cite> to be random</p></li>
+<li><p><strong>valuefcn_param_init</strong> – initial value function parameter values for the subrtn, set <cite>None</cite> to be random</p></li>
+<li><p><strong>subrtn_snapshot_mode</strong> – snapshot mode for saving during training of the subrtn</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">eval_behav_policy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/simopt.html#SimOpt.eval_behav_policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy" title="Permalink to this definition">¶</a></dt>
@@ -1456,6 +1724,36 @@ The candidate and the reference policies must have the same architecture!</p>
 </dd>
 </dl>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>subrtn_cand</strong> – the algorithm that is called at every iteration of SPOTA to yield a candidate policy</p></li>
+<li><p><strong>subrtn_refs</strong> – the algorithm that is called at every iteration of SPOTA to yield reference policies</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations that SPOTA algorithm runs.
+Each of these iterations includes multiple iterations of the subroutine.</p></li>
+<li><p><strong>alpha</strong> – confidence level for the upper confidence bound (UCBOG)</p></li>
+<li><p><strong>beta</strong> – optimality gap threshold for training</p></li>
+<li><p><strong>nG</strong> – number of reference solutions</p></li>
+<li><p><strong>nJ</strong> – number of samples for Monte-Carlo approximation of the optimality gap</p></li>
+<li><p><strong>ntau</strong> – number of rollouts per domain parameter set</p></li>
+<li><p><strong>nc_init</strong> – initial number of domains for training the candidate solution</p></li>
+<li><p><strong>nr_init</strong> – initial number of domains for training the reference solutions</p></li>
+<li><p><strong>sequence_cand</strong> – mathematical sequence for the number of domains for training the candidate solution</p></li>
+<li><p><strong>sequence_refs</strong> – mathematical sequence for the number of domains for training the reference solutions</p></li>
+<li><p><strong>warmstart_cand</strong> – flag if the next candidate solution should be initialized with the previous one</p></li>
+<li><p><strong>warmstart_refs</strong> – flag if the reference solutions should be initialized with the current candidate</p></li>
+<li><p><strong>cand_policy_param_init</strong> – initial policy parameter values for the candidate, set None to be random</p></li>
+<li><p><strong>cand_critic_param_init</strong> – initial critic parameter values for the candidate, set None to be random</p></li>
+<li><p><strong>num_bs_reps</strong> – number of replications for the statistical bootstrap</p></li>
+<li><p><strong>studentized_ci</strong> – flag if a student T distribution should be applied for the confidence interval</p></li>
+<li><p><strong>base_seed</strong> – seed added to all other seeds in order to make the experiments distinct but repeatable</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.spota.SPOTA.iteration_key">
 <span class="sig-name descname"><span class="pre">iteration_key</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'spota_iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.spota.SPOTA.iteration_key" title="Permalink to this definition">¶</a></dt>
@@ -1539,6 +1837,15 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>A wrapper for PyTorch’s multivariate normal distribution with diagonal covariance.
 It is used to get a SciPy optimizer-ready version of the parameters of a distribution,
 i.e. a vector that can be used as the target variable.</p>
+<p>Constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mean</strong> – mean of the distribution; shape <cite>(k,)</cite></p></li>
+<li><p><strong>cov_chol_flat</strong> – standard deviations of the distribution; shape <cite>(k,)</cite></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.cov">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cov</span></span><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.cov" title="Permalink to this definition">¶</a></dt>
@@ -1609,6 +1916,19 @@ entries are the mean and the last <cite>k</cite> entries are the standard deviat
 <p>Version of the <cite>MultivariateNormalWrapper</cite> that is able to exclude either the mean of the covariance from the
 parameters and the stacking. This can be readily used for optimizing the mean or covariance while keeping the
 other fixed.</p>
+<p>Constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mean</strong> – mean of the distribution; shape <cite>(k,)</cite></p></li>
+<li><p><strong>cov_chol_flat</strong> – standard deviations of the distribution; shape <cite>(k,)</cite></p></li>
+<li><p><strong>mean_is_parameter</strong> – if <cite>True</cite>, the mean is treated as a parameter and returned from <cite>get_stacked</cite>
+and similar methods.</p></li>
+<li><p><strong>cov_is_parameter</strong> – if <cite>True</cite>, the covariance is treated as a parameter and returned from <cite>get_stacked</cite>
+and similar methods.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper.from_stacked">
 <span class="sig-name descname"><span class="pre">from_stacked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stacked</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper" title="pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper"><span class="pre">pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper</span></a></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#ParameterAgnosticMultivariateNormalWrapper.from_stacked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper.from_stacked" title="Permalink to this definition">¶</a></dt>
@@ -1666,6 +1986,27 @@ depending on if none, only mean/cov, or both are parameters, respectively</p>
 <p>[1] P. Klink, H. Abdulsamad, B. Belousov, C. D’Eramo, J. Peters, and J. Pajarinen,
 “A Probabilistic Interpretation of Self-Paced Learning with Applications to Reinforcement Learning”, arXiv, 2021</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment wrapped in a DomainRandWrapper</p></li>
+<li><p><strong>subroutine</strong> – algorithm which performs the policy/value-function optimization, which
+must expose its sampler</p></li>
+<li><p><strong>kl_constraints_ub</strong> – upper bound for the KL-divergence</p></li>
+<li><p><strong>max_iter</strong> – Maximal iterations for the SPRL algorithm (not for the subroutine)</p></li>
+<li><p><strong>performance_lower_bound</strong> – lower bound for the performance SPRL tries to stay above
+during distribution updates</p></li>
+<li><p><strong>std_lower_bound</strong> – clipping value for the standard deviation,necessary when using
+very small target variances</p></li>
+<li><p><strong>kl_threshold</strong> – threshold for the KL-divergence until which std_lower_bound is enforced</p></li>
+<li><p><strong>optimize_mean</strong> – whether the mean should be changed or considered fixed</p></li>
+<li><p><strong>optimize_cov</strong> – whether the (co-)variance should be changed or considered fixed</p></li>
+<li><p><strong>max_subrtn_retries</strong> – how often a failed (median performance &lt; 30 % of performance_lower_bound)
+training attempt of the subroutine should be reattempted</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.sprl.SPRL.load_snapshot">
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#SPRL.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.SPRL.load_snapshot" title="Permalink to this definition">¶</a></dt>
@@ -1741,6 +2082,15 @@ For a description of the parameters see <cite>pyrado.algorithms.base.Algorithm.s
 <dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
 <p>Uniform Domain Randomization (UDR)</p>
 <p>This algorithm barely wraps another algorithm. The main purpose is to check if the domain randomizer is set up.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – same environment as the subroutine runs in. Only used for checking and saving the randomizer.</p></li>
+<li><p><strong>subrtn</strong> – algorithm which performs the policy / value-function optimization</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.udr.UDR.load_snapshot">
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/udr.html#UDR.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.udr.UDR.load_snapshot" title="Permalink to this definition">¶</a></dt>

@@ -270,6 +270,17 @@ This code is based on work from Pascal Klink.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Client for communicating with OptiTrack.
 This code is based on work from Boris Belousov and Pascal Klink.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ver</strong> – version as tuple</p></li>
+<li><p><strong>server_ip</strong> – IP address of the NatNet server, where Motive is running</p></li>
+<li><p><strong>gateway_ip</strong> – IP address of the gateway. Set to None to read out this IP from socket (which was not
+working in our tests)</p></li>
+<li><p><strong>quiet</strong> – Set to False to print additional NatNet messages using coloredlogs lib</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_DISCONNECT">
 <span class="sig-name descname"><span class="pre">NAT_DISCONNECT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">9</span></em><a class="headerlink" href="#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_DISCONNECT" title="Permalink to this definition">¶</a></dt>
@@ -382,6 +393,16 @@ This code is based on work from Pascal Klink.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for tracking rigid bodies with OptiTrack and a NatNet client
 This code is based on work from Pascal Klink.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> – list of rigid body names, e.g. [“cup”, “ball”]</p></li>
+<li><p><strong>rotation</strong> – <cite>Rotation</cite> instance of scipy.spatial.transform</p></li>
+<li><p><strong>offset</strong> – [x, y, z] offset from the OptiTrack coordinate system to the one used in simulation</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.barrett_wam.trackers.RigidBodyTracker.get_current_estimate">
 <span class="sig-name descname"><span class="pre">get_current_estimate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/barrett_wam/trackers.html#RigidBodyTracker.get_current_estimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.barrett_wam.trackers.RigidBodyTracker.get_current_estimate" title="Permalink to this definition">¶</a></dt>

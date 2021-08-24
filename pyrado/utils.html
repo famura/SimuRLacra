@@ -253,6 +253,7 @@
 <dt class="sig sig-object py" id="pyrado.utils.argparser.MockArgs">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MockArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vfcn_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyrado.utils.argparser.MockArgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Create new instance of MockArgs(dir, policy_name, vfcn_name)</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.utils.argparser.MockArgs.dir">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dir</span></span><a class="headerlink" href="#pyrado.utils.argparser.MockArgs.dir" title="Permalink to this definition">¶</a></dt>
@@ -288,6 +289,12 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RunningExpDecayingAverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/averaging.html#RunningExpDecayingAverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.averaging.RunningExpDecayingAverage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Implementation of an exponentially decaying average estimator</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>alpha</strong> – decay factor</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.averaging.RunningExpDecayingAverage.reset">
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/averaging.html#RunningExpDecayingAverage.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.averaging.RunningExpDecayingAverage.reset" title="Permalink to this definition">¶</a></dt>
@@ -301,6 +308,12 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RunningMemoryAverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capacity</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/averaging.html#RunningMemoryAverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.averaging.RunningMemoryAverage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Implementation of an estimator that computes the average for a memorized buffer</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>capacity</strong> – memory size</p>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.utils.averaging.RunningMemoryAverage.memory">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">memory</span></span><a class="headerlink" href="#pyrado.utils.averaging.RunningMemoryAverage.memory" title="Permalink to this definition">¶</a></dt>
@@ -429,6 +442,15 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MinMaxScaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bound_lo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound_up</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#MinMaxScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.MinMaxScaler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bound_lo</strong> – lower bound for the transformed data</p></li>
+<li><p><strong>bound_up</strong> – upper bound for the transformed data</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.data_processing.MinMaxScaler.scale_back">
 <span class="sig-name descname"><span class="pre">scale_back</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#MinMaxScaler.scale_back"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.MinMaxScaler.scale_back" title="Permalink to this definition">¶</a></dt>
@@ -464,6 +486,7 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RunningNormalizer</span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#RunningNormalizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.RunningNormalizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Normalizes given data based on the history of observed data, such that all outputs are in range [-1, 1]</p>
+<p>Constructor</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.data_processing.RunningNormalizer.reset">
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#RunningNormalizer.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.RunningNormalizer.reset" title="Permalink to this definition">¶</a></dt>
@@ -477,6 +500,7 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RunningStandardizer</span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#RunningStandardizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.RunningStandardizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Implementation of Welford’s online algorithm</p>
+<p>Constructor</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.data_processing.RunningStandardizer.reset">
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#RunningStandardizer.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.RunningStandardizer.reset" title="Permalink to this definition">¶</a></dt>
@@ -600,6 +624,19 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TimeSeriesDataSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_train</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standardize_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_min_max_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'UnnamedDataSet'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_sets.html#TimeSeriesDataSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.utils.data.dataset.T_co</span></code>]</p>
 <p>Class for storing time series data sets</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – complete raw data set, where the samples are along the first dimension</p></li>
+<li><p><strong>window_size</strong> – length of the sequences fed to the policy for predicting the next value</p></li>
+<li><p><strong>ratio_train</strong> – ratio of the training samples w.r.t. the total sample count</p></li>
+<li><p><strong>standardize_data</strong> – if <cite>True</cite>, the data is standardized to be <span class="math notranslate nohighlight">\(~ N(0,1)\)</span></p></li>
+<li><p><strong>scale_min_max_data</strong> – if <cite>True</cite>, the data is scaled to <span class="math notranslate nohighlight">\(\in [-1, 1]\)</span></p></li>
+<li><p><strong>name</strong> – descriptive name for the data set</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">cut_to_window_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_sets.html#TimeSeriesDataSet.cut_to_window_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size" title="Permalink to this definition">¶</a></dt>
@@ -694,6 +731,16 @@ of the sequences afterwards.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
 <p>The specification of a dynamical system implemented in <cite>RcsPySim</cite> and used in combination with ADN
 We are directly subclassing dict beacuse <cite>PropertySource</cite> in <cite>RcsPySim</cite> extracts information from dicts.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> – name of the dynamics function, e.g. <cite>linear</cite>, <cite>msd</cite>, or <cite>msd_nlin</cite></p></li>
+<li><p><strong>goal</strong> – desired state, e.g. a task space position or velocity</p></li>
+<li><p><strong>kwargs</strong> – additional attributes set by subclasses</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -701,6 +748,7 @@ We are directly subclassing dict beacuse <cite>PropertySource</cite> in <cite>Rc
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">EnvSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">obs_space:</span> <span class="pre">pyrado.spaces.base.Space</span></em>, <em class="sig-param"><span class="pre">act_space:</span> <span class="pre">pyrado.spaces.base.Space</span></em>, <em class="sig-param"><span class="pre">state_space:</span> <span class="pre">pyrado.spaces.base.Space</span> <span class="pre">=</span> <span class="pre">&lt;pyrado.spaces.empty.EmptySpace</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#EnvSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_types.EnvSpec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <p>The specification of an environment’s input and output space</p>
+<p>Create new instance of EnvSpec(obs_space, act_space, state_space)</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.utils.data_types.EnvSpec.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.utils.data_types.EnvSpec.act_space" title="Permalink to this definition">¶</a></dt>
@@ -729,6 +777,16 @@ We are directly subclassing dict beacuse <cite>PropertySource</cite> in <cite>Rc
 The dynamics are defined as <span class="math notranslate nohighlight">\(\dot{x} = A (x_{des} - x_{curr})\)</span> with the error dynamics matrix <span class="math notranslate nohighlight">\(A\)</span>.
 Example:
 LinDSSpec(function=’lin’, goal=np.array([-1., 2.]), errorDynamics=np.eye(2))</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> – name of the dynamics function, e.g. <cite>msd</cite>, or <cite>msd_nlin</cite></p></li>
+<li><p><strong>goal</strong> – desired state, e.g. a task space position or velocity</p></li>
+<li><p><strong>errorDynamics</strong> – a matrix determining the dynamics or the error difference between</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -739,6 +797,18 @@ LinDSSpec(function=’lin’, goal=np.array([-1., 2.]), errorDynamics=np.eye(2))
 implemented in <cite>RcsPySim</cite>.
 Example:
 MSDDSSpec(function=’msd_nlin’, goal=np.array([-1., 2.]), attractorStiffness=50., damping=10., mass=1.)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> – name of the dynamics function, e.g. <cite>msd</cite>, or <cite>msd_nlin</cite></p></li>
+<li><p><strong>goal</strong> – desired state, e.g. a task space position or velocity</p></li>
+<li><p><strong>attractorStiffness</strong> – spring stiffness parameter of the dynamical system</p></li>
+<li><p><strong>damping</strong> – damping parameter of the dynamical system</p></li>
+<li><p><strong>mass</strong> – mass parameter of the dynamical system</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -746,6 +816,7 @@ MSDDSSpec(function=’msd_nlin’, goal=np.array([-1., 2.]), attractorStiffness=
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RenderMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#RenderMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_types.RenderMode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <p>The specification of a render mode, do not print or render anything by default</p>
+<p>Create new instance of RenderMode(text, video, render)</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.utils.data_types.RenderMode.render">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">render</span></span><a class="headerlink" href="#pyrado.utils.data_types.RenderMode.render" title="Permalink to this definition">¶</a></dt>
@@ -771,6 +842,7 @@ MSDDSSpec(function=’msd_nlin’, goal=np.array([-1., 2.]), attractorStiffness=
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TimeSeriesDataPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_seq</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targ</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#TimeSeriesDataPair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_types.TimeSeriesDataPair" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <p>Pair of an input sequence and an associated target value for training time series prediction.</p>
+<p>Create new instance of TimeSeriesDataPair(inp_seq, targ)</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.utils.data_types.TimeSeriesDataPair.inp_seq">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">inp_seq</span></span><a class="headerlink" href="#pyrado.utils.data_types.TimeSeriesDataPair.inp_seq" title="Permalink to this definition">¶</a></dt>
@@ -945,6 +1017,16 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <em class="property"><span class="pre">exception</span> </em><span class="sig-name descname"><span class="pre">KeyErr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#KeyErr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.exceptions.KeyErr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.utils.exceptions.BaseErr" title="pyrado.utils.exceptions.BaseErr"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.exceptions.BaseErr</span></code></a></p>
 <p>Class for exceptions raised asking for a keys in an object that does not exist</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys</strong> – key(s) that caused the error</p></li>
+<li><p><strong>container</strong> – object that should have the key</p></li>
+<li><p><strong>msg</strong> – offers possibility to override the error message</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py exception">
@@ -952,6 +1034,15 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <em class="property"><span class="pre">exception</span> </em><span class="sig-name descname"><span class="pre">PathErr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'__INVALID__'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#PathErr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.exceptions.PathErr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.utils.exceptions.BaseErr" title="pyrado.utils.exceptions.BaseErr"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.exceptions.BaseErr</span></code></a></p>
 <p>Class for exceptions raised by passing wrong paths to folders or files</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>given</strong> – input which caused the error</p></li>
+<li><p><strong>msg</strong> – offers possibility to override the error message</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py exception">
@@ -959,6 +1050,17 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <em class="property"><span class="pre">exception</span> </em><span class="sig-name descname"><span class="pre">ShapeErr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'__INVALID__'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_match</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#ShapeErr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.exceptions.ShapeErr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.utils.exceptions.BaseErr" title="pyrado.utils.exceptions.BaseErr"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.exceptions.BaseErr</span></code></a></p>
 <p>Class for exceptions raised by passing wrong values</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>given</strong> – input which caused the error</p></li>
+<li><p><strong>expected_match</strong> – object which’s shape is the one the input should have</p></li>
+<li><p><strong>given_name</strong> – explicitly pass the name of the variable for the error message</p></li>
+<li><p><strong>msg</strong> – offers possibility to override the error message</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.exceptions.ShapeErr.get_shape_and_name">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">get_shape_and_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#ShapeErr.get_shape_and_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.exceptions.ShapeErr.get_shape_and_name" title="Permalink to this definition">¶</a></dt>
@@ -971,6 +1073,17 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <em class="property"><span class="pre">exception</span> </em><span class="sig-name descname"><span class="pre">TypeErr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'__INVALID__'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#TypeErr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.exceptions.TypeErr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.utils.exceptions.BaseErr" title="pyrado.utils.exceptions.BaseErr"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.exceptions.BaseErr</span></code></a></p>
 <p>Class for exceptions raised by passing wrong data types</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>given</strong> – input which caused the error</p></li>
+<li><p><strong>given_name</strong> – explicitly pass the name of the variable for the error message</p></li>
+<li><p><strong>expected_type</strong> – type or types that should have been passed</p></li>
+<li><p><strong>msg</strong> – offers possibility to override the error message</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py exception">
@@ -978,6 +1091,21 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <em class="property"><span class="pre">exception</span> </em><span class="sig-name descname"><span class="pre">ValueErr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'__INVALID__'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eq_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#ValueErr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.exceptions.ValueErr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.utils.exceptions.BaseErr" title="pyrado.utils.exceptions.BaseErr"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.exceptions.BaseErr</span></code></a></p>
 <p>Class for exceptions raised by passing wrong values</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>given</strong> – input which caused the error</p></li>
+<li><p><strong>given_name</strong> – explicitly pass the name of the variable for the error message</p></li>
+<li><p><strong>eq_constraint</strong> – violated equality constraint</p></li>
+<li><p><strong>l_constraint</strong> – violated less than constraint</p></li>
+<li><p><strong>le_constraint</strong> – violated less or equal than constraint</p></li>
+<li><p><strong>g_constraint</strong> – violated greater than constraint</p></li>
+<li><p><strong>ge_constraint</strong> – violated greater or equal than constraint</p></li>
+<li><p><strong>msg</strong> – offers possibility to override the error message</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -1264,6 +1392,15 @@ exception is raised).</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">UnitCubeProjector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bound_lo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound_up</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Project to a unit qube <span class="math notranslate nohighlight">\([0, 1]^d\)</span> and back using explicit bounds</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bound_lo</strong> – lower bound</p></li>
+<li><p><strong>bound_up</strong> – upper bound</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.math.UnitCubeProjector.project_back">
 <span class="sig-name descname"><span class="pre">project_back</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector.project_back"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector.project_back" title="Permalink to this definition">¶</a></dt>
@@ -1467,6 +1604,17 @@ Modifies the input argument <cite>target</cite>.</p>
 <p>Layer add a bias to the input, multiplies the result with a scaling factor, and then applies the provided
 nonlinearity. If a list of nonlinearities is provided, every dimension will be processed separately.
 The scaling and the bias are learnable parameters.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_features</strong> – size of each input sample</p></li>
+<li><p><strong>nonlin</strong> – nonlinearity</p></li>
+<li><p><strong>bias</strong> – if <cite>True</cite>, a learnable bias is subtracted, else no bias is used</p></li>
+<li><p><strong>weight</strong> – if <cite>True</cite> (default), the input is multiplied with a learnable scaling factor</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.nn_layers.IndiNonlinLayer.extra_repr">
 <span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#IndiNonlinLayer.extra_repr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.nn_layers.IndiNonlinLayer.extra_repr" title="Permalink to this definition">¶</a></dt>
@@ -1505,6 +1653,7 @@ registered hooks while the latter silently ignores them.</p>
 the first half of the kernel (along the columns). This way we can save (close to) half of the parameters, under
 the assumption that we have a kernel that obeys this kind of symmetry.
 The biases are left unchanged.</p>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.utils.nn_layers.MirrConv1d.bias">
 <span class="sig-name descname"><span class="pre">bias</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.bias" title="Permalink to this definition">¶</a></dt>
@@ -1581,6 +1730,15 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PositiveScaleLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_features</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#PositiveScaleLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.nn_layers.PositiveScaleLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Layer which scales (strictly positive) the input using a learnable scaling factor</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_features</strong> – size of each input sample</p></li>
+<li><p><strong>init_weight</strong> – initial scaling factor</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.nn_layers.PositiveScaleLayer.extra_repr">
 <span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#PositiveScaleLayer.extra_repr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.nn_layers.PositiveScaleLayer.extra_repr" title="Permalink to this definition">¶</a></dt>
@@ -1616,6 +1774,15 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ScaleLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_features</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#ScaleLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.nn_layers.ScaleLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Layer which scales the output of the input using a learnable scaling factor</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_features</strong> – size of each input sample</p></li>
+<li><p><strong>init_weight</strong> – initial scaling factor</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.utils.nn_layers.ScaleLayer.extra_repr">
 <span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#ScaleLayer.extra_repr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.nn_layers.ScaleLayer.extra_repr" title="Permalink to this definition">¶</a></dt>

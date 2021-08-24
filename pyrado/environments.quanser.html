@@ -241,6 +241,19 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QuanserReal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcv_dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snd_dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/base.html#QuanserReal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.real_base.RealEnv" title="pyrado.environments.real_base.RealEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.real_base.RealEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class of all real-world Quanser environments in Pyrado</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ip</strong> – IP address of the platform</p></li>
+<li><p><strong>rcv_dim</strong> – number of dimensions of the sensor i.e. measurement signal (received from Simulink server)</p></li>
+<li><p><strong>snd_dim</strong> – number of dimensions of the action command (send to Simulink server)</p></li>
+<li><p><strong>dt</strong> – sampling time interval</p></li>
+<li><p><strong>max_steps</strong> – maximum number of time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.quanser.base.QuanserReal.act_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.act_space" title="Permalink to this definition">¶</a></dt>
@@ -338,6 +351,17 @@ When a terminal condition is met, the reset function is called.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QBallBalancerReal</span></span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_ball_balancer.html#QBallBalancerReal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.base.QuanserReal" title="pyrado.environments.quanser.base.QuanserReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.base.QuanserReal</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Class for the real Quanser Ball-Balancer</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – sampling frequency on the [Hz]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of steps executed on the device [-]</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>ip</strong> – IP address of the 2 DOF Ball-Balancer platform</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'qbb'</span></em><a class="headerlink" href="#pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal.name" title="Permalink to this definition">¶</a></dt>
@@ -368,6 +392,17 @@ The base version (re-)opens the socket and resets the task.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QCartPoleReal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'192.168.2.38'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleReal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.base.QuanserReal" title="pyrado.environments.quanser.base.QuanserReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.base.QuanserReal</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Base class for the real Quanser Cart-Pole</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – time step size on the Quanser device [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of steps executed on the device</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>ip</strong> – IP address of the Cart-Pole platform</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.calibrate">
 <span class="sig-name descname"><span class="pre">calibrate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleReal.calibrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.calibrate" title="Permalink to this definition">¶</a></dt>
@@ -404,6 +439,17 @@ The base version (re-)opens the socket and resets the task.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QCartPoleStabReal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'192.168.2.38'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleStabReal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal" title="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.quanser_cartpole.QCartPoleReal</span></code></a></p>
 <p>Stabilization task on the real Quanser Cart-Pole</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – time step size on the Quanser device [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of steps executed on the device</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>ip</strong> – IP address of the Cart-pole platform</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'qcp-st'</span></em><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal.name" title="Permalink to this definition">¶</a></dt>
@@ -431,6 +477,17 @@ The base version (re-)opens the socket and resets the task.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QCartPoleSwingUpReal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'192.168.2.38'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleSwingUpReal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal" title="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.quanser_cartpole.QCartPoleReal</span></code></a></p>
 <p>Swing-up task on the real Quanser Cart-Pole</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – time step size on the Quanser device [s]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of steps executed on the device</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>ip</strong> – IP address of the Cart-pole platform</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'qcp-su'</span></em><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal.name" title="Permalink to this definition">¶</a></dt>
@@ -461,6 +518,17 @@ The base version (re-)opens the socket and resets the task.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QSocket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_len</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_len</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">9095</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#QSocket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.QSocket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Handles the communication with Quarc (TCP/IP connection)</p>
+<p>Prepare socket for communication.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ip</strong> – IP address of the Windows PC</p></li>
+<li><p><strong>x_len</strong> – number of measured state variables to receive</p></li>
+<li><p><strong>u_len</strong> – number of control variables to send</p></li>
+<li><p><strong>port</strong> – port to connect to, see the server block in the Simulink models</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.quanser.quanser_common.QSocket.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#QSocket.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.QSocket.close" title="Permalink to this definition">¶</a></dt>
@@ -502,6 +570,18 @@ The base version (re-)opens the socket and resets the task.</p>
 <p class="admonition-title">Note</p>
 <p>This velocity filter class is currently not used since we now get the velocities from the Simulink model.</p>
 </div>
+<p>Initialize discrete filter coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_len</strong> – number of measured state variables to receive</p></li>
+<li><p><strong>num</strong> – continuous-time filter numerator (continuous time)</p></li>
+<li><p><strong>den</strong> – continuous-time filter denominator (continuous time)</p></li>
+<li><p><strong>dt</strong> – sampling time interval</p></li>
+<li><p><strong>x_init</strong> – initial observation of the signal to filter</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.quanser.quanser_common.VelocityFilter.set_initial_state">
 <span class="sig-name descname"><span class="pre">set_initial_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#VelocityFilter.set_initial_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.VelocityFilter.set_initial_state" title="Permalink to this definition">¶</a></dt>
@@ -521,6 +601,17 @@ Otherwise the filter would assume a very high velocity.
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">QQubeSwingUpReal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'192.168.2.17'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_qube.html#QQubeSwingUpReal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.base.QuanserReal" title="pyrado.environments.quanser.base.QuanserReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.base.QuanserReal</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Class for the real Quanser Qube a.k.a. Furuta pendulum</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> – sampling frequency on the Quanser device [Hz]</p></li>
+<li><p><strong>max_steps</strong> – maximum number of steps executed on the device [-]</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+<li><p><strong>ip</strong> – IP address of the Qube platform</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal.calibrate">
 <span class="sig-name descname"><span class="pre">calibrate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_qube.html#QQubeSwingUpReal.calibrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal.calibrate" title="Permalink to this definition">¶</a></dt>

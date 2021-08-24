@@ -36,6 +36,7 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -241,6 +242,15 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class for all policies in Pyrado</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.policies.base.Policy.device">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyrado.policies.base.Policy.device" title="Permalink to this definition">¶</a></dt>
@@ -374,6 +384,12 @@ Such modules have a reset() method to reset the hidden states.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TracedPolicyWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TracedPolicyWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Wrapper for a traced policy. Mainly used to add <cite>input_size</cite> and <cite>output_size</cite> attributes.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>module</strong> – non-recurrent network to wrap, which must not be a script module</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.base.TracedPolicyWrapper.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TracedPolicyWrapper.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.forward" title="Permalink to this definition">¶</a></dt>
@@ -405,6 +421,15 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TwoHeadedPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class for policies with a shared body and two separate heads.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.base.TwoHeadedPolicy.forward">
 <em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.forward" title="Permalink to this definition">¶</a></dt>
@@ -451,6 +476,15 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ATan2Feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx_sin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_cos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#ATan2Feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.ATan2Feat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Feature that computes the atan2 from two dimensions of the given input / observation.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx_sin</strong> – indices of the numerator, i.e. the sin-transformed observation dimension</p></li>
+<li><p><strong>idx_cos</strong> – indices of the denominator, i.e. the cos-transformed observation dimension</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -462,6 +496,13 @@ registered hooks while the latter silently ignores them.</p>
 <p class="admonition-title">Note</p>
 <p>We only consider 1-dim inputs.</p>
 </div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>feat_fcns</strong> – feature functions, each of them maps from a multi-dim input to a multi-dim output
+(e.g. <cite>identity_feat</cite>, <cite>squared_feat</cite>, exception: <cite>const_feat</cite>)</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.features.FeatureStack.get_num_feat">
 <span class="sig-name descname"><span class="pre">get_num_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_flat_dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack.get_num_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack.get_num_feat" title="Permalink to this definition">¶</a></dt>
@@ -483,6 +524,12 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MultFeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#MultFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.MultFeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Feature that multiplies two dimensions of the given input / observation</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idcs</strong> – indices of the dimensions to multiply</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -490,6 +537,20 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RBFFeat</span></span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Normalized Gaussian radial basis function features</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_feat_per_dim</strong> – number of radial basis functions, identical for every dimension of the input</p></li>
+<li><p><strong>bounds</strong> – lower and upper bound for the Gaussians’ centers, the input dimension is inferred from them</p></li>
+<li><p><strong>scale</strong> – scaling factor for the squared distance, if <cite>None</cite> the factor is determined such that two
+neighboring RBFs have a value of 0.2 at the other center</p></li>
+<li><p><strong>state_wise_norm</strong> – <cite>True</cite> to apply the normalization across input state dimensions separately (every
+dimension sums to one), or <cite>False</cite> to jointly normalize them</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the module to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.policies.features.RBFFeat.derivative">
 <span class="sig-name descname"><span class="pre">derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat.derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat.derivative" title="Permalink to this definition">¶</a></dt>
@@ -519,6 +580,24 @@ registered hooks while the latter silently ignores them.</p>
 <p class="admonition-title">See also</p>
 <p>[1] A. Rahimi and B. Recht “Random Features for Large-Scale Kernel Machines”, NIPS, 2007</p>
 </div>
+<dl class="simple">
+<dt>Gaussian kernel: <span class="math notranslate nohighlight">\(k(x,y) = \exp(-\sigma**2 / (2*d) * ||x-y||^2)\)</span></dt><dd><p>Sample from <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span> and scale the result by <span class="math notranslate nohighlight">\(\sigma / \sqrt{2*d}\)</span></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp_dim</strong> – flat dimension of the inputs i.e. the observations, called <span class="math notranslate nohighlight">\(d\)</span> in [1]</p></li>
+<li><p><strong>num_feat_per_dim</strong> – number of random Fourier features, called <span class="math notranslate nohighlight">\(D\)</span> in [1]. In contrast to the <cite>RBFFeat</cite>
+class, the output dimensionality, thus the number of associated policy parameters is
+<cite>num_feat_per_dim</cite> and not`num_feat_per_dim * inp_dim`.</p></li>
+<li><p><strong>bandwidth</strong> – scaling factor for the sampled frequencies. Pass a constant scalar value, for example
+<cite>env.obs_space.bound_up</cite>. According to [1] and the note above we should use d here.
+Actually, it is not a bandwidth since it is not a frequency.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the module to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
