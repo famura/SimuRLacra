@@ -26,14 +26,19 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import copy
+import functools
 import os.path as osp
-from functools import partial
 from math import ceil
+from typing import Union
 
+import numpy as np
 import pytest
+import torch as to
 import torch.nn as nn
 from tqdm import tqdm
 
+import pyrado
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.iteration import IterationTracker
 from pyrado.policies.feed_forward.dummy import DummyPolicy
@@ -48,6 +53,7 @@ from pyrado.utils.checks import (
     check_all_shapes_equal,
     check_all_types_equal,
     is_iterator,
+    is_sequence,
 )
 from pyrado.utils.data_processing import (
     MinMaxScaler,
@@ -58,7 +64,14 @@ from pyrado.utils.data_processing import (
     normalize,
     scale_min_max,
 )
-from pyrado.utils.data_types import *
+from pyrado.utils.data_types import (
+    DSSpec,
+    LinDSSpec,
+    MSDDSSpec,
+    merge_dicts,
+    repeat_interleave,
+    update_matching_keys_recursively,
+)
 from pyrado.utils.functions import noisy_nonlin_fcn, skyline
 from pyrado.utils.input_output import completion_context, print_cbt_once
 from pyrado.utils.math import cosine_similarity, cov, logmeanexp, numerical_differentiation_coeffs, rmse
@@ -102,7 +115,7 @@ def test_concat_rollouts(env, expl_strat):
     "x, y",
     [
         (to.tensor([1.0, 2.0, 3.0]), to.tensor([1.0, 2.0, 3.0])),
-        (to.tensor([1.0, 0.0, 1.0]), to.tensor([1.0, 1e12, 1.0])),
+        (to.tensor([1.0, 0.0, 1.0]), to.tensor([1.0, 1000.0, 1.0])),
         (to.tensor([0.0, 0.0, 0.0]), to.tensor([1.0, 2, 3.0])),
         (to.tensor([1.0, 2.0, 3.0]), to.tensor([2.0, 4.0, 6.0])),
         (to.tensor([1.0, 2.0, 3.0]), to.tensor([-1.0, -2.0, -3.0])),
@@ -384,19 +397,16 @@ def test_running_normalizer(data_seq):
         assert (data_norm <= 1).all()
 
 
-@pytest.mark.parametrize(
-    "x",
-    [
-        to.rand(1000, 1),
-        to.rand(1, 1000),
-        to.rand(1000, 1000),
-        np.random.rand(1, 1000),
-        np.random.rand(1000, 1),
-        np.random.rand(1000, 1000),
-    ],
-    ids=["to_1x1000", "to_1000x1", "to_1000x1000", "np_1x1000", "np_1000x1", "np_1000x1000"],
-)
-def test_stateful_standardizer(x):
+@pytest.mark.parametrize("data_type", ["numpy", "torch"], ids=["numpy", "torch"])
+@pytest.mark.parametrize("shape", [(1000, 1), (1, 1000), (1000, 1000)], ids=["1x1000", "1000x1", "1000x1000"])
+def test_stateful_standardizer(data_type: str, shape: tuple):
+    pyrado.set_seed(0)
+
+    if data_type == "numpy":
+        x = 100 * np.random.rand(*shape)
+    elif data_type == "torch":
+        x = 100 * to.rand(shape)
+
     ss = Standardizer()
 
     if isinstance(x, to.Tensor):
@@ -499,7 +509,7 @@ def test_gss_optimizer_functional():
     assert to.norm(dummy.x + 4) < 1e-4
 
 
-@pytest.mark.visualization
+@pytest.mark.visual
 def test_gss_optimizer_nlin_fcn():
     from matplotlib import pyplot as plt
 
@@ -514,7 +524,7 @@ def test_gss_optimizer_nlin_fcn():
     )  # [.25, .75]
     x = nn.Parameter(to.tensor([x_init]), requires_grad=False)
     optim = GSS([x], param_min=x_grid.min().unsqueeze(0), param_max=x_grid.max().unsqueeze(0))
-    obj_fcn = partial(noisy_nonlin_fcn, x=x, f=f, noise_std=noise_std)
+    obj_fcn = functools.partial(noisy_nonlin_fcn, x=x, f=f, noise_std=noise_std)
     num_epochs = 10
 
     # Init plotting
@@ -770,3 +780,21 @@ def test_iteration_tracker():
 def test_correct_atleast_2d(x):
     x_corrected = correct_atleast_2d(x)
     assert x_corrected.shape[0] == len(x)
+
+
+@pytest.mark.parametrize("base", [dict(a=1, b=np.ones(3), c=dict(c1=2.0, c2=4), y=None, z=26)])
+@pytest.mark.parametrize("updater", [dict(a=11, b=np.ones(33), c=dict(c1=22.0), x=13, y=None)])
+def test_update_matching_keys_recursively(base, updater):
+    base = copy.deepcopy(base)
+    update_matching_keys_recursively(base, updater)
+
+    # Check unchanged
+    assert base["y"] is None
+    assert base["z"] == 26
+    assert base["c"]["c2"] == 4
+    assert base.get("x", None) == 13
+
+    # Check shallow changed
+    assert base["a"] == updater["a"]
+    assert np.all(base["b"] == updater["b"])
+    assert base["c"]["c1"] == updater["c"]["c1"]

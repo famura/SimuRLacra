@@ -67,6 +67,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_rollout_sampler import (
+    NO_SEED,
     _ps_init,
     _ps_run_one_domain_param,
     _ps_run_one_init_state,
@@ -78,7 +79,12 @@ from pyrado.spaces.singular import SingularStateSpace
 
 
 def eval_domain_params(
-    pool: SamplerPool, env: SimEnv, policy: Policy, params: List[Dict], init_state: Optional[np.ndarray] = None
+    pool: SamplerPool,
+    env: SimEnv,
+    policy: Policy,
+    params: List[Dict],
+    init_state: Optional[np.ndarray] = None,
+    seed: int = NO_SEED,
 ) -> List[StepSequence]:
     """
     Evaluate a policy on a multidimensional grid of domain parameters.
@@ -99,7 +105,8 @@ def eval_domain_params(
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(functools.partial(_ps_run_one_domain_param, eval=True), params, pb)
+        # we set the sub seed to zero since every run will have its personal sub sub seed
+        return pool.run_map(functools.partial(_ps_run_one_domain_param, eval=True, seed=seed, sub_seed=0), params, pb)
 
 
 def eval_nominal_domain(
@@ -154,6 +161,7 @@ def eval_domain_params_with_segmentwise_reset(
     policy: Policy,
     segments_real_all: List[List[StepSequence]],
     domain_params_ml_all: List[List[dict]],
+    stop_on_done: bool,
     use_rec: bool,
 ) -> List[List[StepSequence]]:
     """
@@ -165,6 +173,9 @@ def eval_domain_params_with_segmentwise_reset(
     :param policy: policy to evaluate
     :param segments_real_all: all segments from the target domain rollout
     :param domain_params_ml_all: all domain parameters to evaluate over
+    :param stop_on_done: if `True`, the rollouts are stopped as soon as they hit the state or observation space
+                             boundaries. This behavior is save, but can lead to short trajectories which are eventually
+                             padded with zeroes. Chose `False` to ignore the boundaries (dangerous on the real system).
     :param use_rec: `True` if pre-recorded actions have been used to generate the rollouts
     :return: list of segments of rollouts
     """
@@ -191,6 +202,7 @@ def eval_domain_params_with_segmentwise_reset(
                     _ps_run_one_reset_kwargs_segment,
                     init_state=segment_real.states[0, :],
                     len_segment=segment_real.length,
+                    stop_on_done=stop_on_done,
                     use_rec=use_rec,
                     idx_r=idx_r,
                     cnt_step=cnt_step,
@@ -201,7 +213,7 @@ def eval_domain_params_with_segmentwise_reset(
             for sdp in segments_dp:
                 assert np.allclose(sdp.states[0, :], segment_real.states[0, :])
                 if use_rec:
-                    check_act_equal(segment_real, sdp)
+                    check_act_equal(segment_real, sdp, check_applied=hasattr(sdp, "actions_applied"))
 
             # Increase step counter for next segment, and append all domain parameter segments
             cnt_step += segment_real.length

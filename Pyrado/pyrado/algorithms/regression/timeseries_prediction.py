@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import torch as to
@@ -35,6 +35,7 @@ from torch import optim
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
@@ -249,7 +250,7 @@ class TSPred(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._policy, "policy.pt", self.save_dir, use_state_dict=True)
+            pyrado.save(self._policy, "policy.pt", self.save_dir, use_state_dict=False)
             pyrado.save(self.dataset, "dataset.pt", self.save_dir)
         else:
             # This algorithm instance is a subroutine of another algorithm
@@ -259,7 +260,7 @@ class TSPred(Algorithm):
                 self.save_dir,
                 prefix=meta_info.get("prefix", ""),
                 suffix=meta_info.get("suffix", ""),
-                use_state_dict=True,
+                use_state_dict=False,
             )
             pyrado.save(
                 self.dataset,
@@ -268,6 +269,12 @@ class TSPred(Algorithm):
                 prefix=meta_info.get("prefix", ""),
                 suffix=meta_info.get("suffix", ""),
             )
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        policy = pyrado.load(f"{parsed_args.policy_name}.pt", ex_dir, verbose=True)
+        extra = dict(dataset=pyrado.load("dataset.pt", ex_dir))
+        return None, policy, extra
 
     @staticmethod
     def evaluate(

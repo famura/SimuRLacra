@@ -1,19 +1,21 @@
 """
-Simple script which runs SNPE-A with one fixed observation.
+Script to identify the domain parameters of the Pendulum environment using BayesSim
 """
 
 from copy import deepcopy
 
 import numpy as np
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 
 import pyrado
 from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import IdlePolicy
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -40,16 +42,16 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=400)
-    env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+    env_hparam = dict(dt=1 / 100.0, max_steps=400)
+    env_sim = OneMassOscillatorSim(**env_hparam, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake ground truth target domain
     num_real_rollouts = 2
     env_real = deepcopy(env_sim)
     # randomizer = DomainRandomizer(
-    #     NormalDomainParam(name="m", mean=0.8, std=0.8 / 50),
-    #     NormalDomainParam(name="k", mean=33.0, std=33 / 50),
-    #     NormalDomainParam(name="d", mean=0.3, std=0.3 / 50),
+    #     NormalDomainParam(name="mass", mean=0.8, std=0.8 / 50),
+    #     NormalDomainParam(name="stiffness", mean=33.0, std=33 / 50),
+    #     NormalDomainParam(name="damping", mean=0.3, std=0.3 / 50),
     # )
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
     # env_real.fill_buffer(num_real_rollouts)
@@ -59,15 +61,23 @@ if __name__ == "__main__":
     policy = IdlePolicy(env_sim.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "m", 1: "k", 2: "d"}
+    dp_mapping = {0: "mass", 1: "stiffness", 2: "damping"}
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()  # m=1.0, k=30.0, d=0.5
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m"] * 0.5, dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
-        high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
+        low=to.tensor([dp_nom["mass"] * 0.5, dp_nom["stiffness"] * 0.5, dp_nom["damping"] * 0.5]),
+        high=to.tensor([dp_nom["mass"] * 1.5, dp_nom["stiffness"] * 1.5, dp_nom["damping"] * 1.5]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
+
+    # Time series embedding
+    embedding_hparam = dict(downsampling_factor=1)
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
+
+    # Time series embedding
+    embedding_hparam = dict(downsampling_factor=1)
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (mixture of Gaussians)
     posterior_hparam = dict(model="mdn", num_components=5)
@@ -79,8 +89,8 @@ if __name__ == "__main__":
         num_segments=args.num_segments,
         len_segments=args.len_segments,
         num_sbi_rounds=4,
-        downsampling_factor=1,
         num_eval_samples=100,
+        stop_on_done=False,
         subrtn_sbi_training_hparam=dict(
             training_batch_size=50,  # default: 50
             learning_rate=5e-4,  # default: 5e-4
@@ -100,14 +110,16 @@ if __name__ == "__main__":
         policy=policy,
         dp_mapping=dp_mapping,
         prior=prior,
+        embedding=embedding,
         **algo_hparam,
     )
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy_name=policy.name),
         dict(prior=prior_hparam),
+        dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(posterior_nn=posterior_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

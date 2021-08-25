@@ -26,13 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from operator import itemgetter
-from typing import List, Union, ValuesView
-
-import numpy as np
-
 import pyrado
 from pyrado.sampling.sbi_embeddings import (
+    AllStepsEmbedding,
     BayesSimEmbedding,
     DeltaStepsEmbedding,
     DynamicTimeWarpingEmbedding,
@@ -41,7 +37,6 @@ from pyrado.sampling.sbi_embeddings import (
     RNNEmbedding,
 )
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
-from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -65,6 +60,8 @@ def create_embedding(name: str, env_spec: EnvSpec, *args, **kwargs) -> Embedding
         embedding = DynamicTimeWarpingEmbedding(env_spec, RolloutSamplerForSBI.get_dim_data(env_spec), *args, **kwargs)
     elif name == RNNEmbedding.name:
         embedding = RNNEmbedding(env_spec, RolloutSamplerForSBI.get_dim_data(env_spec), *args, **kwargs)
+    elif name == AllStepsEmbedding.name:
+        embedding = AllStepsEmbedding(env_spec, RolloutSamplerForSBI.get_dim_data(env_spec), *args, **kwargs)
     else:
         raise pyrado.ValueErr(
             given_name=name,
@@ -73,31 +70,3 @@ def create_embedding(name: str, env_spec: EnvSpec, *args, **kwargs) -> Embedding
         )
 
     return embedding
-
-
-def check_domain_params(
-    rollouts: Union[List[StepSequence], StepSequence],
-    domain_param_value: np.ndarray,
-    domain_param_names: Union[List[str], ValuesView],
-):
-    """
-    Verify if the domain parameters in the rollout are actually the ones commanded.
-
-    :param rollouts: simulated rollouts or rollout segments
-    :param domain_param_value: one set of domain parameters as commanded
-    :param domain_param_names: names of the domain parameters to set, i.e. values of the domain parameter mapping
-    """
-    if isinstance(rollouts, StepSequence):
-        rollouts = [rollouts]
-
-    if not all(
-        [
-            np.allclose(
-                np.asarray(itemgetter(*domain_param_names)(ro.rollout_info["domain_param"])), domain_param_value
-            )
-            for ro in rollouts
-        ]
-    ):
-        raise pyrado.ValueErr(
-            msg="The domain parameters after the rollouts are not identical to the ones commanded by the sbi!"
-        )

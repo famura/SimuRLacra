@@ -30,7 +30,7 @@ import numpy as np
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.quanser import max_act_qbb
+from pyrado.environments.quanser import MAX_ACT_QBB
 from pyrado.environments.quanser.base import QuanserReal
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
@@ -75,7 +75,7 @@ class QBallBalancerReal(QuanserReal, Serializable):
             labels=["theta_x", "theta_y", "x", "y", "theta_dot_x", "theta_dot_y", "x_dot", "y_dot"],
         )
         self._obs_space = self._state_space
-        self._act_space = BoxSpace(-max_act_qbb, max_act_qbb, labels=["V_x", "V_y"])
+        self._act_space = BoxSpace(-MAX_ACT_QBB, MAX_ACT_QBB, labels=["V_x", "V_y"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

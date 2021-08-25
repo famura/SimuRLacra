@@ -122,10 +122,10 @@ if __name__ == "__main__":
 
     # Subroutine
     subrtn_hparam = dict(
-        max_iter=15,
-        pop_size=100,
-        num_is_samples=10,
-        num_init_states_per_domain=4,
+        max_iter=20,
+        pop_size=80,
+        num_is_samples=20,
+        num_init_states_per_domain=1,
         num_domains=10,
         expl_std_init=np.pi / 24,
         expl_std_min=0.01,
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
     save_dicts_to_yaml(
         dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
+        dict(policy=policy_hparam, policy_name=policy.name),
         dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map),
         save_dir=ex_dir,

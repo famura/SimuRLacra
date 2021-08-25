@@ -25,3 +25,11 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
+try:
+    from gym.envs.registration import register
+except ImportError:
+    pass
+else:
+    # If gym is present, register pysim wrapper
+    register(id="SimulacraPySimEnv-v0", entry_point="pyrado.environments.pysim.gym_wrapper:PysimGymWrapper")

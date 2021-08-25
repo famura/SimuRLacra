@@ -49,6 +49,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
 from pyrado.logger.experiment import ask_for_experiment, save_dicts_to_yaml
 from pyrado.sampling.parallel_evaluation import eval_domain_params
+from pyrado.sampling.parallel_rollout_sampler import NO_SEED
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import dict_arraylike_to_float
@@ -73,30 +74,30 @@ def evaluate_policy(args, ex_dir):
         # Use nominal values for all other parameters.
         for param, nominal_value in env.get_nominal_domain_param().items():
             param_spec[param] = nominal_value
-        # param_spec["g"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
-        param_spec["Dp"] = np.linspace(0.0, 0.0001, num=eval_num, endpoint=True)
-        param_spec["Dr"] = np.linspace(0.0, 0.0006, num=eval_num, endpoint=True)
+        # param_spec["gravity_const"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
+        param_spec["damping_pend_pole"] = np.linspace(0.0, 0.0001, num=eval_num, endpoint=True)
+        param_spec["damping_rot_pole"] = np.linspace(0.0, 0.0006, num=eval_num, endpoint=True)
         param_spec_dim = 2
 
     elif isinstance(inner_env(env), QBallBalancerSim):
-        # param_spec["g"] = np.linspace(7.91, 11.91, num=11, endpoint=True)
-        # param_spec["m_ball"] = np.linspace(0.003, 0.3, num=11, endpoint=True)
-        # param_spec["r_ball"] = np.linspace(0.01, 0.1, num=11, endpoint=True)
-        param_spec["l_plate"] = np.linspace(0.275, 0.275, num=11, endpoint=True)
-        param_spec["r_arm"] = np.linspace(0.0254, 0.0254, num=11, endpoint=True)
-        # param_spec["J_l"] = np.linspace(5.2822e-5*0.5, 5.2822e-5*1.5, num=11, endpoint=True)
-        # param_spec["J_m"] = np.linspace(4.6063e-7*0.5, 4.6063e-7*1.5, num=11, endpoint=True)
-        # param_spec["K_g"] = np.linspace(60, 80, num=11, endpoint=True)
-        # param_spec["eta_g"] = np.linspace(0.6, 1.0, num=11, endpoint=True)
-        # param_spec["eta_m"] = np.linspace(0.49, 0.89, num=11, endpoint=True)
-        # param_spec["k_m"] = np.linspace(0.006, 0.066, num=11, endpoint=True)
-        # param_spec["R_m"] = np.linspace(2.6*0.5, 2.6*1.5, num=11, endpoint=True)
-        # param_spec["B_eq"] = np.linspace(0.0, 0.05, num=11, endpoint=True)
-        # param_spec["c_frict"] = np.linspace(0, 0.015, num=11, endpoint=True)
-        # param_spec["V_thold_x_pos"] = np.linspace(0.0, 1.0, num=11, endpoint=True)
-        # param_spec["V_thold_x_neg"] = np.linspace(-1., 0.0, num=11, endpoint=True)
-        # param_spec["V_thold_y_pos"] = np.linspace(0.0, 1.0, num=11, endpoint=True)
-        # param_spec["V_thold_y_neg"] = np.linspace(-1.0, 0, num=11, endpoint=True)
+        # param_spec["gravity_const"] = np.linspace(7.91, 11.91, num=11, endpoint=True)
+        # param_spec["ball_mass"] = np.linspace(0.003, 0.3, num=11, endpoint=True)
+        # param_spec["ball_radius"] = np.linspace(0.01, 0.1, num=11, endpoint=True)
+        param_spec["plate_length"] = np.linspace(0.275, 0.275, num=11, endpoint=True)
+        param_spec["arm_radius"] = np.linspace(0.0254, 0.0254, num=11, endpoint=True)
+        # param_spec["load_inertia"] = np.linspace(5.2822e-5*0.5, 5.2822e-5*1.5, num=11, endpoint=True)
+        # param_spec["motor_inertia"] = np.linspace(4.6063e-7*0.5, 4.6063e-7*1.5, num=11, endpoint=True)
+        # param_spec["gear_ratio"] = np.linspace(60, 80, num=11, endpoint=True)
+        # param_spec["gear_efficiency"] = np.linspace(0.6, 1.0, num=11, endpoint=True)
+        # param_spec["motor_efficiency"] = np.linspace(0.49, 0.89, num=11, endpoint=True)
+        # param_spec["motor_back_emf"] = np.linspace(0.006, 0.066, num=11, endpoint=True)
+        # param_spec["motor_resistance"] = np.linspace(2.6*0.5, 2.6*1.5, num=11, endpoint=True)
+        # param_spec["combined_damping"] = np.linspace(0.0, 0.05, num=11, endpoint=True)
+        # param_spec["friction_coeff"] = np.linspace(0, 0.015, num=11, endpoint=True)
+        # param_spec["voltage_thold_x_pos"] = np.linspace(0.0, 1.0, num=11, endpoint=True)
+        # param_spec["voltage_thold_x_neg"] = np.linspace(-1., 0.0, num=11, endpoint=True)
+        # param_spec["voltage_thold_y_pos"] = np.linspace(0.0, 1.0, num=11, endpoint=True)
+        # param_spec["voltage_thold_y_neg"] = np.linspace(-1.0, 0, num=11, endpoint=True)
         # param_spec["offset_th_x"] = np.linspace(-5/180*np.pi, 5/180*np.pi, num=11, endpoint=True)
         # param_spec["offset_th_y"] = np.linspace(-5/180*np.pi, 5/180*np.pi, num=11, endpoint=True)
 
@@ -120,13 +121,14 @@ def evaluate_policy(args, ex_dir):
     # Create sampler
     pool = SamplerPool(args.num_workers)
     if args.seed is not None:
-        pool.set_seed(args.seed)
         print_cbt(f"Set the random number generators' seed to {args.seed}.", "w")
+        seed = args.seed
     else:
         print_cbt("No seed was set", "y")
+        seed = NO_SEED
 
     # Sample rollouts
-    ros = eval_domain_params(pool, env, policy, param_list, init_state)
+    ros = eval_domain_params(pool, env, policy, param_list, init_state, seed=seed)
 
     # Compute metrics
     lod = []
@@ -181,7 +183,7 @@ if __name__ == "__main__":
         g_ex_dirs = [tmp[0] for tmp in os.walk(g_args.dir, followlinks=True) if "policy.pt" in tmp[2]]
 
     elif g_args.dir is None:
-        g_ex_dirs = [ask_for_experiment(hparam_list=g_args.show_hyperparameters, max_display=50)]
+        g_ex_dirs = [ask_for_experiment(hparam_list=g_args.show_hparams, max_display=50)]
 
     else:
         g_ex_dirs = [g_args.dir]

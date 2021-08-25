@@ -35,12 +35,13 @@ from torch.distributions import MultivariateNormal
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.stopping_criteria.predefined_criteria import ToggleableStoppingCriterion
-from pyrado.algorithms.stopping_criteria.rollout_based_criteria import ConvergenceStoppingCriterion
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.utils import RolloutSavingWrapper, until_thold_exceeded
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environments.base import Env
+from pyrado.policies.base import Policy
 
 
 class MultivariateNormalWrapper:
@@ -279,7 +280,6 @@ class SPRL(Algorithm):
         optimize_mean: bool = True,
         optimize_cov: bool = True,
         max_subrtn_retries: int = 1,
-        context_changed_threshold: float = 0.0001,
     ):
         """
         Constructor
@@ -298,10 +298,6 @@ class SPRL(Algorithm):
         :param optimize_cov: whether the (co-)variance should be changed or considered fixed
         :param max_subrtn_retries: how often a failed (median performance < 30 % of performance_lower_bound)
                                    training attempt of the subroutine should be reattempted
-        :param context_changed_threshold: how different either mean/cov of the context distribution have to be to be
-                                          considered different (w.r.t. the Euclidean norm); used for suppressing the
-                                          reset of the convergence criterion of the subroutine if the context did not
-                                          change much to detect convergence; defaults to `0.0001`
         """
         if not isinstance(subroutine, Algorithm):
             raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
@@ -317,12 +313,6 @@ class SPRL(Algorithm):
         self._subroutine = subroutine
         self._subroutine.sampler = RolloutSavingWrapper(subroutine.sampler)
         self._subroutine.save_name = self._subroutine.name
-        self._subroutine_crit = ConvergenceStoppingCriterion()
-        self._subroutine_crit_toggle = ToggleableStoppingCriterion(met=False)
-        # Evaluate the toggle criterion _after_ the convergence criterion to ensure the latter gets the rollouts.
-        self._subroutine.stopping_criterion = self._subroutine.stopping_criterion | (
-            self._subroutine_crit & self._subroutine_crit_toggle
-        )
 
         self._env = env
 
@@ -337,7 +327,6 @@ class SPRL(Algorithm):
 
         self._optimize_mean = optimize_mean
         self._optimize_cov = optimize_cov
-        self._context_changed_threshold = context_changed_threshold
 
         self._max_subrtn_retries = max_subrtn_retries
 
@@ -372,15 +361,11 @@ class SPRL(Algorithm):
             self.logger.add_value(f"cur context mean for {param.name}", param.context_mean.item())
             self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
 
-        dim = context_mean.shape[0]
-
         # If we are in the first iteration and have a bad performance,
         # we want to completely reset the policy if training is unsuccessful
-        reset_policy = self.curr_iter == 0
-        if reset_policy:
-            self._subroutine_crit_toggle.off()
-        else:
-            self._subroutine_crit_toggle.on()
+        reset_policy = False
+        if self.curr_iter == 0:
+            reset_policy = True
         until_thold_exceeded(self._performance_lower_bound * 0.3, self._max_subrtn_retries)(
             self._train_subroutine_and_evaluate_perf
         )(snapshot_mode, meta_info, reset_policy)
@@ -555,6 +540,18 @@ class SPRL(Algorithm):
             # This algorithm instance is not a subroutine of another algorithm
             self._subroutine.save_snapshot(meta_info)
 
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        if isinstance(self._subroutine, ActorCritic):
+            ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+            extra["vfcn"] = pyrado.load(
+                f"{parsed_args.vfcn_name}.pt", ex_dir, obj=self._subroutine.critic.vfcn, verbose=True
+            )
+
+        return env, policy, extra
+
     def _compute_expected_performance(
         self, distribution: MultivariateNormalWrapper, context: to.Tensor, old_log_prop: to.Tensor, values: to.Tensor
     ) -> to.Tensor:
@@ -567,35 +564,15 @@ class SPRL(Algorithm):
         the optimization step and the general algorithm settings."""
         for i, param in enumerate(self._spl_parameters):
             if self._optimize_mean:
-                new_mean = to.tensor(result[i : i + param.dim])
-            else:
-                new_mean = None
-
+                param.adapt("context_mean", to.tensor(result[i : i + param.dim]))
             if self._optimize_cov and self._optimize_mean:
                 pointer = i + param.dim * len(self._spl_parameters)
-                new_cov = to.tensor(result[pointer : pointer + param.dim])
+                param.adapt("context_cov_chol_flat", to.tensor(result[pointer : pointer + param.dim]))
             elif self._optimize_cov:
-                new_cov = to.tensor(result[i : i + param.dim])
-            else:
-                new_cov = None
-
-            old_mean = param.context_mean
-            old_cov = param.context_cov_chol_flat
-            if new_mean is not None:
-                param.adapt("context_mean", new_mean)
-            if new_cov is not None:
-                param.adapt("context_cov_chol_flat", new_cov)
-
-            # If the context did not change much w.r.t. the Euclidean norm, suppress resetting the internal state of the
-            # stopping criterion to detect convergence across different PPO iterations. The threshold is a
-            # hyperparameter and might has to be hand-tuned!
-            diff_mean = 0.0 if new_mean is None else np.linalg.norm(new_mean - old_mean).item()
-            diff_cov = 0.0 if new_cov is None else np.linalg.norm(new_cov - old_cov).item()
-            if not (diff_mean > self._context_changed_threshold or diff_cov > self._context_changed_threshold):
-                self._subroutine_crit.suppress_next_reset()
+                param.adapt("context_cov_chol_flat", to.tensor(result[i : i + param.dim]))
 
     def _train_subroutine_and_evaluate_perf(
-        self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False
+        self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False, **kwargs
     ) -> float:
         """
         Internal method required by the `until_thold_exceeded` function.
@@ -611,4 +588,4 @@ class SPRL(Algorithm):
         self._subroutine.train(snapshot_mode, None, meta_info)
         rollouts_all = self._subroutine.sampler.rollouts
         x = np.median([[ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts]])
-        return x.item()
+        return x

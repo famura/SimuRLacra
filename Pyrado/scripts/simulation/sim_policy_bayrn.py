@@ -34,12 +34,12 @@ import os.path as osp
 
 import joblib
 import numpy as np
+import prettyprinter
 import torch as to
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
 import pyrado
-from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.sampling.rollout import after_rollout_query, rollout
@@ -51,18 +51,23 @@ from pyrado.utils.ordering import natural_sort
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.set_defaults(animation=True)  # different default value for this script
+    args = parser.parse_args()
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
     # Load the environment randomizer
-    env_sim = joblib.load(osp.join(ex_dir, "env_sim.pkl"))
+    env_sim = pyrado.load("env_sim.pkl", ex_dir)
     hparam = load_dict_from_yaml(osp.join(ex_dir, "hyperparams.yaml"))
 
     # Override the time step size if specified
     if args.dt is not None:
         env_sim.dt = args.dt
+
+    # Use the environments number of steps in case of the default argument (inf)
+    max_steps = env_sim.max_steps if args.max_steps == pyrado.inf else args.max_steps
 
     # Crawl through the given directory and check how many init policies and candidates there are
     found_policies, found_cands = None, None
@@ -119,10 +124,10 @@ if __name__ == "__main__":
             ro = rollout(
                 env_sim,
                 policy,
-                render_mode=RenderMode(video=True),
+                render_mode=RenderMode(video=args.animation, render=args.render),
                 eval=True,
                 reset_kwargs=dict(domain_param=param, init_state=state),
             )  # calls env.reset()
-            print_domain_params(env_sim.domain_param)
+            prettyprinter.pprint(param)
             print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
             done, state, param = after_rollout_query(env_sim, policy, ro)

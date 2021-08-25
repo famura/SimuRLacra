@@ -69,8 +69,8 @@ if __name__ == "__main__":
     descr = f"_{args.max_steps}st_{args.freq}Hz"
 
     # Environment
-    env_hparams = dict(dt=1 / args.freq, max_steps=args.max_steps)
-    env_real = QQubeSwingUpSim(**env_hparams)
+    env_hparam = dict(dt=1 / args.freq, max_steps=args.max_steps)
+    env_real = QQubeSwingUpSim(**env_hparam)
     ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PDDR.name}_{QQubeSwingUpAndBalanceCtrl.name}{descr}")
 
     if args.train_teachers:
@@ -137,20 +137,20 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=args.max_iter,
         min_steps=args.max_steps,
-        num_cpu=12,
         std_init=0.15,
         num_epochs=args.num_epochs,
         num_teachers=args.num_teachers,
         teacher_policy=teacher_policy,
         teacher_algo=teacher_algo,
         teacher_algo_hparam=teacher_algo_hparam,
+        num_workers=12,
     )
 
     algo = PDDR(ex_dir, env_real, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

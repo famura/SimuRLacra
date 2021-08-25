@@ -48,8 +48,8 @@ namespace Rcs
  *   Linear friction coefficient
  *   Unit: m, multiply unitless coefficient with contact surface curvature.
  *
- * Vortex only (see vortex documentation for details):
- * - slip
+ * Vortex only (see the Vortex documentation for details):
+ * - (if bullet is not using the default solver) slip
  * - compliance
  */
 class PPDMaterialProperties : public PhysicsParameterDescriptor
@@ -58,7 +58,6 @@ public:
     PPDMaterialProperties();
     
     virtual ~PPDMaterialProperties();
-    
     
     virtual void getValues(PropertySink* outValues);
     

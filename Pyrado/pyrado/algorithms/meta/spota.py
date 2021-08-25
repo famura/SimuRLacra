@@ -29,7 +29,7 @@
 import csv
 import os.path as osp
 import sys
-from typing import Optional
+from typing import Optional, Tuple
 from warnings import warn
 
 import joblib
@@ -44,7 +44,9 @@ from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppi
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
+from pyrado.policies.base import Policy
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
@@ -129,7 +131,9 @@ class SPOTA(InterruptableAlgorithm):
             raise pyrado.TypeErr(given=subrtn_refs, expected_type=Algorithm)
 
         # Call InterruptableAlgorithm's constructor without specifying the policy
-        super().__init__(num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=None, logger=logger)
+        super().__init__(
+            num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=subrtn_cand.policy, logger=logger
+        )
 
         # Get the randomized environment (recommended to make it the most outer one in the chain)
         self.env_dr = typed_env(env, DomainRandWrapperBuffer)
@@ -171,6 +175,10 @@ class SPOTA(InterruptableAlgorithm):
     def subroutine_cand(self) -> Algorithm:
         """Get the candidate subroutine."""
         return self._subrtn_cand
+
+    @property
+    def policy(self) -> Policy:
+        return self._subrtn_cand.policy
 
     @property
     def sample_count(self) -> int:
@@ -219,7 +227,7 @@ class SPOTA(InterruptableAlgorithm):
             nc, _ = self.seq_cand(self.nc_init, self._curr_iter, dtype=int)
             self._adapt_batch_size(self._subrtn_cand, nc)
             self._compute_candidate(nc)
-            self._subrtn_cand.save_snapshot(meta_info=dict(suffix="cand"))
+            self._subrtn_cand.save_snapshot(meta_info=None)  # overwrites policy.pt (and vfcn.pt ect)
             self.reached_checkpoint()  # setting counter to 1
 
         nr, _ = self.seq_ref(self.nr_init, self._curr_iter, dtype=int)
@@ -227,7 +235,6 @@ class SPOTA(InterruptableAlgorithm):
             # Reference solutions
             self._adapt_batch_size(self._subrtn_refs, nr)
             self._compute_references(nr, self.nG)
-            self._subrtn_refs.save_snapshot(meta_info=dict(suffix="refs"))
             self.reached_checkpoint()  # setting counter to 2
 
         if self.curr_checkpoint == 2:
@@ -373,7 +380,9 @@ class SPOTA(InterruptableAlgorithm):
         for k in range(self.nG):
             print_cbt(f"Estimating the UCBOG | Reference {k + 1} of {self.nG} ...", "c")
             # Load the domain parameters corresponding to the k-th reference solution
-            env_params_ref = joblib.load(osp.join(self.save_dir, f"iter_{self._curr_iter}_env_params_ref_{k}.pkl"))
+            env_params_ref = pyrado.load(
+                "env_params.pkl", self._save_dir, prefix=f"iter_{self._curr_iter}", suffix=f"ref_{k}"
+            )
             self.env_dr.buffer = env_params_ref
 
             # Load the policies (makes a difference for snapshot_mode = best)
@@ -425,7 +434,13 @@ class SPOTA(InterruptableAlgorithm):
         else:
             # Apply bootstrapping
             m_bs, ci_bs_lo, ci_bs_up = bootstrap_ci(
-                np.ravel(self.Gn_diffs), np.mean, self.num_bs_reps, self.alpha, 1, self.studentized_ci
+                np.ravel(self.Gn_diffs),
+                np.mean,
+                self.num_bs_reps,
+                self.alpha,
+                1,
+                bias_correction=False,
+                studentized=self.studentized_ci,
             )
             print(f"m_bs: {m_bs}, ci_bs: {ci_bs_lo, ci_bs_up}")
             print_cbt(f"\nOG (point estimate): {Gn_est} \nUCBOG: {ci_bs_up}\n", "y", bright=True)
@@ -509,3 +524,28 @@ class SPOTA(InterruptableAlgorithm):
             pyrado.save(self.env_dr.randomizer, "randomizer.pkl", self.save_dir)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        extra = dict()
+
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        if getattr(env, "randomizer", None) is not None:
+            if not isinstance(env, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperBuffer)
+            typed_env(env, DomainRandWrapperBuffer).fill_buffer(10)
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}\nand filled it with 10 random instances.", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
+
+        # Policy
+        policy = pyrado.load(f"{parsed_args.policy_name}.pt", ex_dir, obj=self.subroutine_cand.policy, verbose=True)
+
+        # Algorithm specific
+        if isinstance(self.subroutine_cand, ActorCritic):
+            extra["vfcn"] = pyrado.load(
+                f"{parsed_args.vfcn_name}.pt", ex_dir, obj=self.subroutine_cand.critic.vfcn, verbose=True
+            )
+
+        return env, policy, extra

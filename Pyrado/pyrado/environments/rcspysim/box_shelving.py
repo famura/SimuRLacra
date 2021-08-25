@@ -97,7 +97,7 @@ class BoxShelvingSim(RcsSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,
@@ -159,7 +159,7 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,
@@ -262,7 +262,7 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,

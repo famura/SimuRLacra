@@ -104,7 +104,7 @@ class BallInTubeSim(RcsSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,
@@ -181,7 +181,7 @@ class BallInTubeIKSim(BallInTubeSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,
@@ -218,7 +218,7 @@ class BallInTubePosIKActivationSim(BallInTubeSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,
@@ -276,7 +276,7 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,
@@ -364,7 +364,7 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeCollisionCost: bool = True,
                        observeVelocities: bool = True,

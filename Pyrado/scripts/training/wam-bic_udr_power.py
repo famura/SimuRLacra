@@ -29,7 +29,7 @@
 """
 Train an agent to solve the WAM Ball-in-cup environment using Policy learning by Weighting Exploration with the Returns.
 """
-import numpy as np
+import math
 
 import pyrado
 from pyrado.algorithms.episodic.power import PoWER
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Experiment
+    # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
         WAMBallInCupSim.name, f"{UDR.name}-{PoWER.name}_{DualRBFLinearPolicy.name}", "rand-cs-rl-bm-jd-js"
     )
@@ -56,16 +56,19 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(num_dof=4, max_steps=1750, task_args=dict(final_factor=0.5), fixed_init_state=False)
-    env = WAMBallInCupSim(**env_hparams)
+    env_hparam = dict(
+        num_dof=4, max_steps=1750, fixed_init_state=True, stop_on_collision=True, task_args=dict(final_factor=0.2)
+    )
+    env = WAMBallInCupSim(**env_hparam)
 
     # Randomizer
+    dp_nom = WAMBallInCupSim.get_nominal_domain_param()
     randomizer = DomainRandomizer(
-        UniformDomainParam(name="cup_scale", mean=0.95, halfspan=0.05),
-        NormalDomainParam(name="rope_length", mean=0.3, std=0.005),
-        NormalDomainParam(name="ball_mass", mean=0.021, std=0.001),
-        UniformDomainParam(name="joint_2_damping", mean=0.05, halfspan=0.05),
-        UniformDomainParam(name="joint_2_dryfriction", mean=0.1, halfspan=0.1),
+        NormalDomainParam(name="rope_length", mean=2.9941e-01, std=1.0823e-02, clip_lo=0.27, clip_up=0.33),
+        UniformDomainParam(name="rope_damping", mean=3.0182e-05, halfspan=4.5575e-05, clip_lo=0.0),
+        NormalDomainParam(name="ball_mass", mean=1.8412e-02, std=1.9426e-03, clip_lo=1e-2),
+        UniformDomainParam(name="joint_2_dryfriction", mean=1.9226e-01, halfspan=2.5739e-02, clip_lo=0),
+        UniformDomainParam(name="joint_2_damping", mean=9.4057e-03, halfspan=5.0000e-04, clip_lo=1e-6),
     )
     env = DomainRandWrapperLive(env, randomizer)
 
@@ -75,21 +78,21 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=50,
-        pop_size=100,
-        num_is_samples=10,
-        num_init_states_per_domain=4,
+        max_iter=20,
+        pop_size=80,
+        num_is_samples=20,
+        num_init_states_per_domain=1,
         num_domains=10,
-        expl_std_init=np.pi / 12,
-        expl_std_min=0.02,
-        num_workers=8,
+        expl_std_init=math.pi / 24,
+        expl_std_min=0.01,
+        num_workers=20,
     )
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
+        dict(env=env_hparam, seed=args.seed),
+        dict(policy=policy_hparam, policy_name=policy.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

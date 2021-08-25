@@ -74,7 +74,8 @@ def draw_surface(
 
     if fig is None:
         fig = plt.figure()
-    ax = Axes3D(fig)
+    ax = Axes3D(fig, auto_add_to_figure=False)
+    fig.add_axes(ax)
 
     # Create mesh grid matrices from x and y vectors
     xx, yy = np.meshgrid(x, y)

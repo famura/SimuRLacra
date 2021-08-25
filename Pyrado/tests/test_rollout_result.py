@@ -31,7 +31,7 @@ NOTE: This file is not using to.testing.assert_allclose because most methods nee
 """
 import itertools
 import pickle
-from typing import NamedTuple
+from typing import NamedTuple, Union
 
 import numpy as np
 import pandas as pd
@@ -60,45 +60,45 @@ def mock_data():
     ]
     # Observations has one additional element
     observations = [
-        np.array([3, 2, 7, 5], dtype=np.float64),
-        np.array([3, 1, 9, 5], dtype=np.float64),
-        np.array([2, 0, 7, 5], dtype=np.float64),
-        np.array([3, 1, 3, 5], dtype=np.float64),
-        np.array([0, 2, 4, 5], dtype=np.float64),
-        np.array([1, 8, 1, 5], dtype=np.float64),
+        np.array([3.0, 2, 7, 5], dtype=np.float64),
+        np.array([3.0, 1, 9, 5], dtype=np.float64),
+        np.array([2.0, 0, 7, 5], dtype=np.float64),
+        np.array([3.0, 1, 3, 5], dtype=np.float64),
+        np.array([0.0, 2, 4, 5], dtype=np.float64),
+        np.array([1.0, 8, 1, 5], dtype=np.float64),
     ]
     # States has one additional element
     states = [
-        np.array([4, 8, 7], dtype=np.float64),
-        np.array([2, 1, 7], dtype=np.float64),
-        np.array([1, 0, 7], dtype=np.float64),
-        np.array([4, 1, 7], dtype=np.float64),
-        np.array([0, 2, 7], dtype=np.float64),
-        np.array([0, 1, 7], dtype=np.float64),
+        np.array([4.0, 8, 7], dtype=np.float64),
+        np.array([2.0, 1, 7], dtype=np.float64),
+        np.array([1.0, 0, 7], dtype=np.float64),
+        np.array([4.0, 1, 7], dtype=np.float64),
+        np.array([0.0, 2, 7], dtype=np.float64),
+        np.array([0.0, 1, 7], dtype=np.float64),
     ]
     # Actions come from PyTorch
     actions = [
-        to.tensor([0, 1], dtype=to.get_default_dtype()),
-        to.tensor([0, 3], dtype=to.get_default_dtype()),
-        to.tensor([2, 4], dtype=to.get_default_dtype()),
-        to.tensor([3, 1], dtype=to.get_default_dtype()),
-        to.tensor([0, 0], dtype=to.get_default_dtype()),
+        to.tensor([0.0, 1], dtype=to.get_default_dtype()),
+        to.tensor([0.0, 3], dtype=to.get_default_dtype()),
+        to.tensor([2.0, 4], dtype=to.get_default_dtype()),
+        to.tensor([3.0, 1], dtype=to.get_default_dtype()),
+        to.tensor([0.0, 0], dtype=to.get_default_dtype()),
     ]
     # Policy infos as dict collapse test
     policy_infos = [
-        {"mean": np.array([0, 1]), "std": 0.4},
-        {"mean": np.array([0, 3]), "std": 0.2},
-        {"mean": np.array([2, 4]), "std": 0.1},
-        {"mean": np.array([3, 1]), "std": 0.05},
-        {"mean": np.array([0, 0]), "std": 0.025},
+        {"mean": np.array([0.0, 1], dtype=np.float64), "std": 0.4},
+        {"mean": np.array([0.0, 3], dtype=np.float64), "std": 0.2},
+        {"mean": np.array([2.0, 4], dtype=np.float64), "std": 0.1},
+        {"mean": np.array([3.0, 1], dtype=np.float64), "std": 0.05},
+        {"mean": np.array([0.0, 0], dtype=np.float64), "std": 0.025},
     ]
     # Hidden is a tuple, like we see with LSTMs
     hidden = [
-        (np.array([3, 2, 7]), np.array([2, 1])),
-        (np.array([4, 9, 8]), np.array([5, 6])),
-        (np.array([1, 4, 9]), np.array([7, 3])),
-        (np.array([0, 8, 2]), np.array([4, 9])),
-        (np.array([2, 7, 6]), np.array([8, 0])),
+        (to.tensor([3.0, 2, 7], dtype=to.get_default_dtype()), to.tensor([2.0, 1, 8], dtype=to.get_default_dtype())),
+        (to.tensor([4.0, 9, 8], dtype=to.get_default_dtype()), to.tensor([5.0, 6, 5], dtype=to.get_default_dtype())),
+        (to.tensor([1.0, 4, 9], dtype=to.get_default_dtype()), to.tensor([7.0, 3, 5], dtype=to.get_default_dtype())),
+        (to.tensor([0.0, 8, 2], dtype=to.get_default_dtype()), to.tensor([4.0, 9, 3], dtype=to.get_default_dtype())),
+        (to.tensor([2.0, 7, 6], dtype=to.get_default_dtype()), to.tensor([8.0, 0, 1], dtype=to.get_default_dtype())),
     ]
     return rewards, states, observations, actions, hidden, policy_infos
 
@@ -549,3 +549,45 @@ def test_stepsequence_from_pandas(mock_data, given_rewards: bool):
     assert np.allclose(reconstructed.states, states)
     assert np.allclose(reconstructed.observations, observations)
     assert np.allclose(reconstructed.actions, actions)
+
+
+@pytest.mark.parametrize("data_format", ["numpy", "torch"], ids=["numpy", "torch"])
+@pytest.mark.parametrize("pad_value", [0, 0.14], ids=["zero", "somefloat"])
+@pytest.mark.parametrize("pad_len", [7], ids=["7"])
+def test_stepsequence_padding(mock_data, data_format: str, pad_value: Union[int, float], pad_len: int):
+    # Create too short rollout
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+    ro = StepSequence(
+        rewards=rewards,
+        observations=observations,
+        states=states,
+        actions=actions,
+        hidden=hidden,
+        policy_infos=policy_infos,
+    )
+    len_orig = ro.length
+
+    if data_format == "torch":
+        ro.torch()
+
+    # Pad it
+    StepSequence.pad(ro, len_to_pad_to=len(ro) + pad_len, pad_value=pad_value)
+
+    # Check
+    ro.numpy()  # for simplified checking
+    assert np.allclose(ro.states[len_orig + 1 :], pad_value * np.ones_like(ro.states[len_orig + 1 :]))
+    assert np.allclose(ro.observations[len_orig + 1 :], pad_value * np.ones_like(ro.observations[len_orig + 1 :]))
+    assert np.allclose(ro.actions[len_orig:], pad_value * np.ones_like(ro.actions[len_orig:]))
+    assert np.allclose(ro.rewards[len_orig:], pad_value * np.ones_like(ro.rewards[len_orig:]))
+    for k, v in ro.policy_infos.items():
+        assert np.allclose(v[len_orig:], pad_value * np.ones_like(v[len_orig:]))
+
+    assert ro.length == len_orig + pad_len
+    assert all(ro.rollout_bounds == np.array([0, len_orig + pad_len]))
+
+    assert len(ro.states) == len_orig + 8  # check for final step
+    assert len(ro.observations) == len_orig + 8  # check for final step
+    assert len(ro.actions) == len_orig + pad_len
+    assert len(ro.rewards) == len_orig + pad_len
+    for h in ro.hidden:
+        assert len(h) == len_orig + pad_len

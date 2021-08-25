@@ -33,60 +33,60 @@ from pyrado.spaces import BoxSpace
 
 # 7 DoF joint limits [rad] (with 5 degree safety margin)
 # See https://support.barrett.com/wiki/WAM/KinematicsJointRangesConversionFactors
-wam_q_limits_lo_7dof = np.array([-2.6, -2.0, -2.8, -0.9, -4.76, -1.6, -3.0]) + 5 * np.pi / 180
-wam_q_limits_up_7dof = np.array([+2.6, +2.0, +2.8, +3.1, +1.24, +1.6, +3.0]) - 5 * np.pi / 180
+WAM_Q_LIMITS_LO_7DOF = np.array([-2.6, -2.0, -2.8, -0.9, -4.76, -1.6, -3.0]) + 5 * np.pi / 180
+WAM_Q_LIMITS_UP_7DOF = np.array([+2.6, +2.0, +2.8, +3.1, +1.24, +1.6, +3.0]) - 5 * np.pi / 180
 # Arbitrarily set velocity limits [rad/s]
-wam_qd_limits_lo_7dof = -np.array([4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi])
-wam_qd_limits_up_7dof = +np.array([4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi])
+WAM_QD_LIMITS_LO_7DOF = -np.array([4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi])
+WAM_QD_LIMITS_UP_7DOF = +np.array([4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi, 4 * np.pi])
 
 # Torque limits
 # 7 DoF
-max_torque_7dof = np.array([150.0, 125.0, 40.0, 60.0, 5.0, 5.0, 2.0])
-torque_space_wam_7dof = BoxSpace(-max_torque_7dof, max_torque_7dof)
+MAX_TORQUE_7DOF = np.array([150.0, 125.0, 40.0, 60.0, 5.0, 5.0, 2.0])
+TORQUE_SPACE_WAM_7DOF = BoxSpace(-MAX_TORQUE_7DOF, MAX_TORQUE_7DOF)
 # 4 DoF
-max_torque_4dof = max_torque_7dof[:4]
-torque_space_wam_4dof = BoxSpace(-max_torque_4dof, max_torque_4dof)
+MAX_TORQUE_4DOF = MAX_TORQUE_7DOF[:4]
+TORQUE_SPACE_WAM_4DOF = BoxSpace(-MAX_TORQUE_4DOF, MAX_TORQUE_4DOF)
 
 # Default PD gains from robcom / SL
-wam_pgains_7dof = np.array([200.0, 300.0, 100.0, 100.0, 10.0, 10.0, 2.5])
-wam_dgains_7dof = np.array([7.0, 15.0, 5.0, 2.5, 0.3, 0.3, 0.05])
-wam_pgains_4dof = wam_pgains_7dof[:4]
-wam_dgains_4dof = wam_dgains_7dof[:4]
+WAM_PGAINS_7DOF = np.array([200.0, 300.0, 100.0, 100.0, 10.0, 10.0, 2.5])
+WAM_DGAINS_7DOF = np.array([7.0, 15.0, 5.0, 2.5, 0.3, 0.3, 0.05])
+WAM_PGAINS_4DOF = WAM_PGAINS_7DOF[:4]
+WAM_DGAINS_4DOF = WAM_DGAINS_7DOF[:4]
 
 # Desired initial joint angles
 # 7 DoF
-init_qpos_des_7dof = np.array([0.0, 0.5876, 0.0, 1.36, 0.0, -0.321, -1.57])
+INIT_QPOS_DES_7DOF = np.array([0.0, 0.5876, 0.0, 1.36, 0.0, -0.321, -1.57])
 # 4 DoF arm
-init_qpos_des_4dof = np.array([0.0, 0.6, 0.0, 1.25])
+INIT_QPOS_DES_4DOF = np.array([0.0, 0.6, 0.0, 1.25])
 
 # Cartesian cup position when WAM is in init state
-cup_pos_init_sim_4dof = np.array([0.80607, 0.0, 1.4562])  # site name="cup_bottom" (see xml file)
-cup_pos_init_sim_7dof = None  # TODO
-goal_pos_init_sim_4dof = np.array([0.8143, 0.0, 1.48])  # site name="cup_goal" (see xml file)
-goal_pos_init_sim_7dof = np.array([0.82521, 0.0, 1.4469])
+CUP_POS_INIT_SIM_4DOF = np.array([0.80607, 0.0, 1.4562])  # site name="cup_bottom" (see xml file)
+CUP_POS_INIT_SIM_7DOF = None  # not defined yet
+GOAL_POS_INIT_SIM_4DOF = np.array([0.8143, 0.0, 1.48])  # site name="cup_goal" (see xml file)
+GOAL_POS_INIT_SIM_7DOF = np.array([0.82521, 0.0, 1.4469])
 
 # Action space
 # 7 DoF actuated for joint space control
-act_min_jsc_7dof = np.concatenate([wam_q_limits_lo_7dof, wam_qd_limits_lo_7dof])
-act_max_jsc_7dof = np.concatenate([wam_q_limits_up_7dof, wam_qd_limits_up_7dof])
+ACT_MIN_JSC_7DOF = np.concatenate([WAM_Q_LIMITS_LO_7DOF, WAM_QD_LIMITS_LO_7DOF])
+ACT_MAX_JSC_7DOF = np.concatenate([WAM_Q_LIMITS_UP_7DOF, WAM_QD_LIMITS_UP_7DOF])
 labels_jsc_7dof = [f"q_{i}_des" for i in range(1, 8)] + [f"qd_{i}_des" for i in range(1, 8)]
-act_space_jsc_7dof = BoxSpace(act_min_jsc_7dof, act_max_jsc_7dof, labels=labels_jsc_7dof)
+ACT_SPACE_JSC_7DOF = BoxSpace(ACT_MIN_JSC_7DOF, ACT_MAX_JSC_7DOF, labels=labels_jsc_7dof)
 
 # 3 DoF actuated for ball-in-cup task
-act_min_bic_7dof = np.array([-1.985, -0.9, -np.pi / 2, -10 * np.pi, -10 * np.pi, -10 * np.pi])
-act_max_bic_7dof = np.array([1.985, np.pi, np.pi / 2, 10 * np.pi, 10 * np.pi, 10 * np.pi])
+ACT_MIN_BIC_7DOF = np.array([-1.985, -0.9, -np.pi / 2, -10 * np.pi, -10 * np.pi, -10 * np.pi])
+ACT_MAX_BIC_7DOF = np.array([1.985, np.pi, np.pi / 2, 10 * np.pi, 10 * np.pi, 10 * np.pi])
 labels_bic_7dof = [f"q_{i}_des" for i in range(1, 6, 2)] + [f"qd_{i}_des" for i in range(1, 6, 2)]
-act_space_bic_7dof = BoxSpace(act_min_bic_7dof, act_max_bic_7dof, labels=labels_bic_7dof)
+ACT_SPACE_BIC_7DOF = BoxSpace(ACT_MIN_BIC_7DOF, ACT_MAX_BIC_7DOF, labels=labels_bic_7dof)
 
 # Action space
 # 4 DoF actuated for pd joint control
-act_min_jsc_4dof = np.concatenate([wam_q_limits_lo_7dof[:4], wam_qd_limits_lo_7dof[:4]])
-act_max_jsc_4dof = np.concatenate([wam_q_limits_up_7dof[:4], wam_qd_limits_up_7dof[:4]])
+ACT_MIN_JSC_4DOF = np.concatenate([WAM_Q_LIMITS_LO_7DOF[:4], WAM_QD_LIMITS_LO_7DOF[:4]])
+ACT_MAX_JSC_4DOF = np.concatenate([WAM_Q_LIMITS_UP_7DOF[:4], WAM_QD_LIMITS_UP_7DOF[:4]])
 labels_jsc_4dof = [f"q_{i}_des" for i in range(1, 5)] + [f"qd_{i}_des" for i in range(1, 5)]
-act_space_jsc_4dof = BoxSpace(act_min_jsc_4dof, act_max_jsc_4dof, labels=labels_jsc_4dof)
+ACT_SPACE_JSC_4DOF = BoxSpace(ACT_MIN_JSC_4DOF, ACT_MAX_JSC_4DOF, labels=labels_jsc_4dof)
 
 # 2 DoF actuated for ball-in-cup task
-act_min_bic_4dof = np.array([-1.985, -0.9, -10 * np.pi, -10 * np.pi])
-act_max_bic_4dof = np.array([1.985, np.pi, 10 * np.pi, 10 * np.pi])
+ACT_MIN_BIC_4DOF = np.array([-1.985, -0.9, -10 * np.pi, -10 * np.pi])
+ACT_MAX_BIC_4DOF = np.array([1.985, np.pi, 10 * np.pi, 10 * np.pi])
 labels_bic_4dof = [f"q_{i}_des" for i in range(1, 4, 2)] + [f"qd_{i}_des" for i in range(1, 4, 2)]
-act_space_bic_4dof = BoxSpace(act_min_bic_4dof, act_max_bic_4dof, labels=labels_bic_4dof)
+ACT_SPACE_BIC_4DOF = BoxSpace(ACT_MIN_BIC_4DOF, ACT_MAX_BIC_4DOF, labels=labels_bic_4dof)

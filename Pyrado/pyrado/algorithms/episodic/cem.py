@@ -38,7 +38,7 @@ from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExpl
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
-from pyrado.utils.math import cov
+from pyrado.utils.math import cov, soft_update
 
 
 class CEM(ParameterExploring):
@@ -70,6 +70,7 @@ class CEM(ParameterExploring):
         extra_expl_std_init: float = 0.0,
         extra_expl_decay_iter: int = 10,
         num_domains: int = 1,
+        soft_update_factor: float = 1,
         full_cov: bool = False,
         symm_sampling: bool = False,
         num_workers: int = 4,
@@ -93,6 +94,9 @@ class CEM(ParameterExploring):
                                     entries of the covariance matirx, set to 0 to disable this functionality
         :param extra_expl_decay_iter: limit for the linear decay of the additional standard deviation, i.e. last
                                       iteration in which the additional exploration noise is applied
+        :param soft_update_factor: a number between 0 an 1 to do linearly scale the updates of the policy, by default
+                                   full updates are done, i.e. the new policy parameters are the mean of the
+                                   importance samples
         :param full_cov: pass `True` to compute a full covariance matrix for sampling the next policy parameter values,
                          else a diagonal covariance is used
         :param symm_sampling: use an exploration strategy which samples symmetric populations
@@ -120,6 +124,7 @@ class CEM(ParameterExploring):
         if not num_is_samples <= pop_size:
             raise pyrado.ValueErr(given=num_is_samples, le_constraint=pop_size)
         self.num_is_samples = int(num_is_samples)
+        self.soft_update_factor = soft_update_factor
 
         # Explore using normal noise
         self._expl_strat = NormalParamNoise(
@@ -161,7 +166,9 @@ class CEM(ParameterExploring):
         params_is = param_results.parameters[idcs_dcs, :]
 
         # Update the policy parameters from the mean importance samples
-        self._policy.param_values = to.mean(params_is, dim=0)
+        self._policy.param_values = soft_update(
+            target=to.mean(params_is, dim=0), source=to.clone(self._policy.param_values), tau=self.soft_update_factor
+        )
 
         # Update the exploration covariance from the empirical variance of the importance samples
         if isinstance(self._expl_strat.noise, DiagNormalNoise):
@@ -169,13 +176,13 @@ class CEM(ParameterExploring):
             extra_expl_std = self.extra_expl_std_init * max(
                 1.0 - self._curr_iter / self.extra_expl_decay_iter, 0  # see [2, p.4]
             )
-            self._expl_strat.noise.adapt(std=std_is + extra_expl_std)
+            self._expl_strat.adapt(std=std_is + extra_expl_std)
         elif isinstance(self._expl_strat.noise, FullNormalNoise):
             cov_is = cov(params_is, data_along_rows=True)
             extra_expl_cov = to.pow(self.extra_expl_std_init, 2) * max(
                 1.0 - self._curr_iter / self.extra_expl_decay_iter, 0  # see [2, p.4]
             )
-            self._expl_strat.noise.adapt(cov=cov_is + extra_expl_cov)
+            self._expl_strat.adapt(cov=cov_is + extra_expl_cov)
 
         # Logging
         self.logger.add_value("median imp samp return", to.median(rets_avg_is), 4)

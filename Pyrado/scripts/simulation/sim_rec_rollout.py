@@ -32,30 +32,33 @@ Replay a pre-recorded rollout using the simulations' renderer.
 import time
 
 import pyrado
+from pyrado.environments.pysim.base import SimPyEnv
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.logger.experiment import ask_for_experiment
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.experiments import load_rollouts_from_dir
+from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
-    if args.dir is None:
-        raise pyrado.ValueErr(msg="Please provide a directory using -d or --dir")
+    parser = get_argparser()
+    parser.set_defaults(animation=True)  # different default value for this script
+    args = parser.parse_args()
+
+    # Get the experiment's directory to load from
+    args.dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
     # Load the rollouts and select one
     rollouts, file_names = load_rollouts_from_dir(args.dir)
-    if len(rollouts) == 1:
-        rollout = rollouts[0]
-    else:
-        if not isinstance(args.iter, int):
-            raise pyrado.TypeErr(given=args, expected_type=int)
-        rollout = rollouts[args.iter]
 
-    if hasattr(rollout, "rollout_info") and "env_name" in rollout.rollout_info:
-        env_name = rollout.rollout_info["env_name"]
+    # Extract the environment's name if possible
+    if getattr(rollouts[0], "rollout_info", None) and "env_name" in rollouts[0].rollout_info:
+        env_name = rollouts[0].rollout_info["env_name"]
     elif args.env_name is not None:
         env_name = args.env_name.lower()
     else:
@@ -64,8 +67,15 @@ if __name__ == "__main__":
             "it been specified explicitly! Please provide the environment's name using -e or --env_name."
         )
 
-    if hasattr(rollout, "time"):
-        dt = rollout.time[1] - rollout.time[0]  # dt is constant
+    # Extract the domain parameters if possible
+    if getattr(rollouts[0], "rollout_info", None) is not None and "domain_param" in rollouts[0].rollout_info:
+        domain_param = rollouts[0].rollout_info["domain_param"]
+    else:
+        domain_param = None
+
+    # Extract the time if possible
+    if hasattr(rollouts[0], "time"):
+        dt = rollouts[0].time[1] - rollouts[0].time[0]  # dt is constant
     elif args.dt is not None:
         dt = args.dt
     else:
@@ -74,49 +84,81 @@ if __name__ == "__main__":
             "it been specified explicitly! Please provide the time step size using --dt."
         )
 
-    if env_name == "wam-jsc":  # avoid loading mujoco
+    if env_name == QBallBalancerSim.name:
+        env = QBallBalancerSim(dt=dt)
+
+    elif env_name == QCartPoleSwingUpSim.name:
+        env = QCartPoleSwingUpSim(dt=dt)
+
+    elif env_name == QQubeSwingUpSim.name:
+        env = QQubeSwingUpSim(dt=dt)
+
+    elif env_name == "wam-bic":  # avoid loading mujoco
+        from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
+
+        env = WAMBallInCupSim(num_dof=4)
+        env.init_space = BoxSpace(-pyrado.inf, pyrado.inf, shape=env.init_space.shape)
+
+    elif env_name == "wam-jsc":  # avoid loading mujoco
         from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 
         env = WAMJointSpaceCtrlSim(num_dof=7)
         env.init_space = BoxSpace(-pyrado.inf, pyrado.inf, shape=env.init_space.shape)
 
-    elif env_name == QQubeSwingUpSim.name:
-        env = QQubeSwingUpSim(dt=dt)
+    elif env_name == "mg-ik":  # avoid loading _rcsenv
+        from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+
+        env = MiniGolfIKSim(dt=dt)
+
+    elif env_name == "mg-jnt":  # avoid loading _rcsenv
+        from pyrado.environments.rcspysim.mini_golf import MiniGolfJointCtrlSim
+
+        env = MiniGolfJointCtrlSim(dt=dt)
 
     else:
-        raise pyrado.ValueErr(given=env_name, eq_constraint=f"wam-jsc, or {QQubeSwingUpSim.name}")
+        raise pyrado.ValueErr(
+            given=env_name,
+            eq_constraint=f"{QBallBalancerSim.name},{QCartPoleSwingUpSim.name},{QQubeSwingUpSim.name}, "
+            f"wam-bic, wam-jsc, mg-ik, or mg-jnt",
+        )
 
-    done = False
-    while not done:
-        # Simulate like in rollout()
-        for step in rollout:
-            # Display step by step like rollout()
-            t_start = time.time()
-            env.state = step.state
+    for idx_r, rollout in enumerate(rollouts):
+        print_cbt(f"Replaying rollout {idx_r + 1} of {len(rollouts)}", "c")
 
-            do_sleep = True
-            if pyrado.mujoco_loaded:
-                from pyrado.environments.mujoco.base import MujocoSimEnv
+        done = False
+        env.reset(domain_param=domain_param)
 
-                # Use reset() to hammer the current state into MuJoCo at evey step
-                env.reset(step.state)
+        while not done:
+            # Simulate like in rollout()
+            for step in rollout:
+                # Display step by step like rollout()
+                t_start = time.time()
+                env.state = step.state
 
-                if isinstance(env, MujocoSimEnv):
-                    # MuJoCo environments seem to crash on time.sleep()
-                    do_sleep = False
+                if not isinstance(env, SimPyEnv):
+                    # Use reset() to hammer the current state into MuJoCo / Rcs at evey step
+                    env.reset(init_state=step.state)
 
-            env.render(RenderMode(video=True))
+                do_sleep = True
+                if pyrado.mujoco_loaded:
+                    from pyrado.environments.mujoco.base import MujocoSimEnv
 
-            if do_sleep:
-                # Measure time spent and sleep if needed
-                t_end = time.time()
-                t_sleep = env.dt + t_start - t_end
-                if t_sleep > 0:
-                    time.sleep(t_sleep)
+                    if isinstance(env, MujocoSimEnv):
+                        # MuJoCo environments seem to crash on time.sleep()
+                        do_sleep = False
 
-            # Stop when recorded rollout stopped
-            if step.done:
-                break
+                env.render(RenderMode(text=args.verbose, video=args.animation, render=args.render))
 
-        if input("Stop replaying? [y / any other] ").lower() == "y":
-            break
+                if do_sleep:
+                    # Measure time spent and sleep if needed
+                    t_end = time.time()
+                    t_sleep = env.dt + t_start - t_end
+                    if t_sleep > 0:
+                        time.sleep(t_sleep)
+
+                # Stop when recorded rollout stopped
+                if step.done:
+                    break
+
+            if not input("Replay [y]? Or play next [any other]? ").lower() == "y":
+                done = True

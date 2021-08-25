@@ -68,16 +68,16 @@ if __name__ == "__main__":
         _, vals = skyline(
             dt=dt, t_end=20.0, t_intvl_space=BoxSpace(0.5, 3, shape=(1,)), val_space=BoxSpace(-2.0, 3.0, shape=(1,))
         )
-        data = to.from_numpy(vals).view(-1, 1)
+        data = to.from_numpy(vals).to(dtype=to.get_default_dtype()).view(-1, 1)
     elif "qq-su" in data_set_name:
-        data = pyrado.load("rollout_real_2021-02-10_14-24-04.pkl", osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz"))
+        data = pyrado.load("rollout_real_2021-04-14_18-34-53.pkl", osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz"))
         assert isinstance(data, StepSequence)
         assert hasattr(data, "states")
         states = to.from_numpy(data.states).to(dtype=to.get_default_dtype())
         actions = to.from_numpy(data.actions).to(dtype=to.get_default_dtype())
         data = to.cat([states[:-1], actions], dim=1)  # truncate final state
     else:
-        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "time_series", f"{data_set_name}.csv"))
+        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "misc", f"{data_set_name}.csv"))
         if data_set_name == "daily_min_temperatures":
             data = to.tensor(data["Temp"].values, dtype=to.get_default_dtype()).view(-1, 1)
         elif data_set_name == "monthly_sunspots":
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     # Dataset
     data_set_hparam = dict(
-        name=data_set_name, ratio_train=0.90, window_size=50, standardize_data=False, scale_min_max_data=False
+        name=data_set_name, ratio_train=0.80, window_size=100, standardize_data=False, scale_min_max_data=False
     )
     dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         windowed=True,
         cascaded=False,
         optim_class=optim.Adam,
-        optim_hparam=dict(lr=5e-3, eps=1e-8, weight_decay=1e-4),  # momentum=0.7
+        optim_hparam=dict(lr=2e-3, eps=1e-8, weight_decay=1e-4),  # momentum=0.7
         loss_fcn=nn.MSELoss(),
     )
     algo = TSPred(ex_dir, dataset, policy, **algo_hparam)

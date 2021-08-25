@@ -30,11 +30,10 @@
 
 #include "ExperimentConfig.h"
 #include "action/ActionModelIK.h"
+#include "action/AMJointControlPosition.h"
 #include "initState/ISSMiniGolf.h"
 #include "observation/OMBodyStateLinear.h"
 #include "observation/OMBodyStateAngular.h"
-#include "observation/OMCollisionCost.h"
-#include "observation/OMCollisionCostPrediction.h"
 #include "observation/OMCombined.h"
 #include "observation/OMJointState.h"
 #include "observation/OMForceTorque.h"
@@ -90,32 +89,49 @@ class ECMiniGolf : public ExperimentConfig
         RcsBody* ball = RcsGraph_getBodyByName(graph, "Ball");
         RCHECK(ball);
         
-        if (actionModelType == "ik") {
+        if (actionModelType == "joint_pos") {
+            return new AMJointControlPosition(graph);
+        }
+        
+        else if (actionModelType == "ik") {
             // Create the action model. Every but the x tasks have been fixed tasks originally, but now are constant
             // outputs on the policy. This way, we can use the same policy structure in the pre-strike ControlPolicy
             // on the real robot.
             auto amIK = new AMIKGeneric(graph);
             if (properties->getPropertyBool("positionTasks", true)) {
-                // Driving
-                auto tmpTask = new TaskVelocity1D("Zd", graph, ball, clubTip, nullptr);
-                tmpTask->resetParameter(Task::Parameters(-7.0, 7.0, 1.0, "Z Velocity [m/s]"));
-                amIK->addTask(tmpTask);
-//                amIK->addTask(new TaskPosition1D("Z", graph, ball, clubTip, nullptr));
-                // Centering
-//                amIK->addTask(new TaskPosition1D("X", graph, ball, clubTip, nullptr));
-                amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, nullptr));
-                amIK->addTask(new TaskDistance1D(graph, club, ground, 2));
-                amIK->addTask(TaskFactory::createTask(
-                    R"(<Task name="ClubTip_Polar" controlVariable="POLAR" effector="ClubTip"  active="true" />)",
-                    graph)
-                );
-                /*
-                amIK->addTask(new TaskPosition1D("X", graph, clubTip, refBody, refFrame));
-                amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, ground));
-                amIK->addTask(new TaskDistance1D(graph, club, ground, 2));
-                amIK->addTask(new TaskEuler1D("C", graph, clubTip, nullptr, ground));
-                 */
+                if (properties->getPropertyBool("relativeZdTask", true)) {
+                    // Driving
+                    auto tmpTask = new TaskVelocity1D("Zd", graph, ball, clubTip, nullptr);
+                    tmpTask->resetParameter(Task::Parameters(-100.0, 100.0, 1.0, "Z Velocity [m/s]"));
+                    amIK->addTask(tmpTask);
+                    // Centering
+                    amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, nullptr));
+                    amIK->addTask(new TaskDistance1D(graph, club, ground, 2));
+                    amIK->addTask(TaskFactory::createTask(
+                        R"(<Task name="ClubTip_Polar" controlVariable="POLAR" effector="ClubTip"  active="true" />)",
+                        graph)
+                    );
+                }
+                else {
+                    // Driving
+                    amIK->addTask(new TaskPosition1D("X", graph, clubTip, nullptr, nullptr));
+                    // Centering
+//                    amIK->addTask(new TaskPosition1D("X", graph, ball, clubTip, nullptr));
+                    amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, nullptr));
+                    amIK->addTask(new TaskDistance1D(graph, club, ground, 2));
+                    amIK->addTask(TaskFactory::createTask(
+                        R"(<Task name="ClubTip_Polar" controlVariable="POLAR" effector="ClubTip"  active="true" />)",
+                        graph)
+                    );
+                    /*
+                    amIK->addTask(new TaskPosition1D("X", graph, clubTip, refBody, refFrame));
+                    amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, ground));
+                    amIK->addTask(new TaskDistance1D(graph, club, ground, 2));
+                    amIK->addTask(new TaskEuler1D("C", graph, clubTip, nullptr, ground));
+                     */
+                }
             }
+            
             else {
                 throw std::invalid_argument("Velocity tasks are not implemented for AMIKGeneric in this environment.");
             }
@@ -186,7 +202,7 @@ class ECMiniGolf : public ExperimentConfig
         // Observe the robot's joints
         std::list<std::string> listOfJointNames = {"base-m3", "m3-m4", "m4-m5", "m5-m6", "m6-m7", "m7-m8", "m8-m9"};
         for (std::string jointName : listOfJointNames) {
-            fullState->addPart(new OMJointState(graph, jointName.c_str(), false));
+            fullState->addPart(new OMJointStatePositions(graph, jointName.c_str(), false));
         }
         
         std::string actionModelType = "unspecified";
@@ -201,23 +217,6 @@ class ECMiniGolf : public ExperimentConfig
             }
         }
         
-        // Add current collision cost
-        if (properties->getPropertyBool("observeCollisionCost", false) & (collisionMdl != nullptr)) {
-            // Add the collision cost observation model
-            auto omColl = new OMCollisionCost(collisionMdl);
-            fullState->addPart(omColl);
-        }
-        
-        // Add predicted collision cost
-        if (properties->getPropertyBool("observePredictedCollisionCost", false) && collisionMdl != nullptr) {
-            // Get horizon from config
-            int horizon = 20;
-            properties->getChild("collisionConfig")->getProperty(horizon, "predCollHorizon");
-            // Add collision model
-            auto omCollisionCost = new OMCollisionCostPrediction(graph, collisionMdl, actionModel, 50);
-            fullState->addPart(omCollisionCost);
-        }
-        
         return fullState;
     }
     
@@ -227,7 +226,6 @@ class ECMiniGolf : public ExperimentConfig
         manager->addParam("Ball", new PPDMassProperties());
         manager->addParam("Ball", new PPDMaterialProperties());
         manager->addParam("Club", new PPDMassProperties());
-        manager->addParam("Ground", new PPDMaterialProperties());
         manager->addParam("Ground", new PPDMaterialProperties());
         manager->addParam("ObstacleLeft", new PPDBodyPosition(true, true, false));
         manager->addParam("ObstacleLeft", new PPDBodyOrientation(false, false, true));
@@ -272,9 +270,12 @@ class ECMiniGolf : public ExperimentConfig
         PhysicsBase* simulator, PhysicsParameterManager* physicsManager, ForceDisturber* forceDisturber) override
     {
         // Obtain simulator name
-        const char* simName = "None";
+        const char* simName;
         if (simulator != nullptr) {
             simName = simulator->getClassName();
+        }
+        else {
+            simName = "Robot";
         }
         
         linesOut.emplace_back(
@@ -343,15 +344,22 @@ class ECMiniGolf : public ExperimentConfig
             BodyParamInfo* club_bpi = physicsManager->getBodyInfo("Club");
             BodyParamInfo* ground_bpi = physicsManager->getBodyInfo("Ground");
             
+            double ballSlip = 0;
+            ball_bpi->material.getDouble("slip", ballSlip);
+            double groundSlip = 0;
+            ground_bpi->material.getDouble("slip", groundSlip);
+            
             linesOut.emplace_back(
-                string_format("ball mass:     %1.2f kg                            club mass: %1.2f kg",
+                string_format("ball mass:             %1.2f kg           club mass: %1.2f kg",
                               ball_bpi->body->m, club_bpi->body->m));
-            linesOut.emplace_back(string_format("ball friction: %1.3f                        ground friction: %1.3f",
+            linesOut.emplace_back(string_format("ball friction:         %1.3f      ground friction: %1.3f",
                                                 ball_bpi->material.getFrictionCoefficient(),
                                                 ground_bpi->material.getFrictionCoefficient()));
-            linesOut.emplace_back(string_format("ball rolling friction: %1.3f        ground rolling friction: %1.3f",
+            linesOut.emplace_back(string_format("ball rolling friction: %1.6f         ball slip: %1.5f rad/(Ns)",
                                                 ball_bpi->material.getRollingFrictionCoefficient(),
-                                                ground_bpi->material.getRollingFrictionCoefficient()));
+                                                ballSlip));
+            linesOut.emplace_back(string_format("ball restitution: %1.3f               ground slip: %1.5f rad/(Ns)",
+                                                ball_bpi->material.getRestitution(), groundSlip));
         }
     }
 };

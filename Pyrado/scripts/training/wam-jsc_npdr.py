@@ -32,8 +32,8 @@ Domain Randomization
 """
 import os.path as osp
 
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     env_sim_hparams = dict(num_dof=7, dt=1 / 250.0, max_steps=20 * 250)
     env_sim = WAMJointSpaceCtrlSim(**env_sim_hparams)
     num_real_rollouts = 1
-    env_real = osp.join(pyrado.EVAL_DIR, "wam-jsc-7_neg-wam-sin_250Hz_filt")
+    env_real = osp.join(pyrado.EVAL_DIR, "wam-jsc-7_neg-wam-sin_250Hz_20s_filt")
 
     # Define a mapping: index - domain parameter
     # dp_mapping = {
@@ -136,7 +136,7 @@ if __name__ == "__main__":
             ]
         ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
@@ -164,6 +164,7 @@ if __name__ == "__main__":
         num_eval_samples=10,
         # num_segments=5,
         len_segments=100,
+        stop_on_done=False,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10

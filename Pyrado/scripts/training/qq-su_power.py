@@ -46,8 +46,8 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}")
 
     # Environment
-    env_hparams = dict(dt=1 / 250.0, max_steps=1500)
-    env = QQubeSwingUpSim(**env_hparams)
+    env_hparam = dict(dt=1 / 250.0, max_steps=1500)
+    env = QQubeSwingUpSim(**env_hparam)
     env = ActNormWrapper(env)
 
     # Policy
@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=5,
+        max_iter=10,
         pop_size=50,
         num_init_states_per_domain=4,
         num_domains=20,
@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

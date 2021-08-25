@@ -399,8 +399,8 @@ def setup_rcs():
 
     # Apply patch to line 910
     replaced_content = ""
-    for i, line in enumerate(file):
-        if i == 909 and line.strip() == "if ((a_des==NULL) || (MatNd_get2(a_des, i, 0)>0.0))":
+    for line in file:
+        if line.strip() == "if ((a_des==NULL) || (MatNd_get2(a_des, i, 0)>0.0))":
             new_line = line.replace(")>0", ")!=0")
         else:
             new_line = line

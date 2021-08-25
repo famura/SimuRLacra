@@ -29,14 +29,15 @@
 from copy import deepcopy
 
 import pytest
+import torch as to
 
+import pyrado
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.exploration.stochastic_params import NormalParamNoise
 from pyrado.policies.base import Policy
-from pyrado.policies.features import *
 
 
 @pytest.mark.parametrize(
@@ -49,6 +50,8 @@ from pyrado.policies.features import *
 )
 @pytest.mark.parametrize("policy", ["linear_policy", "fnn_policy"], ids=["lin", "fnn"], indirect=True)
 def test_noise_on_act(env: SimEnv, policy: Policy):
+    pyrado.set_seed(0)
+
     for _ in range(100):
         # Init the exploration strategy
         act_noise_strat = NormalActNoiseExplStrat(policy, std_init=0.5, train_mean=True)

@@ -27,12 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Quanser Qube environment using Neural Posterior Domain Randomization
+Script to identify the domain parameters of the Pendulum environment using Neural Posterior Domain Randomization
 """
 from copy import deepcopy
 
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -48,7 +48,6 @@ from pyrado.sampling.sbi_embeddings import (
     LastStepEmbedding,
     RNNEmbedding,
 )
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.sbi import create_embedding
 
@@ -73,21 +72,21 @@ if __name__ == "__main__":
     env_real = deepcopy(env_sim)
     dp_nom = env_sim.get_nominal_domain_param()
     env_real.domain_param = dict(
-        Dr=dp_nom["Dr"] * 1.9,
-        Dp=dp_nom["Dp"] * 0.4,
-        Rm=dp_nom["Rm"] * 1.0,
-        km=dp_nom["km"] * 1.0,
-        Mp=dp_nom["Mp"] * 1.1,
-        Mr=dp_nom["Mr"] * 1.2,
-        Lp=dp_nom["Lp"] * 0.8,
-        Lr=dp_nom["Lr"] * 0.9,
-        g=dp_nom["g"] * 1.0,
+        damping_rot_pole=dp_nom["damping_rot_pole"] * 1.9,
+        damping_pend_pole=dp_nom["damping_pend_pole"] * 0.4,
+        motor_resistance=dp_nom["motor_resistance"] * 1.0,
+        motor_back_emf=dp_nom["motor_back_emf"] * 1.0,
+        mass_pend_pole=dp_nom["mass_pend_pole"] * 1.1,
+        mass_rot_pole=dp_nom["mass_rot_pole"] * 1.2,
+        length_pend_pole=dp_nom["length_pend_pole"] * 0.8,
+        length_rot_pole=dp_nom["length_rot_pole"] * 0.9,
+        gravity_const=dp_nom["gravity_const"] * 1.0,
     )
     # randomizer = DomainRandomizer(
-    #     NormalDomainParam(name="Dr", mean=dp_nom["Dr"] * 2.0, std=dp_nom["km"] / 10, clip_lo=0.0),
-    #     NormalDomainParam(name="Dp", mean=dp_nom["Dp"] * 2.0, std=dp_nom["km"] / 10, clip_lo=0.0),
-    #     NormalDomainParam(name="Rm", mean=dp_nom["Rm"] * 1.1, std=dp_nom["km"] / 50, clip_lo=0.0),
-    #     NormalDomainParam(name="Km", mean=dp_nom["km"] * 0.9, std=dp_nom["km"] / 50, clip_lo=0.0),
+    #     NormalDomainParam(name="damping_rot_pole", mean=dp_nom["damping_rot_pole"] * 2.0, std=dp_nom["motor_back_emf"] / 10, clip_lo=0.0),
+    #     NormalDomainParam(name="damping_pend_pole", mean=dp_nom["damping_pend_pole"] * 2.0, std=dp_nom["motor_back_emf"] / 10, clip_lo=0.0),
+    #     NormalDomainParam(name="motor_resistance", mean=dp_nom["motor_resistance"] * 1.1, std=dp_nom["motor_back_emf"] / 50, clip_lo=0.0),
+    #     NormalDomainParam(name="Km", mean=dp_nom["motor_back_emf"] * 0.9, std=dp_nom["motor_back_emf"] / 50, clip_lo=0.0),
     # )
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
     # env_real.fill_buffer(num_real_rollouts)
@@ -98,8 +97,18 @@ if __name__ == "__main__":
 
     # Define a mapping: index - domain parameter
     # dp_mapping = {0: "act_delay"}
-    # dp_mapping = {0: "Mr", 1: "Mp", 2: "Lr", 3: "Lp"}
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+    # dp_mapping = {0: "mass_rot_pole", 1: "mass_pend_pole", 2: "length_rot_pole", 3: "length_pend_pole"}
+    dp_mapping = {
+        0: "damping_rot_pole",
+        1: "damping_pend_pole",
+        2: "motor_resistance",
+        3: "motor_back_emf",
+        4: "mass_rot_pole",
+        5: "mass_pend_pole",
+        6: "length_rot_pole",
+        7: "length_pend_pole",
+        8: "gravity_const",
+    }
 
     # Prior and Posterior (normalizing flow)
     prior_hparam = dict(
@@ -107,37 +116,37 @@ if __name__ == "__main__":
         # high=to.tensor([5.0]),
         low=to.tensor(
             [
-                dp_nom["Dr"] * 0,
-                dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.8,
-                dp_nom["km"] * 0.8,
-                dp_nom["Mr"] * 0.8,
-                dp_nom["Mp"] * 0.8,
-                dp_nom["Lr"] * 0.8,
-                dp_nom["Lp"] * 0.8,
-                dp_nom["g"] * 0.9,
+                dp_nom["damping_rot_pole"] * 0,
+                dp_nom["damping_pend_pole"] * 0,
+                dp_nom["motor_resistance"] * 0.8,
+                dp_nom["motor_back_emf"] * 0.8,
+                dp_nom["mass_rot_pole"] * 0.8,
+                dp_nom["mass_pend_pole"] * 0.8,
+                dp_nom["length_rot_pole"] * 0.8,
+                dp_nom["length_pend_pole"] * 0.8,
+                dp_nom["gravity_const"] * 0.9,
             ]
         ),
         high=to.tensor(
             [
                 2 * 0.0015,
                 2 * 0.0005,
-                dp_nom["Rm"] * 1.2,
-                dp_nom["km"] * 1.2,
-                dp_nom["Mr"] * 1.2,
-                dp_nom["Mp"] * 1.2,
-                dp_nom["Lr"] * 1.2,
-                dp_nom["Lp"] * 1.2,
-                dp_nom["g"] * 1.1,
+                dp_nom["motor_resistance"] * 1.2,
+                dp_nom["motor_back_emf"] * 1.2,
+                dp_nom["mass_rot_pole"] * 1.2,
+                dp_nom["mass_pend_pole"] * 1.2,
+                dp_nom["length_rot_pole"] * 1.2,
+                dp_nom["length_pend_pole"] * 1.2,
+                dp_nom["gravity_const"] * 1.1,
             ]
         ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
         downsampling_factor=20,
-        # len_rollouts=env_sim.max_steps,
+        len_rollouts=env_sim.max_steps,
         # recurrent_network_type=nn.RNN,
         # only_last_output=True,
         # hidden_size=20,
@@ -160,6 +169,7 @@ if __name__ == "__main__":
         num_eval_samples=10,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
+        stop_on_done=False,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10

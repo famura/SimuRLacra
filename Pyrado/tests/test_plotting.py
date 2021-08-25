@@ -32,13 +32,14 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 import pytest
+import sbi.utils as sbiutils
 import torch as to
 from matplotlib import pyplot as plt
 from sbi.inference import SNPE, simulate_for_sbi
-from sbi.utils import BoxUniform, posterior_nn
 from sbi.utils.user_input_checks import prepare_for_sbi
 
 from pyrado.algorithms.meta.sbi_base import SBIBase
+from pyrado.domain_randomization.transformations import LogDomainParamTransform, SqrtDomainParamTransform
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.plotting.curve import draw_curve_from_data, draw_dts
@@ -251,8 +252,15 @@ def test_rollout_based(env: SimEnv, policy: Policy):
 @pytest.mark.parametrize("labels", [None, ""], ids=["nolabels", "deflabels"])
 @pytest.mark.parametrize("prob_labels", [None, ""], ids=["noproblabels", "defproblabels"])
 @pytest.mark.parametrize("use_prior", [True, False], ids=["useprior", "dontuseprior"])
+@pytest.mark.parametrize("use_trafo", [False, True], ids=["no_trafo", "trafo"])
 def test_pair_plot(
-    env: SimEnv, policy: Policy, layout: str, labels: Optional[str], prob_labels: Optional[str], use_prior: bool
+    env: SimEnv,
+    policy: Policy,
+    layout: str,
+    labels: Optional[str],
+    prob_labels: Optional[str],
+    use_prior: bool,
+    use_trafo: bool,
 ):
     def _simulator(dp: to.Tensor) -> to.Tensor:
         """The most simple interface of a simulation to sbi, using `env` and `policy` from outer scope"""
@@ -263,14 +271,18 @@ def test_pair_plot(
     # Fix the init state
     env.init_space = SingularStateSpace(env.init_space.sample_uniform())
     env_real = deepcopy(env)
-    env_real.domain_param = {"m": 0.8, "k": 35, "d": 0.7}
+    env_real.domain_param = {"mass": 0.8, "stiffness": 35, "d": 0.7}
+
+    # Optionally transformed domain parameters for inference
+    if use_trafo:
+        env = SqrtDomainParamTransform(env, mask=["stiffness"])
 
     # Domain parameter mapping and prior
-    dp_mapping = {0: "m", 1: "k", 2: "d"}
-    prior = BoxUniform(low=to.tensor([0.5, 20, 0.2]), high=to.tensor([1.5, 40, 0.8]))
+    dp_mapping = {0: "mass", 1: "stiffness", 2: "d"}
+    prior = sbiutils.BoxUniform(low=to.tensor([0.5, 20, 0.2]), high=to.tensor([1.5, 40, 0.8]))
 
     # Learn a likelihood from the simulator
-    density_estimator = posterior_nn(model="maf", hidden_features=10, num_transforms=3)
+    density_estimator = sbiutils.posterior_nn(model="maf", hidden_features=10, num_transforms=3)
     snpe = SNPE(prior, density_estimator)
     simulator, prior = prepare_for_sbi(_simulator, prior)
     domain_param, data_sim = simulate_for_sbi(simulator=simulator, proposal=prior, num_simulations=50, num_workers=1)
@@ -324,6 +336,7 @@ def test_pair_plot(
 @pytest.mark.parametrize("labels", [None, ["dp_1", "dp_2", "dp_3"]], ids=["no_labels", "labels"])
 @pytest.mark.parametrize("legend_labels", [None, ["sim"]], ids=["no_legend", "legend"])
 @pytest.mark.parametrize("axis_limits", [None, "use_prior"], ids=["no_limits", "prior_limits"])
+@pytest.mark.parametrize("use_trafo", [False, True], ids=["no_trafo", "trafo"])
 @pytest.mark.parametrize("use_kde", [False, True], ids=["no_kde", "kde"])
 def test_pair_plot_scatter(
     env: SimEnv,
@@ -333,6 +346,7 @@ def test_pair_plot_scatter(
     legend_labels: Optional[str],
     axis_limits: Optional[str],
     use_kde: bool,
+    use_trafo: bool,
 ):
     def _simulator(dp: to.Tensor) -> to.Tensor:
         """The most simple interface of a simulation to sbi, using `env` and `policy` from outer scope"""
@@ -343,14 +357,20 @@ def test_pair_plot_scatter(
     # Fix the init state
     env.init_space = SingularStateSpace(env.init_space.sample_uniform())
     env_real = deepcopy(env)
-    env_real.domain_param = {"m": 0.8, "k": 35, "d": 0.7}
+    env_real.domain_param = {"mass": 0.8, "stiffness": 15, "d": 0.7}
+
+    # Optionally transformed domain parameters for inference
+    if use_trafo:
+        env = LogDomainParamTransform(env, mask=["stiffness"])
 
     # Domain parameter mapping and prior
-    dp_mapping = {0: "m", 1: "k", 2: "d"}
-    prior = BoxUniform(low=to.tensor([0.5, 20, 0.2]), high=to.tensor([1.5, 40, 0.8]))
+    dp_mapping = {0: "mass", 1: "stiffness", 2: "d"}
+    k_low = np.log(10) if use_trafo else 10
+    k_up = np.log(20) if use_trafo else 20
+    prior = sbiutils.BoxUniform(low=to.tensor([0.5, k_low, 0.2]), high=to.tensor([1.5, k_up, 0.8]))
 
     # Learn a likelihood from the simulator
-    density_estimator = posterior_nn(model="maf", hidden_features=10, num_transforms=3)
+    density_estimator = sbiutils.posterior_nn(model="maf", hidden_features=10, num_transforms=3)
     snpe = SNPE(prior, density_estimator)
     simulator, prior = prepare_for_sbi(_simulator, prior)
     domain_param, data_sim = simulate_for_sbi(simulator=simulator, proposal=prior, num_simulations=50, num_workers=1)
@@ -360,14 +380,14 @@ def test_pair_plot_scatter(
 
     # Create a fake (random) true domain parameter
     domain_param_gt = to.tensor([env_real.domain_param[dp_mapping[key]] for key in sorted(dp_mapping.keys())])
-    domain_param_gt += domain_param_gt * to.randn(len(dp_mapping)) / 5
+    domain_param_gt += domain_param_gt * to.randn(len(dp_mapping)) / 10
     domain_param_gt = domain_param_gt.unsqueeze(0)
     data_real = simulator(domain_param_gt)
 
     domain_params, log_probs = SBIBase.eval_posterior(
         posterior,
         data_real,
-        num_samples=10,
+        num_samples=6,
         normalize_posterior=False,
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
     )

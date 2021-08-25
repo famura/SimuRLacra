@@ -127,7 +127,7 @@ class ObsVelFiltWrapper(EnvWrapperObs, Serializable):
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Reset inner environment
         # By not using _wrapped_env directly, we can mix this class with EnvWrapperAct
-        init_obs = super().reset(init_state, domain_param)
+        init_obs = super().reset(init_state=init_state, domain_param=domain_param)
 
         # Initialize the filter with the current simulation state
         self.init_filter(self.state)

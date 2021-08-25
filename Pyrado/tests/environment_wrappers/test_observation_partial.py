@@ -84,7 +84,6 @@ def test_mask_invert():
     assert list(obs) == [7]
 
 
-@pytest.mark.wrapper
 def test_mask_from_indices():
     # Test the create_mask helper separately
     space = BoxSpace(-1, 1, shape=5)
@@ -94,7 +93,6 @@ def test_mask_from_indices():
     assert list(mask) == [0, 1, 0, 0, 1]
 
 
-@pytest.mark.wrapper
 def test_mask_from_labels():
     # Test the create_mask helper separately
     space = BoxSpace(-1, 1, shape=5, labels=["w", "o", "r", "l", "d"])

@@ -67,9 +67,9 @@ if __name__ == "__main__":
         _, vals = skyline(
             dt=dt, t_end=20.0, t_intvl_space=BoxSpace(0.5, 3, shape=(1,)), val_space=BoxSpace(-2.0, 3.0, shape=(1,))
         )
-        data = to.from_numpy(vals).view(-1, 1)
+        data = to.from_numpy(vals).to(dtype=to.get_default_dtype()).view(-1, 1)
     else:
-        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "time_series", f"{data_set_name}.csv"))
+        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "misc", f"{data_set_name}.csv"))
         if data_set_name == "daily_min_temperatures":
             data = to.tensor(data["Temp"].values, dtype=to.get_default_dtype()).view(-1, 1)
             dt = 1.0
@@ -94,7 +94,6 @@ if __name__ == "__main__":
 
     # Policy
     policy_hparam = dict(
-        dt=dt,
         hidden_size=21,
         obs_layer=None,
         activation_nonlin=to.sigmoid,

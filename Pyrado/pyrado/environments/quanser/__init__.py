@@ -29,6 +29,6 @@
 import numpy as np
 
 
-max_act_qbb = np.array([3.0, 3.0])  # [V], original: 5, 5
-max_act_qcp = np.array([8.0])  # [V], original: 24, energy-based swing up controller needs at about +-6.5V
-max_act_qq = np.array([4.0])  # [V], original: 5
+MAX_ACT_QBB = np.array([3.0, 3.0])  # [V], original: 5, 5
+MAX_ACT_QCP = np.array([8.0])  # [V], original: 24, energy-based swing up controller needs at about +-6.5V
+MAX_ACT_QQ = np.array([4.5])  # [V], original: 5

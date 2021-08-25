@@ -30,6 +30,7 @@ import itertools
 import multiprocessing as mp
 import pickle
 import sys
+from functools import partial
 from typing import List, NamedTuple, Optional, Sequence, Union
 
 import numpy as np
@@ -53,6 +54,9 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.properties import cached_property
+
+
+NO_SEED = object()
 
 
 class ParameterSample(NamedTuple):
@@ -126,9 +130,9 @@ def _pes_init(G, env, policy):
     G.policy = pickle.loads(policy)
 
 
-def _pes_sample_one(G, param):
+def _pes_sample_one(G, param, seed: int, sub_seed: int):
     """Sample one rollout with the current setting."""
-    pol_param, dom_param, init_state = param
+    num, (pol_param, dom_param, init_state) = param
     vector_to_parameters(pol_param, G.policy.parameters())
 
     return rollout(
@@ -138,6 +142,9 @@ def _pes_sample_one(G, param):
             "init_state": init_state,
             "domain_param": dom_param,
         },
+        seed=seed,
+        sub_seed=sub_seed,
+        sub_sub_seed=num,
     )
 
 
@@ -161,7 +168,8 @@ class ParameterExplorationSampler(Serializable):
         :param num_init_states_per_domain: number of rollouts to cover the variance over initial states
         :param num_domains: number of rollouts due to the variance over domain parameters
         :param num_workers: number of parallel samplers
-        :param seed: seed value for the random number generators, pass `None` for no seeding
+        :param seed: seed value for the random number generators, pass `None` for no seeding; defaults to the last seed
+                     that was set with `pyrado.set_seed`
         """
         if not isinstance(num_init_states_per_domain, int):
             raise pyrado.TypeErr(given=num_init_states_per_domain, expected_type=int)
@@ -192,9 +200,12 @@ class ParameterExplorationSampler(Serializable):
         # Create parallel pool. We use one thread per environment because it's easier.
         self.pool = SamplerPool(num_workers)
 
-        # Set all rngs' seeds
-        if seed is not None:
-            self.pool.set_seed(seed)
+        if seed is NO_SEED:
+            seed = pyrado.get_base_seed()
+        self._seed = seed
+        # Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when
+        # the sampling crashes and the sample count is not incremented.
+        self._sample_count = -1
 
         # Distribute environments. We use pickle to make sure a copy is created for n_envs = 1
         self.pool.invoke_all(_pes_init, pickle.dumps(self.env), pickle.dumps(self.policy))
@@ -257,12 +268,17 @@ class ParameterExplorationSampler(Serializable):
         """
         Sample rollouts for a given set of parameters.
 
+        .. note::
+            This method is **not** thread-safe! See for example the usage of `self._sample_count`.
+
         :param param_sets: sets of policy parameters
         :param init_states: fixed initial states, pass `None` to randomly sample initial states
         :return: data structure containing the policy parameter sets and the associated rollout data
         """
         if init_states is not None and not isinstance(init_states, list):
             pyrado.TypeErr(given=init_states, expected_type=list)
+
+        self._sample_count += 1
 
         # Sample domain parameter sets
         domain_params = self._sample_domain_params()
@@ -287,7 +303,9 @@ class ParameterExplorationSampler(Serializable):
 
         # Sample rollouts in parallel
         with tqdm(leave=False, file=sys.stdout, desc="Sampling", unit="rollouts") as pb:
-            all_ros = self.pool.run_map(_pes_sample_one, all_params, pb)
+            all_ros = self.pool.run_map(
+                partial(_pes_sample_one, seed=self._seed, sub_seed=self._sample_count), list(enumerate(all_params)), pb
+            )
 
         # Group rollouts by parameters
         ros_iter = iter(all_ros)

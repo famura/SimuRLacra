@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import hashlib
 import os
 import os.path as osp
 import platform
@@ -38,7 +39,7 @@ from colorama import init
 
 
 # Pyrado version number
-VERSION = "0.5"
+VERSION = "0.7"
 
 # Provide global data directories
 PERMA_DIR = osp.join(osp.dirname(__file__), "..", "data", "perma")
@@ -128,22 +129,61 @@ __all__ = [
     "timestamp_date_format",
 ]
 
+PYRADO_BASE_SEED = None
 
-def set_seed(seed: Optional[int], verbose: bool = False):
+
+def set_seed(
+    seed: Optional[int], sub_seed: int = None, sub_sub_seed: int = None, verbose: bool = False
+) -> Optional[int]:
     """
-    Set the seed for the random number generators
+    Set the seed for the random number generators. The actual seed is computed from the base seed `seed´, and the first-
+    and second-order sub-seeds (`sub_seed` and `sub_sub_seed`, respectively). All of these seeds get concatenated in a
+    string which is then MD5-hashed and crushed into a 32-bit integer.
 
-    :param seed: value for the random number generators' seeds, pass `None` to skip seeding
+    :param seed: base seed, pass `None` to skip seeding; must be an unsigned 10-bit integer
+    :param sub_seed: sub-seed, defaults to zero; must be an unsigned 14-bit integer; overflows will be cast back into
+                     the interval by masking, i.e., only the last 14 bits will be kept; underflows are first made
+                     positive by taking the absolute value
+    :param sub_sub_seed: sub-sub-seed, defaults to zero; must be an unsigned 8-bit integer; underflows will be cast back
+                         into the interval by taking the absolute value
     :param verbose: if `True` the seed is printed
+    :return: the seed that was set
     """
-    if isinstance(seed, int):
-        random.seed(seed)
-        np.random.seed(seed)
-        to.manual_seed(seed)
-        if to.cuda.is_available():
-            to.cuda.manual_seed_all(seed)
+
+    global PYRADO_BASE_SEED
+
+    # The better parameter name would be 'base_seed', but keep 'seed' for backward compatibility.
+    base_seed = seed
+    del seed
+    if sub_seed is None:
+        sub_seed = 0
+    if sub_sub_seed is None:
+        sub_sub_seed = 0
+
+    if not isinstance(base_seed, int):
         if verbose:
-            print(f"Set the random number generators' seed to {seed}.")
-    else:
-        if verbose:
-            print(f"The random number generators' seeds were not set.")
+            print(f"Base seed {base_seed} is not an integer -- the random number generators' seeds were not set.")
+        return None
+
+    seed = int(hashlib.md5(f"{base_seed}-{sub_seed}-{sub_sub_seed}".encode()).hexdigest(), 16) % (2 ** 32)
+
+    random.seed(seed)
+    np.random.seed(seed)
+    to.manual_seed(seed)
+    if to.cuda.is_available():
+        to.cuda.manual_seed_all(seed)
+    PYRADO_BASE_SEED = base_seed
+
+    if verbose:
+        print(
+            f"Set the random number generators' seed to {seed} (computed from base seed {base_seed}, "
+            f"sub-seed {sub_seed}, and sub-sub-seed {sub_sub_seed})."
+        )
+
+    return seed
+
+
+def get_base_seed() -> Optional[int]:
+    """Gets the last seed that was set with `pyrado.set_seed`. If no seed was every set, `None`."""
+    global PYRADO_BASE_SEED
+    return PYRADO_BASE_SEED

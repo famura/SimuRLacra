@@ -172,7 +172,7 @@ class PlanarInsertIKActivationSim(PlanarInsertSim, Serializable):
         :param state_des: desired state for the task, pass `None` to use the default goal
         :param kwargs: keyword arguments forwarded to `RcsSim`
                        graphFileName: str = 'gPlanarInsert5Link.xml' or 'gPlanarInsert6Link.xml'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeForceTorque: bool = True,
                        observePredictedCollisionCost: bool = False,
@@ -214,7 +214,7 @@ class PlanarInsertTASim(PlanarInsertSim, Serializable):
         :param kwargs: keyword arguments forwarded to `RcsSim`
                        graphFileName: str = 'gPlanarInsert5Link.xml' or 'gPlanarInsert6Link.xml'
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeForceTorque: bool = True,
                        observePredictedCollisionCost: bool = False,

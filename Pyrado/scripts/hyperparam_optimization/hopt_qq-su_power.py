@@ -75,8 +75,8 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     pyrado.set_seed(seed)
 
     # Environment
-    env_hparams = dict(dt=1 / 250.0, max_steps=1500)
-    env = QQubeSwingUpSim(**env_hparams)
+    env_hparam = dict(dt=1 / 250.0, max_steps=1500)
+    env = QQubeSwingUpSim(**env_hparam)
     env = ActNormWrapper(env)
 
     # Policy

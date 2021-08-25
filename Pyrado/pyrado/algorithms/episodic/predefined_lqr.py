@@ -137,10 +137,10 @@ class LQR(Algorithm):
             )
             A[4, 4] = -dp["B_eq_v"] / dp["J_eq"]
             A[5, 5] = -dp["B_eq_v"] / dp["J_eq"]
-            A[6, 0] = dp["c_kin"] * dp["m_ball"] * dp["g"] * dp["r_ball"] ** 2 / dp["zeta"]
-            A[6, 6] = -dp["c_kin"] * dp["r_ball"] ** 2 / dp["zeta"]
-            A[7, 1] = dp["c_kin"] * dp["m_ball"] * dp["g"] * dp["r_ball"] ** 2 / dp["zeta"]
-            A[7, 7] = -dp["c_kin"] * dp["r_ball"] ** 2 / dp["zeta"]
+            A[6, 0] = dp["c_kin"] * dp["ball_mass"] * dp["gravity_const"] * dp["ball_radius"] ** 2 / dp["zeta"]
+            A[6, 6] = -dp["c_kin"] * dp["ball_radius"] ** 2 / dp["zeta"]
+            A[7, 1] = dp["c_kin"] * dp["ball_mass"] * dp["gravity_const"] * dp["ball_radius"] ** 2 / dp["zeta"]
+            A[7, 7] = -dp["c_kin"] * dp["ball_radius"] ** 2 / dp["zeta"]
             B = np.zeros((self._env.obs_space.flat_dim, self._env.act_space.flat_dim))
             B[4, 0] = dp["A_m"] / dp["J_eq"]
             B[5, 1] = dp["A_m"] / dp["J_eq"]

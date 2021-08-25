@@ -56,7 +56,7 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(
+    env_hparam = dict(
         physicsEngine="Bullet",  # Bullet or Vortex
         graphFileName="gPlanarInsert6Link.xml",
         dt=1 / 50.0,
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         observeTaskSpaceDiscrepancy=True,
         usePhysicsNode=True,
     )
-    env = PlanarInsertTASim(**env_hparams)
+    env = PlanarInsertTASim(**env_hparam)
     # Explicit normalization bounds
     elb = {
         "DiscrepDS_Effector_X": -1.0,
@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

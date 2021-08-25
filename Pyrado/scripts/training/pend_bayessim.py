@@ -27,12 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Pendulum environment using Neural Posterior Domain Randomization
+Script to identify the domain parameters of the Pendulum environment using BayesSim
 """
 from copy import deepcopy
 
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 
 import pyrado
 from pyrado.algorithms.meta.bayessim import BayesSim
@@ -40,7 +40,9 @@ from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.policies.special.environment_specific import create_pend_excitation_policy
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -54,8 +56,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=400)
-    env_sim = PendulumSim(**env_hparams)
+    env_hparam = dict(dt=1 / 50.0, max_steps=400)
+    env_sim = PendulumSim(**env_hparam)
     env_sim.domain_param = dict(d_pole=0)
     env_sim.domain_param = dict(tau_max=4.5)
 
@@ -64,20 +66,19 @@ if __name__ == "__main__":
     env_real = deepcopy(env_sim)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "m_pole", 1: "l_pole"}
+    dp_mapping = {0: "pole_mass", 1: "pole_length"}
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
-        high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
+        low=to.tensor([dp_nom["pole_mass"] * 0.3, dp_nom["pole_length"] * 0.3]),
+        high=to.tensor([dp_nom["pole_mass"] * 1.7, dp_nom["pole_length"] * 1.7]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
-    # prior_hparam = dict(
-    #     loc=to.tensor([dp_nom["m_pole"], dp_nom["l_pole"]]),
-    #     covariance_matrix=to.tensor([[dp_nom["m_pole"] / 20, 0], [0, dp_nom["l_pole"] / 20]]),
-    # )
-    # prior = to.distributions.MultivariateNormal(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
+
+    # Time series embedding
+    embedding_hparam = dict(downsampling_factor=1)
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Behavioral policy
     policy = create_pend_excitation_policy(env_sim, 1)
@@ -92,8 +93,8 @@ if __name__ == "__main__":
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=1000,
-        downsampling_factor=1,
         num_segments=1,
+        stop_on_done=False,
         subrtn_sbi_training_hparam=dict(
             training_batch_size=50,  # default: 50
             learning_rate=5e-4,  # default: 5e-4
@@ -101,10 +102,9 @@ if __name__ == "__main__":
             stop_after_epochs=20,  # default: 20
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
-            # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_policy=None,
-        num_workers=20,
+        num_workers=12,
     )
     algo = BayesSim(
         save_dir=ex_dir,
@@ -113,14 +113,16 @@ if __name__ == "__main__":
         policy=policy,
         dp_mapping=dp_mapping,
         prior=prior,
+        embedding=embedding,
         **algo_hparam,
     )
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy_name=policy.name),
         dict(prior=prior_hparam),
+        dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

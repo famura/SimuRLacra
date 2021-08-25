@@ -28,7 +28,8 @@
 
 import os
 from abc import ABC, abstractmethod
-from typing import List, Mapping, Optional, Tuple, Union
+from operator import itemgetter
+from typing import List, Mapping, Optional, Tuple, Union, ValuesView
 
 import numpy as np
 import torch as to
@@ -47,6 +48,7 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces import BoxSpace
+from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt_once
 
@@ -62,7 +64,13 @@ class RolloutSamplerForSBI(ABC, Serializable):
     """
 
     def __init__(
-        self, env: Env, policy: Policy, embedding: Embedding, num_segments: int = None, len_segments: int = None
+        self,
+        env: Env,
+        policy: Policy,
+        embedding: Embedding,
+        num_segments: int = None,
+        len_segments: int = None,
+        stop_on_done: bool = True,
     ):
         """
         Constructor
@@ -78,6 +86,9 @@ class RolloutSamplerForSBI(ABC, Serializable):
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
+        :param stop_on_done: if `True`, the rollouts are stopped as soon as they hit the state or observation space
+                             boundaries. This behavior is save, but can lead to short trajectories which are eventually
+                             padded with zeroes. Chose `False` to ignore the boundaries (dangerous on the real system).
         """
         if num_segments is None and len_segments is None or num_segments is not None and len_segments is not None:
             raise pyrado.ValueErr(msg="Either num_segments or len_segments must not be None, but not both or none!")
@@ -86,9 +97,11 @@ class RolloutSamplerForSBI(ABC, Serializable):
 
         self._env = env
         self._policy = policy
+        self._embedding = embedding
         self.num_segments = num_segments
         self.len_segments = len_segments
-        self._embedding = embedding
+        self.stop_on_done = stop_on_done
+        self._action_field = "actions_applied"
 
     @abstractmethod
     def __call__(self, params) -> Union[StepSequence, to.Tensor]:
@@ -104,6 +117,17 @@ class RolloutSamplerForSBI(ABC, Serializable):
         """
         return spec.state_space.flat_dim + spec.act_space.flat_dim
 
+    def _set_action_field(self, rollouts: List[StepSequence]):
+        """
+        Check if there is the `actions_applied` field in all the given rollouts. If not use the `actions` field.
+
+        :param rollouts: list of rollouts to inspect for the action field
+        """
+        has_actions_applied_field = True
+        for ro in rollouts:
+            has_actions_applied_field = has_actions_applied_field and hasattr(ro, "actions_applied")
+        self._action_field = "actions_applied" if has_actions_applied_field else "actions"
+
 
 class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
     """Wrapper to make SimuRLacra's simulation environments usable as simulators for the sbi package"""
@@ -116,6 +140,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         embedding: Embedding,
         num_segments: int = None,
         len_segments: int = None,
+        stop_on_done: bool = True,
         rollouts_real: Optional[List[StepSequence]] = None,
         use_rec_act: bool = True,
     ):
@@ -133,6 +158,11 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
+        :param stop_on_done: if `True`, the rollouts are stopped as soon as they hit the state or observation space
+                             boundaries. This behavior is save, but can lead to short trajectories which are eventually
+                             padded with zeroes. Chose `False` to ignore the boundaries (dangerous on the real system).
+        :param rollouts_real: list of rollouts recorded from the target domain, which are used to sync the simulations'
+                              initial states
         :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout
                             during simulation (feed-forward). If `False` there policy is used to generate (potentially)
                             state-dependent actions (feed-back).
@@ -150,13 +180,13 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
         Serializable._init(self, locals())
 
-        super().__init__(
-            env=env, policy=policy, embedding=embedding, num_segments=num_segments, len_segments=len_segments
-        )
+        super().__init__(env, policy, embedding, num_segments, len_segments, stop_on_done)
 
         self.dp_names = dp_mapping.values()
         self.rollouts_real = rollouts_real
         self.use_rec_act = use_rec_act
+        if self.rollouts_real is not None:
+            self._set_action_field(self.rollouts_real)
 
     def __call__(self, dp_values: to.Tensor) -> to.Tensor:
         """
@@ -171,8 +201,11 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         if self.rollouts_real is not None:
             if self.use_rec_act:
                 # Create a policy that simply replays the recorded actions
+                self._set_action_field(self.rollouts_real)
                 policy = PlaybackPolicy(
-                    self._env.spec, [ro.actions_applied for ro in self.rollouts_real], no_reset=True
+                    self._env.spec,
+                    [ro.get_data_values(self._action_field) for ro in self.rollouts_real],
+                    no_reset=True,
                 )
             else:
                 # Use the current policy to generate the actions
@@ -218,24 +251,32 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                             reset_kwargs=dict(
                                 init_state=seg_real.states[0, :], domain_param=dict(zip(self.dp_names, dp_value))
                             ),
-                            stop_on_done=False,
+                            stop_on_done=self.stop_on_done,
                             max_steps=seg_real.length,
                         )
-                        # check_domain_params(seg_sim, dp_value, self.dp_names)
+                        check_domain_params(seg_sim, dp_value, self.dp_names)
                         if self.use_rec_act:
-                            check_act_equal(seg_real, seg_sim, check_applied=True)
+                            check_act_equal(seg_real, seg_sim, check_applied=self._action_field == "actions_applied")
+
+                        # Pad if necessary
+                        StepSequence.pad(seg_sim, seg_real.length)
 
                         # Increase step counter for next segment
                         cnt_step += seg_real.length
 
                         # Concatenate states and actions of the simulated and real segments
                         data_one_seg = np.concatenate(
-                            [seg_sim.states[: len(seg_real), :], seg_sim.actions_applied[: len(seg_real), :]], axis=1
+                            [
+                                seg_sim.states[: len(seg_real), :],
+                                seg_sim.get_data_values(self._action_field)[: len(seg_real), :],
+                            ],
+                            axis=1,
                         )
                         if self._embedding.requires_target_domain_data:
                             # The embedding is also using target domain data (the case for DTW distance)
                             data_one_seg_real = np.concatenate(
-                                [seg_real.states[: len(seg_real), :], seg_real.actions_applied], axis=1
+                                [seg_real.states[: len(seg_real), :], seg_real.get_data_values(self._action_field)],
+                                axis=1,
                             )
                             data_one_seg = np.concatenate([data_one_seg, data_one_seg_real], axis=1)
                         data_one_seg = to.from_numpy(data_one_seg).to(dtype=to.get_default_dtype())
@@ -271,12 +312,17 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     policy,
                     eval=True,
                     reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dp_value))),
-                    stop_on_done=False,
+                    stop_on_done=self.stop_on_done,
                 )
-                # check_domain_params(ro_sim, dp_value, self.dp_names)
+                check_domain_params(ro_sim, dp_value, self.dp_names)
+
+                # Pad if necessary
+                StepSequence.pad(ro_sim, self._env.max_steps)
 
                 # Concatenate states and actions of the simulated segments
-                data_one_seg = np.concatenate([ro_sim.states[:-1, :], ro_sim.actions_applied], axis=1)
+                data_one_seg = np.concatenate(
+                    [ro_sim.states[:-1, :], ro_sim.get_data_values(self._action_field)], axis=1
+                )
                 if self._embedding.requires_target_domain_data:
                     data_one_seg = np.concatenate([data_one_seg, data_one_seg], axis=1)
                 data_one_seg = to.from_numpy(data_one_seg).to(dtype=to.get_default_dtype())
@@ -306,6 +352,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         embedding: Embedding,
         num_segments: int = None,
         len_segments: int = None,
+        stop_on_done: bool = True,
     ):
         """
         Constructor
@@ -320,13 +367,14 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
+        :param stop_on_done: if `True`, the rollouts are stopped as soon as they hit the state or observation space
+                             boundaries. This behavior is save, but can lead to short trajectories which are eventually
+                             padded with zeroes. Chose `False` to ignore the boundaries (dangerous on the real system).
         """
 
         Serializable._init(self, locals())
 
-        super().__init__(
-            env=env, policy=policy, embedding=embedding, num_segments=num_segments, len_segments=len_segments
-        )
+        super().__init__(env, policy, embedding, num_segments, len_segments, stop_on_done)
 
     def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:
         """
@@ -335,31 +383,38 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         :param dp_values: ignored, just here for the interface compatibility
         :return: features computed from the time series data, and the complete rollout
         """
-        ro = None
+        ro_real = None
         run_interactive_loop = True
         while run_interactive_loop:
             # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
-            ro = rollout(self._env, self._policy, eval=True, stop_on_done=False)
+            ro_real = rollout(self._env, self._policy, eval=True, stop_on_done=self.stop_on_done)
             if not isinstance(self._env, RealEnv):
                 run_interactive_loop = False
             else:
                 # Ask is the current rollout should be discarded and redone
                 run_interactive_loop = input("Continue with the next rollout y / n? ").lower() == "n"
-        ro.torch()
 
-        data_real = to.cat([ro.states[:-1, :], ro.actions_applied], dim=1)
+        # Pad if necessary
+        StepSequence.pad(ro_real, self._env.max_steps)
+
+        # Pre-processing
+        ro_real.torch()
+        self._set_action_field([ro_real])
+
+        # Assemble the data
+        data_real = to.cat([ro_real.states[:-1, :], ro_real.get_data_values(self._action_field)], dim=1)
         if self._embedding.requires_target_domain_data:
             data_real = to.cat([data_real, data_real], dim=1)
 
         # Compute the features
         data_real = data_real.unsqueeze(0)  # only one target domain rollout
-        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, 1, len_time_series * data_dim]
+        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, dim_feat]
 
         # Check shape (here no batching and always one rollout)
-        if data_real.shape[0] != 1:
+        if data_real.shape[0] != 1 or data_real.ndim != 2:
             raise pyrado.ShapeErr(given=data_real, expected_match=(1, -1))
 
-        return data_real, ro
+        return data_real, ro_real
 
 
 class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
@@ -391,21 +446,21 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
 
         Serializable._init(self, locals())
 
-        super().__init__(
-            env=None, policy=None, embedding=embedding, num_segments=num_segments, len_segments=len_segments
-        )
+        super().__init__(None, None, embedding, num_segments, len_segments)
 
         # Crawl through the directory and load every file that starts with the word rollout
         rollouts_rec = []
         for root, dirs, files in os.walk(rollouts_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
             rollouts_rec = [pyrado.load(name=f, load_dir=root) for f in files if f.startswith("rollout")]
+            check_all_lengths_equal(rollouts_rec)
         if not rollouts_rec:
             raise pyrado.ValueErr(msg="No rollouts have been found!")
 
         self.rollouts_dir = rollouts_dir
         self.rollouts_rec = rollouts_rec
         self._ring_idx = np.random.randint(0, len(rollouts_rec)) if rand_init_rollout else 0
+        self._set_action_field(self.rollouts_rec)
 
     @property
     def ring_idx(self) -> int:
@@ -434,23 +489,58 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         print_cbt_once(f"Using pre-recorded target domain rollouts to from {self.rollouts_dir}", "g")
 
         # Get pre-recoded rollout and advance the index
-        if not isinstance(self.rollouts_rec, list) and isinstance(self.rollouts_rec[0], StepSequence):
+        if not isinstance(self.rollouts_rec, list):
             raise pyrado.TypeErr(given=self.rollouts_rec, expected_type=list)
+        if not isinstance(self.rollouts_rec[0], StepSequence):
+            raise pyrado.TypeErr(given=self.rollouts_rec[0], expected_type=StepSequence)
 
         ro = self.rollouts_rec[self._ring_idx]
-        ro.torch()
         self._ring_idx = (self._ring_idx + 1) % self.num_rollouts
 
-        data_real = to.cat([ro.states[:-1, :], ro.actions_applied], dim=1)
+        # Pre-processing
+        ro.torch()
+
+        # Assemble the data
+        data_real = to.cat([ro.states[:-1, :], ro.get_data_values(self._action_field)], dim=1)
         if self._embedding.requires_target_domain_data:
             data_real = to.cat([data_real, data_real], dim=1)
 
         # Compute the features
         data_real = data_real.unsqueeze(0)  # only one target domain rollout
-        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, 1, len_time_series * data_dim]
+        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, dim_feat]
 
         # Check shape (here no batching and always one rollout)
-        if data_real.shape[0] != 1:
+        if data_real.shape[0] != 1 or data_real.ndim != 2:
             raise pyrado.ShapeErr(given=data_real, expected_match=(1, -1))
 
         return data_real, ro
+
+
+def check_domain_params(
+    rollouts: Union[List[StepSequence], StepSequence],
+    domain_param_value: np.ndarray,
+    domain_param_names: Union[List[str], ValuesView],
+):
+    """
+    Verify if the domain parameters in the rollout are actually the ones commanded.
+
+    :param rollouts: simulated rollouts or rollout segments
+    :param domain_param_value: one set of domain parameters as commanded
+    :param domain_param_names: names of the domain parameters to set, i.e. values of the domain parameter mapping
+    """
+    if isinstance(rollouts, StepSequence):
+        rollouts = [rollouts]
+
+    if not all(
+        [
+            np.allclose(
+                np.asarray(itemgetter(*domain_param_names)(ro.rollout_info["domain_param"])),
+                domain_param_value,
+                atol=1e-6,
+            )
+            for ro in rollouts
+        ]
+    ):
+        raise pyrado.ValueErr(
+            msg="The domain parameters after the rollouts are not identical to the ones commanded by the sbi!"
+        )
