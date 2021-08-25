@@ -117,17 +117,18 @@ class IDR(Algorithm):
             # Prevents the parameters from overshooting the target.
             if self.curr_iter >= self._param_adjustment_scale:
                 context_mean_new = param.target_mean
-                context_cov_chol_flat_new = param.target_cov_chol_flat
+                context_cov_flat_transformed_new = param.target_cov_flat_transformed
             else:
                 context_mean_new = (
                     param.context_mean + (param.target_mean - param.init_mean) / self._param_adjustment_scale
                 )
-                context_cov_chol_flat_new = (
-                    param.context_cov_chol_flat
-                    + (param.target_cov_chol_flat - param.init_cov_chol_flat) / self._param_adjustment_scale
+                context_cov_flat_transformed_new = (
+                    param.context_cov_flat_transformed
+                    + (param.target_cov_flat_transformed - param.init_cov_flat_transformed)
+                    / self._param_adjustment_scale
                 )
             param.adapt("context_mean", context_mean_new)
-            param.adapt("context_cov_chol_flat", context_cov_chol_flat_new)
+            param.adapt("context_cov_flat_transformed", context_cov_flat_transformed_new)
 
     def reset(self, seed: int = None):
         # Forward to subroutine.
