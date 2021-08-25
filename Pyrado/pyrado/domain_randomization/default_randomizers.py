@@ -569,6 +569,39 @@ def create_default_randomizer_bl() -> DomainRandomizer:
     )
 
 
+@default_randomizer("pyrado.environments.mujoco.openai_half_cheetah", "HalfCheetahSim")
+def create_default_randomizer_cth() -> DomainRandomizer:
+    from pyrado.environments.mujoco.openai_half_cheetah import HalfCheetahSim
+
+    dp_nom = HalfCheetahSim.get_nominal_domain_param()
+    return DomainRandomizer(
+        NormalDomainParam(
+            name="total_mass",
+            mean=dp_nom["total_mass"],
+            std=dp_nom["total_mass"] / 10,
+            clip_lo=1e-3,
+        ),
+        UniformDomainParam(
+            name="tangential_friction_coeff",
+            mean=dp_nom["tangential_friction_coeff"],
+            halfspan=dp_nom["tangential_friction_coeff"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="torsional_friction_coeff",
+            mean=dp_nom["torsional_friction_coeff"],
+            halfspan=dp_nom["torsional_friction_coeff"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="rolling_friction_coeff",
+            mean=dp_nom["rolling_friction_coeff"],
+            halfspan=dp_nom["rolling_friction_coeff"] / 2,
+            clip_lo=0.0,
+        ),
+    )
+
+
 @default_randomizer("pyrado.environments.mujoco.wam_bic", "WAMJointSpaceCtrlSim")
 def create_default_randomizer_wamjsc() -> DomainRandomizer:
     from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
