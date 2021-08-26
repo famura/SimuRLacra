@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=2,
+        max_iter=600,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_params]))
 
     idr_hparam = dict(
-        max_iter=2,
+        max_iter=100,
         performance_threshold=500.0,
     )
     algo = IDR(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **idr_hparam)
