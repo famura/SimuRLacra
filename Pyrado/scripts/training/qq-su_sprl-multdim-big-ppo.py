@@ -112,23 +112,14 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
-    env_sprl_params = [
-        dict(
-            name="g",
-            target_mean=to.tensor([9.81]),
-            target_cov_flat=to.tensor([0.1]),
-            init_mean=to.tensor([9.81]),
-            init_cov_flat=to.tensor([0.01]),
-        ),
-        dict(
-            name="Rm",
-            target_mean=to.tensor([8.4]),
-            target_cov_flat=to.tensor([0.1]),
-            init_mean=to.tensor([8.4]),
-            init_cov_flat=to.tensor([0.01]),
-        ),
-    ]
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
+    env_sprl_param = dict(
+        name=["gravity_const", "motor_resistance"],
+        target_mean=to.tensor([9.81, 8.4]),
+        target_cov_flat=to.tensor([0.1, 0.1]),
+        init_mean=to.tensor([9.81, 8.4]),
+        init_cov_flat=to.tensor([0.01, 0.01]),
+    )
+    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(SelfPacedDomainParam(**env_sprl_param)))
 
     sprl_hparam = dict(
         kl_constraints_ub=8000,
@@ -146,7 +137,7 @@ if __name__ == "__main__":
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=algo_hparam, subrtn_name=PPO.name),
-        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_params=env_sprl_params),
+        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_param=env_sprl_param),
         save_dir=ex_dir,
     )
 

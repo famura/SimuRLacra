@@ -40,11 +40,11 @@ from pyrado.utils.input_output import print_cbt
 
 
 class DomainParam:
-    """Class to store and manage a (single) domain parameter a.k.a. physics parameter a.k.a. simulator parameter"""
+    """Class to store and manage (probably multiple) domain parameter a.k.a. physics parameter a.k.a. simulator parameter"""
 
     def __init__(
         self,
-        name: str,
+        name: Union[str, List[str]],
         clip_lo: Optional[Union[int, float]] = -pyrado.inf,
         clip_up: Optional[Union[int, float]] = pyrado.inf,
         roundint: bool = False,
@@ -52,13 +52,15 @@ class DomainParam:
         """
         Constructor, also see the constructor of DomainRandomizer.
 
-        :param name: name of the parameter
+        :param name: name of the parameter; can be a list of names if this domain parameters supports multiple
+                     parameters, e.g., if the distribution respects correlations; this is usually not the case and the
+                     only known subclass with this behavior is :py:class:`SelfPacedDomainParam`
         :param clip_lo: lower value for clipping
         :param clip_up: upper value for clipping
         :param roundint: flags if the parameters should be rounded and converted to an integer
         """
-        if not isinstance(name, str):
-            raise pyrado.TypeErr(given=name, expected_type=str)
+        if not isinstance(name, (str, list)):
+            raise pyrado.TypeErr(given=name, expected_type=(str, list))
 
         self.name = name
         self.mean = None  # to be set by subclass
@@ -98,12 +100,14 @@ class DomainParam:
             )
         setattr(self, domain_distr_param, domain_distr_param_value)
 
-    def sample(self, num_samples: int = 1) -> List[to.Tensor]:
+    def sample(self, num_samples: int = 1) -> Union[List[to.Tensor], List[List[to.Tensor]]]:
         """
         Generate new domain parameter values.
 
         :param num_samples: number of samples (sets of new parameter values)
-        :return: list of tensors containing the new parameter values
+        :return: list of tensors containing the new parameter values or list of list of tensors containing the new
+                 values for each parameter separately; the outer list is for different parameters, the inner list is for
+                 the number of samples
         """
         if not isinstance(num_samples, int):
             raise pyrado.TypeErr(given=num_samples, expected_type=int)
@@ -310,17 +314,16 @@ class BernoulliDomainParam(DomainParam):
 class SelfPacedDomainParam(DomainParam):
     def __init__(
         self,
-        name: str,
+        name: List[str],
         target_mean: to.Tensor,
         target_cov_flat: to.Tensor,
         init_mean: to.Tensor,
         init_cov_flat: to.Tensor,
-        cov_transformation: BijectiveTransformation,
     ):
         """
         Constructor.
 
-        :param name: name of the parameter
+        :param name: names of the parameters
         :param target_mean: target means of the contextual distribution
         :target_cov_flat: target standard deviations of the contextual distribution
         :init_mean: initial mean of the contextual distribution
@@ -328,6 +331,8 @@ class SelfPacedDomainParam(DomainParam):
         :cov_transformation: transformation applied to the covariance for training
         """
 
+        if not isinstance(name, list):
+            raise pyrado.TypeErr(given_name="name", expected_type=list, given=type(name))
         if not (target_mean.shape == init_mean.shape):
             raise pyrado.ShapeErr(msg="Target and init mean should have same shape!")
         if not (target_cov_flat.shape == init_cov_flat.shape):
@@ -335,14 +340,13 @@ class SelfPacedDomainParam(DomainParam):
 
         super().__init__(name=name)
 
-        self.cov_transformation = cov_transformation
         self.target_mean = target_mean.double()
-        self.target_cov_flat_transformed = self.cov_transformation.forward(target_cov_flat.double())
+        self.target_cov_chol = target_cov_flat.double().sqrt().diag()
         self.context_mean = init_mean.double()
-        self.context_cov_flat_transformed = self.cov_transformation.forward(init_cov_flat.double())
+        self.context_cov_chol = init_cov_flat.double().sqrt().diag()
 
         self.init_mean = self.context_mean.detach().clone()
-        self.init_cov_flat_transformed = self.context_cov_flat_transformed.detach().clone()
+        self.init_cov_chol = self.context_cov_chol.detach().clone()
 
         self.dim = target_mean.shape[0]
 
@@ -351,23 +355,23 @@ class SelfPacedDomainParam(DomainParam):
 
     def get_field_names(self) -> Sequence[str]:
         """Get union of all hyper-parameters of all domain parameter distributions."""
-        return ["target_mean", "target_cov_flat_transformed", "context_mean", "context_cov_flat_transformed"]
+        return ["context_mean", "context_cov_chol"]
 
     @staticmethod
     def make_broadening(
-        name: str,
-        mean: to.Tensor,
+        name: List[str],
+        mean: List[float],
         init_cov_portion: float = 0.001,
         target_cov_portion: float = 0.1,
-        cov_transformation: BijectiveTransformation = SqrtTransformation(),
     ) -> "SelfPacedDomainParam":
+        assert len(mean) == len(name), "mean must have same length as names"
+        mean = to.tensor(mean)
         return SelfPacedDomainParam(
             name=name,
             target_mean=mean,
             target_cov_flat=target_cov_portion * mean.abs(),
             init_mean=mean,
             init_cov_flat=init_cov_portion * mean.abs(),
-            cov_transformation=cov_transformation,
         )
 
     @property
@@ -383,18 +387,18 @@ class SelfPacedDomainParam(DomainParam):
     @property
     def target_cov(self) -> to.Tensor:
         """Get the target covariance matrix."""
-        return to.diag(self.cov_transformation.inverse(self.target_cov_flat_transformed))
+        return self.target_cov_chol @ self.target_cov_chol.T
 
     @property
     def context_cov(self) -> to.Tensor:
         """Get the current covariance matrix."""
-        return to.diag(self.cov_transformation.inverse(self.context_cov_flat_transformed))
+        return self.context_cov_chol @ self.context_cov_chol.T
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
         """
         Update this domain parameter.
 
-        :param domain_distr_param: distribution parameter to update, e.g. mean or std
+        :param domain_distr_param: distribution parameter to update, e.g. mean or cov
         :param domain_distr_param_value: new value of the distribution parameter
         """
 
@@ -402,16 +406,7 @@ class SelfPacedDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distributions, otherwise the changes will have no effect
-        if domain_distr_param in ["target_mean", "target_cov_flat_transformed"]:
-            try:
-                self._target_distr = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
-            except ValueError as err:
-                print_cbt(
-                    f"Inputs that lead to the ValueError from PyTorch Distributions:\n"
-                    f"target_distribution; domain_distr_param = {domain_distr_param}\nloc = {self.target_mean}\ncov = {self.target_cov}"
-                )
-                raise err
-        if domain_distr_param in ["context_mean", "context_cov_flat_transformed"]:
+        if domain_distr_param in ["context_mean", "context_cov_chol"]:
             try:
                 self._context_distr = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
             except ValueError as err:
@@ -428,4 +423,4 @@ class SelfPacedDomainParam(DomainParam):
             raise pyrado.ValueErr(given_name="num_samples", g_constraint=0)
 
         samples = self._context_distr.sample((num_samples,))
-        return list(samples.flatten())
+        return list([list(sample) for sample in samples.T])
