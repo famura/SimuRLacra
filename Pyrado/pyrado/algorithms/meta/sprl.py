@@ -51,7 +51,7 @@ from pyrado.sampling.step_sequence import StepSequence
 def ravel_tril_elements(A: to.Tensor) -> to.Tensor:
     assert len(A.shape) == 2, "A must be two-dimensional"
     assert A.shape[0] == A.shape[1], "A must be square"
-    return to.cat([A.T[i, i:] for i in range(A.shape[0])], dim=0)
+    return to.cat([A[i, : i + 1] for i in range(A.shape[0])], dim=0)
 
 
 def unravel_tril_elements(a: to.Tensor) -> to.Tensor:
@@ -60,8 +60,8 @@ def unravel_tril_elements(a: to.Tensor) -> to.Tensor:
     dim = int((np.sqrt(8 * raveled_dim + 1) - 1) / 2)  # Inverse Gaussian summation formula.
     A = to.zeros((dim, dim)).double()
     for i in range(dim):
-        A[i, i:] = a[dim * i :][: dim - i]
-    return A.T
+        A[i, : i + 1] = a[int(i * (i + 1) / 2) :][: i + 1]
+    return A
 
 
 class MultivariateNormalWrapper:
