@@ -295,10 +295,10 @@ class SPRL(Algorithm):
         for param_a_idx, param_a_name in enumerate(self._spl_parameter.name):
             for param_b_idx, param_b_name in enumerate(self._spl_parameter.name):
                 self.logger.add_value(
-                    f"context cov for {param_a_name}_{param_b_name}", context_cov[param_a_idx, param_b_idx].item()
+                    f"context cov for {param_a_name}--{param_b_name}", context_cov[param_a_idx, param_b_idx].item()
                 )
                 self.logger.add_value(
-                    f"context cov_chol for {param_a_name}_{param_b_name}",
+                    f"context cov_chol for {param_a_name}--{param_b_name}",
                     context_cov_chol[param_a_idx, param_b_idx].item(),
                 )
                 if param_a_name == param_b_name:
