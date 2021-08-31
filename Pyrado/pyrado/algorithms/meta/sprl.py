@@ -449,6 +449,8 @@ class SPRL(Algorithm):
 
         values = to.tensor([ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts])
 
+        constraints = []
+
         def kl_constraint_fn(x):
             """Compute the constraint for the KL-divergence between current and proposed distribution."""
             distribution = previous_distribution.from_stacked_values(x)
@@ -466,12 +468,14 @@ class SPRL(Algorithm):
             grads = to.autograd.grad(kl_divergence, list(distribution.parameters()))
             return np.concatenate([g.detach().numpy() for g in grads])
 
-        kl_constraint = NonlinearConstraint(
-            fun=kl_constraint_fn,
-            lb=-np.inf,
-            ub=self._kl_constraints_ub,
-            jac=kl_constraint_fn_prime,
-            # keep_feasible=True,
+        constraints.append(
+            NonlinearConstraint(
+                fun=kl_constraint_fn,
+                lb=-np.inf,
+                ub=self._kl_constraints_ub,
+                jac=kl_constraint_fn_prime,
+                # keep_feasible=True,
+            )
         )
 
         def performance_constraint_fn(x):
@@ -487,12 +491,14 @@ class SPRL(Algorithm):
             grads = to.autograd.grad(performance, list(distribution.parameters()))
             return np.concatenate([g.detach().numpy() for g in grads])
 
-        performance_constraint = NonlinearConstraint(
-            fun=performance_constraint_fn,
-            lb=self._performance_lower_bound,
-            ub=np.inf,
-            jac=performance_constraint_fn_prime,
-            # keep_feasible=True,
+        constraints.append(
+            NonlinearConstraint(
+                fun=performance_constraint_fn,
+                lb=self._performance_lower_bound,
+                ub=np.inf,
+                jac=performance_constraint_fn_prime,
+                # keep_feasible=True,
+            )
         )
 
         # Clip the bounds of the new variance either if the applied covariance transformation does not ensure
@@ -516,71 +522,35 @@ class SPRL(Algorithm):
             bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
             x0 = np.clip(x0, bounds.lb, bounds.ub)
 
-        objective_fn: Optional[Callable[..., Tuple[np.array, np.array]]] = None
-        result = None
-        constraints = None
+        # We now optimize based on the kl-divergence between target and context distribution by minimizing it
+        def objective(x):
+            """Optimization objective before the minimum specified performance was reached.
+            Tries to find the minimum kl divergence between the current and the update distribution, which
+            still satisfies the minimum update constraint and the performance constraint."""
+            distribution = previous_distribution.from_stacked_values(x)
+            kl_divergence = to.distributions.kl_divergence(distribution.distribution, target_distribution.distribution)
+            grads = to.autograd.grad(kl_divergence, list(distribution.parameters()))
 
-        # Check whether we are already above our performance threshold
-        if performance_constraint_fn(x0) >= self._performance_lower_bound:
-            self._performance_lower_bound_reached = True
-            constraints = [kl_constraint, performance_constraint]
-            print(f"Performance lower bound was reached ({performance_constraint_fn(x0)}), optimizing KL.")
-
-            # We now optimize based on the kl-divergence between target and context distribution by minimizing it
-            def objective(x):
-                """Optimization objective before the minimum specified performance was reached.
-                Tries to find the minimum kl divergence between the current and the update distribution, which
-                still satisfies the minimum update constraint and the performance constraint."""
-                distribution = previous_distribution.from_stacked_values(x)
-                kl_divergence = to.distributions.kl_divergence(
-                    distribution.distribution, target_distribution.distribution
-                )
-                grads = to.autograd.grad(kl_divergence, list(distribution.parameters()))
-
-                return (
-                    kl_divergence.detach().numpy(),
-                    np.concatenate([g.detach().numpy() for g in grads]),
-                )
-
-            objective_fn = objective
-
-        # If we have never reached the performance threshold we optimize just based on the kl constraint
-        elif not self._performance_lower_bound_reached:
-            print(f"Performance lower bound was not reached ({performance_constraint_fn(x0)}), optimizing performance.")
-            constraints = [kl_constraint]
-
-            # Now we optimize on the expected performance, meaning maximizing it
-            def objective(x):
-                """Optimization objective when the minimum specified performance was reached.
-                Tries to maximizes performance while still satisfying the minimum kl update constraint."""
-                distribution = previous_distribution.from_stacked_values(x)
-                performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
-                grads = to.autograd.grad(performance, list(distribution.parameters()))
-
-                return (
-                    -performance.detach().numpy(),
-                    -np.concatenate([g.detach().numpy() for g in grads]),
-                )
-
-            objective_fn = objective
-
-        if objective_fn:
-            result = minimize(
-                objective_fn,
-                x0,
-                method="trust-constr",
-                jac=True,
-                constraints=constraints,
-                options={"gtol": 1e-4, "xtol": 1e-6},
-                bounds=bounds,
-                callback=self._make_optimizer_callback(dim),
+            return (
+                kl_divergence.detach().numpy(),
+                np.concatenate([g.detach().numpy() for g in grads]),
             )
-        if result and result.success:
-            self._adapt_parameters(result.x)
 
-        # We have a result but the optimization process was not a success
-        elif result:
-            old_f = objective_fn(previous_distribution.get_stacked())[0]
+        result = minimize(
+            objective,
+            x0,
+            method="trust-constr",
+            jac=True,
+            constraints=constraints,
+            options={"gtol": 1e-4, "xtol": 1e-6},
+            bounds=bounds,
+            callback=self._make_optimizer_callback(dim),
+        )
+        if result.success:
+            self._adapt_parameters(result.x)
+        else:
+            # If optimization process was not a success
+            old_f = objective(previous_distribution.get_stacked())[0]
             constraints_satisfied = all((const.lb <= const.fun(result.x) <= const.ub for const in constraints))
 
             std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
