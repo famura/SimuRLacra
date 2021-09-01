@@ -319,16 +319,18 @@ class SelfPacedDomainParam(DomainParam):
         target_cov_flat: to.Tensor,
         init_mean: to.Tensor,
         init_cov_flat: to.Tensor,
+        clip_lo: float,
+        clip_up: float,
     ):
         """
         Constructor.
 
         :param name: names of the parameters
         :param target_mean: target means of the contextual distribution
-        :target_cov_flat: target standard deviations of the contextual distribution
+        :target_cov_flat: target covariances of the contextual distribution
         :init_mean: initial mean of the contextual distribution
-        :init_cov_flat: initial standard deviations of the contextual distribution
-        :cov_transformation: transformation applied to the covariance for training
+        :init_cov_flat: initial covariances of the contextual distribution
+        :clip_lo: lowest values to allow for sampling
         """
 
         if not isinstance(name, list):
@@ -338,7 +340,7 @@ class SelfPacedDomainParam(DomainParam):
         if not (target_cov_flat.shape == init_cov_flat.shape):
             raise pyrado.ShapeErr(msg="Target and init standard deviations should have same shape!")
 
-        super().__init__(name=name)
+        super().__init__(name=name, clip_lo=clip_lo, clip_up=clip_up)
 
         self.target_mean = target_mean.double()
         self.target_cov_chol = target_cov_flat.double().sqrt().diag()
@@ -363,6 +365,8 @@ class SelfPacedDomainParam(DomainParam):
         mean: List[float],
         init_cov_portion: float = 0.001,
         target_cov_portion: float = 0.1,
+        clip_lo: float = -pyrado.inf,
+        clip_up: float = pyrado.inf,
     ) -> "SelfPacedDomainParam":
         assert len(mean) == len(name), "mean must have same length as names"
         mean = to.tensor(mean)
@@ -372,6 +376,8 @@ class SelfPacedDomainParam(DomainParam):
             target_cov_flat=target_cov_portion * mean.abs(),
             init_mean=mean,
             init_cov_flat=init_cov_portion * mean.abs(),
+            clip_lo=clip_lo,
+            clip_up=clip_up,
         )
 
     @property
@@ -422,5 +428,5 @@ class SelfPacedDomainParam(DomainParam):
         if not (num_samples > 0):
             raise pyrado.ValueErr(given_name="num_samples", g_constraint=0)
 
-        samples = self._context_distr.sample((num_samples,))
+        samples = self._context_distr.sample((num_samples,)).clamp(self.clip_lo, self.clip_up)
         return list([list(sample) for sample in samples.T])
