@@ -292,6 +292,10 @@ class SPRL(Algorithm):
         target_mean = self._spl_parameter.target_mean.double()
         target_cov_chol = self._spl_parameter.target_cov_chol.double()
 
+        # Add these keys to the logger as dummy values.
+        self.logger.add_value("sprl constraint kl", 0.0)
+        self.logger.add_value("sprl constraint performance", 0.0)
+        self.logger.add_value("sprl objective", 0.0)
         for param_a_idx, param_a_name in enumerate(self._spl_parameter.name):
             for param_b_idx, param_b_name in enumerate(self._spl_parameter.name):
                 self.logger.add_value(
@@ -415,7 +419,7 @@ class SPRL(Algorithm):
         #     x0 = np.clip(x0, bounds.lb, bounds.ub)
 
         # We now optimize based on the kl-divergence between target and context distribution by minimizing it
-        def objective(x):
+        def objective_fn(x):
             """Tries to find the minimum kl divergence between the current and the update distribution, which
             still satisfies the minimum update constraint and the performance constraint."""
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
@@ -432,7 +436,7 @@ class SPRL(Algorithm):
         print("Performing SPRL update.")
         # noinspection PyTypeChecker
         result = minimize(
-            objective,
+            objective_fn,
             x0,
             method="trust-constr",
             jac=True,
@@ -440,20 +444,23 @@ class SPRL(Algorithm):
             options={"gtol": 1e-4, "xtol": 1e-6},
             # bounds=bounds,
         )
-        if result.success:
-            self._adapt_parameters(dim, result.x)
-        else:
+        new_x = result.x
+        if not result.success:
             # If optimization process was not a success
-            old_f = objective(previous_distribution.get_stacked())[0]
+            old_f = objective_fn(previous_distribution.get_stacked())[0]
             constraints_satisfied = all((const.lb <= const.fun(result.x) <= const.ub for const in constraints))
 
             # std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
             std_ok = True
 
-            if constraints_satisfied and std_ok and result.fun < old_f:
-                self._adapt_parameters(dim, result.x)
-            else:
-                print(f"Update unsuccessful, keeping old values spl parameters")
+            if not (constraints_satisfied and std_ok and result.fun < old_f):
+                print(f"Update unsuccessful, keeping old values spl parameters.")
+                new_x = x0
+
+        self._adapt_parameters(dim, new_x)
+        self.logger.add_value("sprl constraint kl", kl_constraint_fn(new_x).item())
+        self.logger.add_value("sprl constraint performance", performance_constraint_fn(new_x).item())
+        self.logger.add_value("sprl objective", objective_fn(new_x)[0].item())
 
     def reset(self, seed: int = None):
         # Forward to subroutine

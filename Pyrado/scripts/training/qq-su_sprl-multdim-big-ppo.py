@@ -118,6 +118,8 @@ if __name__ == "__main__":
         target_cov_flat=to.tensor([0.1, 0.1]),
         init_mean=to.tensor([9.81, 8.4]),
         init_cov_flat=to.tensor([0.01, 0.01]),
+        clip_lo=-pyrado.inf,
+        clip_up=+pyrado.inf,
     )
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(SelfPacedDomainParam(**env_sprl_param)))
 
