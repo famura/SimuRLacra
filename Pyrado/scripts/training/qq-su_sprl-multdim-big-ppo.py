@@ -115,7 +115,7 @@ if __name__ == "__main__":
     env_sprl_param = dict(
         name=["gravity_const", "motor_resistance"],
         target_mean=to.tensor([9.81, 8.4]),
-        target_cov_flat=to.tensor([0.1, 0.1]),
+        target_cov_flat=to.tensor([1.0, 1.0]),
         init_mean=to.tensor([9.81, 8.4]),
         init_cov_flat=to.tensor([0.01, 0.01]),
         clip_lo=-pyrado.inf,
@@ -124,8 +124,8 @@ if __name__ == "__main__":
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(SelfPacedDomainParam(**env_sprl_param)))
 
     sprl_hparam = dict(
-        kl_constraints_ub=8000,
-        performance_lower_bound=50,
+        kl_constraints_ub=10,
+        performance_lower_bound=250,
         kl_threshold=-np.inf,
         max_iter=args.sprl_iterations,
         optimize_mean=not args.cov_only,

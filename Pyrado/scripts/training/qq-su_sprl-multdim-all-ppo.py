@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
     parser.add_argument("--frequency", default=250, type=int)
-    parser.add_argument("--ppo_iterations", default=150, type=int)
+    parser.add_argument("--ppo_iterations", default=200, type=int)
     parser.add_argument("--sprl_iterations", default=50, type=int)
     args = parser.parse_args()
 
@@ -121,7 +121,9 @@ if __name__ == "__main__":
             env = DomainParamTransform(env, [domain_param_name], SqrtTransformation())
         sprl_params_names.append(domain_param_name)
         sprl_params_means.append(domain_param_nominal_value)
-    env_sprl_param = dict(name=sprl_params_names, mean=sprl_params_means)
+    env_sprl_param = dict(
+        name=sprl_params_names, mean=sprl_params_means, init_cov_portion=0.0001, target_cov_portion=0.01
+    )
     env = DomainRandWrapperLive(
         env, randomizer=DomainRandomizer(SelfPacedDomainParam.make_broadening(**env_sprl_param))
     )

@@ -129,7 +129,7 @@ if __name__ == "__main__":
     )
 
     sprl_hparam = dict(
-        kl_constraints_ub=8000,
+        kl_constraints_ub=10,
         performance_lower_bound=400,
         kl_threshold=-np.inf,
         max_iter=args.sprl_iterations,
