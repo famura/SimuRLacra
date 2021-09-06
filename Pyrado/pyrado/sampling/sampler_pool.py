@@ -218,7 +218,7 @@ def _run_collect(
     result = []
     while True:
         with lock:
-            # increment the run counter here to get the id for the next seed
+            # Increment the run counter here to get the id for the next seed
             run_counter.value += 1
             run_num = run_counter.value
 
@@ -228,7 +228,7 @@ def _run_collect(
         # Add to result and record increment
         result.append((run_num, res, n_done))
         with lock:
-            # increment done counter
+            # Increment done counter
             counter.value += n_done
             # Check if done
             if counter.value >= n and (min_runs is None or run_counter.value >= min_runs):
@@ -244,7 +244,7 @@ def _run_map(G, func, argqueue):
             index, arg = argqueue.get(block=False)
         except Empty:
             break
-        result.append((index, func(G, (index, arg))))
+        result.append((index, func(G, arg)))
     return result
 
 
@@ -485,5 +485,5 @@ class SamplerPool:
         raise RuntimeError("The sampler pool is not serializable!")
 
     def __del__(self):
-        # stop the workers as soon as the pool is not referenced anymore
+        # Stop the workers as soon as the pool is not referenced anymore
         self.stop()
