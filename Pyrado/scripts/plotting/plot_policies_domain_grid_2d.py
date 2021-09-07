@@ -36,12 +36,11 @@ from typing import Optional, Tuple
 import joblib as jl
 import pandas as pd
 from matplotlib import colors
-from matplotlib import pyplot as plt
+from matplotlib.colors import TwoSlopeNorm
 
 import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.heatmap import draw_heatmap
-from pyrado.plotting.utils import AccNorm
 from pyrado.utils.argparser import get_argparser
 
 
@@ -74,11 +73,6 @@ def _plot_and_save(
             x_label=column_label,
             add_cbar=True,
         )
-        ax = fig_hm.get_axes()[0]
-        ax.set_xticks([])
-        ax.set_yticks([])
-        ax.set_xlabel(None)
-        ax.set_ylabel(None)
         if nominal:
             fig_hm.get_axes()[0].scatter(
                 *nominal, s=150, marker="o", color="w", edgecolors="k", linewidths=4, label="Nominal"
@@ -98,7 +92,8 @@ def _plot_and_save(
 
 def _plot(dataframes, save_dirs, save_figure):
     # Commonly scale the colorbars of all plots
-    accnorm = AccNorm()
+    # norm = AccNorm()
+    norm = TwoSlopeNorm(vcenter=1500, vmin=0, vmax=3000)
 
     # Loop over all evaluations. Loop two times for first setting the bound of the colorbar and then saving the figures.
     for sf, show_figure in zip((False, save_figure), (False, True)):
@@ -112,7 +107,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 r"$m_{\mathrm{ball}}$",
                 r"$r_{\mathrm{ball}}$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 show_figure=show_figure,
@@ -125,7 +120,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 "$gravity_const$",
                 r"$r_{\mathrm{ball}}$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 show_figure=show_figure,
@@ -138,7 +133,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 "$J_l$",
                 "$J_m$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 show_figure=show_figure,
@@ -151,24 +146,24 @@ def _plot(dataframes, save_dirs, save_figure):
                 r"$\eta_g$",
                 r"$\eta_m$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 show_figure=show_figure,
             )
 
-            _plot_and_save(
-                df,
-                "motor_back_emf",
-                "motor_resistance",
-                "$k_m$",
-                "$R_m$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=sf,
-                save_dir=save_dir,
-                show_figure=show_figure,
-            )
+            # _plot_and_save(
+            #     df,
+            #     "motor_back_emf",
+            #     "motor_resistance",
+            #     "$k_m$",
+            #     "$R_m$",
+            #     add_sep_colorbar=True,
+            #     norm=norm,
+            #     save_figure=sf,
+            #     save_dir=save_dir,
+            #     show_figure=show_figure,
+            # )
 
             _plot_and_save(
                 df,
@@ -177,7 +172,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 r"$B_{\mathrm{eq}}$",
                 r"$c_{\mathrm{frict}}$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 show_figure=show_figure,
@@ -190,7 +185,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 r"$V_{\mathrm{thold,x-}}$",
                 r"$V_{\mathrm{thold,x+}}$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 show_figure=show_figure,
@@ -203,7 +198,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 r"$V_{\mathrm{thold,y-}}$",
                 r"$V_{\mathrm{thold,y+}}$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 show_figure=show_figure,
@@ -216,7 +211,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 r"$m_{\mathrm{ball}}$",
                 r"$a_{\mathrm{delay}}$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 show_figure=show_figure,
@@ -230,7 +225,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 r"$D_p$",
                 r"$D_r$",
                 add_sep_colorbar=True,
-                norm=accnorm,
+                norm=norm,
                 save_figure=sf,
                 save_dir=save_dir,
                 nominal=(1e-6, 5e-6),
