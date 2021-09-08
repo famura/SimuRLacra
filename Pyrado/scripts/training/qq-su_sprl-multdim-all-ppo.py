@@ -47,7 +47,7 @@ from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.bijective_transformation import IdentityTransformation, LogTransformation, SqrtTransformation
+from pyrado.utils.bijective_transformation import SqrtTransformation
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
     parser.add_argument("--frequency", default=250, type=int)
-    parser.add_argument("--ppo_iterations", default=150, type=int)
+    parser.add_argument("--ppo_iterations", default=200, type=int)
     parser.add_argument("--sprl_iterations", default=50, type=int)
     args = parser.parse_args()
 
@@ -112,14 +112,20 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
-    env_sprl_params = []
+    sprl_params_names, sprl_params_means = [], []
     for domain_param_name, domain_param_nominal_value in env.get_nominal_domain_param().items():
+        if domain_param_name in ("voltage_thold_neg", "voltage_thold_pos"):
+            continue
         if domain_param_nominal_value < 1:
-            domain_param_nominal_value = np.log(domain_param_nominal_value)
-            env = DomainParamTransform(env, [domain_param_name], LogTransformation())
-        env_sprl_params.append(dict(name=domain_param_name, mean=to.tensor([domain_param_nominal_value])))
+            domain_param_nominal_value = np.sqrt(domain_param_nominal_value)
+            env = DomainParamTransform(env, [domain_param_name], SqrtTransformation())
+        sprl_params_names.append(domain_param_name)
+        sprl_params_means.append(domain_param_nominal_value)
+    env_sprl_param = dict(
+        name=sprl_params_names, mean=sprl_params_means, init_cov_portion=0.0001, target_cov_portion=0.01
+    )
     env = DomainRandWrapperLive(
-        env, randomizer=DomainRandomizer(*[SelfPacedDomainParam.make_broadening(**p) for p in env_sprl_params])
+        env, randomizer=DomainRandomizer(SelfPacedDomainParam.make_broadening(**env_sprl_param))
     )
 
     sprl_hparam = dict(
@@ -137,7 +143,7 @@ if __name__ == "__main__":
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=algo_hparam, subrtn_name=PPO.name),
-        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_params=env_sprl_params),
+        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_param=env_sprl_param),
         save_dir=ex_dir,
     )
 

@@ -85,7 +85,13 @@ class IDR(Algorithm):
         self._performance_threshold = performance_threshold
         self._param_adjustment_scale = param_adjustment_portion * max_iter
 
-        self._parameters = [param for param in env.randomizer.domain_params if isinstance(param, SelfPacedDomainParam)]
+        self._parameter = None
+        for param in env.randomizer.domain_params:
+            if isinstance(param, SelfPacedDomainParam):
+                if self._parameter is None:
+                    self._parameter = param
+                else:
+                    raise pyrado.ValueErr(msg="randomizer contains more than one spl param")
 
     @property
     def sub_algorithm(self) -> Algorithm:
@@ -104,31 +110,42 @@ class IDR(Algorithm):
         """
         self.save_snapshot()
 
-        for param in self._parameters:
-            self.logger.add_value(f"cur context mean for {param.name}", param.context_mean.item())
-            self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
+        for param_a_idx, param_a_name in enumerate(self._parameter.name):
+            for param_b_idx, param_b_name in enumerate(self._parameter.name):
+                self.logger.add_value(
+                    f"context cov for {param_a_name}--{param_b_name}",
+                    self._parameter.context_cov[param_a_idx, param_b_idx].item(),
+                )
+                self.logger.add_value(
+                    f"context cov_chol for {param_a_name}--{param_b_name}",
+                    self._parameter.context_cov_chol[param_a_idx, param_b_idx].item(),
+                )
+                if param_a_name == param_b_name:
+                    self.logger.add_value(
+                        f"context mean for {param_a_name}", self._parameter.context_mean[param_a_idx].item()
+                    )
+                    break
 
         self._subroutine.reset()
         # Also reset the rollouts to not stop too early because the stopping criterion is fulfilled.
         self._subroutine.sampler.reset_rollouts()
         self._subroutine.train(snapshot_mode, None, meta_info)
 
-        for param in self._parameters:
-            # Prevents the parameters from overshooting the target.
-            if self.curr_iter >= self._param_adjustment_scale:
-                context_mean_new = param.target_mean
-                context_cov_flat_transformed_new = param.target_cov_flat_transformed
-            else:
-                context_mean_new = (
-                    param.context_mean + (param.target_mean - param.init_mean) / self._param_adjustment_scale
-                )
-                context_cov_flat_transformed_new = (
-                    param.context_cov_flat_transformed
-                    + (param.target_cov_flat_transformed - param.init_cov_flat_transformed)
-                    / self._param_adjustment_scale
-                )
-            param.adapt("context_mean", context_mean_new)
-            param.adapt("context_cov_flat_transformed", context_cov_flat_transformed_new)
+        # Prevents the parameters from overshooting the target.
+        if self.curr_iter >= self._param_adjustment_scale:
+            context_mean_new = self._parameter.target_mean
+            context_cov_chol_new = self._parameter.target_cov_chol
+        else:
+            context_mean_new = (
+                self._parameter.context_mean
+                + (self._parameter.target_mean - self._parameter.init_mean) / self._param_adjustment_scale
+            )
+            context_cov_chol_new = (
+                self._parameter.context_cov_chol
+                + (self._parameter.target_cov_chol - self._parameter.init_cov_chol) / self._param_adjustment_scale
+            )
+        self._parameter.adapt("context_mean", context_mean_new)
+        self._parameter.adapt("context_cov_chol", context_cov_chol_new)
 
     def reset(self, seed: int = None):
         # Forward to subroutine.

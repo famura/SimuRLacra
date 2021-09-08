@@ -27,8 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube swing-up task using Proximal Policy Optimization.
+Train an agent to solve the Quanser CartPole swing-up task using Proximal Policy Optimization and Self-Paced RL.
 """
+import numpy as np
 import torch as to
 from torch.optim import lr_scheduler
 
@@ -38,14 +39,15 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.bijective_transformation import IdentityTransformation, LogTransformation, SqrtTransformation
+from pyrado.utils.bijective_transformation import LogTransformation
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -53,48 +55,39 @@ if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
     parser.add_argument("--frequency", default=250, type=int)
-    parser.set_defaults(max_steps=600)
-    parser.add_argument("--ppo_iterations", default=150, type=int)
-    parser.add_argument("--sprl_iterations", default=50, type=int)
-    parser.add_argument("--cov_transform", default="identity", choices=["identity", "sqrt", "log"])
+    parser.add_argument("--ppo_iterations", default=200, type=int)
+    parser.add_argument("--sprl_iterations", default=75, type=int)
+    parser.add_argument("--domain_params")
     args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
-        QQubeSwingUpSim.name,
+        QCartPoleSwingUpSim.name,
         f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.cov_transform}CovTransform_{args.max_steps}ROLen_{args.ppo_iterations}PPOIter_{args.sprl_iterations}_seed_{args.seed}",
+        f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_DomainParams-{args.domain_params}_seed_{args.seed}",
     )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
-    # Covariance transformation.
-    if args.cov_transform == "identity":
-        cov_transformation = IdentityTransformation()
-    elif args.cov_transform == "sqrt":
-        cov_transformation = SqrtTransformation()
-    elif args.cov_transform == "log":
-        cov_transformation = LogTransformation()
-    else:
-        raise pyrado.ValueErr(msg=f"{args.cov_transform!r} is not a valid covariance transformation")
-
     # Environment
-    env_hparam = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
-    env = QQubeSwingUpSim(**env_hparam)
+    env_hparam = dict(
+        dt=1 / float(args.frequency),
+        max_steps=int(12 * args.frequency),  # 12s
+        long=False,
+        simple_dynamics=False,
+        wild_init=False,
+    )
+    env = QCartPoleSwingUpSim(**env_hparam)
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
-    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
-    # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
     vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
-    # vfcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
-    # vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9844224855479998,
         lamda=0.9700148505302241,
@@ -122,24 +115,25 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
-    env_sprl_params = [
-        dict(
-            name=["gravity_const"],
-            target_mean=to.tensor([9.81]),
-            target_cov_flat=to.tensor([1.0]),
-            init_mean=to.tensor([9.81]),
-            init_cov_flat=to.tensor([0.0025]),
-        )
-    ]
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
+    sprl_params_names, sprl_params_means = [], []
+    for domain_param_name, domain_param_nominal_value in env.get_nominal_domain_param().items():
+        if domain_param_name in ("voltage_thold_neg", "voltage_thold_pos"):  # Discontinuous influence.
+            continue
+        if domain_param_nominal_value < 0.1:  # Too small for SPRL.
+            continue
+        sprl_params_names.append(domain_param_name)
+        sprl_params_means.append(domain_param_nominal_value)
+    env_sprl_param = dict(name=sprl_params_names, mean=sprl_params_means, clip_lo=1e-10)
+    env = DomainRandWrapperLive(
+        env, randomizer=DomainRandomizer(SelfPacedDomainParam.make_broadening(**env_sprl_param))
+    )
 
     sprl_hparam = dict(
-        kl_constraints_ub=8000,
-        performance_lower_bound=500,
-        var_lower_bound=0.4 ** 2,
-        kl_threshold=200,
+        kl_constraints_ub=10,
+        performance_lower_bound=400,
+        kl_threshold=-np.inf,
         max_iter=args.sprl_iterations,
-        optimize_mean=True,
+        max_subrtn_retries=1,
     )
     algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
 
@@ -148,8 +142,8 @@ if __name__ == "__main__":
         dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(subrtn=algo_hparam, subrtn_name=PPO.name),
-        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_params=env_sprl_params),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_param=env_sprl_param),
         save_dir=ex_dir,
     )
 
