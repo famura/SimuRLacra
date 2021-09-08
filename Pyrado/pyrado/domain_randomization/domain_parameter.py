@@ -28,6 +28,7 @@
 
 from typing import List, Optional, Sequence, Union
 
+import torch
 import torch as to
 from torch.distributions.bernoulli import Bernoulli
 from torch.distributions.multivariate_normal import MultivariateNormal
@@ -428,5 +429,11 @@ class SelfPacedDomainParam(DomainParam):
         if not (num_samples > 0):
             raise pyrado.ValueErr(given_name="num_samples", g_constraint=0)
 
-        samples = self._context_distr.sample((num_samples,)).clamp(self.clip_lo, self.clip_up)
+        samples = self._context_distr.sample((num_samples,))
+        valid = torch.logical_and(self.clip_lo <= samples, samples <= self.clip_up)
+        while not valid.all():
+            resamples = self._context_distr.sample((num_samples,))
+            mask = torch.logical_not(valid)
+            samples[mask] = resamples[mask]
+            valid = torch.logical_and(self.clip_lo <= samples, samples <= self.clip_up)
         return list([list(sample) for sample in samples.T])
