@@ -330,13 +330,13 @@ By default, the learning rate is constant.</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.actor_critic.ActorCritic.critic">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">critic</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.algorithms.step_based.gae.GAE</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.critic" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">critic</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#pyrado.algorithms.step_based.gae.GAE" title="pyrado.algorithms.step_based.gae.GAE"><span class="pre">pyrado.algorithms.step_based.gae.GAE</span></a></em><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.critic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the critic.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.actor_critic.ActorCritic.expl_strat">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.exploration.stochastic_action.NormalActNoiseExplStrat</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.expl_strat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat" title="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat"><span class="pre">pyrado.exploration.stochastic_action.NormalActNoiseExplStrat</span></a></em><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.expl_strat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the algorithm’s exploration strategy.</p>
 </dd></dl>
 
@@ -387,7 +387,7 @@ Be sure to call this function if you override it.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.actor_critic.ActorCritic.sampler">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler" title="pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler"><span class="pre">pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler</span></a></em><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the sampler. For algorithms with multiple samplers, this is the once collecting the training data.</p>
 </dd></dl>
 
@@ -545,7 +545,7 @@ Be sure to call this function if you override it.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.dql.DQL.sampler">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler" title="pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler"><span class="pre">pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler</span></a></em><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the sampler. For algorithms with multiple samplers, this is the once collecting the training data.</p>
 </dd></dl>
 
@@ -679,7 +679,7 @@ The default implementation resets the learning rate scheduler if there is one.</
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.gae.GAE.vfcn">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">vfcn</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union[torch.nn.modules.module.Module,</span> <span class="pre">pyrado.policies.base.Policy]</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.vfcn" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">vfcn</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.vfcn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the value function approximator.</p>
 </dd></dl>
 
@@ -733,7 +733,7 @@ schedules the maximum learning rate.</p>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.ppo.PPO.expl_strat">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.exploration.stochastic_action.NormalActNoiseExplStrat</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO.expl_strat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat" title="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat"><span class="pre">pyrado.exploration.stochastic_action.NormalActNoiseExplStrat</span></a></em><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO.expl_strat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the algorithm’s exploration strategy.</p>
 </dd></dl>
 
@@ -826,7 +826,7 @@ schedules the maximum learning rate.</p>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.ppo.PPO2.expl_strat">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.exploration.stochastic_action.NormalActNoiseExplStrat</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO2.expl_strat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat" title="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat"><span class="pre">pyrado.exploration.stochastic_action.NormalActNoiseExplStrat</span></a></em><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO2.expl_strat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the algorithm’s exploration strategy.</p>
 </dd></dl>
 
@@ -992,7 +992,7 @@ Be sure to call this function if you override it.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.sac.SAC.sampler">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler" title="pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler"><span class="pre">pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler</span></a></em><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the sampler. For algorithms with multiple samplers, this is the once collecting the training data.</p>
 </dd></dl>
 
@@ -1166,13 +1166,13 @@ logger prints the summary statistics</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.value_based.ValueBased.expl_strat">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union[pyrado.exploration.stochastic_action.SACExplStrat,</span> <span class="pre">pyrado.exploration.stochastic_action.EpsGreedyExplStrat]</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.expl_strat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_action.SACExplStrat" title="pyrado.exploration.stochastic_action.SACExplStrat"><span class="pre">pyrado.exploration.stochastic_action.SACExplStrat</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat" title="pyrado.exploration.stochastic_action.EpsGreedyExplStrat"><span class="pre">pyrado.exploration.stochastic_action.EpsGreedyExplStrat</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.expl_strat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the algorithm’s exploration strategy.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.value_based.ValueBased.memory">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">memory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.algorithms.utils.ReplayMemory</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.memory" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">memory</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="algorithms.html#pyrado.algorithms.utils.ReplayMemory" title="pyrado.algorithms.utils.ReplayMemory"><span class="pre">pyrado.algorithms.utils.ReplayMemory</span></a></em><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.memory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the replay memory.</p>
 </dd></dl>
 

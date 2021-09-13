@@ -379,13 +379,7 @@ observeForceTorque: bool = True</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.ball_in_tube.BallInTubeSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/rcspysim/ball_in_tube.html#BallInTubeSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.rcspysim.ball_in_tube.BallInTubeSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),
-since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -505,13 +499,7 @@ observeForceTorque: bool = True</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.ball_on_plate.BallOnPlateSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/rcspysim/ball_on_plate.html#BallOnPlateSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.rcspysim.ball_on_plate.BallOnPlateSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),
-since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.ball_on_plate.BallOnPlateSim.reset">
@@ -567,7 +555,7 @@ be stored in the environment object, thus are saved e.g. when pickled.</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.base.RcsSim.act_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.act_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.act_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
@@ -634,13 +622,13 @@ since the nominal domain parameters are not set explicitly from Pyrado (only whe
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.base.RcsSim.init_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.init_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.init_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the initial state space.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.base.RcsSim.obs_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.obs_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.obs_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
@@ -689,7 +677,7 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.base.RcsSim.state_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.state_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.state_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Derives the state space from the observation space using _state_from_obs or state_mask.</p>
 </dd></dl>
 
@@ -723,7 +711,7 @@ When a terminal condition is met, the reset function is called.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.base.RcsSim.task">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.tasks.base.Task</span></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.task" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="tasks.html#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><span class="pre">pyrado.tasks.base.Task</span></a></em><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>
 </dd></dl>
 
@@ -847,13 +835,7 @@ observeForceTorque: bool = True</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.box_lifting.BoxLiftingSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/rcspysim/box_lifting.html#BoxLiftingSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.rcspysim.box_lifting.BoxLiftingSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),
-since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -998,13 +980,7 @@ observeForceTorque: bool = True</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.box_shelving.BoxShelvingSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/rcspysim/box_shelving.html#BoxShelvingSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.rcspysim.box_shelving.BoxShelvingSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),
-since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1134,13 +1110,7 @@ observeForceTorque: bool = False,</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.mini_golf.MiniGolfSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/rcspysim/mini_golf.html#MiniGolfSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.rcspysim.mini_golf.MiniGolfSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),
-since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1190,13 +1160,7 @@ taskCombinationMethod: str = ‘sum’, # or ‘mean’, ‘softmax’, ‘produ
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.mp_blending.MPBlendingSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/rcspysim/mp_blending.html#MPBlendingSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.rcspysim.mp_blending.MPBlendingSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),
-since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.mp_blending.MPBlendingSim.name">
@@ -1284,13 +1248,7 @@ collisionConfig: specification of the Rcs CollisionModel</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.planar_3_link.Planar3LinkSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/rcspysim/planar_3_link.html#Planar3LinkSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.rcspysim.planar_3_link.Planar3LinkSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),
-since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1418,13 +1376,7 @@ collisionConfig: specification of the Rcs CollisionModel</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.rcspysim.planar_insert.PlanarInsertSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/rcspysim/planar_insert.html#PlanarInsertSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.rcspysim.planar_insert.PlanarInsertSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),
-since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 

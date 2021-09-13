@@ -252,7 +252,7 @@
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.base.Env.act_space">
-<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.base.Env.act_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.base.Env.act_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
@@ -290,7 +290,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.base.Env.max_steps">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">max_steps</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union[int,</span> <span class="pre">float]</span></em><a class="headerlink" href="#pyrado.environments.base.Env.max_steps" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">max_steps</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.environments.base.Env.max_steps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the maximum number of simulation steps.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -311,7 +311,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.base.Env.obs_space">
-<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.base.Env.obs_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.base.Env.obs_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
@@ -366,13 +366,13 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.base.Env.spec">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.utils.data_types.EnvSpec</span></em><a class="headerlink" href="#pyrado.environments.base.Env.spec" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></em><a class="headerlink" href="#pyrado.environments.base.Env.spec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the environment specification (generated on call).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.base.Env.state_space">
-<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.base.Env.state_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.base.Env.state_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the states (used for describing the environment).</p>
 </dd></dl>
 
@@ -406,7 +406,7 @@ When a terminal condition is met, the reset function is called.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.base.Env.task">
-<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.tasks.base.Task</span></em><a class="headerlink" href="#pyrado.environments.base.Env.task" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="tasks.html#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><span class="pre">pyrado.tasks.base.Task</span></a></em><a class="headerlink" href="#pyrado.environments.base.Env.task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>
 </dd></dl>
 
@@ -482,7 +482,7 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.sim_base.SimEnv.init_space">
-<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.sim_base.SimEnv.init_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.sim_base.SimEnv.init_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the initial state space.</p>
 </dd></dl>
 

@@ -531,7 +531,7 @@ env_info: contains diagnostic information about the environment</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.act_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.act_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.act_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
@@ -588,7 +588,7 @@ This assumes that there is only one.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.init_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.init_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.init_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the initial state space if it exists. Forwards to the wrapped environment.</p>
 </dd></dl>
 
@@ -609,7 +609,7 @@ This assumes that there is only one.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.max_steps">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">max_steps</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union[int,</span> <span class="pre">float]</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.max_steps" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">max_steps</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.max_steps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the maximum number of simulation steps.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -631,13 +631,13 @@ This assumes that there is only one.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.obs_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.obs_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.obs_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.randomizer">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">randomizer</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[pyrado.domain_randomization.domain_randomizer.DomainRandomizer]</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.randomizer" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">randomizer</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer"><span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the wrapped environment’s domain randomizer.</p>
 </dd></dl>
 
@@ -680,7 +680,7 @@ This assumes that there is only one.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.state_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.state_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.state_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the states (used for describing the environment).</p>
 </dd></dl>
 
@@ -711,13 +711,13 @@ The domain parameters are automatically stored in attributes prefixed with ‘_�
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.task">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.tasks.base.Task</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.task" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="tasks.html#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><span class="pre">pyrado.tasks.base.Task</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapper.wrapped_env">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">wrapped_env</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.environments.base.Env</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.wrapped_env" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">wrapped_env</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.wrapped_env" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the wrapped environment of this wrapper.</p>
 </dd></dl>
 
@@ -738,7 +738,7 @@ If necessary, you should also override _process_action_space to report the corre
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapperAct.act_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapperAct.act_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapperAct.act_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
@@ -776,7 +776,7 @@ If necessary, you should also override _process_obs_space to report the correct 
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.base.EnvWrapperObs.obs_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapperObs.obs_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapperObs.obs_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
@@ -837,7 +837,7 @@ and use its randomizer</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.domain_randomization.DomainRandWrapper.randomizer">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">randomizer</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></em><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper.randomizer" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">randomizer</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer"><span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper.randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the wrapped environment’s domain randomizer.</p>
 </dd></dl>
 
@@ -973,7 +973,7 @@ m = {0: (&#39;name1&#39;, &#39;parameter_type1&#39;), 1: (&#39;name2&#39;, &#39;
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper.randomizer">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">randomizer</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></em><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper.randomizer" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">randomizer</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer"><span class="pre">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</span></a></em><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper.randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the wrapped environment’s domain randomizer.</p>
 </dd></dl>
 

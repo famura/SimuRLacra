@@ -282,12 +282,7 @@ stabilized on the center of the beam. In this setup, the agent can control the t
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.ball_on_beam.BallOnBeamSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/ball_on_beam.html#BallOnBeamSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.ball_on_beam.BallOnBeamSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is used to check which domain parameters exist.</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.ball_on_beam.BallOnBeamSim.name">
@@ -316,7 +311,7 @@ stabilized on the center of the beam. In this setup, the agent can control the t
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.base.SimPyEnv.act_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.act_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.act_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
@@ -331,13 +326,13 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.base.SimPyEnv.init_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.init_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.init_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the initial state space.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.base.SimPyEnv.obs_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.obs_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.obs_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
@@ -375,7 +370,7 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.base.SimPyEnv.state_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.state_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.state_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the states (used for describing the environment).</p>
 </dd></dl>
 
@@ -409,7 +404,7 @@ When a terminal condition is met, the reset function is called.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.base.SimPyEnv.task">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.tasks.base.Task</span></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.task" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="tasks.html#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><span class="pre">pyrado.tasks.base.Task</span></a></em><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>
 </dd></dl>
 
@@ -598,12 +593,7 @@ registered hooks while the latter silently ignores them.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is used to check which domain parameters exist.</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.name">
@@ -634,7 +624,7 @@ See <a class="reference external" href="https://github.com/openai/gym/tree/maste
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.openai_classical_control.GymEnv.act_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.act_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.act_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
@@ -656,12 +646,7 @@ but there might also be additional parameters that depend on the domain paramete
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.openai_classical_control.GymEnv.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/openai_classical_control.html#GymEnv.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is used to check which domain parameters exist.</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.openai_classical_control.GymEnv.init_space">
@@ -676,7 +661,7 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.openai_classical_control.GymEnv.obs_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.obs_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.obs_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
@@ -714,7 +699,7 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.openai_classical_control.GymEnv.state_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.spaces.base.Space</span></em><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.state_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></em><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.state_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the states (used for describing the environment).</p>
 </dd></dl>
 
@@ -986,12 +971,7 @@ When a terminal condition is met, the reset function is called.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pendulum.PendulumSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/pendulum.html#PendulumSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pendulum.PendulumSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is used to check which domain parameters exist.</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.pendulum.PendulumSim.name">
@@ -1103,12 +1083,7 @@ As a result, the angles alpha and beta are w.r.t. to the inertial frame, i.e. th
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is used to check which domain parameters exist.</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim.get_voltage_tholds">
@@ -1171,12 +1146,7 @@ can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span>. On
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_cartpole.html#QCartPoleSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is used to check which domain parameters exist.</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.observe">
@@ -1290,12 +1260,7 @@ can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_qube.QQubeSim.get_nominal_domain_param">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_qube.html#QQubeSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_qube.QQubeSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is used to check which domain parameters exist.</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.quanser_qube.QQubeSim.observe">
