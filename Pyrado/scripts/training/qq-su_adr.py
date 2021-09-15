@@ -64,11 +64,7 @@ if __name__ == "__main__":
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
-    ##
-    #
-    # Subroutine
-    #
-    ##
+    ### Subroutine ###
 
     # Policy
     policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
@@ -106,11 +102,7 @@ if __name__ == "__main__":
     )
     subroutine = PPO(ex_dir, env, policy, critic, **subroutine_hparam)
 
-    ###
-    #
-    # ADR
-    #
-    ###
+    ### ADR ###
 
     adr_hp = dict(randomized_params=["length_rot_pole", "gravity_const"], evaluation_steps=20, step_length=0.05)
 

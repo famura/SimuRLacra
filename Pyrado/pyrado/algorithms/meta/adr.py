@@ -464,7 +464,6 @@ class RewardGenerator:
         Trajectories considered as not fixed yield a high reward.
 
         :param traj: trajectory to evaluate
-        :type traj: StepSequence
         :return: a score
         :rtype: to.Tensor
         """

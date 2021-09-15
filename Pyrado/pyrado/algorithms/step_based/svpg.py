@@ -72,7 +72,6 @@ class SVPG(Algorithm):
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
-        :type save_dir: pyrado.PathLike
         :param env: the environment which the policy operates
         :param particle: the particle to populate with different parameters during training
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
@@ -138,7 +137,6 @@ class SVPG(Algorithm):
             self.make_snapshot(snapshot_mode, avg_ret, meta_info)
             self.logger.record_step()
 
-        # assert all(len(p) == len(parameters[0]) for p in parameters)
         params = to.stack([to.stack(parameters[i]).mean(axis=0) for i in range(self.num_particles)])
         policy_grds = to.stack([to.stack(policy_grads[i]).mean(axis=0) for i in range(self.num_particles)])
 
@@ -220,13 +218,6 @@ class SVPG(Algorithm):
         self.particle_states[self.current_particle] = self.particle.__getstate__()
         self.particle_policy_states[self.current_particle] = to.clone(self.particle.policy.param_values)
 
-
-# class SVPGHyperparams(TypedDict):
-#    algo: Dict
-#    actor: Dict
-#    vfcn: Dict
-#    critic: Dict
-#    particle: Dict
 
 SVPGHyperparams = Dict
 
