@@ -673,6 +673,8 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.convert">convert() (StepSequence method)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.convert_and_detach">convert_and_detach() (ADR method)</a>
+</li>
       <li><a href="spaces.html#pyrado.spaces.base.Space.copy">copy() (Space method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_processing.correct_atleast_2d">correct_atleast_2d() (in module pyrado.utils.data_processing)</a>
@@ -1130,6 +1132,8 @@
       <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding">Embedding (class in pyrado.sampling.sbi_embeddings)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.embedding">embedding (SBIBase property)</a>
+</li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.empty">empty() (OptimizerHook method)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.empty.EmptySpace">EmptySpace (class in pyrado.spaces.empty)</a>
 </li>
@@ -1929,6 +1933,8 @@
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.iter_particles">iter_particles (SVPG property)</a>
 </li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.iter_steps">iter_steps() (OptimizerHook method)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.iterate_rollouts">iterate_rollouts() (StepSequence method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker.iteration">iteration() (IterationTracker method)</a>
@@ -2008,8 +2014,6 @@
       <li><a href="policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy">LinearPolicy (class in pyrado.policies.feed_back.linear)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.list_experiments">list_experiments() (in module pyrado.logger.experiment)</a>
-</li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.lite_step">lite_step() (SVPGAdapter method)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager">LiveFigureManager (class in pyrado.plotting.live_update)</a>
 </li>
@@ -3048,10 +3052,10 @@
       </ul></li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsNormWrapper">ObsNormWrapper (class in pyrado.environment_wrappers.observation_normalization)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_partial.ObsPartialWrapper">ObsPartialWrapper (class in pyrado.environment_wrappers.observation_partial)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsRunningNormWrapper">ObsRunningNormWrapper (class in pyrado.environment_wrappers.observation_normalization)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper">ObsVelFiltWrapper (class in pyrado.environment_wrappers.observation_velfilter)</a>
@@ -3075,6 +3079,8 @@
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultExample.opt_est_expec_return">opt_est_expec_return() (CatapultExample method)</a>
 </li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultExample.opt_policy_param">opt_policy_param() (CatapultExample method)</a>
+</li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook">OptimizerHook (class in pyrado.algorithms.step_based.svpg)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.goalless.OptimProxyTask">OptimProxyTask (class in pyrado.tasks.goalless)</a>
 </li>
@@ -4861,6 +4867,8 @@
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.read_csv_w_replace">read_csv_w_replace() (in module pyrado.utils.experiments)</a>
 </li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.real_step">real_step() (OptimizerHook method)</a>
+</li>
       <li><a href="environments.html#pyrado.environments.real_base.RealEnv">RealEnv (class in pyrado.environments.real_base)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI">RealRolloutSamplerForSBI (class in pyrado.sampling.sbi_rollout_sampler)</a>
@@ -5039,6 +5047,8 @@
         <li><a href="algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.reset">(NonlinRegression method)</a>
 </li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.reset">(ObsVelFiltWrapper method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.reset">(OptimizerHook method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.goalless.OptimProxyTask.reset">(OptimProxyTask method)</a>
 </li>
@@ -5730,6 +5740,8 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.step">(NPDR method)</a>
 </li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.step">(OptimizerHook method)</a>
+</li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.step">(ParameterExploring method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.step">(PDDR method)</a>
@@ -5889,6 +5901,8 @@
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter">SVPGAdapter (class in pyrado.algorithms.meta.adr)</a>
 </li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPGBuilder">SVPGBuilder (class in pyrado.algorithms.step_based.svpg)</a>
+</li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_params.SymmParamExplStrat">SymmParamExplStrat (class in pyrado.exploration.stochastic_params)</a>
 </li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL">SysIdViaEpisodicRL (class in pyrado.algorithms.episodic.sysid_via_episodic_rl)</a>
@@ -5974,6 +5988,8 @@
       <li><a href="tests.html#tests.test_rollout_result.test_additional_required">test_additional_required() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_utils.test_adr_reward_generator">test_adr_reward_generator() (in module tests.algorithms.test_utils)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_utils.test_adr_reward_generator_save_load">test_adr_reward_generator_save_load() (in module tests.algorithms.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_advantage_calculation">test_advantage_calculation() (in module tests.test_rollout_result)</a>
 </li>
@@ -6313,6 +6329,8 @@
 </li>
       <li><a href="tests.html#tests.test_domain_randomization.test_rescaling">test_rescaling() (in module tests.test_domain_randomization)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_delay.test_reset">test_reset() (in module tests.environment_wrappers.test_action_delay)</a>
 
       <ul>
@@ -6321,8 +6339,6 @@
         <li><a href="tests.html#tests.test_environments.test_reset">(in module tests.test_environments)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_tasks.test_rew_fcn_constructor">test_rew_fcn_constructor() (in module tests.test_tasks)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rfb_policy_batch">test_rfb_policy_batch() (in module tests.test_policies)</a>
@@ -6440,8 +6456,6 @@
       <li><a href="tests.html#tests.test_spaces.test_subspace_box_space">test_subspace_box_space() (in module tests.test_spaces)</a>
 </li>
       <li><a href="tests.html#tests.test_plotting.test_surface">test_surface() (in module tests.test_plotting)</a>
-</li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_svpg">test_svpg() (in module tests.algorithms.test_algorithms)</a>
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_sysidasrl_reps">test_sysidasrl_reps() (in module tests.algorithms.test_meta)</a>
 </li>
@@ -7014,6 +7028,10 @@
 
 <h2 id="Z">Z</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.zero_grad">zero_grad() (OptimizerHook method)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.ZeroPerStepRewFcn">ZeroPerStepRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
