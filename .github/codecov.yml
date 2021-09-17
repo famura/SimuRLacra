@@ -8,6 +8,7 @@ ignore:
   - "Pyrado/pyrado/environments/quanser"
   - "Pyrado/pyrado/environments/gym_wrapper"
   - "Pyrado/scripts"
+  - "Pyrado/setup.py"
   - "RcsPySim/doc"
   - "RcsPySim/config"
   - "thirdParty"
