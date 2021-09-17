@@ -55,7 +55,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
         f"{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}",
-        f"sim2sim_rand-mass_pend_pole-mass_rot_pole_seed-{args.seed}",
+        f"sim2sim_seed-{args.seed}",
     )
 
     # Set seed if desired
@@ -82,13 +82,13 @@ if __name__ == "__main__":
     subrtn_hparam = dict(
         max_iter=5,
         pop_size=50,
-        num_init_states_per_domain=4,
-        num_domains=10,
+        num_init_states_per_domain=5,
+        num_domains=16,
         num_is_samples=5,
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_workers=12,
+        num_workers=20,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     # Algorithm
     bayrn_hparam = dict(
-        max_iter=15,
+        max_iter=10,
         acq_fc="UCB",
         acq_param=dict(beta=0.25),
         acq_restarts=500,
