@@ -65,7 +65,7 @@ if __name__ == "__main__":
         ro.numpy()
         if args.verbose:
             plot_observations(ro)
-            plt.gcf().canvas.set_window_title("Before")
+            plt.gcf().canvas.manager.set_window_title("Before")
 
         # Filter the signals, but not the time
         ro_proc = StepSequence.process_data(
@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
         if args.verbose:
             plot_observations(ro_proc)
-            plt.gcf().canvas.set_window_title("After")
+            plt.gcf().canvas.manager.set_window_title("After")
             plt.show()
 
         # Save in a new folder on the same level as the current folder

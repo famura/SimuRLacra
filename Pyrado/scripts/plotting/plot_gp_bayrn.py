@@ -51,6 +51,11 @@ if __name__ == "__main__":
     cands = to.load(osp.join(ex_dir, "candidates.pt"))
     cands_values = to.load(osp.join(ex_dir, "candidates_values.pt")).unsqueeze(1)
 
+    # Cut off later iterations (e.g., to produce a gif)
+    if args.iter > 0:  # default value for iter is -1
+        cands = cands[: args.iter]
+        cands_values = cands_values[: args.iter]
+
     dim_cand = cands.shape[1]  # number of domain distribution parameters
     if dim_cand % 2 != 0:
         raise pyrado.ShapeErr(msg="The dimension of domain distribution parameters must be a multiple of 2!")

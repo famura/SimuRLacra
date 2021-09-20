@@ -516,7 +516,7 @@ def plot_mean_std_across_rollouts(
     fig_obs, axs_obs = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
     axs_obs = np.atleast_2d(axs_obs)
     axs_obs = correct_atleast_2d(axs_obs)
-    fig_obs.canvas.set_window_title("Mean And 2 Standard Deviations of the Observations over Time")
+    fig_obs.canvas.manager.set_window_title("Mean And 2 Standard Deviations of the Observations over Time")
     colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(idcs_obs)))
 
     # Plot observations
@@ -543,7 +543,7 @@ def plot_mean_std_across_rollouts(
     fig_act, axs_act = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
     axs_act = np.atleast_2d(axs_act)
     axs_act = correct_atleast_2d(axs_act)
-    fig_act.canvas.set_window_title("Mean And 2 Standard Deviations of the Actions over Time")
+    fig_act.canvas.manager.set_window_title("Mean And 2 Standard Deviations of the Actions over Time")
     colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
     for idx_a, c in enumerate(data_act.columns.unique()):
