@@ -1,78 +1,38 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>stopping_criteria &mdash; Pyrado 0.7 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="exploration" href="exploration.html" />
     <link rel="prev" title="regression" href="algorithms.regression.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> Pyrado
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 0.7
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +40,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
@@ -165,83 +114,42 @@
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Pyrado</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>stopping_criteria</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/algorithms.stopping_criteria.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="stopping-criteria">
-<h1>stopping_criteria<a class="headerlink" href="#stopping-criteria" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-pyrado.algorithms.stopping_criteria.predefined_criteria">
-<span id="predefined-criteria"></span><h2>predefined_criteria<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria.predefined_criteria" title="Permalink to this headline">¶</a></h2>
+             
+  <section id="stopping-criteria">
+<h1>stopping_criteria<a class="headerlink" href="#stopping-criteria" title="Permalink to this headline"></a></h1>
+<section id="module-pyrado.algorithms.stopping_criteria.predefined_criteria">
+<span id="predefined-criteria"></span><h2>predefined_criteria<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria.predefined_criteria" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.AlwaysStopStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">AlwaysStopStoppingCriterion</span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#AlwaysStopStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.AlwaysStopStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">AlwaysStopStoppingCriterion</span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#AlwaysStopStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.AlwaysStopStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion</span></code></a></p>
 <p>Stopping criterion that is always met.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.AlwaysStopStoppingCriterion.is_met">
-<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#AlwaysStopStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.AlwaysStopStoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#AlwaysStopStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.AlwaysStopStoppingCriterion.is_met" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether the stopping criterion is met.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -261,7 +169,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.CustomStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CustomStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">criterion_fn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#CustomStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.CustomStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CustomStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">criterion_fn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#CustomStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.CustomStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion</span></code></a></p>
 <p>Custom stopping criterion that takes an arbitrary callable to evaluate.</p>
 <p>Constructor.</p>
@@ -277,7 +185,7 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.CustomStoppingCriterion.is_met">
-<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#CustomStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.CustomStoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#CustomStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.CustomStoppingCriterion.is_met" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether the stopping criterion is met.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -297,7 +205,7 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.IterCountStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">IterCountStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#IterCountStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.IterCountStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">IterCountStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#IterCountStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.IterCountStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion</span></code></a></p>
 <p>Uses the iteration number as a stopping criterion, i.e. sets a maximum number of iterations.</p>
 <p>Constructor.</p>
@@ -308,7 +216,7 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.IterCountStoppingCriterion.is_met">
-<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#IterCountStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.IterCountStoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#IterCountStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.IterCountStoppingCriterion.is_met" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether the stopping criterion is met.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -328,12 +236,12 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.NeverStopStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">NeverStopStoppingCriterion</span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#NeverStopStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.NeverStopStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">NeverStopStoppingCriterion</span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#NeverStopStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.NeverStopStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion</span></code></a></p>
 <p>Stopping criterion that is never met.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.NeverStopStoppingCriterion.is_met">
-<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#NeverStopStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.NeverStopStoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#NeverStopStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.NeverStopStoppingCriterion.is_met" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether the stopping criterion is met.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -353,7 +261,7 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.SampleCountStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SampleCountStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_sample_count</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#SampleCountStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.SampleCountStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SampleCountStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_sample_count</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#SampleCountStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.SampleCountStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion</span></code></a></p>
 <p>Uses the sampler count as a stopping criterion, i.e. sets a maximum number samples.</p>
 <p>Constructor.</p>
@@ -364,7 +272,7 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.SampleCountStoppingCriterion.is_met">
-<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#SampleCountStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.SampleCountStoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#SampleCountStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.SampleCountStoppingCriterion.is_met" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether the stopping criterion is met.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -384,7 +292,7 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ToggleableStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">met</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ToggleableStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">met</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion</span></code></a></p>
 <p>Stopping criterion that can be turned on/off from the outside.</p>
 <p>Constructor.</p>
@@ -395,7 +303,7 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.is_met">
-<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.is_met" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether the stopping criterion is met.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -413,27 +321,27 @@ same that was passed to the <cite>is_met</cite> method</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.off">
-<span class="sig-name descname"><span class="pre">off</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.off"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.off" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">off</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.off"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.off" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.on">
-<span class="sig-name descname"><span class="pre">on</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.on"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.on" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">on</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.on"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.on" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.toggle">
-<span class="sig-name descname"><span class="pre">toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.toggle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.toggle" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.algorithms.stopping_criteria.rollout_based_criteria">
-<span id="rollout-based-criteria"></span><h2>rollout_based_criteria<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria.rollout_based_criteria" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-pyrado.algorithms.stopping_criteria.rollout_based_criteria">
+<span id="rollout-based-criteria"></span><h2>rollout_based_criteria<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria.rollout_based_criteria" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ConvergenceStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ConvergenceStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">convergence_probability_threshold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_statistic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ReturnStatistic.median</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_lookbacks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#ConvergenceStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ConvergenceStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ConvergenceStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">convergence_probability_threshold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_statistic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ReturnStatistic.median</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_lookbacks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#ConvergenceStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ConvergenceStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion</span></code></a></p>
 <p>Checks for convergence of the returns for a given statistic that can be specified in the constructor. This is done
 by fitting a linear regression model to all the previous statistics (stored in a list) and performing a Wald test
@@ -472,7 +380,7 @@ computing the statistic; defaults to one</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.MinReturnStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MinReturnStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_threshold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_statistic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ReturnStatistic.min</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#MinReturnStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.MinReturnStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MinReturnStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_threshold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_statistic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ReturnStatistic.min</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#MinReturnStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.MinReturnStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion</span></code></a></p>
 <p>Uses any statistic (defaulting to min) of the return of the latest rollout as a stopping criterion and stops if this
 statistic exceeds a certain threshold.</p>
@@ -490,39 +398,39 @@ criterion is met</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ReturnStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#ReturnStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ReturnStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#ReturnStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
 <p>All the different return statistics supported by <cite>ReturnStatisticBasedStoppingCriterion</cite>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.max">
-<span class="sig-name descname"><span class="pre">max</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.max" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">max</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.max" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.mean">
-<span class="sig-name descname"><span class="pre">mean</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.mean" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.mean" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.median">
-<span class="sig-name descname"><span class="pre">median</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.median" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">median</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.median" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.min">
-<span class="sig-name descname"><span class="pre">min</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.min" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">min</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.min" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.variance">
-<span class="sig-name descname"><span class="pre">variance</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.variance" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">variance</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic.variance" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ReturnStatisticBasedStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_statistic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ReturnStatistic.median</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_lookbacks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#ReturnStatisticBasedStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ReturnStatisticBasedStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_statistic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ReturnStatistic.median</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_lookbacks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#ReturnStatisticBasedStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion</span></code></a></p>
 <p>Abstract extension of the base <cite>RolloutBasedStoppingCriterion</cite> class for criteria that are based on a specific
 statistic of the returns of rollouts of the last iteration.</p>
@@ -541,7 +449,7 @@ computing the statistic; defaults to one</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RolloutBasedStoppingCriterion</span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#RolloutBasedStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RolloutBasedStoppingCriterion</span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#RolloutBasedStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion</span></code></a></p>
 <p>Abstract extension of the base <cite>StoppingCriterion</cite> class for criteria that are based on having access to rollouts.</p>
 <div class="admonition note">
@@ -550,7 +458,7 @@ computing the statistic; defaults to one</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion.is_met">
-<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#RolloutBasedStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/rollout_based_criteria.html#RolloutBasedStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion.is_met" title="Permalink to this definition"></a></dt>
 <dd><p>Gets the sampler from the algorithm, checks if it is a <cite>RolloutSavingWrapper</cite> and forwards the check if of the
 stopping criterion to <cite>_is_met_with_sampler(..)</cite>.</p>
 <dl class="field-list simple">
@@ -565,19 +473,19 @@ stopping criterion to <cite>_is_met_with_sampler(..)</cite>.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.algorithms.stopping_criteria.stopping_criterion">
-<span id="stopping-criterion"></span><h2>stopping_criterion<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria.stopping_criterion" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-pyrado.algorithms.stopping_criteria.stopping_criterion">
+<span id="stopping-criterion"></span><h2>stopping_criterion<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria.stopping_criterion" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">StoppingCriterion</span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/stopping_criterion.html#StoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">StoppingCriterion</span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/stopping_criterion.html#StoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class for the stopping criterion. A stopping criterion takes an algorithm (and hence its current state) and
 decides whether the algorithm should terminate. A common stopping criterion is e.g. reaching a set number of
 iterations.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.is_met">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/stopping_criterion.html#StoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/stopping_criterion.html#StoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.is_met" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether the stopping criterion is met.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -595,7 +503,7 @@ iterations.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/stopping_criterion.html#StoppingCriterion.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.reset" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/stopping_criterion.html#StoppingCriterion.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Resets the internal state of this stopping criterion. Has to be called when the algorithm is reset. If
 <cite>suppress_next_reset</cite> was invoked right before invoking this method, the stopping criterion will not be reset.</p>
 <div class="admonition note">
@@ -607,64 +515,47 @@ mechanism.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.suppress_next_reset">
-<span class="sig-name descname"><span class="pre">suppress_next_reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/stopping_criterion.html#StoppingCriterion.suppress_next_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.suppress_next_reset" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">suppress_next_reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/stopping_criterion.html#StoppingCriterion.suppress_next_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.suppress_next_reset" title="Permalink to this definition"></a></dt>
 <dd><p>Suppresses the next reset call as described in <cite>reset</cite>.</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.algorithms.stopping_criteria">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+</section>
+<section id="module-pyrado.algorithms.stopping_criteria">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria" title="Permalink to this headline"></a></h2>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="exploration.html" class="btn btn-neutral float-right" title="exploration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="algorithms.regression.html" class="btn btn-neutral float-left" title="regression" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="exploration.html" class="btn btn-neutral float-right" title="exploration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020.
-
-    </p>
+    <p>&#169; Copyright 2020.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
