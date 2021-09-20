@@ -549,7 +549,7 @@ suppress the title</p></li>
 <dt class="sig sig-object py" id="pyrado.plotting.gaussian_process.render_singletask_gp">
 <span class="sig-name descname"><span class="pre">render_singletask_gp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/gaussian_process.html#render_singletask_gp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.gaussian_process.render_singletask_gp" title="Permalink to this definition"></a></dt>
 <dd><p>Fit the GP posterior to the input data and plot the mean and std as well as the data points.
-There are 3 options: 1D plot (infered by data dimensions), 2D plot</p>
+There are 3 options: 1D plot (inferred by data dimensions), 2D plot</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
@@ -575,11 +575,9 @@ There are 3 options: 1D plot (infered by data dimensions), 2D plot</p>
 <li><p><strong>curve_label</strong> – label for the mean curve (1D plot only)</p></li>
 <li><p><strong>heatmap_cmap</strong> – color map forwarded to <cite>draw_heatmap()</cite> (2D plot only), <cite>None</cite> to use Pyrado’s default</p></li>
 <li><p><strong>show_legend_posterior</strong> – flag if the legend entry for the posterior should be printed (affects mean and std)</p></li>
-<li><p><strong>show_legend_std</strong> – flag if a legend entry for the std area should be printed</p></li>
 <li><p><strong>show_legend_data</strong> – flag if a legend entry for the individual data points should be printed</p></li>
 <li><p><strong>legend_data_cmap</strong> – color map for the sampled points, default is ‘binary’</p></li>
 <li><p><strong>cbar_label</strong> – label for the color bar (2D plot only)</p></li>
-<li><p><strong>title</strong> – title displayed above the figure, set to <cite>None</cite> to suppress the title</p></li>
 <li><p><strong>render3D</strong> – use 3D rendering if possible</p></li>
 </ul>
 </dd>
