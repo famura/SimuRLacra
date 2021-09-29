@@ -168,13 +168,13 @@ class ValueBased(Algorithm, ABC):
                 ros = self.sampler_init.sample()
                 self._fill_with_init_sampler = False
             else:
-                # save old bounds from the sampler
+                # Save old bounds from the sampler
                 min_rollouts = self.sampler.min_rollouts
                 min_steps = self.sampler.min_steps
-                # set and sample with the init sampler settings
+                # Set and sample with the init sampler settings
                 self.sampler.set_min_count(min_steps=self.num_init_memory_steps)
                 ros = self.sampler.sample()
-                # revert back to initial parameters
+                # Revert back to initial parameters
                 self.sampler.set_min_count(min_rollouts=min_rollouts, min_steps=min_steps)
             self._memory.push(ros)
         else:
