@@ -215,12 +215,12 @@ class ValueBased(Algorithm, ABC):
 
     def reset(self, seed: Optional[int] = None, fill_memory_with_dummy_policy: bool = False):
         """
-        Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+        Reset the algorithm to its initial state. This should not reset learned policy parameters.
         By default, this resets the iteration count and the exploration strategy.
         Be sure to call this function if you override it.
 
-        :param seed: seed value for the random number generators, pass None for no seeding
-        :param fill_memory_with_dummy: Fill the memory with a random dummy policy instead of the trained policy
+        :param seed: seed value for the random number generators, pass `None` for no seeding
+        :param fill_memory_with_dummy: if `True`, fill the memory with a random dummy policy instead of the trained policy
         """
 
         # Reset the exploration strategy, internal variables and the random seeds
