@@ -63,8 +63,8 @@ if __name__ == "__main__":
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
-        f"{SAC.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.max_steps}ROLen_{args.sac_iterations}SACIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}",
+        f"{SPRL.name}-{SAC.name}_{FNNPolicy.name}",
+        f"covonly-{args.cov_only}_seed-{args.seed}",
     )
 
     # Set seed if desired
