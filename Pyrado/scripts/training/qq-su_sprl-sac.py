@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube swing-up task using Soft-Actor-Critic.
+Train an agent to solve the Quanser Qube swing-up task using Self-Paced Reinforcement Learning using Soft-Actor-Critic
+as a subroutine.
 """
 import torch as to
 from torch.optim import lr_scheduler
