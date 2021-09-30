@@ -341,9 +341,9 @@ class SAC(ValueBased):
             self.logger.add_value("avg lr policy", np.mean(self._lr_scheduler_policy.get_last_lr()), 6)
             self.logger.add_value("avg lr critic", np.mean(self._lr_scheduler_qfcns.get_last_lr()), 6)
 
-    def reset(self, seed: Optional[int] = None, fill_memory_with_dummy_policy: bool = False):
+    def reset(self, seed: Optional[int] = None):
         # Reset samplers, replay memory, exploration strategy, internal variables and the random seeds
-        super().reset(seed, fill_memory_with_dummy_policy)
+        super().reset(seed)
 
         # Reset the learning rate schedulers
         if self._lr_scheduler_policy is not None:

@@ -217,16 +217,7 @@ class ValueBased(Algorithm, ABC):
     def update(self):
         raise NotImplementedError
 
-    def reset(self, seed: Optional[int] = None, fill_memory_with_dummy_policy: bool = False):
-        """
-        Reset the algorithm to its initial state. This should not reset learned policy parameters.
-        By default, this resets the iteration count and the exploration strategy.
-        Be sure to call this function if you override it.
-
-        :param seed: seed value for the random number generators, pass `None` for no seeding
-        :param fill_memory_with_dummy: if `True`, fill the memory with a random dummy policy instead of the trained policy
-        """
-
+    def reset(self, seed: Optional[int] = None):
         # Reset the exploration strategy, internal variables and the random seeds
         super().reset(seed)
 
@@ -234,9 +225,6 @@ class ValueBased(Algorithm, ABC):
         self.sampler_init.reinit(self._env, self.init_expl_policy)
         self.sampler.reinit(self._env, self._expl_strat)
         self.sampler_eval.reinit(self._env, self._policy)
-
-        # Optionally use the init sampler to fill memory buffer
-        self._fill_with_init_sampler = fill_memory_with_dummy_policy
 
         # Reset the replay memory
         self._memory.reset()
