@@ -98,6 +98,7 @@ class SAC(ValueBased):
         lr_scheduler_hparam: Optional[dict] = None,
         num_workers: int = 4,
         logger: Optional[StepLogger] = None,
+        use_trained_policy_for_refill: bool = False,
     ):
         r"""
         Constructor
@@ -161,6 +162,7 @@ class SAC(ValueBased):
             max_grad_norm=max_grad_norm,
             num_workers=num_workers,
             logger=logger,
+            use_trained_policy_for_refill=use_trained_policy_for_refill,
         )
 
         self.qfcn_1 = qfcn_1
