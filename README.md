@@ -54,8 +54,10 @@ The part without C++ dependencies, called Pyrado, also works under Windows 10 (n
 </tr>
 </table>
 
-:-: | :-:
-<video src='assets/video/qq.mov' width=180/> | <video src='video2.mp4' width=180/>
+
+https://user-images.githubusercontent.com/9105453/135641055-d591ce50-7ae3-43a1-a653-dba75ba34e4c.mov
+
+
 ## Citing
 
 If you use code or ideas from SimuRLacra for your projects or research, please cite it.
