@@ -42,20 +42,20 @@ The part without C++ dependencies, called Pyrado, also works under Windows 10 (n
 <table>
 <tr>
 <td><img alt="gif"  height="175px" src="assets/gif/qq.gif"  style="padding-right: 0"/></td>
-<td><img alt="gif"  height="175px" src="assets/gif/cth.gif" style="padding-right: 0" /></td>
 <td><img alt="gif"  height="175px" src="assets/gif/bob.gif" style="padding-right: 0" /></td>
 <td><img alt="gif"  height="175px" src="assets/gif/omo.gif"  style="padding-right: 0"/></td>
+<td><img alt="gif"  height="175px" src="assets/gif/cp.gif" style="padding-right: 0" /></td>
 </tr>
 <tr>
 <td><img alt="gif"  height="175px" src="assets/gif/qbb.gif" style="padding-right: 0" /></td>
 <td><img alt="gif"  height="175px" src="assets/gif/ant.gif" style="padding-right: 0" /></td>
-<td><img alt="gif"  height="175px" src="assets/gif/cp.gif" style="padding-right: 0" /></td>
+<td><img alt="gif"  height="175px" src="assets/gif/cth.gif" style="padding-right: 0" /></td>
 <td><img alt="gif"  height="175px" src="assets/gif/hop.gif" style="padding-right: 0" /></td>
 </tr>
 </table>
 
-<video src='assets/video/qq.mov'></video>
-
+:-: | :-:
+<video src='assets/video/qq.mov' width=180/> | <video src='video2.mp4' width=180/>
 ## Citing
 
 If you use code or ideas from SimuRLacra for your projects or research, please cite it.
