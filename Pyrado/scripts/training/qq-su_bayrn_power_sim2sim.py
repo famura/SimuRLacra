@@ -70,8 +70,8 @@ if __name__ == "__main__":
 
     env_real = QQubeSwingUpSim(**env_sim_hparams)
     env_real.domain_param = dict(
-        mass_pend_pole=0.024 * 1.1,
-        mass_rot_pole=0.095 * 1.1,
+        mass_pend_pole=0.024 * 1.15,
+        mass_rot_pole=0.095 * 1.15,
     )
     env_real_hparams = env_sim_hparams
     env_real = wrap_like_other_env(env_real, env_sim)
@@ -80,11 +80,11 @@ if __name__ == "__main__":
     policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.0)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
-        max_iter=5,
-        pop_size=50,
-        num_init_states_per_domain=5,
+        max_iter=8,
+        pop_size=100,
+        num_init_states_per_domain=4,
         num_domains=16,
-        num_is_samples=5,
+        num_is_samples=10,
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
@@ -92,42 +92,24 @@ if __name__ == "__main__":
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
-    # PoWER and linear policy setup
-    # policy_hparam = dict(
-    #     feats=FeatureStack(identity_feat, sign_feat, abs_feat, squared_feat,
-    #                        MultFeat((2, 5)), MultFeat((3, 5)), MultFeat((4, 5)))
-    # )
-    # policy = LinearPolicy(spec=env_sim.spec, **policy_hparam)
-    # subrtn_hparam = dict(
-    #     max_iter=20,
-    #     pop_size=200,
-    #     num_init_states_per_domain=6,
-    #     num_is_samples=10,
-    #     expl_std_init=2.0,
-    #     expl_std_min=0.02,
-    #     symm_sampling=False,
-    #     num_workers=32,
-    # )
-    # subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
-
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     ddp_space = BoxSpace(
-        bound_lo=np.array([0.8 * dp_nom["mass_pend_pole"], 1e-8, 0.8 * dp_nom["mass_rot_pole"], 1e-8]),
-        bound_up=np.array([1.2 * dp_nom["mass_pend_pole"], 1e-7, 1.2 * dp_nom["mass_rot_pole"], 1e-7]),
+        bound_lo=np.array([0.7 * dp_nom["mass_pend_pole"], 1e-8, 0.7 * dp_nom["mass_rot_pole"], 1e-8]),
+        bound_up=np.array([1.3 * dp_nom["mass_pend_pole"], 1e-7, 1.3 * dp_nom["mass_rot_pole"], 1e-7]),
     )
 
     # Algorithm
     bayrn_hparam = dict(
-        max_iter=10,
-        acq_fc="UCB",
-        acq_param=dict(beta=0.25),
+        max_iter=15,
+        acq_fc="EI",
+        acq_param=dict(beta=0.2),
         acq_restarts=500,
         acq_samples=1000,
-        num_init_cand=4,
+        num_init_cand=2,
         warmstart=False,
         num_eval_rollouts_real=100,
-        thold_succ_subrtn=300,
+        thold_succ_subrtn=-1,
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
