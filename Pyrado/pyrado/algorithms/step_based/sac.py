@@ -136,6 +136,8 @@ class SAC(ValueBased):
         :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        :param use_trained_policy_for_refill: whether to use the trained policy instead of a dummy policy to refill the
+                                              replay buffer after resets
         """
         if typed_env(env, ActNormWrapper) is None:
             raise pyrado.TypeErr(msg="SAC required an environment wrapped by an ActNormWrapper!")
