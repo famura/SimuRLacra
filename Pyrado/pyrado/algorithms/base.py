@@ -267,7 +267,7 @@ class Algorithm(ABC, LoggerAware):
         if seed is not None:
             set_seed(seed, verbose=True)
 
-        # The stopping criterion might add values to the log -- invoke it once to not run into errors later for keys
+        # The stopping criterion might add values to the log. Invoke it once to not run into errors later for keys
         # that where added after the first step.
         self.stopping_criterion_met()
 
