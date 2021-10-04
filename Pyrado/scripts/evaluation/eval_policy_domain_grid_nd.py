@@ -46,8 +46,7 @@ from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-
-# from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
+from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
 from pyrado.logger.experiment import ask_for_experiment, save_dicts_to_yaml
 from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.parallel_rollout_sampler import NO_SEED
@@ -66,18 +65,18 @@ def evaluate_policy(args, ex_dir):
     param_spec = dict()
     param_spec_dim = None
 
-    #    if isinstance(inner_env(env), BallOnPlateSim):
-    #        param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
-    #        param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
-    #
-    if isinstance(inner_env(env), QQubeSwingUpSim):
-        eval_num = 20
+    if isinstance(inner_env(env), BallOnPlateSim):
+        param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
+        param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
+
+    elif isinstance(inner_env(env), QQubeSwingUpSim):
+        eval_num = 200
         # Use nominal values for all other parameters.
         for param, nominal_value in env.get_nominal_domain_param().items():
             param_spec[param] = nominal_value
         # param_spec["gravity_const"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
-        param_spec["damping_pend_pole"] = np.linspace(0.0, 0.0002, num=eval_num, endpoint=True)
-        param_spec["damping_rot_pole"] = np.linspace(0.0, 0.003, num=eval_num, endpoint=True)
+        param_spec["damping_pend_pole"] = np.linspace(0.0, 0.0001, num=eval_num, endpoint=True)
+        param_spec["damping_rot_pole"] = np.linspace(0.0, 0.0006, num=eval_num, endpoint=True)
         param_spec_dim = 2
 
     elif isinstance(inner_env(env), QBallBalancerSim):

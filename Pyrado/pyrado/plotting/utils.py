@@ -165,14 +165,12 @@ def draw_sep_cbar(
         colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, orientation=cbar_orientation)
 
     # Set the ticks
-    if cbar_orientation == "horizontal":
-        ax_cb.xaxis.set_label_position("top")
-        ax_cb.xaxis.set_ticks_position("top")
-        ticks = np.linspace(norm.vmin, norm.vmax, num=5, dtype=int)
-        ax_cb.xaxis.set_ticks(ticks)
-        ax_cb.xaxis.set_ticklabels([str(tick) for tick in ticks])
-        # ax_cb.xaxis.set_major_locator(plt.LinearLocator(numticks=5))
-    elif cbar_orientation == "vertical":
-        ax_cb.yaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
+    if num_major_ticks_cb is not None:
+        if cbar_orientation == "horizontal":
+            ax_cb.xaxis.set_label_position("top")
+            ax_cb.xaxis.set_ticks_position("top")
+            ax_cb.xaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
+        elif cbar_orientation == "vertical":
+            ax_cb.yaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
 
     return fig_cb

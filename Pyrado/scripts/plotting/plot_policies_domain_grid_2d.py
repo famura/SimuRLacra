@@ -68,24 +68,17 @@ def _plot_and_save(
             df_pivot,
             annotate=False,
             separate_cbar=add_sep_colorbar,
-            cbar_orientation="horizontal",
             norm=norm,
             y_label=index_label,
             x_label=column_label,
             add_cbar=True,
         )
-        ax = fig_hm.get_axes()[0]
-        ax.set_xticks([])
-        ax.set_yticks([])
-        ax.set_xlabel(None)
-        ax.set_ylabel(None)
         if nominal:
             fig_hm.get_axes()[0].scatter(
                 *nominal, s=150, marker="o", color="w", edgecolors="k", linewidths=4, label="Nominal"
             )
         if show_figure:
             fig_hm.show()
-            fig_cb.show()
 
         # Save heat map and color bar if desired
         if save_figure:
