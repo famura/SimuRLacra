@@ -104,8 +104,8 @@ if __name__ == "__main__":
     # Create the figures
     fig_trn, axs_trn = plt.subplots(nrows=dataset.dim_data, figsize=(16, 10))
     fig_tst, axs_tst = plt.subplots(nrows=dataset.dim_data, figsize=(16, 10))
-    fig_trn.canvas.set_window_title(dataset.name)
-    fig_tst.canvas.set_window_title(dataset.name)
+    fig_trn.canvas.manager.set_window_title(dataset.name)
+    fig_tst.canvas.manager.set_window_title(dataset.name)
 
     # Plot the predictions on the training data
     for idx_dim in range(dataset.dim_data):
@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
     # Plot training and testing loss
     fig_loss, axs_loss = plt.subplots(nrows=2, figsize=(16, 10))
-    fig_loss.canvas.set_window_title(dataset.name)
+    fig_loss.canvas.manager.set_window_title(dataset.name)
 
     for idx_dim in range(2):
         for idx_p, policy in enumerate(policies):

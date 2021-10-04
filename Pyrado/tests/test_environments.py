@@ -74,7 +74,7 @@ from pyrado.utils.data_types import RenderMode
         pytest.param("default_mg_jnt_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
         pytest.param("default_hop", marks=m_needs_mujoco),
-        pytest.param("default_humanoid", marks=m_needs_mujoco),
+        pytest.param("default_hum", marks=m_needs_mujoco),
         pytest.param("default_ant", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),
     ],
@@ -131,7 +131,7 @@ def test_rollout(env):
         pytest.param("default_mg_jnt_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
         pytest.param("default_hop", marks=m_needs_mujoco),
-        pytest.param("default_humanoid", marks=m_needs_mujoco),
+        pytest.param("default_hum", marks=m_needs_mujoco),
         pytest.param("default_ant", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),
     ],
@@ -183,7 +183,7 @@ def test_init_spaces(env):
         pytest.param("default_mg_jnt_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
         pytest.param("default_hop", marks=m_needs_mujoco),
-        pytest.param("default_humanoid", marks=m_needs_mujoco),
+        pytest.param("default_hum", marks=m_needs_mujoco),
         pytest.param("default_ant", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),
     ],
@@ -285,7 +285,7 @@ def test_rcspysim_animations(env):
 @m_needs_mujoco
 @pytest.mark.visual
 @pytest.mark.parametrize(
-    "env", ["default_cth", "default_hop", "default_humanoid", "default_ant", "default_wambic"], indirect=True
+    "env", ["default_cth", "default_hop", "default_hum", "default_ant", "default_wambic"], indirect=True
 )
 def test_mujoco_animations(env):
     assert isinstance(env, SimEnv)

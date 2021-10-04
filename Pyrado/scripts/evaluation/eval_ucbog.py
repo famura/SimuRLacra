@@ -97,7 +97,7 @@ if __name__ == "__main__":
     axs[2].fill_between(rnd_mean.index, rnd_mean - 2 * rnd_std, rnd_mean + 2 * rnd_std, alpha=0.3)
 
     fig2, ax1 = plt.subplots(1, figsize=pyrado.figsize_IEEE_1col_18to10)
-    fig2.canvas.set_window_title(f"Final UCBOG value: {UCBOG_mean.values[-1]}")
+    fig2.canvas.manager.set_window_title(f"Final UCBOG value: {UCBOG_mean.values[-1]}")
     ax1.plot(UCBOG_mean.index, UCBOG_mean, label="UCBOG")
     ax1.fill_between(UCBOG_mean.index, UCBOG_mean - 2 * UCBOG_std, UCBOG_mean + 2 * UCBOG_std, alpha=0.3)
     ax1.set_xlabel("iteration")

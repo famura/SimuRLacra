@@ -208,7 +208,7 @@ def draw_heatmap(
         fig_hm = ax_hm.figure
 
     if fig_canvas_title is not None:
-        fig_hm.canvas.set_window_title(fig_canvas_title)
+        fig_hm.canvas.manager.set_window_title(fig_canvas_title)
 
     # Create the image
     img = ax_hm.imshow(

@@ -1,4 +1,4 @@
-# Copyright (c) 2021, Fabio Muratore, Honda Research Institute Europe GmbH, and
+# Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
 # Technical University of Darmstadt.
 # All rights reserved.
 #
@@ -27,17 +27,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the One-Mass-Oscillator environment using Stein Variational Policy Gradients.
+Train agents to solve the Ball-on-Beam environment using Stein Variational Policy Gradient.
 """
 import torch as to
 
 import pyrado
+from pyrado.algorithms.meta.adr import ADR
 from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.gae import GAE, ValueFunctionSpace
+from pyrado.algorithms.step_based.ppo import PPO2 as PPO
 from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import StepLogger
 from pyrado.policies.feed_back.fnn import FNNPolicy
@@ -50,55 +51,60 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(OneMassOscillatorSim.name, SVPG.name)
+    ex_dir = setup_experiment(BallOnBeamSim.name, SVPG.name)
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparam = dict(dt=1 / 100.0, max_steps=500)
-    env = OneMassOscillatorSim(**env_hparam)
+    env = BallOnBeamSim(**env_hparam)
     env = ActNormWrapper(env)
 
-    # Specification of actor an critic (will be instantiated in SVPG)
-    actor_hparam = dict(
-        hidden_sizes=[64],
-        hidden_nonlin=to.relu,
-    )
-    vfcn_hparam = dict(
-        hidden_sizes=[32],
-        hidden_nonlin=to.tanh,
-    )
-    critic_hparam = dict(
-        gamma=0.995,
-        lamda=0.95,
-        num_epoch=5,
-        lr=1e-3,
-        standardize_adv=False,
-        max_grad_norm=5.0,
-    )
-
-    a2c_hparam = dict(
+    svpg_hparams = dict(
         max_iter=200,
-        min_steps=2 * env.max_steps,
-        lr=1e-3,
-    )
-
-    # Algorithm
-    algo_hparam = dict(
-        max_iter=200,
-        num_particles=3,
-        temperature=1,
+        num_particles=4,
+        temperature=0.3,
         horizon=50,
     )
 
-    actor = FNNPolicy(spec=env.spec, **actor_hparam)
-    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
-    critic = GAE(vfcn, **critic_hparam)
-    particle_logger = StepLogger()
-    particle_example = A2C(ex_dir, env, actor, critic, logger=particle_logger, **a2c_hparam)
+    # Algorithm
+    adr_hparam = dict(
+        svpg_particle_hparam=svpg_hparams,
+        max_iter=200,
+    )
 
-    algo = SVPG(ex_dir, env, particle_example, **algo_hparam)
+    # Policy
+    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    policy = FNNPolicy(spec=env.spec, **policy_hparam)
+    # Critic
+    vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    critic_hparam = dict(
+        gamma=0.995,
+        lamda=0.95,
+        num_epoch=10,
+        batch_size=512,
+        standardize_adv=False,
+        standardizer=None,
+        max_grad_norm=1.0,
+        lr=5e-4,
+    )
+    critic = GAE(vfcn, **critic_hparam)
+
+    # Algorithm
+    algo_hparam = dict(
+        max_iter=500,
+        min_steps=20 * env.max_steps,
+        num_epoch=10,
+        eps_clip=0.15,
+        batch_size=512,
+        max_grad_norm=1.0,
+        lr=3e-4,
+        num_workers=12,
+    )
+    subrtn = PPO(ex_dir, env, policy, critic, **algo_hparam)
+    algo = ADR(ex_dir, env, subrtn, **adr_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(

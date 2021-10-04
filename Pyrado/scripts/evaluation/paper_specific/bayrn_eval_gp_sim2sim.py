@@ -32,7 +32,6 @@ Script for the paper plot the GP's posterior after a Bayesian Domain Randomizati
 import os
 import os.path as osp
 
-import joblib
 import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
@@ -45,6 +44,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.gaussian_process import render_singletask_gp
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.input_output import ensure_math_mode
 
 
 if __name__ == "__main__":
@@ -81,6 +81,11 @@ if __name__ == "__main__":
     cands = pyrado.load("candidates.pt", ex_dir)
     cands_values = pyrado.load("candidates_values.pt", ex_dir).unsqueeze(1)
     ddp_space = pyrado.load("ddp_space.pkl", ex_dir)
+
+    # Cut off later iterations (e.g., to produce a gif)
+    if args.iter > 0:  # default value for iter is -1
+        cands = cands[: args.iter]
+        cands_values = cands_values[: args.iter]
 
     dim_cand = cands.shape[1]  # number of domain distribution parameters
     if dim_cand % 2 != 0:
@@ -123,7 +128,7 @@ if __name__ == "__main__":
         raise pyrado.ValueErr(msg="Select exactly 1 or 2 indices!")
 
     # Use a color map from seaborn for pyplot
-    hm_cmap = ListedColormap(sns.color_palette("YlGnBu", n_colors=100)[::-1])
+    hm_cmap = ListedColormap(sns.color_palette("YlGnBu", n_colors=100)[:15:-1])
     scat_cmap = LinearSegmentedColormap.from_list("light_to_dark_gray", [(0.95, 0.95, 0.95), (0.05, 0.05, 0.05)], N=256)
 
     if len(args.idcs) == 1:
@@ -137,8 +142,8 @@ if __name__ == "__main__":
         data_x_min=ddp_space.bound_lo[args.idcs],
         data_x_max=ddp_space.bound_up[args.idcs],
         idcs_sel=args.idcs,
-        x_label=x_label,
-        y_label=y_label,
+        x_label="$m_p$",  # ensure_math_mode(x_label),
+        y_label="$m_r$",  # ensure_math_mode(y_label),
         z_label=r"r$\hat{J}^{\textrm{real}}$",
         heatmap_cmap=hm_cmap,
         num_std=2,
@@ -146,7 +151,6 @@ if __name__ == "__main__":
         legend_data_cmap=scat_cmap,
         show_legend_data=args.verbose,
         show_legend_posterior=True,
-        show_legend_std=True,
         render3D=args.render3D,
     )
 
@@ -157,17 +161,18 @@ if __name__ == "__main__":
 
     if args.save:
         os.makedirs(osp.join(ex_dir, "plots"), exist_ok=True)
+        str_iter = f"_iter_{cands.shape[0]}"
         for fmt in ["pdf", "pgf", "png"]:
             if len(args.idcs) == 1 or args.render3D:
-                fig.savefig(osp.join(ex_dir, "plots", f"gp_posterior_ret_mean.{fmt}"), dpi=500)
+                fig.savefig(osp.join(ex_dir, "plots", f"gp_ret_mean_{str_iter}.{fmt}"), dpi=500)
             if len(args.idcs) == 2 and not args.render3D:
                 fig_hm_mean.savefig(
-                    osp.join(ex_dir, "plots", f"gp_posterior_ret_mean_hm.{fmt}"), dpi=500, backend="pgf"
+                    osp.join(ex_dir, "plots", f"gp_ret_mean_hm_{str_iter}.{fmt}"), dpi=500, backend="pgf"
                 )
                 fig_cb_mean.savefig(
-                    osp.join(ex_dir, "plots", f"gp_posterior_ret_mean_cb.{fmt}"), dpi=500, backend="pgf"
+                    osp.join(ex_dir, "plots", f"gp_ret_mean_cb_{str_iter}.{fmt}"), dpi=500, backend="pgf"
                 )
-                fig_hm_std.savefig(osp.join(ex_dir, "plots", f"gp_posterior_ret_std_hm.{fmt}"), dpi=500, backend="pgf")
-                fig_cb_std.savefig(osp.join(ex_dir, "plots", f"gp_posterior_ret_std_cb.{fmt}"), dpi=500, backend="pgf")
+                fig_hm_std.savefig(osp.join(ex_dir, "plots", f"gp_ret_std_hm_{str_iter}.{fmt}"), dpi=500, backend="pgf")
+                fig_cb_std.savefig(osp.join(ex_dir, "plots", f"gp_ret_std_cb_{str_iter}.{fmt}"), dpi=500, backend="pgf")
 
     plt.show()

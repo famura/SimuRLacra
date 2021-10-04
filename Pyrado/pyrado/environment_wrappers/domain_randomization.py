@@ -35,10 +35,10 @@ from init_args_serializer import Serializable
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environment_wrappers.utils import all_envs, inner_env, remove_env
+from pyrado.environment_wrappers.utils import all_envs, inner_env, remove_env, typed_env
 from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.utils.input_output import completion_context, print_cbt
+from pyrado.utils.input_output import completion_context
 
 
 class DomainRandWrapper(EnvWrapper, Serializable):
@@ -97,7 +97,7 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
             m = {0: ('name1', 'parameter_type1'), 1: ('name2', 'parameter_type2')}
             ```
         """
-        if not isinstance(wrapped_rand_env, DomainRandWrapper):
+        if not typed_env(wrapped_rand_env, DomainRandWrapper):
             raise pyrado.TypeErr(given=wrapped_rand_env, expected_type=DomainRandWrapper)
 
         Serializable._init(self, locals())

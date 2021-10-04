@@ -666,8 +666,8 @@ def draw_posterior_scatter_2d(
         # Plot the data points
         if use_kde and len(dp_samples[idx_obs]) > 1:
             sns.kdeplot(
-                x=dp_samples[idx_obs][:, dim_x],
-                y=dp_samples[idx_obs][:, dim_y],
+                x=dp_samples[idx_obs][:, dim_x].numpy(),
+                y=dp_samples[idx_obs][:, dim_y].numpy(),
                 alpha=alphas[idx_obs],
                 cmap=sns.light_palette(color_palette[idx_obs], as_cmap=True),
                 label=legend_labels[idx_obs],
@@ -1111,8 +1111,8 @@ def draw_posterior_pairwise_scatter(
             # Plot the data points
             if use_kde and len(dp_samples[idx_obs]) > 1:
                 sns.kdeplot(
-                    x=dp_samples[idx_obs][:, dim_x],
-                    y=dp_samples[idx_obs][:, dim_y],
+                    x=dp_samples[idx_obs][:, dim_x].numpy(),
+                    y=dp_samples[idx_obs][:, dim_y].numpy(),
                     alpha=alphas[idx_obs],
                     cmap=sns.light_palette(color_palette[idx_obs], as_cmap=True),
                     **kde_args,
