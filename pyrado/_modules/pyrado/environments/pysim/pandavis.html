@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyrado.environments.pysim.pandavis &mdash; Pyrado 0.7 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+      <li>pyrado.environments.pysim.pandavis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyrado.environments.pysim.pandavis</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">direct.showbase.ShowBase</span> <span class="kn">import</span> <span class="n">ShowBase</span>
+<span class="kn">from</span> <span class="nn">direct.showbase.ShowBaseGlobal</span> <span class="kn">import</span> <span class="n">aspect2d</span>
+<span class="kn">from</span> <span class="nn">direct.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">panda3d.core</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AmbientLight</span><span class="p">,</span>
+    <span class="n">AntialiasAttrib</span><span class="p">,</span>
+    <span class="n">DirectionalLight</span><span class="p">,</span>
+    <span class="n">Filename</span><span class="p">,</span>
+    <span class="n">LineSegs</span><span class="p">,</span>
+    <span class="n">NodePath</span><span class="p">,</span>
+    <span class="n">TextNode</span><span class="p">,</span>
+    <span class="n">WindowProperties</span><span class="p">,</span>
+    <span class="n">loadPrcFileData</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+
+
+<span class="c1"># Configuration for panda3d-window</span>
+<span class="n">confVars</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">win-size 1280 720</span>
+<span class="s2">framebuffer-multisample 1</span>
+<span class="s2">multisamples 2</span>
+<span class="s2">show-frame-rate-meter 1</span>
+<span class="s2">sync-video 0</span>
+<span class="s2">threading-model Cull/Cull</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">loadPrcFileData</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">confVars</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PandaVis"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.PandaVis">[docs]</a><span class="k">class</span> <span class="nc">PandaVis</span><span class="p">(</span><span class="n">ShowBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all visualizations with panda3d&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rendering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param rendering: boolean indicating whether to use RenderPipeline or default Panda3d as visualization-module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="n">Filename</span><span class="o">.</span><span class="n">fromOsSpecific</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PANDA_ASSETS_DIR</span><span class="p">)</span><span class="o">.</span><span class="n">getFullpath</span><span class="p">()</span>
+
+        <span class="c1"># Initialize RenderPipeline</span>
+        <span class="k">if</span> <span class="n">rendering</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">RENDER_PIPELINE_DIR</span><span class="p">)</span>
+            <span class="kn">from</span> <span class="nn">rpcore</span> <span class="kn">import</span> <span class="n">RenderPipeline</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span> <span class="o">=</span> <span class="n">RenderPipeline</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span><span class="o">.</span><span class="n">pre_showbase_init</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span><span class="o">.</span><span class="n">set_loading_screen_image</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;logo.png&quot;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;pipeline.display_debugger&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span><span class="o">.</span><span class="n">daytime_mgr</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="s2">&quot;17:00&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Activate antialiasing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="o">.</span><span class="n">setAntialias</span><span class="p">(</span><span class="n">AntialiasAttrib</span><span class="o">.</span><span class="n">MAuto</span><span class="p">)</span>
+
+        <span class="c1"># Set window properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span> <span class="o">=</span> <span class="n">WindowProperties</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setForeground</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;Experiment&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set background color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setBackgroundColor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Configuration of the lighting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directionalLight1</span> <span class="o">=</span> <span class="n">DirectionalLight</span><span class="p">(</span><span class="s2">&quot;directionalLight&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directionalLightNP1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="o">.</span><span class="n">attachNewNode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directionalLight1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directionalLightNP1</span><span class="o">.</span><span class="n">setHpr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="o">.</span><span class="n">setLight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directionalLightNP1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">directionalLight2</span> <span class="o">=</span> <span class="n">DirectionalLight</span><span class="p">(</span><span class="s2">&quot;directionalLight&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directionalLightNP2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="o">.</span><span class="n">attachNewNode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directionalLight2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directionalLightNP2</span><span class="o">.</span><span class="n">setHpr</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="o">.</span><span class="n">setLight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directionalLightNP2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ambientLight</span> <span class="o">=</span> <span class="n">AmbientLight</span><span class="p">(</span><span class="s2">&quot;ambientLight&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ambientLightNP</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="o">.</span><span class="n">attachNewNode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ambientLight</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ambientLight</span><span class="o">.</span><span class="n">setColor</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="o">.</span><span class="n">setLight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ambientLightNP</span><span class="p">)</span>
+
+        <span class="c1"># Create a text node displaying the physic parameters on the top left of the screen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">TextNode</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textNodePath</span> <span class="o">=</span> <span class="n">aspect2d</span><span class="o">.</span><span class="n">attachNewNode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setTextColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># black</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textNodePath</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="mf">0.07</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textNodePath</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
+
+        <span class="c1"># Configure trace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span> <span class="o">=</span> <span class="n">LineSegs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">setThickness</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>  <span class="c1"># light grey</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="o">.</span><span class="n">attachNewNode</span><span class="p">(</span><span class="s2">&quot;Lines&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_pos</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Adds one instance of the update function to the task-manager, thus initializes the animation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">taskMgr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PandaVis.update"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.PandaVis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the visualization with every call.</span>
+
+<span class="sd">        :param task: Needed by panda3d task manager.</span>
+<span class="sd">        :return Task.cont: indicates that task should be called again next frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span></div>
+
+<div class="viewcode-block" id="PandaVis.reset"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.PandaVis.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the the visualization to a certain state, so that in can be run again. Removes the trace.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">getChildren</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_pos</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PandaVis.draw_trace"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.PandaVis.draw_trace">[docs]</a>    <span class="k">def</span> <span class="nf">draw_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draws a line from the last point to the current point</span>
+
+<span class="sd">        :param point: Current position of pen. Needs 3 value vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if trace initialized</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_pos</span><span class="p">:</span>
+            <span class="c1"># Set starting point of new line</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">moveTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_pos</span><span class="p">)</span>
+
+        <span class="c1"># Draw line to that point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">drawTo</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+
+        <span class="c1"># Save last position of pen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_pos</span> <span class="o">=</span> <span class="n">point</span>
+
+        <span class="c1"># Show drawing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace_np</span> <span class="o">=</span> <span class="n">NodePath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">create</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace_np</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BallOnBeamVis"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.BallOnBeamVis">[docs]</a><span class="k">class</span> <span class="nc">BallOnBeamVis</span><span class="p">(</span><span class="n">PandaVis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Visualisation for the BallOnBeamSim class using panda3d&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">rendering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env: environment to visualize</span>
+<span class="sd">        :param rendering</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rendering</span><span class="p">)</span>
+
+        <span class="c1"># Accessing variables of the environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="n">r_ball</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">]</span>
+        <span class="n">l_beam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;beam_length&quot;</span><span class="p">]</span>
+        <span class="n">d_beam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;beam_thickness&quot;</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># ball position along the beam axis [m]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># angle [rad]</span>
+
+        <span class="c1"># Scaling of the animation so the camera can move smoothly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">l_beam</span>
+
+        <span class="c1"># Set window title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;Ball on Beam&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">requestProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="p">)</span>
+
+        <span class="c1"># Set pov</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+
+        <span class="c1"># Ball</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;ball_red.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">r_ball</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">d_beam</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">r_ball</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Beam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cube_green.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">l_beam</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">d_beam</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">d_beam</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="o">.</span><span class="n">setR</span><span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BallOnBeamVis.update"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.BallOnBeamVis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="c1"># Accessing the current parameter values</span>
+        <span class="n">gravity_const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span>
+        <span class="n">m_ball</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">]</span>
+        <span class="n">r_ball</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">]</span>
+        <span class="n">m_beam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;beam_mass&quot;</span><span class="p">]</span>
+        <span class="n">l_beam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;beam_length&quot;</span><span class="p">]</span>
+        <span class="n">d_beam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;beam_thickness&quot;</span><span class="p">]</span>
+        <span class="n">c_frict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;friction_coeff&quot;</span><span class="p">]</span>
+        <span class="n">ang_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;ang_offset&quot;</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># ball position along the beam axis [m]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># angle [rad]</span>
+
+        <span class="n">ball_pos</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">d_beam</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">r_ball</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">d_beam</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">r_ball</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Update position of ball</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">ball_pos</span><span class="p">)</span>
+
+        <span class="c1"># Draw trace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_trace</span><span class="p">(</span><span class="n">ball_pos</span><span class="p">)</span>
+
+        <span class="c1"># Update rotation of joint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="o">.</span><span class="n">setR</span><span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="c1"># Update displayed text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            ball position: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="si">:</span><span class="s2">1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            beam angle [deg]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 3.1f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            dt: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">dt</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gravity_const: </span><span class="si">{</span><span class="n">gravity_const</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            ball_mass: </span><span class="si">{</span><span class="n">m_ball</span><span class="si">:</span><span class="s2"> 1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            ball_radius: </span><span class="si">{</span><span class="n">r_ball</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            beam_mass: </span><span class="si">{</span><span class="n">m_beam</span> <span class="si">:</span><span class="s2"> 1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            beam_length: </span><span class="si">{</span><span class="n">l_beam</span> <span class="si">:</span><span class="s2"> 1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            beam_thickness: </span><span class="si">{</span><span class="n">d_beam</span> <span class="si">:</span><span class="s2"> 1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            friction_coeff: </span><span class="si">{</span><span class="n">c_frict</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            ang_offset: </span><span class="si">{</span><span class="n">ang_offset</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span></div></div>
+
+
+<div class="viewcode-block" id="OneMassOscillatorVis"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.OneMassOscillatorVis">[docs]</a><span class="k">class</span> <span class="nc">OneMassOscillatorVis</span><span class="p">(</span><span class="n">PandaVis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Visualisation for the OneMassOscillatorSim class using panda3d&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">rendering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env: environment to visualize</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rendering</span><span class="p">)</span>
+
+        <span class="c1"># Accessing variables of the environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Scaling of the animation so the camera can move smoothly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="n">c</span>
+
+        <span class="c1"># Set window title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;One Mass Oscillator&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">requestProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="p">)</span>
+
+        <span class="c1"># Set pov</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+
+        <span class="c1"># Ground</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cube_green.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ground</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cube_blue.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">c</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">c</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Desired state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">des</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cube_green.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">des</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">state_des</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">des</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="mf">0.4</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">des</span><span class="o">.</span><span class="n">setTransparency</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">des</span><span class="o">.</span><span class="n">setColorScale</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">des</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Force</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;arrow_red.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span>
+            <span class="mf">0.1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">_curr_act</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Spring</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;spring_orange.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spring</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spring</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">7.3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spring</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OneMassOscillatorVis.update"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.OneMassOscillatorVis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="c1"># Accessing the current parameter values</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;stiffness&quot;</span><span class="p">]</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;damping&quot;</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Update position of mass</span>
+        <span class="n">pos_mass</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">pos_mass</span><span class="p">)</span>
+        <span class="c1"># And force</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+
+        <span class="c1"># Update scale of force</span>
+        <span class="n">capped_act</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">_curr_act</span><span class="p">)</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">_curr_act</span><span class="p">),</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">capped_act</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="o">.</span><span class="n">setSx</span><span class="p">(</span><span class="mf">0.00001</span><span class="p">)</span>  <span class="c1"># has_mat error if scale = 0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">force</span><span class="o">.</span><span class="n">setSx</span><span class="p">(</span><span class="n">capped_act</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+
+        <span class="c1"># Update scale of spring</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spring</span><span class="o">.</span><span class="n">setSx</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">c</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">7.3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+
+        <span class="c1"># Update displayed text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            pos: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="si">:</span><span class="s2">1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            vel: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="si">:</span><span class="s2">1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            dt: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">dt</span> <span class="si">:</span><span class="s2">1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            mass: </span><span class="si">{</span><span class="n">m</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            stiffness: </span><span class="si">{</span><span class="n">k</span> <span class="si">:</span><span class="s2"> 2.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            damping: </span><span class="si">{</span><span class="n">d</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span></div></div>
+
+
+<div class="viewcode-block" id="PendulumVis"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.PendulumVis">[docs]</a><span class="k">class</span> <span class="nc">PendulumVis</span><span class="p">(</span><span class="n">PandaVis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Visualisation for the PendulumSim class using panda3d&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">rendering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env: environment to visualize</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rendering</span><span class="p">)</span>
+
+        <span class="c1"># Accessing variables of the environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="n">th</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pole_length&quot;</span><span class="p">])</span>
+        <span class="n">r_pole</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+        <span class="c1"># Scaling of the animation so the camera can move smoothly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">l_pole</span>
+
+        <span class="c1"># Set window title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;Pendulum&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">requestProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="p">)</span>
+
+        <span class="c1"># Set pov depending on the render mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mi">22</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mi">18</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Joint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;ball_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cylinder_top_red.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PendulumVis.update"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.PendulumVis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="c1"># Accessing the current parameter values</span>
+        <span class="n">th</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">gravity_const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span>
+        <span class="n">m_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pole_mass&quot;</span><span class="p">]</span>
+        <span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pole_length&quot;</span><span class="p">])</span>
+        <span class="n">d_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pole_damping&quot;</span><span class="p">]</span>
+        <span class="n">tau_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;torque_thold&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Update position and rotation of pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setR</span><span class="p">(</span><span class="o">-</span><span class="n">th</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="c1"># Get position of pole</span>
+        <span class="n">pole_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">getPos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+        <span class="c1"># Calculate position of new point</span>
+        <span class="n">current_pos</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Update displayed text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            pole angle [deg]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 3.1f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            sin theta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            cos theta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            theta_dot: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            torque: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">_curr_act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            dt: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">dt</span> <span class="si">:</span><span class="s2">1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gravity_const: </span><span class="si">{</span><span class="n">gravity_const</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            pole_mass: </span><span class="si">{</span><span class="n">m_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            pole_length: </span><span class="si">{</span><span class="n">l_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            pole_damping: </span><span class="si">{</span><span class="n">d_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            torque_thold: </span><span class="si">{</span><span class="n">tau_max</span><span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span></div></div>
+
+
+<div class="viewcode-block" id="QBallBalancerVis"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.QBallBalancerVis">[docs]</a><span class="k">class</span> <span class="nc">QBallBalancerVis</span><span class="p">(</span><span class="n">PandaVis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Visualisation for the QBallBalancerSim class using panda3d&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">rendering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env: environment to visualize</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rendering</span><span class="p">)</span>
+
+        <span class="c1"># Accessing variables of the environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="n">l_plate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;plate_length&quot;</span><span class="p">]</span>
+        <span class="n">r_ball</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Only for animation</span>
+        <span class="n">d_plate</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">r_pole</span> <span class="o">=</span> <span class="mf">0.005</span>
+        <span class="n">l_pole</span> <span class="o">=</span> <span class="mf">0.02</span>
+
+        <span class="c1"># Scaling of the animation so the camera can move smoothly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">r_pole</span>
+
+        <span class="c1"># Set window title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;Quanser Ball Balancer&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">requestProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="p">)</span>
+
+        <span class="c1"># Set pov depending on the render mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.55</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.8</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setHpr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># roll, pitch, yaw [deg]</span>
+
+        <span class="c1"># Ball</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;ball_red.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="p">(</span><span class="n">r_ball</span> <span class="o">+</span> <span class="n">d_plate</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">r_ball</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Plate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cube_blue.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plate</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">l_plate</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">l_plate</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">d_plate</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plate</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Joint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;ball_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">d_plate</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cylinder_top_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">d_plate</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Pround plate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">null_plate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cube_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">null_plate</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">null_plate</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">l_plate</span> <span class="o">*</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">l_plate</span> <span class="o">*</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">d_plate</span> <span class="o">/</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">null_plate</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QBallBalancerVis.update"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.QBallBalancerVis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="c1"># Accessing the current parameter values</span>
+        <span class="n">gravity_const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span>
+        <span class="n">l_plate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;plate_length&quot;</span><span class="p">]</span>
+        <span class="n">m_ball</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">]</span>
+        <span class="n">r_ball</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">]</span>
+        <span class="n">eta_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gear_efficiency&quot;</span><span class="p">]</span>
+        <span class="n">eta_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_efficiency&quot;</span><span class="p">]</span>
+        <span class="n">K_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gear_ratio&quot;</span><span class="p">]</span>
+        <span class="n">J_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_inertia&quot;</span><span class="p">]</span>
+        <span class="n">J_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;load_inertia&quot;</span><span class="p">]</span>
+        <span class="n">r_arm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;arm_radius&quot;</span><span class="p">]</span>
+        <span class="n">k_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">]</span>
+        <span class="n">R_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">]</span>
+        <span class="n">B_eq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;combined_damping&quot;</span><span class="p">]</span>
+        <span class="n">ball_damping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;ball_damping&quot;</span><span class="p">]</span>
+        <span class="n">V_thold_x_neg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;voltage_thold_x_neg&quot;</span><span class="p">]</span>
+        <span class="n">V_thold_x_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;voltage_thold_x_pos&quot;</span><span class="p">]</span>
+        <span class="n">V_thold_y_neg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;voltage_thold_y_neg&quot;</span><span class="p">]</span>
+        <span class="n">V_thold_y_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;voltage_thold_y_pos&quot;</span><span class="p">]</span>
+        <span class="n">offset_th_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;offset_th_x&quot;</span><span class="p">]</span>
+        <span class="n">offset_th_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;offset_th_y&quot;</span><span class="p">]</span>
+        <span class="n">d_plate</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># only for animation</span>
+
+        <span class="c1"># Get ball position</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+        <span class="c1"># Compute plate orientation</span>
+        <span class="n">a_vp</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">plate_angs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">b_vp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">plate_angs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Update rotation of plate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plate</span><span class="o">.</span><span class="n">setR</span><span class="p">(</span><span class="o">-</span><span class="n">a_vp</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plate</span><span class="o">.</span><span class="n">setP</span><span class="p">(</span><span class="n">b_vp</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="c1"># Update position of ball</span>
+        <span class="n">ball_pos</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">a_vp</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+            <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">b_vp</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">r_ball</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a_vp</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">b_vp</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">a_vp</span><span class="p">)</span> <span class="o">*</span> <span class="n">d_plate</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">ball_pos</span><span class="p">)</span>
+
+        <span class="c1"># Draw line to that point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_trace</span><span class="p">(</span><span class="n">ball_pos</span><span class="p">)</span>
+
+        <span class="c1"># Update displayed text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>  <span class="c1"># x-axis is pos to the right, y-axis is pos up</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            ball pos: </span><span class="si">{</span><span class="n">x</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            plate angle around x axis: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">plate_angs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 2.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            plate angle around y axis: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">plate_angs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 2.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            shaft angles [deg]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 3.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 3.1f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            V_x: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">_curr_act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="si">:</span><span class="s2"> 1.2f</span><span class="si">}</span><span class="s2">, V_y : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">_curr_act</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="si">:</span><span class="s2"> 1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gravity_const: </span><span class="si">{</span><span class="n">gravity_const</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            ball_mass: </span><span class="si">{</span><span class="n">m_ball</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            ball_radius: </span><span class="si">{</span><span class="n">r_ball</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            arm_radius: </span><span class="si">{</span><span class="n">r_arm</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            plate_length: </span><span class="si">{</span><span class="n">l_plate</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gear_ratio: </span><span class="si">{</span><span class="n">K_g</span> <span class="si">:</span><span class="s2"> 2.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_inertia: </span><span class="si">{</span><span class="n">J_m</span> <span class="si">:</span><span class="s2"> 1.7f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            load_inertia: </span><span class="si">{</span><span class="n">J_l</span> <span class="si">:</span><span class="s2"> 1.6f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gear_efficiency: </span><span class="si">{</span><span class="n">eta_g</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_efficiency: </span><span class="si">{</span><span class="n">eta_m</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_back_emf: </span><span class="si">{</span><span class="n">k_m</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_resistance: </span><span class="si">{</span><span class="n">R_m</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            combined_damping: </span><span class="si">{</span><span class="n">B_eq</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            ball_damping: </span><span class="si">{</span><span class="n">ball_damping</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            V_thold_x_pos: </span><span class="si">{</span><span class="n">V_thold_x_pos</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            V_thold_x_neg: </span><span class="si">{</span><span class="n">V_thold_x_neg</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            V_thold_y_pos: </span><span class="si">{</span><span class="n">V_thold_y_pos</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            V_thold_y_neg: </span><span class="si">{</span><span class="n">V_thold_y_neg</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            offset_th_x: </span><span class="si">{</span><span class="n">offset_th_x</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            offset_th_y: </span><span class="si">{</span><span class="n">offset_th_y</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span></div></div>
+
+
+<div class="viewcode-block" id="QCartPoleVis"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.QCartPoleVis">[docs]</a><span class="k">class</span> <span class="nc">QCartPoleVis</span><span class="p">(</span><span class="n">PandaVis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Visualisation for the QCartPoleSim class using panda3d&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">rendering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env: environment to visualize</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rendering</span><span class="p">)</span>
+
+        <span class="c1"># Accessing variables of the environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pole_length&quot;</span><span class="p">])</span>
+        <span class="n">l_rail</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;rail_length&quot;</span><span class="p">])</span>
+
+        <span class="c1"># Only for animation</span>
+        <span class="n">l_cart</span><span class="p">,</span> <span class="n">h_cart</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.045</span>
+        <span class="n">r_pole</span><span class="p">,</span> <span class="n">r_rail</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.005</span>
+
+        <span class="c1"># Scaling of the animation so the camera can move smoothly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">l_pole</span>
+
+        <span class="c1"># Set window title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;Quanser Cartpole&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">requestProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="p">)</span>
+
+        <span class="c1"># Set pov depending on the render mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Rail</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cylinder_middle_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rail</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">h_cart</span> <span class="o">-</span> <span class="n">r_rail</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rail</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">l_rail</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_rail</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_rail</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rail</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Cart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cube_green.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cart</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cart</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">l_cart</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">h_cart</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">h_cart</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cart</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Joint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;ball_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">r_pole</span> <span class="o">-</span> <span class="n">h_cart</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cylinder_top_red.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">r_pole</span> <span class="o">-</span> <span class="n">h_cart</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QCartPoleVis.update"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.QCartPoleVis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="c1"># Accessing the current parameter values</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">gravity_const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span>
+        <span class="n">m_cart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;cart_mass&quot;</span><span class="p">]</span>
+        <span class="n">m_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pole_mass&quot;</span><span class="p">]</span>
+        <span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pole_length&quot;</span><span class="p">])</span>
+        <span class="n">l_rail</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;rail_length&quot;</span><span class="p">])</span>
+        <span class="n">eta_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_efficiency&quot;</span><span class="p">]</span>
+        <span class="n">eta_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gear_efficiency&quot;</span><span class="p">]</span>
+        <span class="n">K_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gear_ratio&quot;</span><span class="p">]</span>
+        <span class="n">J_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_inertia&quot;</span><span class="p">]</span>
+        <span class="n">R_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">]</span>
+        <span class="n">k_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">]</span>
+        <span class="n">r_mp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pinion_radius&quot;</span><span class="p">]</span>
+        <span class="n">B_eq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;combined_damping&quot;</span><span class="p">]</span>
+        <span class="n">B_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;pole_damping&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Update position of Cart, Joint and Pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cart</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+
+        <span class="c1"># Update rotation of Pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setR</span><span class="p">(</span><span class="o">-</span><span class="n">th</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="c1"># Get position of pole</span>
+        <span class="n">pole_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">getPos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Draw line to that point</span>
+        <span class="n">traced_point</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_trace</span><span class="p">(</span><span class="n">traced_point</span><span class="p">)</span>
+
+        <span class="c1"># Update displayed text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            cart position: </span><span class="si">{</span><span class="n">x</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            pole angle [deg]: </span><span class="si">{</span><span class="n">th</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 3.1f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            dt: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">dt</span> <span class="si">:</span><span class="s2">1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gravity_const: </span><span class="si">{</span><span class="n">gravity_const</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            cart_mass: </span><span class="si">{</span><span class="n">m_cart</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            pole_mass: </span><span class="si">{</span><span class="n">m_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            rail_length: </span><span class="si">{</span><span class="n">l_rail</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            pole_length: </span><span class="si">{</span><span class="n">l_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_efficiency: </span><span class="si">{</span><span class="n">eta_m</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gear_efficiency: </span><span class="si">{</span><span class="n">eta_g</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gear_ratio: </span><span class="si">{</span><span class="n">K_g</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_inertia: </span><span class="si">{</span><span class="n">J_m</span> <span class="si">:</span><span class="s2"> 1.8f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            pinion_radius: </span><span class="si">{</span><span class="n">r_mp</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_resistance: </span><span class="si">{</span><span class="n">R_m</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_back_emf: </span><span class="si">{</span><span class="n">k_m</span> <span class="si">:</span><span class="s2"> 1.6f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            combined_damping: </span><span class="si">{</span><span class="n">B_eq</span> <span class="si">:</span><span class="s2"> 1.2f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            pole_damping: </span><span class="si">{</span><span class="n">B_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span></div></div>
+
+
+<div class="viewcode-block" id="QQubeVis"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.QQubeVis">[docs]</a><span class="k">class</span> <span class="nc">QQubeVis</span><span class="p">(</span><span class="n">PandaVis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Visualisation for the QQubeSim class using panda3d&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">rendering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env: environment to visualize</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rendering</span><span class="p">)</span>
+
+        <span class="c1"># Accessing variables of the environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="n">length_rot_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">]</span>
+        <span class="n">length_pend_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Only for animation</span>
+        <span class="n">arm_radius</span> <span class="o">=</span> <span class="mf">0.0035</span>
+        <span class="n">pole_radius</span> <span class="o">=</span> <span class="mf">0.005</span>
+
+        <span class="c1"># Scaling of the animation so the camera can move smoothly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">length_pend_pole</span>
+
+        <span class="c1"># Set window title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;Quanser Qube&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">requestProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="p">)</span>
+
+        <span class="c1"># Set pov depending on the render mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mf">0.7</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setHpr</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># roll, pitch, yaw [deg]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="o">-</span><span class="mf">0.6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setHpr</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># roll, pitch, yaw [deg]</span>
+
+        <span class="c1"># Box</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cube_green.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.07</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="mf">0.09</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.09</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Cylinder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cylinder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cylinder_middle_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cylinder</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="mf">0.005</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.005</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.03</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cylinder</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.07</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cylinder</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Joint 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;ball_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint1</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="mf">0.005</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint1</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.07</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint1</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Arm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cylinder_top_blue.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">arm_radius</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">arm_radius</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">length_rot_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="o">.</span><span class="n">setP</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.07</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Joint 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;ball_grey.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint2</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">pole_radius</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint2</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.07</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">length_rot_pole</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint2</span><span class="o">.</span><span class="n">wrtReparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">)</span>
+
+        <span class="c1"># Pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cylinder_bottom_red.egg&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setScale</span><span class="p">(</span><span class="n">pole_radius</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">pole_radius</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">length_pend_pole</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.07</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">length_rot_pole</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">wrtReparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QQubeVis.update"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pandavis.QQubeVis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="c1"># Accessing the current parameter values</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span>
+        <span class="n">Mr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">]</span>
+        <span class="n">Mp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">]</span>
+        <span class="n">Lr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">])</span>
+        <span class="n">Lp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">])</span>
+        <span class="n">km</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">]</span>
+        <span class="n">Rm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">]</span>
+        <span class="n">Dr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;damping_rot_pole&quot;</span><span class="p">]</span>
+        <span class="n">Dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;damping_pend_pole&quot;</span><span class="p">]</span>
+        <span class="n">th</span><span class="p">,</span> <span class="n">al</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span>
+
+        <span class="c1"># Update rotation of arm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="o">.</span><span class="n">setH</span><span class="p">(</span><span class="n">th</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="mi">180</span><span class="p">)</span>
+
+        <span class="c1"># Update rotation of pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setR</span><span class="p">(</span><span class="n">al</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="c1"># Get position of pole</span>
+        <span class="n">pole_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">getPos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+
+        <span class="c1"># Calculate position of new point</span>
+        <span class="n">current_pos</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Lp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">al</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Lp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">al</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+            <span class="n">pole_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Lp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">al</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Draw line to that point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_trace</span><span class="p">(</span><span class="n">current_pos</span><span class="p">)</span>
+
+        <span class="c1"># Update displayed text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            theta [deg]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 3.1f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            alpha [deg]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 3.1f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            dt: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">dt</span> <span class="si">:</span><span class="s2">1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            gravity_const: </span><span class="si">{</span><span class="n">g</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            mass_rot_pole: </span><span class="si">{</span><span class="n">Mr</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            mass_pend_pole: </span><span class="si">{</span><span class="n">Mp</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            length_rot_pole: </span><span class="si">{</span><span class="n">Lr</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            length_pend_pole: </span><span class="si">{</span><span class="n">Lp</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            damping_rot_pole: </span><span class="si">{</span><span class="n">Dr</span> <span class="si">:</span><span class="s2"> 1.7f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            damping_pend_pole: </span><span class="si">{</span><span class="n">Dp</span> <span class="si">:</span><span class="s2"> 1.7f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_resistance: </span><span class="si">{</span><span class="n">Rm</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            motor_back_emf: </span><span class="si">{</span><span class="n">km</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
