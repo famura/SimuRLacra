@@ -38,7 +38,12 @@ from pyrado.environment_wrappers.utils import typed_env
 
 
 class IDR(Algorithm):
-    """Iterative Domain Randomization (IDR)."""
+    """
+    Iterative Domain Randomization (IDR).
+
+    This is an ablation of SPRL in the sense that the optimization is omitted and the contectual distribution is naively
+    updated in fixed steps, disregarding the performance information.
+    """
 
     name: str = "idr"
 
