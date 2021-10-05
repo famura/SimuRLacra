@@ -170,20 +170,17 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.a2c</span> <span class="kn">import</span> <span class="n">A2C</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.svpg</span> <span class="kn">import</span> <span class="n">SVPG</span><span class="p">,</span> <span class="n">SVPGBuilder</span><span class="p">,</span> <span class="n">SVPGHyperparams</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.svpg</span> <span class="kn">import</span> <span class="n">SVPGBuilder</span><span class="p">,</span> <span class="n">SVPGHyperparams</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">DomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.rnn</span> <span class="kn">import</span> <span class="n">LSTMPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_evaluation</span> <span class="kn">import</span> <span class="n">eval_domain_params</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sampler_pool</span> <span class="kn">import</span> <span class="n">SamplerPool</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">gae_returns</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.base</span> <span class="kn">import</span> <span class="n">Space</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>

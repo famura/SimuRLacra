@@ -322,32 +322,32 @@ When a terminal condition is met, the reset function is called.</p>
 <section id="module-pyrado.environments.pysim.gym_wrapper">
 <span id="gym-wrapper"></span><h2>gym_wrapper<a class="headerlink" href="#module-pyrado.environments.pysim.gym_wrapper" title="Permalink to this headline"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PysimGymWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.environments.pysim.base.SimPyEnv" title="pyrado.environments.pysim.base.SimPyEnv"><span class="pre">pyrado.environments.pysim.base.SimPyEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#PysimGymWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">OpenAIGymWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.environments.pysim.base.SimPyEnv" title="pyrado.environments.pysim.base.SimPyEnv"><span class="pre">pyrado.environments.pysim.base.SimPyEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.core.Env</span></code></p>
-<p>A wrapper for pysim environments exposing a gym env.
+<p>A wrapper for simulation environments exposing an OpenAI Gym environment.
 Do not instantiate this yourself but rather use <cite>gym.make()</cite> like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim_env</span> <span class="o">=</span> <span class="n">QQubeSwingUpSim</span><span class="p">(</span><span class="o">**</span><span class="n">env_hparams</span><span class="p">)</span>
-<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;SimulacraPySimEnv-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">sim_env</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim_env</span> <span class="o">=</span> <span class="n">QQubeSwingUpSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;SimuRLacraSimEnv-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">sim_env</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Initialize the environment. You are not supposed to call this function directly, but use
-<cite>gym.make(“SimulacraPySimEnv-v0”, env=sim_env)</cite> where <cite>sim_env</cite> is your Pyrado environment.</p>
+<cite>gym.make(“SimuRLacraSimEnv-v0”, env=sim_env)</cite> where <cite>sim_env</cite> is your Pyrado environment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>env</strong> – Pyrado environment to wrap</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.close">
-<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#PysimGymWrapper.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.close" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.close" title="Permalink to this definition"></a></dt>
 <dd><p>Perform any necessary cleanup for the environment. Environments will automatically <cite>close()</cite> themselves when
 garbage collected or when the program exits.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.conv_space_from_pyrado">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">conv_space_from_pyrado</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">gym.spaces.space.Space</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#PysimGymWrapper.conv_space_from_pyrado"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.conv_space_from_pyrado" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.conv_space_from_pyrado">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">conv_space_from_pyrado</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">gym.spaces.space.Space</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.conv_space_from_pyrado"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.conv_space_from_pyrado" title="Permalink to this definition"></a></dt>
 <dd><p>Convert a Pyrado space to a gym space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -360,13 +360,13 @@ garbage collected or when the program exits.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.metadata">
-<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'render.modes':</span> <span class="pre">['human']}</span></em><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.metadata" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'render.modes':</span> <span class="pre">['human']}</span></em><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.metadata" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'human'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#PysimGymWrapper.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.render" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'human'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.render" title="Permalink to this definition"></a></dt>
 <dd><p>Renders the environment.
 The set of supported modes varies per environment (some environments do not support rendering).
 By convention, if mode is:
@@ -387,8 +387,8 @@ rgb_array: return an numpy.ndarray with shape (x, y, 3), representing RGB values
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#PysimGymWrapper.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.reset" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Resets the environment to an initial state and returns an initial observation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -404,12 +404,12 @@ of <cite>reset()</cite> yields an environment suitable for a new episode, indepe
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.seed">
-<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#PysimGymWrapper.seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.seed" title="Permalink to this definition"></a></dt>
-<dd><p>Sets the seed for this env’s random number generator(s).</p>
+<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.seed" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the seed for this environment’s random number generator(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>list of seeds used in this environments’s random number generators. The first value in the list
+<dd class="field-odd"><p>list of seeds used in this environment’s random number generators. The first value in the list
 should be the “main” seed, or the value which a reproducer should pass to <cite>seed</cite>. Often, the main
 seed equals the provided <cite>seed</cite>, but this won’t be true if <cite>seed=None</cite>, for example.</p>
 </dd>
@@ -417,9 +417,9 @@ seed equals the provided <cite>seed</cite>, but this won’t be true if <cite>se
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.step">
-<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#PysimGymWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.step" title="Permalink to this definition"></a></dt>
-<dd><p>Run one timestep of the environment’s dynamics. When the end of episode is reached, you are responsible for
+<dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.step" title="Permalink to this definition"></a></dt>
+<dd><p>Run one time step of the environment’s dynamics. When the end of episode is reached, you are responsible for
 calling <cite>reset()</cite> to reset this environment’s state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

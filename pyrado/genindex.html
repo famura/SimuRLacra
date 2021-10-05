@@ -500,7 +500,7 @@
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.openai_classical_control.GymEnv.close">(GymEnv method)</a>
 </li>
-        <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.close">(PysimGymWrapper method)</a>
+        <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.close">(OpenAIGymWrapper method)</a>
 </li>
         <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket.close">(QSocket method)</a>
 </li>
@@ -575,7 +575,7 @@
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.context_distr">context_distr (SelfPacedDomainParam property)</a>
 </li>
-      <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.conv_space_from_pyrado">conv_space_from_pyrado() (PysimGymWrapper static method)</a>
+      <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.conv_space_from_pyrado">conv_space_from_pyrado() (OpenAIGymWrapper static method)</a>
 </li>
       <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ConvergenceStoppingCriterion">ConvergenceStoppingCriterion (class in pyrado.algorithms.stopping_criteria.rollout_based_criteria)</a>
 </li>
@@ -2067,7 +2067,7 @@
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.merge_dicts_same_dtype">merge_dicts_same_dtype() (in module pyrado.utils.data_types)</a>
 </li>
-      <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.metadata">metadata (PysimGymWrapper attribute)</a>
+      <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.metadata">metadata (OpenAIGymWrapper attribute)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper">MetaDomainRandWrapper (class in pyrado.environment_wrappers.domain_randomization)</a>
 </li>
@@ -2984,6 +2984,8 @@
 </li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket.open">open() (QSocket method)</a>
 </li>
+      <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper">OpenAIGymWrapper (class in pyrado.environments.pysim.gym_wrapper)</a>
+</li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultExample.opt_est_expec_return">opt_est_expec_return() (CatapultExample method)</a>
 </li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultExample.opt_policy_param">opt_policy_param() (CatapultExample method)</a>
@@ -3773,6 +3775,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.base">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.gym_wrapper
 
@@ -3780,8 +3784,6 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.gym_wrapper">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.one_mass_oscillator
 
@@ -4671,8 +4673,6 @@
         <li><a href="utils.html#module-pyrado.utils.tensor">module</a>
 </li>
       </ul></li>
-      <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper">PysimGymWrapper (class in pyrado.environments.pysim.gym_wrapper)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -4840,7 +4840,7 @@
 </li>
         <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.mock_env.MockEnv.render">(MockEnv method)</a>
 </li>
-        <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.render">(PysimGymWrapper method)</a>
+        <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.render">(OpenAIGymWrapper method)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.render">(QBallBalancerKin method)</a>
 </li>
@@ -4956,6 +4956,8 @@
 </li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.reset">(ObsVelFiltWrapper method)</a>
 </li>
+        <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.reset">(OpenAIGymWrapper method)</a>
+</li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.reset">(OptimizerHook method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.goalless.OptimProxyTask.reset">(OptimProxyTask method)</a>
@@ -4973,8 +4975,6 @@
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.PolySplineTimePolicy.reset">(PolySplineTimePolicy method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.power.PoWER.reset">(PoWER method)</a>
-</li>
-        <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.reset">(PysimGymWrapper method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.environment_specific.QBallBalancerPDCtrl.reset">(QBallBalancerPDCtrl method)</a>
 </li>
@@ -5379,7 +5379,7 @@
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TimePolicy.script">(TimePolicy method)</a>
 </li>
       </ul></li>
-      <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.seed">seed() (PysimGymWrapper method)</a>
+      <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.seed">seed() (OpenAIGymWrapper method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.select_by_hint">select_by_hint() (in module pyrado.logger.experiment)</a>
 </li>
@@ -5648,13 +5648,13 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.step">(NPDR method)</a>
 </li>
+        <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.step">(OpenAIGymWrapper method)</a>
+</li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.step">(OptimizerHook method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.step">(ParameterExploring method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.step">(PDDR method)</a>
-</li>
-        <li><a href="environments.pysim.html#pyrado.environments.pysim.gym_wrapper.PysimGymWrapper.step">(PysimGymWrapper method)</a>
 </li>
         <li><a href="environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.step">(QuanserReal method)</a>
 </li>

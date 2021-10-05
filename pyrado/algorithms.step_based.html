@@ -1102,8 +1102,19 @@ contains a dict of information about the current iteration of the meta-algorithm
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPGBuilder">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SVPGBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hyperparams</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPGBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPGBuilder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SVPGBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPGBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPGBuilder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Helper class to build an SVPG algorithm instance</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>hparam</strong> – hyper-parameters for SVPG</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
