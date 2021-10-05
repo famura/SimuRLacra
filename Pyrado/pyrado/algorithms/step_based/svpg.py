@@ -223,14 +223,22 @@ SVPGHyperparams = Dict
 
 
 class SVPGBuilder:
-    def __init__(self, ex_dir, env: Env, hyperparams: SVPGHyperparams) -> None:
-        actor = FNNPolicy(spec=env.spec, **hyperparams["actor"])
-        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **hyperparams["vfcn"])
-        critic = GAE(vfcn, **hyperparams["critic"])
-        particle_logger = StepLogger()
-        particle_example = A2C(ex_dir, env, actor, critic, logger=particle_logger, **hyperparams["particle"])
+    """Helper class to build an SVPG algorithm instance"""
 
-        self.svpg = SVPG(ex_dir, env, particle_example, **hyperparams["algo"])
+    def __init__(self, save_dir, env: Env, hparam: SVPGHyperparams) -> None:
+        """
+        Constructor
+
+        :param save_dir: directory to save the snapshots i.e. the results in
+        :param env: the environment which the policy operates
+        :param hparam: hyper-parameters for SVPG
+        """
+        actor = FNNPolicy(spec=env.spec, **hparam["actor"])
+        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **hparam["vfcn"])
+        critic = GAE(vfcn, **hparam["critic"])
+        particle_template = A2C(save_dir, env, actor, critic, logger=StepLogger(), **hparam["particle"])
+
+        self.svpg = SVPG(save_dir, env, particle_template, **hparam["algo"])
 
         self.svpg.save_name = "subrtn_svpg"
 

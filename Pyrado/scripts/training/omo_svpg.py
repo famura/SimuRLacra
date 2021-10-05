@@ -95,10 +95,9 @@ if __name__ == "__main__":
     actor = FNNPolicy(spec=env.spec, **actor_hparam)
     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic = GAE(vfcn, **critic_hparam)
-    particle_logger = StepLogger()
-    particle_example = A2C(ex_dir, env, actor, critic, logger=particle_logger, **a2c_hparam)
+    particle_template = A2C(ex_dir, env, actor, critic, logger=StepLogger(), **a2c_hparam)
 
-    algo = SVPG(ex_dir, env, particle_example, **algo_hparam)
+    algo = SVPG(ex_dir, env, particle_template, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
