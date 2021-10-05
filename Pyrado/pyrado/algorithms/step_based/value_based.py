@@ -66,6 +66,7 @@ class ValueBased(Algorithm, ABC):
         max_grad_norm: float,
         num_workers: int,
         logger: StepLogger,
+        use_trained_policy_for_refill: bool = False,
     ):
         r"""
         Constructor
@@ -88,6 +89,8 @@ class ValueBased(Algorithm, ABC):
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        :param use_trained_policy_for_refill: whether to use the trained policy instead of a dummy policy to refill the
+                                              replay buffer after resets
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
@@ -148,6 +151,9 @@ class ValueBased(Algorithm, ABC):
         self._expl_strat = None  # must be implemented by subclass
         self._sampler = None  # must be implemented by subclass
 
+        self._fill_with_init_sampler = True  # use the init sampler with the dummy policy on first run
+        self._use_trained_policy_for_refill = use_trained_policy_for_refill
+
     @property
     def expl_strat(self) -> Union[SACExplStrat, EpsGreedyExplStrat]:
         return self._expl_strat
@@ -160,9 +166,20 @@ class ValueBased(Algorithm, ABC):
     def step(self, snapshot_mode: str, meta_info: dict = None):
         if self._memory.isempty:
             # Warm-up phase
-            print_cbt_once("Collecting samples until replay memory if full.", "w")
+            print_cbt_once(f"Empty replay memory, collecting {self.num_init_memory_steps} samples.", "w")
             # Sample steps and store them in the replay memory
-            ros = self.sampler_init.sample()
+            if self._fill_with_init_sampler:
+                ros = self.sampler_init.sample()
+                self._fill_with_init_sampler = not self._use_trained_policy_for_refill
+            else:
+                # Save old bounds from the sampler
+                min_rollouts = self.sampler.min_rollouts
+                min_steps = self.sampler.min_steps
+                # Set and sample with the init sampler settings
+                self.sampler.set_min_count(min_steps=self.num_init_memory_steps)
+                ros = self.sampler.sample()
+                # Revert back to initial parameters
+                self.sampler.set_min_count(min_rollouts=min_rollouts, min_steps=min_steps)
             self._memory.push(ros)
         else:
             # Sample steps and store them in the replay memory

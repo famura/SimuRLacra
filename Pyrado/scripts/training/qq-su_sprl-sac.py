@@ -27,14 +27,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube swing-up task using Soft Actor Critic.
+Train an agent to solve the Quanser Qube swing-up task using Self-Paced Reinforcement Learning using Soft-Actor-Critic
+as a subroutine.
 """
 import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
+from pyrado.algorithms.meta.sprl import SPRL
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.sac import SAC
+from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
+from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
@@ -47,36 +53,44 @@ from pyrado.utils.data_types import EnvSpec
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
-    seed_str = f"seed-{args.seed}" if args.seed is not None else None
+    parser = get_argparser()
+    parser.add_argument("--frequency", default=100, type=int)
+    parser.set_defaults(max_steps=600)
+    parser.add_argument("--sac_iterations", default=300, type=int)
+    parser.add_argument("--sprl_iterations", default=50, type=int)
+    parser.add_argument("--cov_only", action="store_true")
+    args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{SAC.name}", seed_str)
+    ex_dir = setup_experiment(
+        QQubeSwingUpSim.name,
+        f"{SPRL.name}-{SAC.name}_{FNNPolicy.name}",
+        f"covonly-{args.cov_only}_seed-{args.seed}",
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / 100.0, max_steps=600)
+    env_hparams = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(shared_hidden_sizes=[64, 64], shared_hidden_nonlin=to.relu)
+    policy_hparam = dict(shared_hidden_sizes=[64, 64], shared_hidden_nonlin=to.relu)  # FNN
     policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam)
 
-    # Q-Functions
     qfnc_param = dict(hidden_sizes=[64, 64], hidden_nonlin=to.relu)
     combined_space = BoxSpace.cat([env.obs_space, env.act_space])
     q1 = FNNPolicy(spec=EnvSpec(combined_space, ValueFunctionSpace), **qfnc_param)
     q2 = FNNPolicy(spec=EnvSpec(combined_space, ValueFunctionSpace), **qfnc_param)
 
-    # Algorithm
+    # Subroutine
     algo_hparam = dict(
-        max_iter=300,
-        memory_size=1000000,
+        max_iter=args.sac_iterations,
+        memory_size=1_000_000,
         gamma=0.9995,
-        num_updates_per_step=1000,
+        num_updates_per_step=1_000,
         tau=0.99,
         ent_coeff_init=0.3,
         learn_ent_coeff=True,
@@ -88,16 +102,37 @@ if __name__ == "__main__":
         lr=5e-4,
         max_grad_norm=1.5,
         num_workers=8,
-        eval_intvl=1,
+        lr_scheduler=lr_scheduler.ExponentialLR,
+        lr_scheduler_hparam=dict(gamma=0.999),
     )
-    algo = SAC(ex_dir, env, policy, q1, q2, **algo_hparam)
+    env_sprl_params = [
+        dict(
+            name="g",
+            target_mean=to.tensor([9.81]),
+            target_cov_chol_flat=to.tensor([1.0]),
+            init_mean=to.tensor([9.81]),
+            init_cov_chol_flat=to.tensor([0.05]),
+        )
+    ]
+    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
+
+    sprl_hparam = dict(
+        kl_constraints_ub=8000,
+        performance_lower_bound=500,
+        std_lower_bound=0.4,
+        kl_threshold=200,
+        max_iter=args.sprl_iterations,
+        optimize_mean=not args.cov_only,
+        max_subrtn_retries=3,
+    )
+    algo = SPRL(env, SAC(ex_dir, env, policy, q1, q2, **algo_hparam), **sprl_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
         dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
-        dict(qfcn=qfnc_param),
-        dict(algo=algo_hparam, algo_name=algo.name),
+        dict(subrtn=algo_hparam, subrtn_name=SAC.name),
+        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_params=env_sprl_params),
         save_dir=ex_dir,
     )
 
