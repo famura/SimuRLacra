@@ -199,6 +199,7 @@
         <span class="n">max_grad_norm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span><span class="p">,</span>
+        <span class="n">use_trained_policy_for_refill</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -221,6 +222,8 @@
 <span class="sd">        :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping</span>
 <span class="sd">        :param num_workers: number of environments for parallel sampling</span>
 <span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
+<span class="sd">        :param use_trained_policy_for_refill: whether to use the trained policy instead of a dummy policy to refill the</span>
+<span class="sd">                                              replay buffer after resets</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Env</span><span class="p">)</span>
@@ -281,6 +284,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># must be implemented by subclass</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># must be implemented by subclass</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fill_with_init_sampler</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># use the init sampler with the dummy policy on first run</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_trained_policy_for_refill</span> <span class="o">=</span> <span class="n">use_trained_policy_for_refill</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">expl_strat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">SACExplStrat</span><span class="p">,</span> <span class="n">EpsGreedyExplStrat</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span>
@@ -293,9 +299,20 @@
 <div class="viewcode-block" id="ValueBased.step"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">isempty</span><span class="p">:</span>
             <span class="c1"># Warm-up phase</span>
-            <span class="n">print_cbt_once</span><span class="p">(</span><span class="s2">&quot;Collecting samples until replay memory if full.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="n">print_cbt_once</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Empty replay memory, collecting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span><span class="si">}</span><span class="s2"> samples.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
             <span class="c1"># Sample steps and store them in the replay memory</span>
-            <span class="n">ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_init</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_with_init_sampler</span><span class="p">:</span>
+                <span class="n">ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_init</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fill_with_init_sampler</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_trained_policy_for_refill</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Save old bounds from the sampler</span>
+                <span class="n">min_rollouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">min_rollouts</span>
+                <span class="n">min_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">min_steps</span>
+                <span class="c1"># Set and sample with the init sampler settings</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">set_min_count</span><span class="p">(</span><span class="n">min_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span><span class="p">)</span>
+                <span class="n">ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+                <span class="c1"># Revert back to initial parameters</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">set_min_count</span><span class="p">(</span><span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">ros</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Sample steps and store them in the replay memory</span>
