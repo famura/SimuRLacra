@@ -467,3 +467,26 @@ def test_time_series_prediction(ex_dir, dataset_ts, env: MockEnv, policy: Policy
     )
     assert isinstance(preds, to.Tensor)
     assert isinstance(loss, to.Tensor)
+
+
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize("fill_with_trained_policy", [True, False])
+def test_sac_fill_memory_with_trained_policy(ex_dir, env, fill_with_trained_policy):
+    sac_hparam = dict(
+        max_iter=1,
+        num_workers=1,
+        memory_size=1000,
+        num_updates_per_step=2,
+        gamma=0.99,
+        min_rollouts=1,
+        use_trained_policy_for_refill=fill_with_trained_policy,
+    )
+    fnn_hparam = dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)
+    env = ActNormWrapper(env)
+    policy = TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
+    obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
+    sac_hparam.update(qfcn_1=FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **fnn_hparam))
+    sac_hparam.update(qfcn_2=FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **fnn_hparam))
+    algo = SAC(ex_dir, env, policy, **sac_hparam)
+    algo.policy.param_values += to.tensor([42.0])
+    algo.train()
