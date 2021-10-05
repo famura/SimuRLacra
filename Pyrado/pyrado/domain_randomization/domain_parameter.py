@@ -324,14 +324,14 @@ class SelfPacedDomainParam(DomainParam):
         clip_up: float,
     ):
         """
-        Constructor.
+        Constructor
 
         :param name: names of the parameters
         :param target_mean: target means of the contextual distribution
-        :target_cov_flat: target covariances of the contextual distribution
-        :init_mean: initial mean of the contextual distribution
-        :init_cov_flat: initial covariances of the contextual distribution
-        :clip_lo: lowest values to allow for sampling
+        :param target_cov_flat: target covariances of the contextual distribution
+        :param init_mean: initial mean of the contextual distribution
+        :param init_cov_flat: initial covariances of the contextual distribution
+        :param clip_lo: lowest values to allow for sampling
         """
 
         if not isinstance(name, list):
@@ -369,7 +369,19 @@ class SelfPacedDomainParam(DomainParam):
         clip_lo: float = -pyrado.inf,
         clip_up: float = pyrado.inf,
     ) -> "SelfPacedDomainParam":
-        assert len(mean) == len(name), "mean must have same length as names"
+        """
+        Creates a self-paced domain parameter having the same initial and target mean, but a larger variance on the
+        target distribution.
+
+        :param name: names of the parameters
+        :param mean: means of the contextual distribution
+        :param init_cov_portion: percentage of the mean the initial variance should be set to
+        :param target_cov_portion: percentage of the mean the target variance should be set to
+        :param clip_lo: lowest values to allow for sampling
+        :param clip_up: highest values to allow for sampling
+        """
+        if not (len(mean) == len(name)):
+            raise pyrado.ValueErr(msg="mean must have same length as names")
         mean = to.tensor(mean)
         return SelfPacedDomainParam(
             name=name,

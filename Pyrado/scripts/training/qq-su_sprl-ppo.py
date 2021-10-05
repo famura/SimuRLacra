@@ -27,8 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube swing-up task using Proximal Policy Optimization.
+Train an agent to solve the Quanser Qube swing-up task using Self-Paced RL with Proximal Policy Optimization.
 """
+import numpy as np
 import torch as to
 from torch.optim import lr_scheduler
 
@@ -45,7 +46,6 @@ from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.bijective_transformation import IdentityTransformation, LogTransformation, SqrtTransformation
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -56,32 +56,22 @@ if __name__ == "__main__":
     parser.set_defaults(max_steps=600)
     parser.add_argument("--ppo_iterations", default=150, type=int)
     parser.add_argument("--sprl_iterations", default=50, type=int)
-    parser.add_argument("--cov_transform", default="identity", choices=["identity", "sqrt", "log"])
+    parser.add_argument("--cov_only", action="store_true")
     args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
         f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.cov_transform}CovTransform_{args.max_steps}ROLen_{args.ppo_iterations}PPOIter_{args.sprl_iterations}_seed_{args.seed}",
+        f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}",
     )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
-    # Covariance transformation.
-    if args.cov_transform == "identity":
-        cov_transformation = IdentityTransformation()
-    elif args.cov_transform == "sqrt":
-        cov_transformation = SqrtTransformation()
-    elif args.cov_transform == "log":
-        cov_transformation = LogTransformation()
-    else:
-        raise pyrado.ValueErr(msg=f"{args.cov_transform!r} is not a valid covariance transformation")
-
     # Environment
-    env_hparam = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
-    env = QQubeSwingUpSim(**env_hparam)
+    env_hparams = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
+    env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
     # Policy
@@ -122,34 +112,34 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
-    env_sprl_params = [
-        dict(
-            name=["gravity_const"],
-            target_mean=to.tensor([9.81]),
-            target_cov_flat=to.tensor([1.0]),
-            init_mean=to.tensor([9.81]),
-            init_cov_flat=to.tensor([0.0025]),
-        )
-    ]
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
+    env_sprl_param = dict(
+        name=["gravity_const", "motor_resistance"],
+        target_mean=to.tensor([9.81, 8.4]),
+        target_cov_flat=to.tensor([1.0, 1.0]),
+        init_mean=to.tensor([9.81, 8.4]),
+        init_cov_flat=to.tensor([0.01, 0.01]),
+        clip_lo=-pyrado.inf,
+        clip_up=+pyrado.inf,
+    )
+    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(SelfPacedDomainParam(**env_sprl_param)))
 
     sprl_hparam = dict(
-        kl_constraints_ub=8000,
-        performance_lower_bound=500,
-        var_lower_bound=0.4 ** 2,
-        kl_threshold=200,
+        kl_constraints_ub=10,
+        performance_lower_bound=250,
+        kl_threshold=-np.inf,
         max_iter=args.sprl_iterations,
-        optimize_mean=True,
+        optimize_mean=not args.cov_only,
+        max_subrtn_retries=1,
     )
     algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparam, seed=args.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=algo_hparam, subrtn_name=PPO.name),
-        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_params=env_sprl_params),
+        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_param=env_sprl_param),
         save_dir=ex_dir,
     )
 

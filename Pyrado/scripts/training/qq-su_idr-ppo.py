@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Qube swing-up task using Proximal Policy Optimization and Iterative Domain Randomization.
+Train an agent to solve the Qube swing-up task using Iterative Domain Randomization with Proximal Policy Optimization.
 """
 import torch as to
 from torch.optim import lr_scheduler
@@ -107,11 +107,19 @@ if __name__ == "__main__":
         dict(
             name="gravity_const",
             target_mean=to.tensor([9.81]),
-            target_cov_flat=to.tensor([1.0]),
+            target_cov_flat=to.tensor([0.1]),
             init_mean=to.tensor([9.81]),
-            init_cov_flat=to.tensor([0.0025]),
+            init_cov_flat=to.tensor([0.01]),
             cov_transformation=SqrtTransformation(),
-        )
+        ),
+        dict(
+            name="motor_resistance",
+            target_mean=to.tensor([8.4]),
+            target_cov_flat=to.tensor([0.1]),
+            init_mean=to.tensor([8.4]),
+            init_cov_flat=to.tensor([0.01]),
+            cov_transformation=SqrtTransformation(),
+        ),
     ]
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_params]))
 

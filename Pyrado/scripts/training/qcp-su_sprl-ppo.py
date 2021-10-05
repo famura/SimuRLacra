@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser CartPole swing-up task using Proximal Policy Optimization and Self-Paced RL.
+Train an agent to solve the Quanser CartPole swing-up task using Self-Paced RL with Proximal Policy Optimization.
 """
 import numpy as np
 import torch as to
