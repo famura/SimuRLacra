@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube swing-up task using Self-Paced RL with Proximal Policy Optimization.
+Train an agent to solve the Quanser Qube swing-up task using Self-Paced Domain Radnomization using Proximal Policy Optimization
+as a subroutine.
 """
 import numpy as np
 import torch as to
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
         f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}",
+        f"{args.frequency}Hz_covonly_{args.cov_only}_seed_{args.seed}",
     )
 
     # Set seed if desired
