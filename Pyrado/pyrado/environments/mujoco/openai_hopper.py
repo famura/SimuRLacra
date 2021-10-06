@@ -46,9 +46,13 @@ class HopperSim(MujocoSimEnv, Serializable):
     The Hopper (v3) MuJoCo simulation environment where a planar simplified one-legged robot tries to run forward.
 
     .. note::
+        The OpenAI Gym variant considers this task solved at a reward over 3800
+        (https://github.com/openai/gym/blob/master/gym/envs/__init__.py).
+
+    .. note::
         In contrast to the OpenAI Gym MoJoCo environments, Pyrado enables the randomization of the hoppers "healthy"
-        state range. Moreover, the state space is constrained to the this part of the state space. Note the in the
-        original environment, the `terminate_when_unhealthy` is `True` by default.
+        state range. Moreover, the state space is constrained to the this part of the state space. In the original
+        environment, the `terminate_when_unhealthy` is `True` by default.
 
     .. seealso::
         [1] https://github.com/openai/gym/blob/master/gym/envs/mujoco/hopper_v3.py
@@ -58,7 +62,7 @@ class HopperSim(MujocoSimEnv, Serializable):
 
     def __init__(
         self,
-        frame_skip: int = 5,
+        frame_skip: int = 4,
         dt: Optional[float] = None,
         max_steps: int = 1000,
         task_args: Optional[dict] = None,
@@ -115,7 +119,11 @@ class HopperSim(MujocoSimEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            state_bound=100.0, z_lower_bound=0.7, angle_bound=0.2, foot_friction_coeff=2.0, reset_noise_halfspan=5e-3
+            reset_noise_halfspan=0,  # fixed initial state by default
+            state_bound=100.0,
+            z_lower_bound=0.7,
+            angle_bound=0.2,
+            foot_friction_coeff=2.0,
         )
 
     def _create_task(self, task_args: dict) -> Task:

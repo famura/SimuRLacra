@@ -45,6 +45,10 @@ class AntSim(MujocoSimEnv, Serializable):
     """
     The Ant (v3) MuJoCo simulation environment where a four-legged creature walks as fast as possible.
 
+    .. note::
+        The OpenAI Gym variant considers this task solved at a reward over 6000
+        (https://github.com/openai/gym/blob/master/gym/envs/__init__.py).
+
     .. seealso::
         https://github.com/openai/gym/blob/master/gym/envs/mujoco/ant_v3.py
     """
@@ -114,7 +118,7 @@ class AntSim(MujocoSimEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            reset_noise_halfspan=0.1,
+            reset_noise_halfspan=0.0,  # fixed initial state by default
             init_pos_z=0.75,
             hip_length=0.2,
             thigh_length=0.2,
