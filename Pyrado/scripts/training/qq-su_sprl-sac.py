@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube swing-up task using Self-Paced Domain Randomization using Soft-Actor-Critic
+Train an agent to solve the Quanser Qube swing-up task using Self-Paced Domain Radomization using Soft-Actor-Critic
 as a subroutine.
 """
 import torch as to
