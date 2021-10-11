@@ -27,13 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Qube swing-up task using Iterative Domain Randomization with Proximal Policy Optimization.
+Train an agent to solve the Qube swing-up task using Incremental Uniform Domain Randomization with PPO.
 """
 import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.meta.idr import IDR
+from pyrado.algorithms.meta.iudr import IUDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{IDR.name}_{PPO.name}_{FNNPolicy.name}", f"{args.frequency}Hz")
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{IUDR.name}_{PPO.name}_{FNNPolicy.name}", f"{args.frequency}Hz")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -123,11 +123,11 @@ if __name__ == "__main__":
     ]
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_params]))
 
-    idr_hparam = dict(
+    iudr_hparam = dict(
         max_iter=100,
         performance_threshold=500.0,
     )
-    algo = IDR(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **idr_hparam)
+    algo = IUDR(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **iudr_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=algo_hparam, subrtn_name=PPO.name),
-        dict(algo=idr_hparam, algo_name=algo.name, env_params=env_params),
+        dict(algo=iudr_hparam, algo_name=algo.name, env_params=env_params),
         save_dir=ex_dir,
     )
 

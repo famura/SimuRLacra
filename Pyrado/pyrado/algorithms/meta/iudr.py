@@ -37,15 +37,15 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
 
 
-class IDR(Algorithm):
+class IUDR(Algorithm):
     """
-    Iterative Domain Randomization (IDR).
+    Incremental Uniform Domain Randomization (IUDR).
 
-    This is an ablation of SPRL in the sense that the optimization is omitted and the contectual distribution is naively
+    This is an ablation of SPRL in the sense that the optimization is omitted and the contextual distribution is naively
     updated in fixed steps, disregarding the performance information.
     """
 
-    name: str = "idr"
+    name: str = "iudr"
 
     def __init__(
         self,
@@ -61,11 +61,11 @@ class IDR(Algorithm):
         :param env: environment wrapped in a DomainRandWrapper
         :param subroutine: algorithm which performs the policy/value-function optimization; note that this algorithm
                            must be capable of learning a sufficient policy in its maximum number of iterations
-        :param max_iter: iterations of the IDR algorithm (not for the subroutine); changing the domain parameter
+        :param max_iter: iterations of the IUDR algorithm (not for the subroutine); changing the domain parameter
                          distribution is done by linear interpolation over this many iterations
         :param performance_threshold: lower bound for the performance that has to be reached until the domain parameter
                                       randomization is changed
-        :param param_adjustment_portion: what portion of the IDR iterations should be spent on adjusting the domain
+        :param param_adjustment_portion: what portion of the IUDR iterations should be spent on adjusting the domain
                                          parameter distributions; defaults to `90%`
         """
         if not isinstance(subroutine, Algorithm):
@@ -110,7 +110,7 @@ class IDR(Algorithm):
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         """
-        Perform a step of IDR. This includes training the subroutine and updating the context distribution accordingly.
+        Perform a step of IUDR. This includes training the subroutine and updating the context distribution accordingly.
         For a description of the parameters see `pyrado.algorithms.base.Algorithm.step`.
         """
         self.save_snapshot()
