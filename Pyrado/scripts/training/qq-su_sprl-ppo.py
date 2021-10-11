@@ -34,7 +34,7 @@ import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.meta.sprl import SPRL
+from pyrado.algorithms.meta.spdr import SPDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     parser.add_argument("--frequency", default=250, type=int)
     parser.set_defaults(max_steps=600)
     parser.add_argument("--ppo_iterations", default=150, type=int)
-    parser.add_argument("--sprl_iterations", default=50, type=int)
+    parser.add_argument("--spdr_iterations", default=50, type=int)
     parser.add_argument("--cov_only", action="store_true")
     args = parser.parse_args()
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
         f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}",
+        f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.spdr_iterations}SPDRIter_cov_only{args.cov_only}_seed_{args.seed}",
     )
 
     # Set seed if desired
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
-    env_sprl_param = dict(
+    env_spdr_param = dict(
         name=["gravity_const", "motor_resistance"],
         target_mean=to.tensor([9.81, 8.4]),
         target_cov_flat=to.tensor([1.0, 1.0]),
@@ -121,17 +121,17 @@ if __name__ == "__main__":
         clip_lo=-pyrado.inf,
         clip_up=+pyrado.inf,
     )
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(SelfPacedDomainParam(**env_sprl_param)))
+    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(SelfPacedDomainParam(**env_spdr_param)))
 
-    sprl_hparam = dict(
+    spdr_hparam = dict(
         kl_constraints_ub=10,
         performance_lower_bound=250,
         kl_threshold=-np.inf,
-        max_iter=args.sprl_iterations,
+        max_iter=args.spdr_iterations,
         optimize_mean=not args.cov_only,
         max_subrtn_retries=1,
     )
-    algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
+    algo = SPDR(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **spdr_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
@@ -139,7 +139,7 @@ if __name__ == "__main__":
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=algo_hparam, subrtn_name=PPO.name),
-        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_param=env_sprl_param),
+        dict(algo=spdr_hparam, algo_name=algo.name, env_spdr_param=env_spdr_param),
         save_dir=ex_dir,
     )
 

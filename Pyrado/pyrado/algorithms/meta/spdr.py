@@ -179,9 +179,9 @@ class MultivariateNormalWrapper:
         self.distribution = MultivariateNormal(self.mean, self.cov)
 
 
-class SPRL(Algorithm):
+class SPDR(Algorithm):
     """
-    Self-Paced Reinforcement Leaner (SPRL)
+    Self-Paced Domain Randomization (SPDR)
 
     This algorithm wraps another algorithm. The main purpose is to apply self-paced RL [1].
 
@@ -190,7 +190,7 @@ class SPRL(Algorithm):
         "A Probabilistic Interpretation of Self-Paced Learning with Applications to Reinforcement Learning", arXiv, 2021
     """
 
-    name: str = "sprl"
+    name: str = "spdr"
 
     def __init__(
         self,
@@ -212,8 +212,8 @@ class SPRL(Algorithm):
         :param subroutine: algorithm which performs the policy/value-function optimization, which
                            must expose its sampler
         :param kl_constraints_ub: upper bound for the KL-divergence
-        :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
-        :param performance_lower_bound: lower bound for the performance SPRL tries to stay above
+        :param max_iter: Maximal iterations for the SPDR algorithm (not for the subroutine)
+        :param performance_lower_bound: lower bound for the performance SPDR tries to stay above
                                         during distribution updates
         :param var_lower_bound: clipping value for the variance,necessary when using very small target variances; prefer
                                 a log-transformation instead
@@ -281,7 +281,7 @@ class SPRL(Algorithm):
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         """
-        Perform a step of SPRL. This includes training the subroutine and updating the context distribution accordingly.
+        Perform a step of SPDR. This includes training the subroutine and updating the context distribution accordingly.
         For a description of the parameters see `pyrado.algorithms.base.Algorithm.step`.
         """
         self.save_snapshot()
@@ -293,9 +293,9 @@ class SPRL(Algorithm):
         target_cov_chol = self._spl_parameter.target_cov_chol.double()
 
         # Add these keys to the logger as dummy values.
-        self.logger.add_value("sprl constraint kl", 0.0)
-        self.logger.add_value("sprl constraint performance", 0.0)
-        self.logger.add_value("sprl objective", 0.0)
+        self.logger.add_value("spdr constraint kl", 0.0)
+        self.logger.add_value("spdr constraint performance", 0.0)
+        self.logger.add_value("spdr objective", 0.0)
         for param_a_idx, param_a_name in enumerate(self._spl_parameter.name):
             for param_b_idx, param_b_name in enumerate(self._spl_parameter.name):
                 self.logger.add_value(
@@ -433,7 +433,7 @@ class SPRL(Algorithm):
 
         x0 = previous_distribution.get_stacked()
 
-        print("Performing SPRL update.")
+        print("Performing SPDR update.")
         # noinspection PyTypeChecker
         result = minimize(
             objective_fn,
@@ -458,9 +458,9 @@ class SPRL(Algorithm):
                 new_x = x0
 
         self._adapt_parameters(dim, new_x)
-        self.logger.add_value("sprl constraint kl", kl_constraint_fn(new_x).item())
-        self.logger.add_value("sprl constraint performance", performance_constraint_fn(new_x).item())
-        self.logger.add_value("sprl objective", objective_fn(new_x)[0].item())
+        self.logger.add_value("spdr constraint kl", kl_constraint_fn(new_x).item())
+        self.logger.add_value("spdr constraint performance", performance_constraint_fn(new_x).item())
+        self.logger.add_value("spdr objective", objective_fn(new_x)[0].item())
 
     def reset(self, seed: int = None):
         # Forward to subroutine

@@ -41,7 +41,7 @@ class IUDR(Algorithm):
     """
     Incremental Uniform Domain Randomization (IUDR).
 
-    This is an ablation of SPRL in the sense that the optimization is omitted and the contextual distribution is naively
+    This is an ablation of SPDR in the sense that the optimization is omitted and the contextual distribution is naively
     updated in fixed steps, disregarding the performance information.
     """
 

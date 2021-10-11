@@ -50,8 +50,8 @@ from pyrado.algorithms.meta.epopt import EPOpt
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.pddr import PDDR
 from pyrado.algorithms.meta.simopt import SimOpt
+from pyrado.algorithms.meta.spdr import SPDR
 from pyrado.algorithms.meta.spota import SPOTA
-from pyrado.algorithms.meta.sprl import SPRL
 from pyrado.algorithms.meta.udr import UDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
@@ -937,11 +937,11 @@ def test_npdr_and_bayessim(
 @pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
 @pytest.mark.parametrize("optimize_mean", [False, True])
-def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
+def test_spdr(ex_dir, env: SimEnv, optimize_mean: bool):
     pyrado.set_seed(0)
 
     env = ActNormWrapper(env)
-    env_sprl_params = [
+    env_spdr_params = [
         dict(
             name="gravity_const",
             target_mean=to.tensor([9.81]),
@@ -950,7 +950,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
             init_cov_flat=to.tensor([0.05]),
         )
     ]
-    radnomizer = DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params])
+    radnomizer = DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_spdr_params])
     env = DomainRandWrapperLive(env, randomizer=radnomizer)
 
     policy = FNNPolicy(env.spec, hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
@@ -988,7 +988,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
         optimize_mean=optimize_mean,
     )
 
-    algo = SPRL(env, PPO(ex_dir, env, policy, critic, **subrtn_hparam), **algo_hparam)
+    algo = SPDR(env, PPO(ex_dir, env, policy, critic, **subrtn_hparam), **algo_hparam)
     algo.train(snapshot_mode="latest")
     assert algo.curr_iter == algo.max_iter
 
