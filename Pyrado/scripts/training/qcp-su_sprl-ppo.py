@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser CartPole swing-up task using Self-Paced RL with Proximal Policy Optimization.
+Train an agent to solve the Quanser CartPole swing-up task using Self-Paced Domain Randomization with Proximal Policy Optimization
+as a subroutine.
 """
 import numpy as np
 import torch as to
@@ -64,7 +65,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(
         QCartPoleSwingUpSim.name,
         f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.spdr_iterations}SPDRIter_DomainParams-{args.domain_params}_seed_{args.seed}",
+        f"{args.frequency}Hz_DomainParams-{args.domain_params}_seed_{args.seed}",
     )
 
     # Set seed if desired
