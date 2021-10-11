@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Qube swing-up task using Incremental Uniform Domain Randomization with PPO.
+Train an agent to solve the Qube swing-up task using Incremental Uniform Domain Randomization using
+Proximal Policy Optimization as a subroutine.
 """
 import torch as to
 from torch.optim import lr_scheduler
