@@ -57,7 +57,7 @@ def ravel_tril_elements(A: to.Tensor) -> to.Tensor:
 def unravel_tril_elements(a: to.Tensor) -> to.Tensor:
     assert len(a.shape) == 1, "a must be one-dimensional"
     raveled_dim = a.shape[0]
-    dim = int((np.sqrt(8 * raveled_dim + 1) - 1) / 2)  # Inverse Gaussian summation formula.
+    dim = int((np.sqrt(8 * raveled_dim + 1) - 1) / 2)  # inverse Gaussian summation formula
     A = to.zeros((dim, dim)).double()
     for i in range(dim):
         A[i, : i + 1] = a[int(i * (i + 1) / 2) :][: i + 1]
