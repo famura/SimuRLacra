@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyrado.algorithms.meta.bayrn &mdash; Pyrado 0.7 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+      <li>pyrado.algorithms.meta.bayrn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyrado.algorithms.meta.bayrn</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">botorch.acquisition</span> <span class="kn">import</span> <span class="n">ExpectedImprovement</span><span class="p">,</span> <span class="n">PosteriorMean</span><span class="p">,</span> <span class="n">ProbabilityOfImprovement</span><span class="p">,</span> <span class="n">UpperConfidenceBound</span>
+<span class="kn">from</span> <span class="nn">botorch.fit</span> <span class="kn">import</span> <span class="n">fit_gpytorch_model</span>
+<span class="kn">from</span> <span class="nn">botorch.models</span> <span class="kn">import</span> <span class="n">SingleTaskGP</span>
+<span class="kn">from</span> <span class="nn">botorch.optim</span> <span class="kn">import</span> <span class="n">optimize_acqf</span>
+<span class="kn">from</span> <span class="nn">gpytorch.constraints</span> <span class="kn">import</span> <span class="n">GreaterThan</span>
+<span class="kn">from</span> <span class="nn">gpytorch.mlls</span> <span class="kn">import</span> <span class="n">ExactMarginalLogLikelihood</span>
+<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span><span class="p">,</span> <span class="n">InterruptableAlgorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.actor_critic</span> <span class="kn">import</span> <span class="n">ActorCritic</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.stopping_criteria.predefined_criteria</span> <span class="kn">import</span> <span class="n">CustomStoppingCriterion</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">until_thold_exceeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">MetaDomainRandWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span><span class="p">,</span> <span class="n">typed_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.real_base</span> <span class="kn">import</span> <span class="n">RealEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.bootstrapping</span> <span class="kn">import</span> <span class="n">bootstrap_ci</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_processing</span> <span class="kn">import</span> <span class="n">standardize</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">UnitCubeProjector</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.ordering</span> <span class="kn">import</span> <span class="n">natural_sort</span>
+
+
+<div class="viewcode-block" id="BayRn"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn">[docs]</a><span class="k">class</span> <span class="nc">BayRn</span><span class="p">(</span><span class="n">InterruptableAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bayesian Domain Randomization (BayRn)</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        A candidate is a set of parameter values for the domain parameter distribution and its value is the</span>
+<span class="sd">        (estimated) real-world return.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        F. Muratore, C. Eilers, M. Gienger, J. Peters, &quot;Bayesian Domain Randomization for Sim-to-Real Transfer&quot;,</span>
+<span class="sd">        arXiv, 2020</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bayrn&quot;</span>
+    <span class="n">iteration_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bayrn_iteration&quot;</span>  <span class="c1"># logger&#39;s iteration key</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">env_sim</span><span class="p">:</span> <span class="n">MetaDomainRandWrapper</span><span class="p">,</span>
+        <span class="n">env_real</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span>
+        <span class="n">subrtn</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
+        <span class="n">ddp_space</span><span class="p">:</span> <span class="n">BoxSpace</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">acq_fc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">acq_restarts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">acq_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">acq_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_init_cand</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">mc_estimator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">num_eval_rollouts_real</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">num_eval_rollouts_sim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="n">thold_succ</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">thold_succ_subrtn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">warmstart</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">policy_param_init</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">valuefcn_param_init</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">subrtn_snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            If you want to continue an experiment, use the `load_dir` argument for the `train` call. If you want to</span>
+<span class="sd">            initialize every of the policies with a pre-trained policy parameters use `policy_param_init`.</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
+<span class="sd">        :param env_sim: randomized simulation environment a.k.a. source domain</span>
+<span class="sd">        :param env_real: real-world environment a.k.a. target domain</span>
+<span class="sd">        :param subrtn: algorithm which performs the policy / value-function optimization</span>
+<span class="sd">        :param ddp_space: space holding the boundaries for the domain distribution parameters</span>
+<span class="sd">        :param max_iter: maximum number of iterations</span>
+<span class="sd">        :param acq_fc: Acquisition Function</span>
+<span class="sd">                       &#39;UCB&#39;: Upper Confidence Bound (default $\beta = 0.1$)</span>
+<span class="sd">                       &#39;EI&#39;: Expected Improvement</span>
+<span class="sd">                       &#39;PI&#39;: Probability of Improvement</span>
+<span class="sd">        :param acq_restarts: number of restarts for optimizing the acquisition function</span>
+<span class="sd">        :param acq_samples: number of initial samples for optimizing the acquisition function</span>
+<span class="sd">        :param acq_param: hyper-parameter for the acquisition function, e.g. $\beta$ for UCB</span>
+<span class="sd">        :param num_init_cand: number of initial policies to train, ignored if `init_dir` is provided</span>
+<span class="sd">        :param mc_estimator: estimate the return with a sample average (`True`) or a lower confidence</span>
+<span class="sd">                                     bound (`False`) obtained from bootstrapping</span>
+<span class="sd">        :param num_eval_rollouts_real: number of rollouts in the target domain to estimate the return</span>
+<span class="sd">        :param num_eval_rollouts_sim: number of rollouts in simulation to estimate the return after training</span>
+<span class="sd">        :param thold_succ: success threshold on the real system&#39;s return for BayRn, stop the algorithm if exceeded</span>
+<span class="sd">        :param thold_succ_subrtn: success threshold on the simulated system&#39;s return for the subroutine, repeat the</span>
+<span class="sd">                                  subroutine until the threshold is exceeded or the for a given number of iterations</span>
+<span class="sd">        :param warmstart: initialize the policy (and value function) parameters with the one of the previous iteration.</span>
+<span class="sd">                          This behavior can also be overruled by passing `init_policy_params` (and</span>
+<span class="sd">                          `valuefcn_param_init`) explicitly.</span>
+<span class="sd">        :param policy_param_init: initial policy parameter values for the subroutine, set `None` to be random</span>
+<span class="sd">        :param valuefcn_param_init: initial value function parameter values for the subroutine, set `None` to be random</span>
+<span class="sd">        :param subrtn_snapshot_mode: snapshot mode for saving during training of the subroutine</span>
+<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
+<span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">MetaDomainRandWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">MetaDomainRandWrapper</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subrtn</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subrtn</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Algorithm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ddp_space</span><span class="p">,</span> <span class="n">BoxSpace</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">ddp_space</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">BoxSpace</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_init_cand</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_init_cand</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Call InterruptableAlgorithm&#39;s constructor without specifying the policy</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">num_checkpoints</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">init_checkpoint</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">,</span>
+            <span class="n">policy</span><span class="o">=</span><span class="n">subrtn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span> <span class="o">=</span> <span class="n">env_sim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span> <span class="o">=</span> <span class="n">env_real</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span> <span class="o">=</span> <span class="n">subrtn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s2">&quot;subrtn&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span> <span class="o">=</span> <span class="n">ddp_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ddp_projector</span> <span class="o">=</span> <span class="n">UnitCubeProjector</span><span class="p">(</span>
+            <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+            <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cands</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># called x in the context of GPs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># called y in the context of GPs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">argmax_cand</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acq_fcn_type</span> <span class="o">=</span> <span class="n">acq_fc</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acq_restarts</span> <span class="o">=</span> <span class="n">acq_restarts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acq_samples</span> <span class="o">=</span> <span class="n">acq_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acq_param</span> <span class="o">=</span> <span class="n">acq_param</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_init_cand</span> <span class="o">=</span> <span class="n">num_init_cand</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mc_estimator</span> <span class="o">=</span> <span class="n">mc_estimator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span> <span class="o">=</span> <span class="n">policy_param_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valuefcn_param_init</span> <span class="o">=</span> <span class="n">valuefcn_param_init</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">valuefcn_param_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warmstart</span> <span class="o">=</span> <span class="n">warmstart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_rollouts_real</span> <span class="o">=</span> <span class="n">num_eval_rollouts_real</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_rollouts_sim</span> <span class="o">=</span> <span class="n">num_eval_rollouts_sim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_snapshot_mode</span> <span class="o">=</span> <span class="n">subrtn_snapshot_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thold_succ</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">thold_succ</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thold_succ_subrtn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">thold_succ_subrtn</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_subrtn_rep</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># number of tries to exceed thold_succ_subrtn during training in simulation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curr_cand_value</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>  <span class="c1"># for the stopping criterion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span><span class="p">)</span>
+
+        <span class="c1"># Save initial environments and the domain distribution parameter space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="p">,</span> <span class="s2">&quot;ddp_space.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopping_criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopping_criterion</span> <span class="o">|</span> <span class="n">CustomStoppingCriterion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_custom_stopping_criterion</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_custom_stopping_criterion</span><span class="p">(</span><span class="n">algo</span><span class="p">:</span> <span class="s2">&quot;BayRn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_cand_value</span> <span class="o">&gt;</span> <span class="n">algo</span><span class="o">.</span><span class="n">thold_succ</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">subroutine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Algorithm</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the policy optimization subroutine.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Policy</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">policy</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
+
+<div class="viewcode-block" id="BayRn.train_policy_sim"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim">[docs]</a>    <span class="k">def</span> <span class="nf">train_policy_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cnt_rep</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train a policy in simulation for given hyper-parameters from the domain randomizer.</span>
+
+<span class="sd">        :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</span>
+<span class="sd">        :param prefix: set a prefix to the saved file name, use &quot;&quot; for no prefix</span>
+<span class="sd">        :param cnt_rep: current repetition count, coming from the wrapper function</span>
+<span class="sd">        :return: estimated return of the trained policy in the target domain</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Save the current candidate</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cand</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_candidate.pt&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Set the domain randomizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">cand</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+        <span class="c1"># Reset the subroutine algorithm which includes resetting the exploration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="c1"># Do a warm start if desired, but randomly reset the policy parameters if training failed once</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warmstart</span> <span class="ow">and</span> <span class="n">cnt_rep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">policy_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span><span class="p">,</span>
+            <span class="n">valuefcn_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">valuefcn_param_init</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Train a policy in simulation using the subroutine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subrtn_snapshot_mode</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># overwrites policy.pt (and vfcn.pt ect)</span>
+
+        <span class="c1"># Return the estimated return of the trained policy in simulation</span>
+        <span class="n">avg_ret_sim</span> <span class="o">=</span> <span class="n">BayRn</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mc_estimator</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_rollouts_sim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">avg_ret_sim</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BayRn.train_init_policies"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_init_policies">[docs]</a>    <span class="k">def</span> <span class="nf">train_init_policies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the algorithm with a number of random distribution parameter sets a.k.a. candidates specified by</span>
+<span class="sd">        the user. Train a policy for every candidate. Finally, store the policies and candidates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cands</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_init_cand</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_init_cand</span><span class="p">):</span>
+            <span class="n">print_cbt</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Generating initial domain instance and policy </span><span class="si">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_init_cand</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="c1"># Sample random domain distribution parameters</span>
+            <span class="n">cands</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">())</span>
+
+            <span class="c1"># Train a policy for each candidate, repeat if the resulting policy did not exceed the success threshold</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Randomly sampled the next candidate: </span><span class="si">{</span><span class="n">cands</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
+            <span class="n">wrapped_trn_fcn</span> <span class="o">=</span> <span class="n">until_thold_exceeded</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thold_succ_subrtn</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_subrtn_rep</span><span class="p">)(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">train_policy_sim</span>
+            <span class="p">)</span>
+            <span class="n">wrapped_trn_fcn</span><span class="p">(</span><span class="n">cands</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;init_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Save candidates into a single tensor (policy is saved during training or exists already)</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cands</span><span class="p">,</span> <span class="s2">&quot;candidates.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cands</span> <span class="o">=</span> <span class="n">cands</span></div>
+
+<div class="viewcode-block" id="BayRn.eval_init_policies"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.eval_init_policies">[docs]</a>    <span class="k">def</span> <span class="nf">eval_init_policies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the trained initial policies on the target device and store the estimated return per candidate.</span>
+<span class="sd">        The number of initial policies to evaluate is the number of found policies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Crawl through the experiment&#39;s directory</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">):</span>
+            <span class="n">dirs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># prevents walk() from going into subdirectories</span>
+            <span class="n">found_policies</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;init_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_policy.pt&quot;</span><span class="p">)]</span>
+            <span class="n">found_cands</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;init_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_candidate.pt&quot;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_policies</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_cands</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Found a different number of initial policies than candidates!&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_policies</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;No policies or candidates found!&quot;</span><span class="p">)</span>
+
+        <span class="n">num_init_cand</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_cands</span><span class="p">)</span>
+        <span class="n">cands_values</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">num_init_cand</span><span class="p">)</span>
+
+        <span class="c1"># Load all found candidates to save them into a single tensor</span>
+        <span class="n">found_cands</span> <span class="o">=</span> <span class="n">natural_sort</span><span class="p">(</span><span class="n">found_cands</span><span class="p">)</span>  <span class="c1"># the order is important since it determines the rows of the tensor</span>
+        <span class="n">cands</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">found_cands</span><span class="p">])</span>
+
+        <span class="c1"># Evaluate learned policies from random candidates on the target environment (real-world) system</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_init_cand</span><span class="p">):</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;init_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">)</span>
+            <span class="n">cands_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">BayRn</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span>
+                <span class="n">policy</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mc_estimator</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;init_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">num_rollouts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_eval_rollouts_real</span><span class="p">,</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Save candidates and their returns into tensors (policy is saved during training or exists already)</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cands_values</span><span class="p">,</span> <span class="s2">&quot;candidates_values.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span> <span class="o">=</span> <span class="n">cands</span><span class="p">,</span> <span class="n">cands_values</span></div>
+
+<div class="viewcode-block" id="BayRn.eval_policy"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.eval_policy">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">eval_policy</span><span class="p">(</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span>
+        <span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">MetaDomainRandWrapper</span><span class="p">],</span>
+        <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+        <span class="n">mc_estimator</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate a policy either in the source or in the target domain.</span>
+<span class="sd">        This method is static to facilitate evaluation of specific policies in hindsight.</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved</span>
+<span class="sd">        :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance</span>
+<span class="sd">        :param policy: policy to evaluate</span>
+<span class="sd">        :param mc_estimator: estimate the return with a sample average (`True`) or a lower confidence</span>
+<span class="sd">                                     bound (`False`) obtained from bootrapping</span>
+<span class="sd">        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate</span>
+<span class="sd">        :param num_rollouts: number of rollouts to collect on the target system</span>
+<span class="sd">        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate</span>
+<span class="sd">        :param num_workers: number of environments for the parallel sampler (only used for a `SimEnv`)</span>
+<span class="sd">        :return: estimated return in the target domain</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_policy ...&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">rets_real</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">RealEnv</span><span class="p">):</span>
+            <span class="c1"># Evaluate sequentially when conducting a sim-to-real experiment</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">):</span>
+                <span class="n">rets_real</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span>
+                <span class="c1"># If a reward of -1 is given, skip evaluation ahead and set all returns to zero</span>
+                <span class="k">if</span> <span class="n">rets_real</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Set all returns for this policy to zero.&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+                    <span class="n">rets_real</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">)</span>
+                    <span class="k">break</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">SimEnv</span><span class="p">):</span>
+            <span class="c1"># Create a parallel sampler when conducting a sim-to-sim experiment</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">)</span>
+            <span class="n">ros</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">):</span>
+                <span class="n">rets_real</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ros</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Save and print the evaluation results</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">rets_real</span><span class="p">,</span> <span class="s2">&quot;returns_real.pt&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Target domain performance&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="n">tabulate</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="p">[</span><span class="s2">&quot;mean return&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span>
+                        <span class="p">[</span><span class="s2">&quot;std return&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)],</span>
+                        <span class="p">[</span><span class="s2">&quot;min return&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)],</span>
+                        <span class="p">[</span><span class="s2">&quot;max return&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)],</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mc_estimator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rets_real</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span>
+                <span class="n">rets_real</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ci_lo</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BayRn.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Save snapshot to save the correct iteration count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Train the initial policies in the source domain</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_init_policies</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to -1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Evaluate the initial policies in the target domain</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eval_init_policies</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Normalize the input data and standardize the output data</span>
+            <span class="n">cands_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ddp_projector</span><span class="o">.</span><span class="n">project_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="p">)</span>
+            <span class="n">cands_values_stdized</span> <span class="o">=</span> <span class="n">standardize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Create and fit the GP model</span>
+            <span class="n">gp</span> <span class="o">=</span> <span class="n">SingleTaskGP</span><span class="p">(</span><span class="n">cands_norm</span><span class="p">,</span> <span class="n">cands_values_stdized</span><span class="p">)</span>
+            <span class="n">gp</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">noise_covar</span><span class="o">.</span><span class="n">register_constraint</span><span class="p">(</span><span class="s2">&quot;raw_noise&quot;</span><span class="p">,</span> <span class="n">GreaterThan</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">))</span>
+            <span class="n">mll</span> <span class="o">=</span> <span class="n">ExactMarginalLogLikelihood</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">likelihood</span><span class="p">,</span> <span class="n">gp</span><span class="p">)</span>
+            <span class="n">fit_gpytorch_model</span><span class="p">(</span><span class="n">mll</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Fitted the GP.&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Acquisition functions</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">acq_fcn_type</span> <span class="o">==</span> <span class="s2">&quot;UCB&quot;</span><span class="p">:</span>
+                <span class="n">acq_fcn</span> <span class="o">=</span> <span class="n">UpperConfidenceBound</span><span class="p">(</span><span class="n">gp</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acq_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">acq_fcn_type</span> <span class="o">==</span> <span class="s2">&quot;EI&quot;</span><span class="p">:</span>
+                <span class="n">acq_fcn</span> <span class="o">=</span> <span class="n">ExpectedImprovement</span><span class="p">(</span><span class="n">gp</span><span class="p">,</span> <span class="n">best_f</span><span class="o">=</span><span class="n">cands_values_stdized</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">acq_fcn_type</span> <span class="o">==</span> <span class="s2">&quot;PI&quot;</span><span class="p">:</span>
+                <span class="n">acq_fcn</span> <span class="o">=</span> <span class="n">ProbabilityOfImprovement</span><span class="p">(</span><span class="n">gp</span><span class="p">,</span> <span class="n">best_f</span><span class="o">=</span><span class="n">cands_values_stdized</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acq_fcn_type</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;UCB&#39;, &#39;EI&#39;, &#39;PI&#39;&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Optimize acquisition function and get new candidate point</span>
+            <span class="n">cand_norm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">optimize_acqf</span><span class="p">(</span>
+                <span class="n">acq_function</span><span class="o">=</span><span class="n">acq_fcn</span><span class="p">,</span>
+                <span class="n">bounds</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span>
+                <span class="p">),</span>
+                <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">num_restarts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acq_restarts</span><span class="p">,</span>
+                <span class="n">raw_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acq_samples</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cand_norm</span> <span class="o">=</span> <span class="n">cand_norm</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+            <span class="n">next_cand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ddp_projector</span><span class="o">.</span><span class="n">project_back</span><span class="p">(</span><span class="n">cand_norm</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found the next candidate: </span><span class="si">{</span><span class="n">next_cand</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cands</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="p">,</span> <span class="n">next_cand</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="p">,</span> <span class="s2">&quot;candidates.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Train and evaluate a new policy, repeat if the resulting policy did not exceed the success threshold</span>
+            <span class="n">wrapped_trn_fcn</span> <span class="o">=</span> <span class="n">until_thold_exceeded</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thold_succ_subrtn</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_subrtn_rep</span><span class="p">)(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">train_policy_sim</span>
+            <span class="p">)</span>
+            <span class="n">wrapped_trn_fcn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 2</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Evaluate the current policy in the target domain</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">curr_cand_value</span> <span class="o">=</span> <span class="n">BayRn</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span>
+                <span class="n">policy</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mc_estimator</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_rollouts_real</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_cand_value</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span><span class="p">,</span> <span class="s2">&quot;candidates_values.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+
+            <span class="c1"># Store the argmax after training and evaluating</span>
+            <span class="n">curr_argmax_cand</span> <span class="o">=</span> <span class="n">BayRn</span><span class="o">.</span><span class="n">argmax_posterior_mean</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">acq_restarts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">acq_samples</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">argmax_cand</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">argmax_cand</span><span class="p">,</span> <span class="n">curr_argmax_cand</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argmax_cand</span><span class="p">,</span> <span class="s2">&quot;candidates.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;argmax&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 0</span></div>
+
+<div class="viewcode-block" id="BayRn.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
+
+        <span class="c1"># Policies of every iteration are saved by the subroutine in train_policy_sim()</span>
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="p">,</span> <span class="s2">&quot;env_sim.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span> <span class="s2">&quot;env_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not supposed be run as a subroutine!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BayRn.load_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.load_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="n">Policy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+        <span class="n">ex_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">parsed_args</span><span class="p">,</span> <span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># Environment</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;env_sim.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;randomizer&quot;</span><span class="p">):</span>
+            <span class="n">last_cand</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;candidates.pt&quot;</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">last_cand</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded the domain randomizer</span><span class="se">\n</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">randomizer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Loaded environment has no randomizer, or it is None.&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Policy</span>
+        <span class="n">policy</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">policy_name</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Algorithm specific</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subroutine</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
+            <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;vfcn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">vfcn_name</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subroutine</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">vfcn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span></div>
+
+<div class="viewcode-block" id="BayRn.argmax_posterior_mean"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.argmax_posterior_mean">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">argmax_posterior_mean</span><span class="p">(</span>
+        <span class="n">cands</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">cands_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ddp_space</span><span class="p">:</span> <span class="n">BoxSpace</span><span class="p">,</span> <span class="n">num_restarts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the GP input with the maximal posterior mean.</span>
+
+<span class="sd">        :param cands: candidates a.k.a. x</span>
+<span class="sd">        :param cands_values: observed values a.k.a. y</span>
+<span class="sd">        :param ddp_space: space of the domain distribution parameters, indicates the lower and upper bound</span>
+<span class="sd">        :param num_restarts: number of restarts for the optimization of the acquisition function</span>
+<span class="sd">        :param num_samples: number of samples for the optimization of the acquisition function</span>
+<span class="sd">        :return: un-normalized candidate with maximum posterior value a.k.a. x</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cands</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">cands</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cands_values</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">cands_values</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ddp_space</span><span class="p">,</span> <span class="n">BoxSpace</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">ddp_space</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">BoxSpace</span><span class="p">)</span>
+
+        <span class="c1"># Normalize the input data and standardize the output data</span>
+        <span class="n">uc_projector</span> <span class="o">=</span> <span class="n">UnitCubeProjector</span><span class="p">(</span>
+            <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+            <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+        <span class="p">)</span>
+        <span class="n">cands_norm</span> <span class="o">=</span> <span class="n">uc_projector</span><span class="o">.</span><span class="n">project_to</span><span class="p">(</span><span class="n">cands</span><span class="p">)</span>
+        <span class="n">cands_values_stdized</span> <span class="o">=</span> <span class="n">standardize</span><span class="p">(</span><span class="n">cands_values</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cands_norm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">cands_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">print_cbt</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="n">cands</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> candidates but only </span><span class="si">{</span><span class="n">cands_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> evaluations. Ignoring &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the candidates without evaluation for computing the argmax.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;y&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cands_norm</span> <span class="o">=</span> <span class="n">cands_norm</span><span class="p">[:</span> <span class="n">cands_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span>
+
+        <span class="c1"># Create and fit the GP model</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">SingleTaskGP</span><span class="p">(</span><span class="n">cands_norm</span><span class="p">,</span> <span class="n">cands_values_stdized</span><span class="p">)</span>
+        <span class="n">gp</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">noise_covar</span><span class="o">.</span><span class="n">register_constraint</span><span class="p">(</span><span class="s2">&quot;raw_noise&quot;</span><span class="p">,</span> <span class="n">GreaterThan</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">))</span>
+        <span class="n">mll</span> <span class="o">=</span> <span class="n">ExactMarginalLogLikelihood</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">likelihood</span><span class="p">,</span> <span class="n">gp</span><span class="p">)</span>
+        <span class="n">fit_gpytorch_model</span><span class="p">(</span><span class="n">mll</span><span class="p">)</span>
+
+        <span class="c1"># Find position with maximal posterior mean</span>
+        <span class="n">cand_norm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">optimize_acqf</span><span class="p">(</span>
+            <span class="n">acq_function</span><span class="o">=</span><span class="n">PosteriorMean</span><span class="p">(</span><span class="n">gp</span><span class="p">),</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+            <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">num_restarts</span><span class="o">=</span><span class="n">num_restarts</span><span class="p">,</span>
+            <span class="n">raw_samples</span><span class="o">=</span><span class="n">num_samples</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">cand_norm</span> <span class="o">=</span> <span class="n">cand_norm</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+        <span class="n">cand</span> <span class="o">=</span> <span class="n">uc_projector</span><span class="o">.</span><span class="n">project_back</span><span class="p">(</span><span class="n">cand_norm</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converged to argmax of the posterior mean: </span><span class="si">{</span><span class="n">cand</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cand</span></div>
+
+<div class="viewcode-block" id="BayRn.train_argmax_policy"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_argmax_policy">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">train_argmax_policy</span><span class="p">(</span>
+        <span class="n">load_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">env_sim</span><span class="p">:</span> <span class="n">MetaDomainRandWrapper</span><span class="p">,</span>
+        <span class="n">subrtn</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
+        <span class="n">num_restarts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">policy_param_init</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">valuefcn_param_init</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">subrtn_snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Policy</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train a policy based on the maximizer of the posterior mean.</span>
+
+<span class="sd">        :param load_dir: directory to load from</span>
+<span class="sd">        :param env_sim: simulation environment</span>
+<span class="sd">        :param subrtn: algorithm which performs the policy / value-function optimization</span>
+<span class="sd">        :param num_restarts: number of restarts for the optimization of the acquisition function</span>
+<span class="sd">        :param num_samples: number of samples for the optimization of the acquisition function</span>
+<span class="sd">        :param policy_param_init: initial policy parameter values for the subroutine, set `None` to be random</span>
+<span class="sd">        :param valuefcn_param_init: initial value function parameter values for the subroutine, set `None` to be random</span>
+<span class="sd">        :param subrtn_snapshot_mode: snapshot mode for saving during training of the subroutine</span>
+<span class="sd">        :return: the final BayRn policy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Load the required data</span>
+        <span class="n">cands</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;candidates.pt&quot;</span><span class="p">,</span> <span class="n">load_dir</span><span class="p">)</span>
+        <span class="n">cands_values</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;candidates_values.pt&quot;</span><span class="p">,</span> <span class="n">load_dir</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ddp_space</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;ddp_space.pkl&quot;</span><span class="p">,</span> <span class="n">load_dir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cands</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">cands_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">print_cbt</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="n">cands</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> candidates but only </span><span class="si">{</span><span class="n">cands_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> evaluations. Ignoring the&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;candidates without evaluation for computing the argmax.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;y&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cands</span> <span class="o">=</span> <span class="n">cands</span><span class="p">[:</span> <span class="n">cands_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span>
+
+        <span class="c1"># Find the maximizer</span>
+        <span class="n">argmax_cand</span> <span class="o">=</span> <span class="n">BayRn</span><span class="o">.</span><span class="n">argmax_posterior_mean</span><span class="p">(</span><span class="n">cands</span><span class="p">,</span> <span class="n">cands_values</span><span class="p">,</span> <span class="n">ddp_space</span><span class="p">,</span> <span class="n">num_restarts</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span>
+
+        <span class="c1"># Set the domain randomizer</span>
+        <span class="n">env_sim</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">argmax_cand</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+        <span class="c1"># Reset the subroutine algorithm which includes resetting the exploration</span>
+        <span class="n">subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="c1"># Do a warm start</span>
+        <span class="n">subrtn</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span>
+            <span class="n">warmstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">policy_param_init</span><span class="o">=</span><span class="n">policy_param_init</span><span class="p">,</span> <span class="n">valuefcn_param_init</span><span class="o">=</span><span class="n">valuefcn_param_init</span>
+        <span class="p">)</span>
+
+        <span class="n">subrtn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="n">subrtn_snapshot_mode</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;argmax&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">policy</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
