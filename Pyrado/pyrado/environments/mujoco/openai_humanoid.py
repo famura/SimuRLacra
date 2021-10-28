@@ -146,7 +146,7 @@ class HumanoidSim(MujocoSimEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            reset_noise_halfspan=1e-2,
+            reset_noise_halfspan=0.0,  # fixed initial state by default
             gravity=9.81,
             sliding_friction=1,
             torsional_friction=0.005,

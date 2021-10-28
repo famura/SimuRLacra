@@ -37,20 +37,17 @@ from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.step_based.a2c import A2C
-from pyrado.algorithms.step_based.gae import GAE, ValueFunctionSpace
-from pyrado.algorithms.step_based.svpg import SVPG, SVPGBuilder, SVPGHyperparams
+from pyrado.algorithms.step_based.svpg import SVPGBuilder, SVPGHyperparams
 from pyrado.domain_randomization.domain_parameter import DomainParam
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.policies.recurrent.rnn import LSTMPolicy
 from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.sampler_pool import SamplerPool
-from pyrado.sampling.step_sequence import StepSequence, gae_returns
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
 from pyrado.utils.data_types import EnvSpec

@@ -309,7 +309,7 @@ def test_mujoco_animations(env):
 def test_gym_wrapper(env):
     gym = pytest.importorskip("gym")
 
-    gym_env = gym.make("SimulacraPySimEnv-v0", env=env)
+    gym_env = gym.make("SimuRLacraSimEnv-v0", env=env)
     gym_env.reset()
     act = gym_env.action_space.sample()
     out = gym_env.step(act)

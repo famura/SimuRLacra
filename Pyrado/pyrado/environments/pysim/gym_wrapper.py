@@ -28,7 +28,6 @@
 
 from typing import List, Optional, Tuple
 
-import gym
 import gym.spaces
 import numpy as np
 from gym.spaces.box import Box
@@ -40,15 +39,15 @@ from pyrado.spaces.box import BoxSpace
 from pyrado.utils.data_types import RenderMode
 
 
-class PysimGymWrapper(gym.Env):
+class OpenAIGymWrapper(gym.Env):
     """
-    A wrapper for pysim environments exposing a gym env.
+    A wrapper for simulation environments exposing an OpenAI Gym environment.
     Do not instantiate this yourself but rather use `gym.make()` like this:
 
     .. code-block:: python
 
-        sim_env = QQubeSwingUpSim(**env_hparams)
-        gym.make("SimulacraPySimEnv-v0", env=sim_env)
+        sim_env = QQubeSwingUpSim(dt=1 / 100.0, max_steps=600)
+        gym.make("SimuRLacraSimEnv-v0", env=sim_env)
     """
 
     metadata = {"render.modes": ["human"]}  # currently only human is supported
@@ -56,19 +55,19 @@ class PysimGymWrapper(gym.Env):
     def __init__(self, env: SimPyEnv):
         """
         Initialize the environment. You are not supposed to call this function directly, but use
-        `gym.make("SimulacraPySimEnv-v0", env=sim_env)` where `sim_env` is your Pyrado environment.
+        `gym.make("SimuRLacraSimEnv-v0", env=sim_env)` where `sim_env` is your Pyrado environment.
 
         :param env: Pyrado environment to wrap
         """
         self._wrapped_env = env
 
         # Translate environment parameters
-        self.action_space = PysimGymWrapper.conv_space_from_pyrado(self._wrapped_env.act_space)
-        self.observation_space = PysimGymWrapper.conv_space_from_pyrado(self._wrapped_env.obs_space)
+        self.action_space = OpenAIGymWrapper.conv_space_from_pyrado(self._wrapped_env.act_space)
+        self.observation_space = OpenAIGymWrapper.conv_space_from_pyrado(self._wrapped_env.obs_space)
 
     def step(self, act: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
         """
-        Run one timestep of the environment's dynamics. When the end of episode is reached, you are responsible for
+        Run one time step of the environment's dynamics. When the end of episode is reached, you are responsible for
         calling `reset()` to reset this environment's state.
 
         :param act: action provided by the agent
@@ -116,9 +115,9 @@ class PysimGymWrapper(gym.Env):
 
     def seed(self, seed: Optional[int] = None) -> Optional[List[int]]:
         """
-        Sets the seed for this env's random number generator(s).
+        Sets the seed for this environment's random number generator(s).
 
-        :return: list of seeds used in this environments's random number generators. The first value in the list
+        :return: list of seeds used in this environment's random number generators. The first value in the list
                  should be the "main" seed, or the value which a reproducer should pass to `seed`. Often, the main
                  seed equals the provided `seed`, but this won't be true if `seed=None`, for example.
         """

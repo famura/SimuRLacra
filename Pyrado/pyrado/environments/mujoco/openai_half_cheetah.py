@@ -45,8 +45,12 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
     """
     The Half-Cheetah (v3) MuJoCo simulation environment where a planar cheetah-like robot tries to run forward.
 
+    .. note::
+        The OpenAI Gym variant considers this task solved at a reward over 4800
+        (https://github.com/openai/gym/blob/master/gym/envs/__init__.py).
+
     .. seealso::
-        https://github.com/openai/gym/blob/master/gym/envs/mujoco/half_cheetah.py
+        https://github.com/openai/gym/blob/master/gym/envs/mujoco/half_cheetah_v3.py
     """
 
     name: str = "cth"
@@ -103,11 +107,11 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
+            reset_noise_halfspan=0.0,  # fixed initial state by default
             total_mass=14,
             tangential_friction_coeff=0.4,
             torsional_friction_coeff=0.1,
             rolling_friction_coeff=0.1,
-            reset_noise_halfspan=0.1,
         )
 
     def _create_task(self, task_args: dict) -> Task:

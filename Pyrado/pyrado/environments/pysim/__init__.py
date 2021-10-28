@@ -32,4 +32,4 @@ except ImportError:
     pass
 else:
     # If gym is present, register pysim wrapper
-    register(id="SimulacraPySimEnv-v0", entry_point="pyrado.environments.pysim.gym_wrapper:PysimGymWrapper")
+    register(id="SimuRLacraSimEnv-v0", entry_point="pyrado.environments.pysim.gym_wrapper:OpenAIGymWrapper")
