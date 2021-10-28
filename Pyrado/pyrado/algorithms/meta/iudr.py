@@ -78,11 +78,11 @@ class IUDR(Algorithm):
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
-        self._subroutine = subroutine
+        self._subrtn = subroutine
         # Wrap the sampler with a rollout saving wrapper for the stopping criterion.
-        self._subroutine.sampler = RolloutSavingWrapper(self._subroutine.sampler)
-        self._subroutine.save_name = self._subroutine.name
-        self._subroutine.stopping_criterion = self._subroutine.stopping_criterion | MinReturnStoppingCriterion(
+        self._subrtn.sampler = RolloutSavingWrapper(self._subrtn.sampler)
+        self._subrtn.save_name = self._subrtn.name
+        self._subrtn.stopping_criterion = self._subrtn.stopping_criterion | MinReturnStoppingCriterion(
             return_threshold=performance_threshold
         )
 
@@ -99,14 +99,9 @@ class IUDR(Algorithm):
                     raise pyrado.ValueErr(msg="randomizer contains more than one spl param")
 
     @property
-    def sub_algorithm(self) -> Algorithm:
-        """Get the policy optimization subroutine."""
-        return self._subroutine
-
-    @property
     def sample_count(self) -> int:
         # Forward to subroutine.
-        return self._subroutine.sample_count
+        return self._subrtn.sample_count
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         """
@@ -131,10 +126,10 @@ class IUDR(Algorithm):
                     )
                     break
 
-        self._subroutine.reset()
+        self._subrtn.reset()
         # Also reset the rollouts to not stop too early because the stopping criterion is fulfilled.
-        self._subroutine.sampler.reset_rollouts()
-        self._subroutine.train(snapshot_mode, None, meta_info)
+        self._subrtn.sampler.reset_rollouts()
+        self._subrtn.train(snapshot_mode, None, meta_info)
 
         # Prevents the parameters from overshooting the target.
         if self.curr_iter >= self._param_adjustment_scale:
@@ -154,11 +149,11 @@ class IUDR(Algorithm):
 
     def reset(self, seed: int = None):
         # Forward to subroutine.
-        self._subroutine.reset(seed)
+        self._subrtn.reset(seed)
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm.
-            self._subroutine.save_snapshot(meta_info)
+            self._subrtn.save_snapshot(meta_info)

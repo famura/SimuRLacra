@@ -234,9 +234,9 @@ class SPDR(Algorithm):
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
         # Wrap the sampler of the subroutine with an rollout saving wrapper
-        self._subroutine = subroutine
-        self._subroutine.sampler = RolloutSavingWrapper(subroutine.sampler)
-        self._subroutine.save_name = self._subroutine.name
+        self._subrtn = subroutine
+        self._subrtn.sampler = RolloutSavingWrapper(subroutine.sampler)
+        self._subrtn.save_name = self._subrtn.name
 
         self._env = env
 
@@ -270,14 +270,9 @@ class SPDR(Algorithm):
         optimize_logger.writeheader()
 
     @property
-    def sub_algorithm(self) -> Algorithm:
-        """Get the policy optimization subroutine."""
-        return self._subroutine
-
-    @property
     def sample_count(self) -> int:
         # Forward to subroutine
-        return self._subroutine.sample_count
+        return self._subrtn.sample_count
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         """
@@ -464,7 +459,7 @@ class SPDR(Algorithm):
 
     def reset(self, seed: int = None):
         # Forward to subroutine
-        self._subroutine.reset(seed)
+        self._subrtn.reset(seed)
         self._get_sampler().reset_rollouts()
 
     def save_snapshot(self, meta_info: dict = None):
@@ -473,16 +468,16 @@ class SPDR(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            self._subroutine.save_snapshot(meta_info)
+            self._subrtn.save_snapshot(meta_info)
 
     def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
         env, policy, extra = super().load_snapshot(parsed_args)
 
         # Algorithm specific
-        if isinstance(self._subroutine, ActorCritic):
+        if isinstance(self._subrtn, ActorCritic):
             ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
             extra["vfcn"] = pyrado.load(
-                f"{parsed_args.vfcn_name}.pt", ex_dir, obj=self._subroutine.critic.vfcn, verbose=True
+                f"{parsed_args.vfcn_name}.pt", ex_dir, obj=self._subrtn.critic.vfcn, verbose=True
             )
 
         return env, policy, extra
@@ -512,14 +507,14 @@ class SPDR(Algorithm):
         :return: the median undiscounted return
         """
         if reset_policy:
-            self._subroutine.init_modules(False)
-        self._subroutine.reset()
+            self._subrtn.init_modules(False)
+        self._subrtn.reset()
 
-        self._subroutine.train(snapshot_mode, None, meta_info)
+        self._subrtn.train(snapshot_mode, None, meta_info)
         rollouts_all = self._get_sampler().rollouts
         return np.median([[ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts]]).item()
 
     def _get_sampler(self) -> RolloutSavingWrapper:
         # It is checked in the constructor that the sampler is a RolloutSavingWrapper.
         # noinspection PyTypeChecker
-        return self._subroutine.sampler
+        return self._subrtn.sampler
