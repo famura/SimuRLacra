@@ -49,13 +49,16 @@ from pyrado.sampling.step_sequence import StepSequence
 
 
 def ravel_tril_elements(A: to.Tensor) -> to.Tensor:
-    assert len(A.shape) == 2, "A must be two-dimensional"
-    assert A.shape[0] == A.shape[1], "A must be square"
+    if not (len(A.shape) == 2):
+        raise pyrado.ShapeErr(msg="A must be two-dimensional")
+    if not (A.shape[0] == A.shape[1]):
+        raise pyrado.ShapeErr(msg="A must be square")
     return to.cat([A[i, : i + 1] for i in range(A.shape[0])], dim=0)
 
 
 def unravel_tril_elements(a: to.Tensor) -> to.Tensor:
-    assert len(a.shape) == 1, "a must be one-dimensional"
+    if not (len(a.shape) == 1):
+        raise pyrado.ShapeErr(msg="a must be one-dimensional")
     raveled_dim = a.shape[0]
     dim = int((np.sqrt(8 * raveled_dim + 1) - 1) / 2)  # inverse Gaussian summation formula
     A = to.zeros((dim, dim)).double()
@@ -79,16 +82,22 @@ class MultivariateNormalWrapper:
         :param cov_chol: Cholesky decomposition of the covariance matrix; must be lower triangular; shape `(k, k)`
                               if it is the actual matrix or shape `(k * (k + 1) / 2,)` if it is raveled
         """
-        assert len(mean.shape) == 1, "mean must be one-dimensional"
+        if not (len(mean.shape) == 1):
+            raise pyrado.ShapeErr(msg="mean must be one-dimensional")
         self._k = mean.shape[0]
         cov_chol_tril_is_raveled = len(cov_chol.shape) == 1
         if cov_chol_tril_is_raveled:
-            assert cov_chol.shape[0] == self._k * (self._k + 1) / 2, "raveled cov_chol must have shape (k (k + 1) / 2,)"
+            if not (cov_chol.shape[0] == self._k * (self._k + 1) / 2):
+                raise pyrado.ShapeErr(msg="raveled cov_chol must have shape (k (k + 1) / 2,)")
         else:
-            assert len(cov_chol.shape) == 2, "cov_chol must be two-dimensional"
-            assert cov_chol.shape[0] == cov_chol.shape[1], "cov_chol must be square"
-            assert cov_chol.shape[0] == mean.shape[0], "cov_chol and mean must have same size"
-            assert to.allclose(cov_chol, cov_chol.tril()), "cov_chol must be lower triangular"
+            if not (len(cov_chol.shape) == 2):
+                raise pyrado.ShapeErr(msg="cov_chol must be two-dimensional")
+            if not (cov_chol.shape[0] == cov_chol.shape[1]):
+                raise pyrado.ShapeErr(msg="cov_chol must be square")
+            if not (cov_chol.shape[0] == mean.shape[0]):
+                raise pyrado.ShapeErr(msg="cov_chol and mean must have same size")
+            if not (to.allclose(cov_chol, cov_chol.tril())):
+                raise pyrado.ValueErr(msg="cov_chol must be lower triangular")
         self._mean = mean.clone().detach().requires_grad_(True)
         cov_chol_tril = cov_chol.clone().detach()
         if not cov_chol_tril_is_raveled:
