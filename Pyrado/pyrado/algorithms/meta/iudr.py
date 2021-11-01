@@ -56,9 +56,9 @@ class IUDR(Algorithm):
         param_adjustment_portion: float = 0.9,
     ):
         """
-        Constructor.
+        Constructor
 
-        :param env: environment wrapped in a DomainRandWrapper
+        :param env: environment wrapped in a `DomainRandWrapper`
         :param subroutine: algorithm which performs the policy/value-function optimization; note that this algorithm
                            must be capable of learning a sufficient policy in its maximum number of iterations
         :param max_iter: iterations of the IUDR algorithm (not for the subroutine); changing the domain parameter
@@ -79,7 +79,7 @@ class IUDR(Algorithm):
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
         self._subrtn = subroutine
-        # Wrap the sampler with a rollout saving wrapper for the stopping criterion.
+        # Wrap the sampler with a rollout saving wrapper for the stopping criterion
         self._subrtn.sampler = RolloutSavingWrapper(self._subrtn.sampler)
         self._subrtn.save_name = self._subrtn.name
         self._subrtn.stopping_criterion = self._subrtn.stopping_criterion | MinReturnStoppingCriterion(
@@ -100,7 +100,7 @@ class IUDR(Algorithm):
 
     @property
     def sample_count(self) -> int:
-        # Forward to subroutine.
+        # Forward to subroutine
         return self._subrtn.sample_count
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
@@ -127,11 +127,11 @@ class IUDR(Algorithm):
                     break
 
         self._subrtn.reset()
-        # Also reset the rollouts to not stop too early because the stopping criterion is fulfilled.
+        # Also reset the rollouts to not stop too early because the stopping criterion is fulfilled
         self._subrtn.sampler.reset_rollouts()
         self._subrtn.train(snapshot_mode, None, meta_info)
 
-        # Prevents the parameters from overshooting the target.
+        # Prevents the parameters from overshooting the target
         if self.curr_iter >= self._param_adjustment_scale:
             context_mean_new = self._parameter.target_mean
             context_cov_chol_new = self._parameter.target_cov_chol
@@ -148,12 +148,12 @@ class IUDR(Algorithm):
         self._parameter.adapt("context_cov_chol", context_cov_chol_new)
 
     def reset(self, seed: int = None):
-        # Forward to subroutine.
+        # Forward to subroutine
         self._subrtn.reset(seed)
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm.
+            # This algorithm instance is not a subroutine of another algorithm
             self._subrtn.save_snapshot(meta_info)
