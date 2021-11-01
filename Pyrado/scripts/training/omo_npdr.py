@@ -35,23 +35,17 @@ import math
 import numpy as np
 import sbi.utils as sbiutils
 import torch as to
-import torch.nn as nn
 from sbi.inference import SNPE_C
 
 import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.domain_randomization.transformations import LogDomainParamTransform
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import IdlePolicy
-from pyrado.sampling.sbi_embeddings import (
-    BayesSimEmbedding,
-    DeltaStepsEmbedding,
-    DynamicTimeWarpingEmbedding,
-    LastStepEmbedding,
-    RNNEmbedding,
-)
+from pyrado.sampling.sbi_embeddings import DynamicTimeWarpingEmbedding
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.bijective_transformation import LogTransformation
 from pyrado.utils.sbi import create_embedding
 
 
@@ -85,7 +79,7 @@ if __name__ == "__main__":
     policy = IdlePolicy(env_sim.spec)
 
     # Define a mapping: index - domain parameter
-    env_sim = LogDomainParamTransform(env_sim, ["mass"])
+    env_sim = DomainParamTransform(env_sim, ["mass"], LogTransformation())
     dp_mapping = {0: "mass", 1: "stiffness", 2: "damping"}
 
     # Prior

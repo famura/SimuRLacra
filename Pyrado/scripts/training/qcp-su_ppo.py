@@ -27,24 +27,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube swing-up task using Self-Paced Domain Radnomization using Proximal Policy Optimization
-as a subroutine.
+Train an agent to solve the Quanser CartPole swing-up task using Proximal Policy Optimization.
 """
-import numpy as np
 import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.meta.spdr import SPDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
-from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.policies.recurrent.rnn import GRUPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
@@ -52,40 +47,48 @@ from pyrado.utils.data_types import EnvSpec
 
 if __name__ == "__main__":
     # Parse command line arguments
-    parser = get_argparser()
-    parser.add_argument("--frequency", default=250, type=int)
-    parser.set_defaults(max_steps=600)
-    parser.add_argument("--ppo_iterations", default=150, type=int)
-    parser.add_argument("--spdr_iterations", default=50, type=int)
-    parser.add_argument("--cov_only", action="store_true")
-    args = parser.parse_args()
+    args = get_argparser().parse_args()
+    if args.mode is None or args.mode.lower() == FNNPolicy.name:
+        pol_str = FNNPolicy.name
+    elif args.mode.lower() == GRUPolicy.name:
+        pol_str = GRUPolicy.name
+    else:
+        raise pyrado.ValueErr(given=args.mode, eq_constraint=f"{FNNPolicy.name}, {GRUPolicy.name}, or None")
+    seed_str = f"seed-{args.seed}" if args.seed is not None else None
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(
-        QQubeSwingUpSim.name,
-        f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_covonly_{args.cov_only}_seed_{args.seed}",
-    )
+    ex_dir = setup_experiment(QCartPoleSwingUpSim.name, f"{PPO.name}_{pol_str}", seed_str)
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
-    env = QQubeSwingUpSim(**env_hparams)
+    env_hparam = dict(
+        dt=1 / 100.0,
+        max_steps=600,
+        long=False,
+        simple_dynamics=False,
+        wild_init=False,
+    )
+    env = QCartPoleSwingUpSim(**env_hparam)
+    # env = ObsVelFiltWrapper(env, idcs_pos=["theta", "alpha"], idcs_vel=["theta_dot", "alpha_dot"])
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
-    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
-    policy = FNNPolicy(spec=env.spec, **policy_hparam)
-    # policy = GRUPolicy(spec=env.spec, **policy_hparam)
+    if args.mode is None or args.mode.lower() == FNNPolicy.name:
+        policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+        policy = FNNPolicy(spec=env.spec, **policy_hparam)
+    elif args.mode.lower() == GRUPolicy.name:
+        policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)
+        policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
-    # vfcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
-    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
-    # vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    if isinstance(policy, FNNPolicy):
+        vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
+        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    elif isinstance(policy, GRUPolicy):
+        vfcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+        vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9844224855479998,
         lamda=0.9700148505302241,
@@ -101,7 +104,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=args.ppo_iterations,
+        max_iter=200 if policy.name == FNNPolicy.name else 75,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,
@@ -113,34 +116,14 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
-    env_spdr_param = dict(
-        name=["gravity_const", "motor_resistance"],
-        target_mean=to.tensor([9.81, 8.4]),
-        target_cov_flat=to.tensor([1.0, 1.0]),
-        init_mean=to.tensor([9.81, 8.4]),
-        init_cov_flat=to.tensor([0.01, 0.01]),
-        clip_lo=-pyrado.inf,
-        clip_up=+pyrado.inf,
-    )
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(SelfPacedDomainParam(**env_spdr_param)))
-
-    spdr_hparam = dict(
-        kl_constraints_ub=10,
-        performance_lower_bound=250,
-        kl_threshold=-np.inf,
-        max_iter=args.spdr_iterations,
-        optimize_mean=not args.cov_only,
-        max_subrtn_retries=1,
-    )
-    algo = SPDR(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **spdr_hparam)
+    algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(subrtn=algo_hparam, subrtn_name=PPO.name),
-        dict(algo=spdr_hparam, algo_name=algo.name, env_spdr_param=env_spdr_param),
+        dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )
 

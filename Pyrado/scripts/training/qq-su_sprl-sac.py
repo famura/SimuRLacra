@@ -27,14 +27,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube swing-up task using Self-Paced Reinforcement Learning using Soft-Actor-Critic
+Train an agent to solve the Quanser Qube swing-up task using Self-Paced Domain Radomization using Soft-Actor-Critic
 as a subroutine.
 """
 import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.meta.sprl import SPRL
+from pyrado.algorithms.meta.spdr import SPDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.sac import SAC
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
@@ -57,14 +57,14 @@ if __name__ == "__main__":
     parser.add_argument("--frequency", default=100, type=int)
     parser.set_defaults(max_steps=600)
     parser.add_argument("--sac_iterations", default=300, type=int)
-    parser.add_argument("--sprl_iterations", default=50, type=int)
+    parser.add_argument("--spdr_iterations", default=50, type=int)
     parser.add_argument("--cov_only", action="store_true")
     args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
-        f"{SPRL.name}-{SAC.name}_{FNNPolicy.name}",
+        f"{SPDR.name}-{SAC.name}_{FNNPolicy.name}",
         f"covonly-{args.cov_only}_seed-{args.seed}",
     )
 
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
-    env_sprl_params = [
+    env_spdr_params = [
         dict(
             name="g",
             target_mean=to.tensor([9.81]),
@@ -114,25 +114,25 @@ if __name__ == "__main__":
             init_cov_chol_flat=to.tensor([0.05]),
         )
     ]
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
+    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_spdr_params]))
 
-    sprl_hparam = dict(
+    spdr_hparam = dict(
         kl_constraints_ub=8000,
         performance_lower_bound=500,
         std_lower_bound=0.4,
         kl_threshold=200,
-        max_iter=args.sprl_iterations,
+        max_iter=args.spdr_iterations,
         optimize_mean=not args.cov_only,
         max_subrtn_retries=3,
     )
-    algo = SPRL(env, SAC(ex_dir, env, policy, q1, q2, **algo_hparam), **sprl_hparam)
+    algo = SPDR(env, SAC(ex_dir, env, policy, q1, q2, **algo_hparam), **spdr_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
         dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(subrtn=algo_hparam, subrtn_name=SAC.name),
-        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_params=env_sprl_params),
+        dict(algo=spdr_hparam, algo_name=algo.name, env_spdr_params=env_spdr_params),
         save_dir=ex_dir,
     )
 

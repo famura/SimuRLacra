@@ -133,8 +133,19 @@ class DomainRandomizer:
             raise pyrado.ValueErr(given=num_samples, g_constraint="0")
 
         # Generate domain parameter samples
-        keys = [dp.name for dp in self.domain_params]
-        values = [dp.sample(num_samples) for dp in self.domain_params]
+        keys, values = [], []
+        for dp in self.domain_params:
+            dp_name = dp.name
+            if type(dp_name) is list:
+                keys += dp_name
+            else:
+                keys.append(dp_name)
+
+            dp_sample = dp.sample(num_samples)
+            if type(dp_sample[0]) is list:
+                values += dp_sample
+            else:
+                values.append(dp_sample)
 
         # Fill the internal storage containers
         self._params_pert_dict = dict(zip(keys, values))

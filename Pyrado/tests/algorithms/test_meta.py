@@ -47,11 +47,12 @@ from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
+from pyrado.algorithms.meta.iudr import IUDR
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.pddr import PDDR
 from pyrado.algorithms.meta.simopt import SimOpt
+from pyrado.algorithms.meta.spdr import SPDR
 from pyrado.algorithms.meta.spota import SPOTA
-from pyrado.algorithms.meta.sprl import SPRL
 from pyrado.algorithms.meta.udr import UDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
@@ -936,21 +937,22 @@ def test_npdr_and_bayessim(
 
 @pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
-@pytest.mark.parametrize("optimize_mean", [False, True])
-def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
+def test_spdr(ex_dir, env: SimEnv):
     pyrado.set_seed(0)
 
     env = ActNormWrapper(env)
-    env_sprl_params = [
+    env_spdr_params = [
         dict(
-            name="gravity_const",
+            name=["gravity_const"],
             target_mean=to.tensor([9.81]),
-            target_cov_chol_flat=to.tensor([1.0]),
+            target_cov_flat=to.tensor([1.0]),
             init_mean=to.tensor([9.81]),
-            init_cov_chol_flat=to.tensor([0.05]),
+            init_cov_flat=to.tensor([0.05]),
+            clip_lo=1e-5,
+            clip_up=np.inf,
         )
     ]
-    radnomizer = DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params])
+    radnomizer = DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_spdr_params])
     env = DomainRandWrapperLive(env, randomizer=radnomizer)
 
     policy = FNNPolicy(env.spec, hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
@@ -982,13 +984,74 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     algo_hparam = dict(
         kl_constraints_ub=8000,
         performance_lower_bound=500,
-        std_lower_bound=0.4,
         kl_threshold=200,
         max_iter=1,
-        optimize_mean=optimize_mean,
     )
 
-    algo = SPRL(env, PPO(ex_dir, env, policy, critic, **subrtn_hparam), **algo_hparam)
+    algo = SPDR(env, PPO(ex_dir, env, policy, critic, **subrtn_hparam), **algo_hparam)
+    algo.train(snapshot_mode="latest")
+    assert algo.curr_iter == algo.max_iter
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
+def test_iudr(ex_dir, env: SimEnv):
+    pyrado.set_seed(0)
+
+    env = ActNormWrapper(env)
+    env_spdr_params = [
+        dict(
+            name=["gravity_const"],
+            target_mean=to.tensor([9.81]),
+            target_cov_flat=to.tensor([1.0]),
+            init_mean=to.tensor([9.81]),
+            init_cov_flat=to.tensor([0.05]),
+            clip_lo=1e-5,
+            clip_up=np.inf,
+        )
+    ]
+    radnomizer = DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_spdr_params])
+    env = DomainRandWrapperLive(env, randomizer=radnomizer)
+
+    policy = FNNPolicy(env.spec, hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    critic_hparam = dict(
+        gamma=0.9844534412010116,
+        lamda=0.9710614403461155,
+        num_epoch=10,
+        batch_size=150,
+        standardize_adv=False,
+        lr=0.00016985313083236645,
+    )
+    critic = GAE(vfcn, **critic_hparam)
+
+    subrtn_hparam = dict(
+        max_iter=1,
+        eps_clip=0.12648736789309026,
+        min_steps=10 * env.max_steps,
+        num_epoch=3,
+        batch_size=150,
+        std_init=0.7573286998997557,
+        lr=6.999956625305722e-04,
+        max_grad_norm=1.0,
+        num_workers=1,
+    )
+
+    algo_hparam = dict(
+        performance_threshold=500,
+        max_iter=3,
+    )
+
+    algo = IUDR(env, PPO(ex_dir, env, policy, critic, **subrtn_hparam), **algo_hparam)
     algo.train(snapshot_mode="latest")
     assert algo.curr_iter == algo.max_iter
 

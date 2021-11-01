@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Qube swing-up task using Uniform Domain Randomization.
+Train an agent to solve the CartPole swing-up task using Uniform Domain Randomization.
 """
 import torch as to
 from torch.optim import lr_scheduler
@@ -39,7 +39,7 @@ from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
@@ -49,17 +49,27 @@ from pyrado.utils.data_types import EnvSpec
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.add_argument("--frequency", default=250, type=int)
+    args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{UDR.name}-{PPO.name}_{FNNPolicy.name}", "100Hz")
+    ex_dir = setup_experiment(
+        QCartPoleSwingUpSim.name, f"{UDR.name}-{PPO.name}_{FNNPolicy.name}", f"{args.frequency}Hz"
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparam = dict(dt=1 / 100.0, max_steps=600)
-    env = QQubeSwingUpSim(**env_hparam)
+    env_hparam = dict(
+        dt=1 / float(args.frequency),
+        max_steps=6 * int(args.frequency),  # 6s
+        long=False,
+        simple_dynamics=False,
+        wild_init=False,
+    )
+    env = QCartPoleSwingUpSim(**env_hparam)
     env = ActNormWrapper(env)
 
     randomizer = create_default_randomizer(env)
@@ -87,7 +97,7 @@ if __name__ == "__main__":
 
     # Subroutine
     subrtn_hparam = dict(
-        max_iter=200,
+        max_iter=600,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,
