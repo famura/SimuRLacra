@@ -1,4 +1,4 @@
-<img alt="logo" align="left" height="175px" src="logo.png" style="padding-right: 20px">
+<img alt="logo" align="left" height="175px" src="assets/logo.png" style="padding-right: 20px">
 
 **[Overview](#overview)**  
 **[Citing](#citing)**  
@@ -39,6 +39,32 @@ __Cons__
 SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4, 1.7 (deprecated) and 1.8 (recommended).
 The part without C++ dependencies, called Pyrado, also works under Windows 10 (not supported).
 
+<table>
+<tr>
+  <td>Furuta Pendulum</td>
+  <td>Ball on Beam</td>
+  <td>One-Mass-Oscillator</td>
+  <td>Cart-Pole</td>
+</tr>
+<tr>
+<td><img alt="gif"  height="175px" src="assets/gif/qq.gif"  style="padding-right: 0"/></td>
+<td><img alt="gif"  height="175px" src="assets/gif/bob.gif" style="padding-right: 0" /></td>
+<td><img alt="gif"  height="175px" src="assets/gif/omo.gif"  style="padding-right: 0"/></td>
+<td><img alt="gif"  height="175px" src="assets/gif/cp.gif" style="padding-right: 0" /></td>
+</tr>
+  <tr>
+  <td>Ball-Balancer</td>
+  <td>Ant</td>
+  <td>Half-Cheetah</td>
+  <td>Hopper</td>
+</tr>
+<tr>
+<td><img alt="gif"  height="175px" src="assets/gif/qbb.gif" style="padding-right: 0" /></td>
+<td><img alt="gif"  height="175px" src="assets/gif/ant.gif" style="padding-right: 0" /></td>
+<td><img alt="gif"  height="175px" src="assets/gif/cth.gif" style="padding-right: 0" /></td>
+<td><img alt="gif"  height="175px" src="assets/gif/hop.gif" style="padding-right: 0" /></td>
+</tr>
+</table>
 
 ## Citing
 
