@@ -41,10 +41,22 @@ The part without C++ dependencies, called Pyrado, also works under Windows 10 (n
 
 <table>
 <tr>
+  <td>Furuta Pendulum</td>
+  <td>Ball on Beam</td>
+  <td>One-Mass-Oscillator</td>
+  <td>Cart-Pole</td>
+</tr>
+<tr>
 <td><img alt="gif"  height="175px" src="assets/gif/qq.gif"  style="padding-right: 0"/></td>
 <td><img alt="gif"  height="175px" src="assets/gif/bob.gif" style="padding-right: 0" /></td>
 <td><img alt="gif"  height="175px" src="assets/gif/omo.gif"  style="padding-right: 0"/></td>
 <td><img alt="gif"  height="175px" src="assets/gif/cp.gif" style="padding-right: 0" /></td>
+</tr>
+  <tr>
+  <td>Ball-Balancer</td>
+  <td>Ant</td>
+  <td>Half-Cheetah</td>
+  <td>Hopper</td>
 </tr>
 <tr>
 <td><img alt="gif"  height="175px" src="assets/gif/qbb.gif" style="padding-right: 0" /></td>
@@ -53,10 +65,6 @@ The part without C++ dependencies, called Pyrado, also works under Windows 10 (n
 <td><img alt="gif"  height="175px" src="assets/gif/hop.gif" style="padding-right: 0" /></td>
 </tr>
 </table>
-
-
-https://user-images.githubusercontent.com/9105453/135641055-d591ce50-7ae3-43a1-a653-dba75ba34e4c.mov
-
 
 ## Citing
 
