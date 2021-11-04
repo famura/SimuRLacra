@@ -90,7 +90,7 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=1)
         l2_norm_mean.backward()
         state_grad = state_tensor.grad
-        return self._eps * to.sign(state_grad)
+        return self._eps * state_grad
 
 
 class AdversarialStateWrapper(AdversarialWrapper, Serializable):
@@ -130,15 +130,11 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
             state_tensor = state
         else:
             raise ValueError("state could not be converted to a torch tensor")
-        if self.torch_observation:
-            observation = inner_env(self).observe(state_tensor, dtype=to.Tensor)
-        else:
-            observation = state_tensor
         mean_arpl = self._policy.forward(to.cat((observation, nonobserved)))
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=0)
         l2_norm_mean.backward()
         state_grad = state_tensor.grad
-        return self._eps * to.sign(state_grad)
+        return self._eps * state_grad
 
 
 class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
@@ -157,7 +153,9 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
         Serializable._init(self, locals())
         AdversarialWrapper.__init__(self, wrapped_env, policy, eps, phi)
         self.width = width
-        self.saw = typed_env(self.wrapped_env, StateAugmentationWrapper)
+        saw = typed_env(self.wrapped_env, StateAugmentationWrapper)
+        assert isinstance(saw, StateAugmentationWrapper)
+        self.saw: StateAugmentationWrapper = saw
         self.nominal = self.saw.nominal
         self.nominalT = to.from_numpy(self.nominal)
         self.adv = None
@@ -168,26 +166,28 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         self.re_adv()
-        self.saw.set_param(to.tensor(self.adv))
+        self.saw.param = to.tensor(self.adv)
 
         # Forward to EnvWrapper, which delegates to self._wrapped_env
         return super().reset(init_state=init_state, domain_param=domain_param)
 
     def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)
-        state = obs.clone()
+        state = to.Tensor(obs)
         adversarial = self.get_arpl_grad(state) * self.nominalT
         if self.decide_apply():
             new_params = to.tensor(self.adv).squeeze(0) + adversarial
-            self.saw.set_param(new_params.squeeze(0))
+            self.saw.param = new_params.squeeze(0)
         return obs, reward, done, info
 
-    def get_arpl_grad(self, state):
-        state_tensor = to.tensor([state], requires_grad=True)
-        self.saw.set_param(self.adv)
+    def get_arpl_grad(self, state: to.Tensor):
+        print(state.shape)
+        state_tensor = state
+        state_tensor.requires_grad = True
+        self.saw.param = self.adv
         mean_arpl = self._policy.forward(state_tensor)
-        l2_norm_mean = -to.norm(mean_arpl, p=2, dim=1)
+        l2_norm_mean = -to.norm(mean_arpl, p=2)
         l2_norm_mean.backward()
         state_grad = state_tensor.grad
-        state_grad = state_grad[:, self.saw.offset :]
-        return self._eps * to.sign(state_grad)
+        state_grad = state_grad[self.saw.offset :]
+        return self._eps * state_grad

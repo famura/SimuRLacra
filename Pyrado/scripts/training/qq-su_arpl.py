@@ -9,7 +9,7 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSim.name, f"{ARPL.name}_{FNNPolicy.name}", "actnorm")
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{ARPL.name}_{FNNPolicy.name}", "actnorm")
     # ex_dir = setup_experiment(QQubeSim.name, f'{ARPL.name}_{GRUPolicy.name}', 'actnorm')
 
     # Set seed if desired
@@ -30,17 +30,28 @@ if __name__ == "__main__":
 
     # Environment
     env_hparam = dict(dt=1 / 250.0, max_steps=1500)
-    env = QQubeSim(**env_hparam)
+    env = QQubeSwingUpSim(**env_hparam)
     env = ActNormWrapper(env)
     env = StateAugmentationWrapper(env, domain_param=None)
 
     # Policy
     policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
-    # policy_hparam = dict(hidden_size=64, num_recurrent_layers=1)  # LSTM & GRU
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
-    # policy = RNNPolicy(spec=env.spec, **policy_hparam)
-    # policy = LSTMPolicy(spec=env.spec, **policy_hparam)
-    # policy = GRUPolicy(spec=env.spec, **policy_hparam)
+
+    env = ARPL.wrap_env(
+        env,
+        policy,
+        dynamics=True,
+        process=True,
+        observation=True,
+        halfspan=0.05,
+        dyn_eps=0.07,
+        dyn_phi=0.25,
+        obs_phi=0.1,
+        obs_eps=0.05,
+        proc_phi=0.1,
+        proc_eps=0.03,
+    )
 
     # Critic
     vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
@@ -72,14 +83,6 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=500,
         steps_num=23 * env.max_steps,
-        halfspan=0.05,
-        dyn_eps=0.07,
-        dyn_phi=0.25,
-        obs_phi=0.1,
-        obs_eps=0.05,
-        proc_phi=0.1,
-        proc_eps=0.03,
-        torch_observation=True,
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
     algo = ARPL(ex_dir, env, subrtn, policy, subrtn.expl_strat, **algo_hparam)

@@ -145,22 +145,8 @@ class QQubeSim(SimPyEnv, Serializable):
             k[j, :] = np.array([s[2], s[3], thdd, aldd])
         self.state += self._dt / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3])
 
-    def observe(self, state: np.ndarray, dtype: type = np.ndarray):
-        if dtype is np.ndarray:
-            return np.array(
-                [np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]]
-            )
-        elif dtype is to.Tensor:
-            return to.cat(
-                (
-                    state[0].sin().view(1),
-                    state[0].cos().view(1),
-                    state[1].sin().view(1),
-                    state[1].cos().view(1),
-                    state[2].view(1),
-                    state[3].view(1),
-                )
-            )
+    def observe(self, state: np.ndarray) -> np.ndarray:
+        return np.array([np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def _init_anim(self):
         # Import PandaVis Class

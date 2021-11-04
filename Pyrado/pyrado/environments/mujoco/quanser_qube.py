@@ -146,7 +146,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
             failed=mjsim_crashed or state_oob,
         )
 
-    def observe(self, state: np.ndarray, dtype: type = np.ndarray):
+    def observe(self, state: np.ndarray) -> np.ndarray:
         return np.array([np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:

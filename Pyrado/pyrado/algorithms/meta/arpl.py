@@ -26,6 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Union
+
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.environment_wrappers.adversarial import (
@@ -56,7 +58,7 @@ class ARPL(Algorithm):
     def __init__(
         self,
         save_dir: pyrado.PathLike,
-        env: [SimEnv, StateAugmentationWrapper],
+        env: Union[SimEnv, StateAugmentationWrapper],
         subrtn: Algorithm,
         policy: Policy,
         expl_strat: StochasticActionExplStrat,
@@ -64,16 +66,6 @@ class ARPL(Algorithm):
         num_rollouts: int = None,
         steps_num: int = None,
         apply_dynamics_noise: bool = False,
-        dyn_eps: float = 0.01,
-        dyn_phi: float = 0.1,
-        halfspan: float = 0.25,
-        apply_proccess_noise: bool = False,
-        proc_eps: float = 0.01,
-        proc_phi: float = 0.05,
-        apply_observation_noise: bool = False,
-        obs_eps: float = 0.01,
-        obs_phi: float = 0.05,
-        torch_observation: bool = True,
         logger: StepLogger = None,
     ):
         """
@@ -97,7 +89,6 @@ class ARPL(Algorithm):
         :param apply_observation_noise: whether adversarially generated observation noise should be applied
         :param obs_eps: the intensity of generated observation noise
         :param obs_phi: the probability of applying observation noise
-        :param torch_observation: a function to provide a differentiable observation
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         assert isinstance(subrtn, Algorithm)
@@ -105,22 +96,40 @@ class ARPL(Algorithm):
 
         super().__init__(save_dir, max_iter, policy, logger)
 
-        # Initialize adversarial wrappers
-        if apply_dynamics_noise:
-            assert isinstance(env, StateAugmentationWrapper)
-            env = AdversarialDynamicsWrapper(env, self.policy, dyn_eps, dyn_phi, halfspan)
-        if apply_proccess_noise:
-            env = AdversarialStateWrapper(env, self.policy, proc_eps, proc_phi, torch_observation=torch_observation)
-        if apply_observation_noise:
-            env = AdversarialObservationWrapper(env, self.policy, obs_eps, obs_phi)
         self._env = env
-        # TODO @Robin: how do you make sure that the newly wrapped env is used by the subroutine?
 
         # Subroutine
         self._subrtn = subrtn
         self._subrtn.save_name = "subrtn"
 
         pyrado.save(self._env, "env.pkl", self.save_dir)
+
+    @staticmethod
+    def wrap_env(
+        env,
+        policy,
+        dynamics=False,
+        process=False,
+        observation=False,
+        dyn_eps: float = 0.01,
+        dyn_phi: float = 0.1,
+        halfspan: float = 0.25,
+        apply_proccess_noise: bool = False,
+        proc_eps: float = 0.01,
+        proc_phi: float = 0.05,
+        apply_observation_noise: bool = False,
+        obs_eps: float = 0.01,
+        obs_phi: float = 0.05,
+    ):
+        # Initialize adversarial wrappers
+        if dynamics:
+            assert isinstance(env, StateAugmentationWrapper)
+            env = AdversarialDynamicsWrapper(env, policy, dyn_eps, dyn_phi, halfspan)
+        if process:
+            env = AdversarialStateWrapper(env, policy, proc_eps, proc_phi)
+        if observation:
+            env = AdversarialObservationWrapper(env, policy, obs_eps, obs_phi)
+        return env
 
     @property
     def sample_count(self) -> int:
