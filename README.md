@@ -20,25 +20,6 @@ It features __randomizable simulations__ written __in standalone Python__ (no li
 [![codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![isort](https://img.shields.io/badge/imports-isort-green)](https://pycqa.github.io/isort/)
 
-__Pros__  
-* __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
-* __C++ export of policies based on PyTorch Modules.__ Since the `Policy` class is a subclass of PyTorch's `nn.Module`, you can port your neural-network policies, learned with Python, to you C++ applications. This also holds for stateful recurrent networks.
-* __CPU-based parallelization for sampling the environments.__ Similar to the OpenAI Gym, SimuRLacra offers parallelized environments for sampling. This is done by employing [Serializable](https://github.com/Xfel/init-args-serializer), making the simulation environments fully pickleable.
-* __Deterministic parallel sampling.__ The sampling is deterministic when conditioned on the seed.
-* __Separation of the exploration strategies and the policy.__ Instead of having a GaussianFNN and a GaussianRNN ect. policy, you can wrap your policy architectures with (almost) any exploration scheme. At test time, you simple strip the exploration wrapper.
-* __Tested integration of real-world Quanser platforms__. This feature is extremely valuable if you want to conduct sim-to-real research, since you can simply replace the simulated environment with the physical one by changing one line of code.
-* __Tested integration of [BoTorch](https://botorch.org/), [Optuna](https://optuna.org/)__, and [sbi](https://github.com/mackelab/sbi).
-* __Detailed [documentation](https://famura.github.io/SimuRLacra/)__.
-
-__Cons__  
-* __No vision-based environments/tasks.__ In principle there is nothing stopping you from integrating computer vision into SimuRLacra. However, I assume there are better suited frameworks out there.
-* __Without bells and whistles.__ The implementations (especially the algorithms) do not focus on performance. After all, this framework was created to understand and prototype things. However, improvement suggestions are always welcome.
-* __Hyper-parameters are not fully tuned.__ Sometimes the most important part of reinforcement learning is the time-consuming search for the right hyper-parameters. I only did this for the environment-algorithm combinations reported in my papers. But, for all the other cases there is [Optuna](https://optuna.org/) and some optuna-based example scripts that you can start from.
-* __Moderate GPU-support.__ All policies can run on a GPU. However, the GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
-
-SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4, 1.7 (deprecated) and 1.8 (recommended).
-The part without C++ dependencies, called Pyrado, also works under Windows 10 (not supported).
-
 <table>
 <tr>
   <td>Furuta Pendulum</td>
@@ -65,6 +46,25 @@ The part without C++ dependencies, called Pyrado, also works under Windows 10 (n
 <td><img alt="gif"  height="175px" src="assets/gif/hop.gif" style="padding-right: 0" /></td>
 </tr>
 </table>
+
+__Pros__  
+* __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
+* __C++ export of policies based on PyTorch Modules.__ Since the `Policy` class is a subclass of PyTorch's `nn.Module`, you can port your neural-network policies, learned with Python, to you C++ applications. This also holds for stateful recurrent networks.
+* __CPU-based parallelization for sampling the environments.__ Similar to the OpenAI Gym, SimuRLacra offers parallelized environments for sampling. This is done by employing [Serializable](https://github.com/Xfel/init-args-serializer), making the simulation environments fully pickleable.
+* __Deterministic parallel sampling.__ The sampling is deterministic when conditioned on the seed.
+* __Separation of the exploration strategies and the policy.__ Instead of having a GaussianFNN and a GaussianRNN ect. policy, you can wrap your policy architectures with (almost) any exploration scheme. At test time, you simple strip the exploration wrapper.
+* __Tested integration of real-world Quanser platforms__. This feature is extremely valuable if you want to conduct sim-to-real research, since you can simply replace the simulated environment with the physical one by changing one line of code.
+* __Tested integration of [BoTorch](https://botorch.org/), [Optuna](https://optuna.org/), and [sbi](https://github.com/mackelab/sbi)__.
+* __Detailed [documentation](https://famura.github.io/SimuRLacra/)__.
+
+__Cons__  
+* __No vision-based environments/tasks.__ In principle there is nothing stopping you from integrating computer vision into SimuRLacra. However, I assume there are better suited frameworks out there.
+* __Without bells and whistles.__ The implementations (especially the algorithms) do not focus on performance. After all, this framework was created to understand and prototype things. However, improvement suggestions are always welcome.
+* __Hyper-parameters are not fully tuned.__ Sometimes the most important part of reinforcement learning is the time-consuming search for the right hyper-parameters. I only did this for the environment-algorithm combinations reported in my papers. But, for all the other cases there is [Optuna](https://optuna.org/) and some optuna-based example scripts that you can start from.
+* __Moderate GPU-support.__ All policies can run on a GPU. However, the GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
+
+SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4, 1.7 (deprecated) and 1.8 (recommended).
+The part without C++ dependencies, called Pyrado, also works under Windows 10 (not supported).
 
 ## Citing
 
