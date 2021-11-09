@@ -104,7 +104,6 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         :param policy: policy to be updated
         :param eps: magnitude of perturbation
         :param phi: probability of perturbation
-        :param torch_observation: observation uses torch
         """
         Serializable._init(self, locals())
         AdversarialWrapper.__init__(self, wrapped_env, policy, eps, phi)
@@ -124,12 +123,7 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         return obs, reward, done, info
 
     def get_arpl_grad(self, state, nonobserved):
-        if isinstance(state, np.ndarray):
-            state_tensor = to.tensor(state, requires_grad=True)
-        elif isinstance(state, to.Tensor):
-            state_tensor = state
-        else:
-            raise ValueError("state could not be converted to a torch tensor")
+        state_tensor = to.tensor(state, requires_grad=True)
         mean_arpl = self._policy.forward(to.cat((observation, nonobserved)))
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=0)
         l2_norm_mean.backward()

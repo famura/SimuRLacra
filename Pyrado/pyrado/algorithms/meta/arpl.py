@@ -114,10 +114,8 @@ class ARPL(Algorithm):
         dyn_eps: float = 0.01,
         dyn_phi: float = 0.1,
         halfspan: float = 0.25,
-        apply_proccess_noise: bool = False,
         proc_eps: float = 0.01,
         proc_phi: float = 0.05,
-        apply_observation_noise: bool = False,
         obs_eps: float = 0.01,
         obs_phi: float = 0.05,
     ):
