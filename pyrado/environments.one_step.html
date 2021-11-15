@@ -136,7 +136,7 @@
 <span id="catapult"></span><h2>catapult<a class="headerlink" href="#module-pyrado.environments.one_step.catapult" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultExample">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CatapultExample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_V</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultExample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultExample" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CatapultExample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_V</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultExample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultExample" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>For calculating the quantities of the ‘illustrative example’ in [1]</p>
 <div class="admonition seealso">
@@ -203,7 +203,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CatapultSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CatapultSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>In this special environment, the action is equal to the policy parameter. Therefore, it makes only sense to
 use it in combination with a linear policy that has only one constant feature.</p>
@@ -218,13 +218,13 @@ use it in combination with a linear policy that has only one constant feature.</
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.act_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.act_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.act_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.domain_param">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">domain_param</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.domain_param" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">domain_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.domain_param" title="Permalink to this definition"></a></dt>
 <dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy dict.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
@@ -233,29 +233,34 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.get_nominal_domain_param">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.init_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.init_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.init_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the initial state space.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'cata'</span></em><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cata'</span></em><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.obs_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.obs_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.obs_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">pyrado.utils.data_types.RenderMode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.render" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">pyrado.utils.data_types.RenderMode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.render" title="Permalink to this definition"></a></dt>
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
@@ -270,7 +275,7 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.reset" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -287,13 +292,13 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.state_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.state_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.state_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the states (used for describing the environment).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.step">
-<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.step" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.step" title="Permalink to this definition"></a></dt>
 <dd><p>Perform one time step of the simulation or on the real-world device.
 When a terminal condition is met, the reset function is called.</p>
 <div class="admonition note">
@@ -321,7 +326,7 @@ When a terminal condition is met, the reset function is called.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.catapult.CatapultSim.task">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.task" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.task" title="Permalink to this definition"></a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>
 </dd></dl>
 
@@ -332,19 +337,19 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="rosenbrock"></span><h2>rosenbrock<a class="headerlink" href="#module-pyrado.environments.one_step.rosenbrock" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RosenSim</span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RosenSim</span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>This environment wraps the Rosenbrock function to use it as a test case for Pyrado algorithms.</p>
 <p>Constructor</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.act_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.act_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.act_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.domain_param">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">domain_param</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.domain_param" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">domain_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.domain_param" title="Permalink to this definition"></a></dt>
 <dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy dict.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
@@ -353,29 +358,34 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.get_nominal_domain_param">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.init_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.init_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.init_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the initial state space.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'rosen'</span></em><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rosen'</span></em><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.obs_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.obs_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.obs_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">pyrado.utils.data_types.RenderMode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.render" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">pyrado.utils.data_types.RenderMode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.render" title="Permalink to this definition"></a></dt>
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
@@ -390,7 +400,7 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.reset" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -407,13 +417,13 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.state_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.state_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.state_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the states (used for describing the environment).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.step">
-<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.step" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.step" title="Permalink to this definition"></a></dt>
 <dd><p>Perform one time step of the simulation or on the real-world device.
 When a terminal condition is met, the reset function is called.</p>
 <div class="admonition note">
@@ -441,7 +451,7 @@ When a terminal condition is met, the reset function is called.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.rosenbrock.RosenSim.task">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="tasks.html#pyrado.tasks.goalless.OptimProxyTask" title="pyrado.tasks.goalless.OptimProxyTask"><span class="pre">pyrado.tasks.goalless.OptimProxyTask</span></a></em><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.task" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="tasks.html#pyrado.tasks.goalless.OptimProxyTask" title="pyrado.tasks.goalless.OptimProxyTask"><span class="pre">pyrado.tasks.goalless.OptimProxyTask</span></a></em><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.task" title="Permalink to this definition"></a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>
 </dd></dl>
 
@@ -452,7 +462,7 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="two-dim-gaussian"></span><h2>two_dim_gaussian<a class="headerlink" href="#module-pyrado.environments.one_step.two_dim_gaussian" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TwoDimGaussian</span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TwoDimGaussian</span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>A toy model with complex 2-dim Gaussian posterior as described in [1]. This environment can be interpreted as a zero-step environment.
 We use the domain parameters to capture the</p>
@@ -466,23 +476,23 @@ We use the domain parameters to capture the</p>
 <p>Constructor</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.act_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.act_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.act_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.calc_constants">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">calc_constants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.calc_constants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.calc_constants" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calc_constants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.calc_constants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.calc_constants" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.constants">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">constants</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.constants" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constants</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.constants" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.domain_param">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">domain_param</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.domain_param" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">domain_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.domain_param" title="Permalink to this definition"></a></dt>
 <dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy dict.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
@@ -491,12 +501,17 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.get_nominal_domain_param">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.init_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.init_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.init_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the initial state space.</p>
 </dd></dl>
 
@@ -510,18 +525,18 @@ the exact posterior probability</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'2dg'</span></em><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2dg'</span></em><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.obs_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.obs_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.obs_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">pyrado.utils.data_types.RenderMode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.render" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">pyrado.utils.data_types.RenderMode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.render" title="Permalink to this definition"></a></dt>
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
@@ -536,20 +551,20 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.reset" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Resetting the environment generates the singular state which is of importance.
 This environment can be interpreted as a zero-step environment, because it does not depend on an action.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.state_space">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.state_space" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.state_space" title="Permalink to this definition"></a></dt>
 <dd><p>Get the space of the states (used for describing the environment).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.step">
-<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.step" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.step" title="Permalink to this definition"></a></dt>
 <dd><p>Perform one time step of the simulation or on the real-world device.
 When a terminal condition is met, the reset function is called.</p>
 <div class="admonition note">
@@ -577,7 +592,7 @@ When a terminal condition is met, the reset function is called.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.task">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="tasks.html#pyrado.tasks.goalless.OptimProxyTask" title="pyrado.tasks.goalless.OptimProxyTask"><span class="pre">pyrado.tasks.goalless.OptimProxyTask</span></a></em><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.task" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="tasks.html#pyrado.tasks.goalless.OptimProxyTask" title="pyrado.tasks.goalless.OptimProxyTask"><span class="pre">pyrado.tasks.goalless.OptimProxyTask</span></a></em><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.task" title="Permalink to this definition"></a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>
 </dd></dl>
 
