@@ -107,6 +107,7 @@ class ARPL(Algorithm):
         halfspan: float = 0.25,
         proc_eps: float = 0.01,
         proc_phi: float = 0.05,
+        torch_observation = None,
         obs_eps: float = 0.01,
         obs_phi: float = 0.05,
     ):
@@ -129,7 +130,7 @@ class ARPL(Algorithm):
             assert isinstance(env, StateAugmentationWrapper), pyrado.TypeErr(env, given_name='env', expected_type=StateAugmentationWrapper)
             env = AdversarialDynamicsWrapper(env, policy, dyn_eps, dyn_phi, halfspan)
         if process:
-            env = AdversarialStateWrapper(env, policy, proc_eps, proc_phi)
+            env = AdversarialStateWrapper(env, policy, proc_eps, proc_phi, torch_observation=torch_observation)
         if observation:
             env = AdversarialObservationWrapper(env, policy, obs_eps, obs_phi)
         return env

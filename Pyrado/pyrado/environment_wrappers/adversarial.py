@@ -29,6 +29,11 @@
 from abc import ABC
 
 import numpy as np
+from numpy.core import numeric
+import pyrado
+from pyrado.algorithms.base import Algorithm
+from pyrado.environments.base import Env
+from pyrado.policies.base import Policy
 import torch as to
 from init_args_serializer import Serializable
 
@@ -100,7 +105,7 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
 class AdversarialStateWrapper(AdversarialWrapper, Serializable):
     """ " Wrapper to apply adversarial perturbations to the state (used in ARPL)"""
 
-    def __init__(self, wrapped_env, policy, eps, phi, torch_observation=False):
+    def __init__(self, wrapped_env: Env, policy: Policy, eps: numeric, phi, torch_observation=None):
         """
         Constructor
 
@@ -111,13 +116,19 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         """
         Serializable._init(self, locals())
         AdversarialWrapper.__init__(self, wrapped_env, policy, eps, phi)
-        self.torch_observation = torch_observation
+        if wrapped_env.observe is Env.observe:
+            self.torch_observation = wrapped_env.observe
+            print('USING DEFAULT')
+        else:   
+            assert torch_observation, pyrado.ValueErr(torch_observation)
+            self.torch_observation = torch_observation
 
     def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)
         saw = typed_env(self.wrapped_env, StateAugmentationWrapper)
         nonobserved = to.from_numpy(obs[saw.offset :])
-        adversarial = self.get_arpl_grad(self.state, nonobserved)
+        state_tensor = to.tensor(self.state, requires_grad=True)
+        adversarial = self.get_arpl_grad(state_tensor, nonobserved)
         if self.decide_apply():
             self.state += adversarial.view(-1).numpy()
         if saw:
@@ -126,13 +137,12 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
             obs = inner_env(self).observe(self.state)
         return obs, reward, done, info
 
-    def get_arpl_grad(self, state, nonobserved):
-        observation = to.tensor(inner_env(self).observe(state)).to(dtype=to.get_default_dtype())
-        observation_tensor = to.tensor(observation, requires_grad=True)
-        mean_arpl = self._policy.forward(to.cat((observation_tensor, nonobserved)).to(dtype=to.get_default_dtype()))
+    def get_arpl_grad(self, state_tensor, nonobserved):
+        observation = self.torch_observation(state_tensor).to(dtype=to.get_default_dtype())
+        mean_arpl = self._policy.forward(to.cat((observation, nonobserved)).to(dtype=to.get_default_dtype()))
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=0)
         l2_norm_mean.backward()
-        state_grad = observation_tensor.grad
+        state_grad = state_tensor.grad
         return self._eps * state_grad
 
 

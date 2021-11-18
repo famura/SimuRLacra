@@ -48,7 +48,7 @@ class FNN(nn.Module):
         input_size: int,
         output_size: int,
         hidden_sizes: Sequence[int],
-        hidden_nonlin: List[Callable, Sequence[Callable]],
+        hidden_nonlin: Union[Callable, Sequence[Callable]],
         dropout: Optional[float] = 0.0,
         output_nonlin: Optional[Callable] = None,
         init_param_kwargs: Optional[dict] = None,

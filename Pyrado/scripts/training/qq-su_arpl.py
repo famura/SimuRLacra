@@ -1,6 +1,7 @@
 """
 Train an agent to solve the Qube swing-up task environment using Adversarially Robust Policy Learning.
 """
+import numpy as np
 import torch as to
 
 import pyrado
@@ -16,6 +17,14 @@ from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
+def torch_observation(state: to.tensor) -> to.tensor:
+        return to.stack([
+            to.sin(state[0]),
+            to.cos(state[0]),
+            to.sin(state[1]),
+            to.cos(state[1]),
+            state[2],
+            state[3]])
 
 if __name__ == "__main__":
     # Parse command line arguments
@@ -38,11 +47,13 @@ if __name__ == "__main__":
     policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
 
+        
+
     env = ARPL.wrap_env(
         env,
         policy,
         dynamics=True,
-        process=False,
+        process=True,
         observation=True,
         halfspan=0.05,
         dyn_eps=0.07,
@@ -51,6 +62,7 @@ if __name__ == "__main__":
         obs_eps=0.05,
         proc_phi=0.1,
         proc_eps=0.03,
+        torch_observation=torch_observation
     )
 
     # Critic
