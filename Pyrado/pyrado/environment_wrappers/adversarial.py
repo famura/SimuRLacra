@@ -80,12 +80,16 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
     def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)
         adversarial = self.get_arpl_grad(obs)
+        saw = typed_env(self.wrapped_env, StateAugmentationWrapper)
         if self.decide_apply():
-            obs += adversarial.view(-1).float().numpy()
+            if saw:
+                obs[: saw.offset] += adversarial.view(-1).float().numpy()[: saw.offset]
+            else:
+                obs += adversarial.view(-1).float().numpy()
         return obs, reward, done, info
 
     def get_arpl_grad(self, state):
-        state_tensor = to.tensor([state], requires_grad=True, dtype=to.double)
+        state_tensor = to.tensor([state], requires_grad=True, dtype=to.float)
         mean_arpl = self._policy.forward(state_tensor)
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=1)
         l2_norm_mean.backward()
@@ -123,11 +127,12 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         return obs, reward, done, info
 
     def get_arpl_grad(self, state, nonobserved):
-        state_tensor = to.tensor(state, requires_grad=True)
-        mean_arpl = self._policy.forward(to.cat((observation, nonobserved)))
+        observation = to.tensor(inner_env(self).observe(state)).float()
+        observation_tensor = to.tensor(observation, requires_grad=True)
+        mean_arpl = self._policy.forward(to.cat((observation_tensor, nonobserved)).float())
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=0)
         l2_norm_mean.backward()
-        state_grad = state_tensor.grad
+        state_grad = observation_tensor.grad
         return self._eps * state_grad
 
 
@@ -169,13 +174,14 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
         obs, reward, done, info = self.wrapped_env.step(act)
         state = to.Tensor(obs)
         adversarial = self.get_arpl_grad(state) * self.nominalT
+        # Decide whether the adversarial should be applied
         if self.decide_apply():
+            # Add adversarial to the randomly sampled base configuration
             new_params = to.tensor(self.adv).squeeze(0) + adversarial
             self.saw.param = new_params.squeeze(0)
         return obs, reward, done, info
 
     def get_arpl_grad(self, state: to.Tensor):
-        print(state.shape)
         state_tensor = state
         state_tensor.requires_grad = True
         self.saw.param = self.adv

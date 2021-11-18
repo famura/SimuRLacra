@@ -80,15 +80,6 @@ class ARPL(Algorithm):
         :param num_rollouts: the number of rollouts to be performed for each update step
         :param steps_num: the number of steps to be performed for each update step
         :param apply_dynamics_noise: whether adversarially generated dynamics noise should be applied
-        :param dyn_eps: the intensity of generated dynamics noise
-        :param dyn_phi: the probability of applying dynamics noise
-        :param halfspan: the halfspan of the uniform random distribution used to sample
-        :param apply_proccess_noise: whether adversarially generated process noise should be applied
-        :param proc_eps: the intensity of generated process noise
-        :param proc_phi: the probability of applying process noise
-        :param apply_observation_noise: whether adversarially generated observation noise should be applied
-        :param obs_eps: the intensity of generated observation noise
-        :param obs_phi: the probability of applying observation noise
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         assert isinstance(subrtn, Algorithm)
@@ -119,9 +110,23 @@ class ARPL(Algorithm):
         obs_eps: float = 0.01,
         obs_phi: float = 0.05,
     ):
-        # Initialize adversarial wrappers
+        """
+        :param env: the environment in which the agent should be trained
+        :param policy: policy to be updated
+        :param dynamics: whether adversarially generated dynamics noise should be applied
+        :param proccess: whether adversarially generated process noise should be applied
+        :param observation: whether adversarially generated observation noise should be applied
+        :param dyn_eps: the intensity of generated dynamics noise
+        :param dyn_phi: the probability of applying dynamics noise
+        :param halfspan: the halfspan of the uniform random distribution used to sample
+        :param proc_eps: the intensity of generated process noise
+        :param proc_phi: the probability of applying process noise
+        :param obs_eps: the intensity of generated observation noise
+        :param obs_phi: the probability of applying observation noise
+        """
+        # Initialize adversarial wrappers in the correct order
         if dynamics:
-            assert isinstance(env, StateAugmentationWrapper)
+            assert isinstance(env, StateAugmentationWrapper), pyrado.TypeErr(env, given_name='env', expected_type=StateAugmentationWrapper)
             env = AdversarialDynamicsWrapper(env, policy, dyn_eps, dyn_phi, halfspan)
         if process:
             env = AdversarialStateWrapper(env, policy, proc_eps, proc_phi)

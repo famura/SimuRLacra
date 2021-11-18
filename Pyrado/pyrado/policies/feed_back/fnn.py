@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Callable, Iterable, Optional, Sequence, Tuple, Union
+from typing import Callable, Iterable, List, Optional, Sequence, Tuple, Union
 
 import torch as to
 import torch.cuda as cuda
@@ -48,7 +48,7 @@ class FNN(nn.Module):
         input_size: int,
         output_size: int,
         hidden_sizes: Sequence[int],
-        hidden_nonlin: [Callable, Sequence[Callable]],
+        hidden_nonlin: List[Callable, Sequence[Callable]],
         dropout: Optional[float] = 0.0,
         output_nonlin: Optional[Callable] = None,
         init_param_kwargs: Optional[dict] = None,

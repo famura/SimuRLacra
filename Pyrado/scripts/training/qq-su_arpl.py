@@ -42,7 +42,7 @@ if __name__ == "__main__":
         env,
         policy,
         dynamics=True,
-        process=True,
+        process=False,
         observation=True,
         halfspan=0.05,
         dyn_eps=0.07,
