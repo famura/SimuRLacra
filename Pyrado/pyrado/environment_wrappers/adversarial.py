@@ -83,13 +83,13 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
         saw = typed_env(self.wrapped_env, StateAugmentationWrapper)
         if self.decide_apply():
             if saw:
-                obs[: saw.offset] += adversarial.view(-1).float().numpy()[: saw.offset]
+                obs[: saw.offset] += adversarial.view(-1).to(dtype=to.get_default_dtype()).numpy()[: saw.offset]
             else:
-                obs += adversarial.view(-1).float().numpy()
+                obs += adversarial.view(-1).to(dtype=to.get_default_dtype()).numpy()
         return obs, reward, done, info
 
     def get_arpl_grad(self, state):
-        state_tensor = to.tensor([state], requires_grad=True, dtype=to.float)
+        state_tensor = to.tensor([state], requires_grad=True, dtype=to.get_default_dtype())
         mean_arpl = self._policy.forward(state_tensor)
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=1)
         l2_norm_mean.backward()
@@ -127,9 +127,9 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         return obs, reward, done, info
 
     def get_arpl_grad(self, state, nonobserved):
-        observation = to.tensor(inner_env(self).observe(state)).float()
+        observation = to.tensor(inner_env(self).observe(state)).to(dtype=to.get_default_dtype())
         observation_tensor = to.tensor(observation, requires_grad=True)
-        mean_arpl = self._policy.forward(to.cat((observation_tensor, nonobserved)).float())
+        mean_arpl = self._policy.forward(to.cat((observation_tensor, nonobserved)).to(dtype=to.get_default_dtype()))
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=0)
         l2_norm_mean.backward()
         state_grad = observation_tensor.grad
