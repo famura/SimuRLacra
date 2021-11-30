@@ -30,11 +30,6 @@ from copy import deepcopy
 from typing import Callable
 
 import numpy as np
-from pyrado.algorithms.meta.arpl import ARPL
-from pyrado.environment_wrappers.adversarial import AdversarialStateWrapper
-from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
-from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 import pytest
 import torch as to
 from tests.conftest import m_needs_cuda
@@ -49,6 +44,7 @@ from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.algorithms.episodic.pepg import PEPG
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
+from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.regression.nonlin_regression import NonlinRegression
 from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.algorithms.step_based.a2c import A2C
@@ -59,8 +55,12 @@ from pyrado.algorithms.step_based.ppo import PPO, PPO2
 from pyrado.algorithms.step_based.sac import SAC
 from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environment_wrappers.adversarial import AdversarialStateWrapper
+from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
+from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
