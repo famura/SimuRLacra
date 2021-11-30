@@ -27,6 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC
+from types import FunctionType
+from typing import Callable, Optional
 
 import numpy as np
 from numpy.core import numeric
@@ -105,7 +107,7 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
 class AdversarialStateWrapper(AdversarialWrapper, Serializable):
     """ " Wrapper to apply adversarial perturbations to the state (used in ARPL)"""
 
-    def __init__(self, wrapped_env: Env, policy: Policy, eps: numeric, phi, torch_observation=None):
+    def __init__(self, wrapped_env: Env, policy: Policy, eps: numeric, phi, torch_observation:Optional[Callable]=None):
         """
         Constructor
 
@@ -116,12 +118,10 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         """
         Serializable._init(self, locals())
         AdversarialWrapper.__init__(self, wrapped_env, policy, eps, phi)
-        if wrapped_env.observe is Env.observe:
-            self.torch_observation = wrapped_env.observe
-            print('USING DEFAULT')
-        else:   
-            assert torch_observation, pyrado.ValueErr(torch_observation)
-            self.torch_observation = torch_observation
+        if not torch_observation:
+            raise pyrado.TypeErr(msg='The observation must be passed as torch')
+        self.torch_obs = torch_observation
+
 
     def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)
@@ -138,8 +138,8 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         return obs, reward, done, info
 
     def get_arpl_grad(self, state_tensor, nonobserved):
-        observation = self.torch_observation(state_tensor).to(dtype=to.get_default_dtype())
-        mean_arpl = self._policy.forward(to.cat((observation, nonobserved)).to(dtype=to.get_default_dtype()))
+        obs = self.torch_obs(state_tensor).to(dtype=to.get_default_dtype())
+        mean_arpl = self._policy.forward(to.cat((obs, nonobserved)).to(dtype=to.get_default_dtype()))
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=0)
         l2_norm_mean.backward()
         state_grad = state_tensor.grad
