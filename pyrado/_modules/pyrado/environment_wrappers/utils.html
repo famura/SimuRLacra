@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyrado.environment_wrappers.utils &mdash; Pyrado 0.7 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../pyrado.html">pyrado</a> &raquo;</li>
+      <li>pyrado.environment_wrappers.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyrado.environment_wrappers.utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Some helpers for wrapped environment chains.</span>
+<span class="sd">A &#39;chain&#39; consists of an environment and multiple EnvWrappers wrapping it.</span>
+<span class="sd">The real environment is always at the end of the chain.</span>
+<span class="sd">The modifying methods in this file assume that all EnvWrapper subclasses use Serializable properly,</span>
+<span class="sd">and that it&#39;s ctor takes the wrapped environment as first positional parameter.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
+
+
+<div class="viewcode-block" id="all_envs"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.all_envs">[docs]</a><span class="k">def</span> <span class="nf">all_envs</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Iterates over the environment chain.</span>
+
+<span class="sd">    :param env: outermost environment of the chain</span>
+<span class="sd">    :return: an iterable over the whole chain from outermost to innermost</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">yield</span> <span class="n">env</span>
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">):</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">wrapped_env</span>
+        <span class="k">yield</span> <span class="n">env</span></div>
+
+
+<div class="viewcode-block" id="typed_env"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.typed_env">[docs]</a><span class="k">def</span> <span class="nf">typed_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">tp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Locate the first element in the chain that is an instance of the given type. Returns `None` if not found.</span>
+
+<span class="sd">    :param env: outermost environment of the chain</span>
+<span class="sd">    :param tp: the environment type to find, see isinstance for possible values.</span>
+<span class="sd">    :return: the first environment with the given type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">penv</span> <span class="ow">in</span> <span class="n">all_envs</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">penv</span><span class="p">,</span> <span class="n">tp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">penv</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="attr_env"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.attr_env">[docs]</a><span class="k">def</span> <span class="nf">attr_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Locate the first element in the chain that has an attribute of the given name.  Returns `None` if not found.</span>
+
+<span class="sd">    :param env: outermost environment of the chain</span>
+<span class="sd">    :param attr: attribute name to search</span>
+<span class="sd">    :return: the first environment with the given attribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">penv</span> <span class="ow">in</span> <span class="n">all_envs</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">penv</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">penv</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="attr_env_get"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.attr_env_get">[docs]</a><span class="k">def</span> <span class="nf">attr_env_get</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Locate the first element in the chain that has an attribute of the given name and return the value of the attribute.</span>
+<span class="sd">    Returns `None` if not found.</span>
+
+<span class="sd">    :param env: outermost environment of the chain</span>
+<span class="sd">    :param attr: attribute name to search</span>
+<span class="sd">    :return: the value of the given attribute, taken from the first environment with the given attribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">penv</span> <span class="ow">in</span> <span class="n">all_envs</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">penv</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># So it&#39;s not here. Go on.</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="inner_env"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.inner_env">[docs]</a><span class="k">def</span> <span class="nf">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the innermost (a.k.a. non-wrapper) environment.</span>
+
+<span class="sd">    :param env: outermost environment of the chain</span>
+<span class="sd">    :return: the innermost environment of the chain</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">):</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">wrapped_env</span>
+    <span class="k">return</span> <span class="n">env</span></div>
+
+
+<span class="k">def</span> <span class="nf">_replace_wrapped_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">new_wrapped</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a copy of the given environment with `wrapped_env` replaced by `new_wrapped`.</span>
+
+<span class="sd">    :param env: environment to be re-wrapped</span>
+<span class="sd">    :param new_wrapped: new wrapper</span>
+<span class="sd">    :return: re-wrapped copy of the environment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)</span>
+    <span class="c1"># Use the copy function provided by Serializable</span>
+    <span class="k">return</span> <span class="n">env</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">=</span><span class="n">new_wrapped</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_recurse_envstack_update</span><span class="p">(</span><span class="n">head_env</span><span class="p">,</span> <span class="n">op</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Goes from the outer most environment to the inner most environment and performs an operation on each of them.</span>
+
+<span class="sd">    :param head_env: outer most environment</span>
+<span class="sd">    :param op: op(env) may return</span>
+<span class="sd">               - a new env to indicate modification and termination</span>
+<span class="sd">               - the same env to indicate termination without change</span>
+<span class="sd">               - None to continue deeper</span>
+<span class="sd">    :return: changed environment chain</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Execute op on head</span>
+    <span class="n">opres</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">head_env</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">opres</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Op changed it, so return changed</span>
+        <span class="k">return</span> <span class="n">opres</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">head_env</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">):</span>
+        <span class="c1"># Recurse deeper</span>
+        <span class="n">recres</span> <span class="o">=</span> <span class="n">_recurse_envstack_update</span><span class="p">(</span><span class="n">head_env</span><span class="o">.</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
+        <span class="c1"># Rebuild current env if needed</span>
+        <span class="k">if</span> <span class="n">recres</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">head_env</span><span class="o">.</span><span class="n">wrapped_env</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_replace_wrapped_env</span><span class="p">(</span><span class="n">head_env</span><span class="p">,</span> <span class="n">recres</span><span class="p">)</span>
+    <span class="c1"># Reached end</span>
+    <span class="k">return</span> <span class="n">head_env</span>
+
+
+<div class="viewcode-block" id="remove_env"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.remove_env">[docs]</a><span class="k">def</span> <span class="nf">remove_env</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">key_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove an `EnvWrapper` of the given type from the environment chain and return the modified chain.</span>
+<span class="sd">    The original stack is unmodified, but untouched parts will be shared.</span>
+<span class="sd">    If the key is not found, nothing will be done and the original chain is returned.</span>
+
+<span class="sd">    :param stack: outermost environment of the chain</span>
+<span class="sd">    :param key_type: type of environment to remove</span>
+<span class="sd">    :return: the modified environment chain</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">key_type</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_remove_op</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">key_type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">env</span><span class="o">.</span><span class="n">wrapped_env</span>
+
+    <span class="k">return</span> <span class="n">_recurse_envstack_update</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">_remove_op</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="insert_env_before"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.insert_env_before">[docs]</a><span class="k">def</span> <span class="nf">insert_env_before</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">key_type</span><span class="p">,</span> <span class="n">insert_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add an EnvWrapper of the given type right before key_type to the environment chain and return the modified chain.</span>
+<span class="sd">    The original stack is unmodified, but untouched parts will be shared. If the key is not found,</span>
+<span class="sd">    nothing will be done and the original chain is returned.</span>
+
+<span class="sd">    :param stack: outermost environment of the chain</span>
+<span class="sd">    :param key_type: Type of environment to insert before. May be None to use the innermost environment</span>
+<span class="sd">    :param insert_type: type of environment to insert</span>
+<span class="sd">    :param args: additional args for insert_type&#39;s ctor</span>
+<span class="sd">    :param kwargs: additional kwargs for insert_type&#39;s ctor</span>
+<span class="sd">    :return: the modified environment chain</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">key_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">key_type</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">insert_type</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_insert_op</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)</span> <span class="k">if</span> <span class="n">key_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">key_type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">insert_type</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_recurse_envstack_update</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">_insert_op</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
