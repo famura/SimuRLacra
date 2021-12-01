@@ -92,7 +92,12 @@ class StateAugmentationWrapper(EnvWrapper, Serializable):
     def offset(self):
         return self.wrapped_env.obs_space.flat_dim
 
-    def set_param(self, params):
+    @property
+    def param(self):
+        return inner_env(self.wrapped_env).domain_param
+
+    @param.setter
+    def param(self, params):
         newp = dict()
         for key, value in zip(self._params, params):
             newp[key] = value.item()

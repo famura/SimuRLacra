@@ -44,6 +44,7 @@ from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.algorithms.episodic.pepg import PEPG
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
+from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.regression.nonlin_regression import NonlinRegression
 from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.algorithms.step_based.a2c import A2C
@@ -54,8 +55,12 @@ from pyrado.algorithms.step_based.ppo import PPO, PPO2
 from pyrado.algorithms.step_based.sac import SAC
 from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environment_wrappers.adversarial import AdversarialStateWrapper
+from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
+from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
@@ -490,3 +495,85 @@ def test_sac_fill_memory_with_trained_policy(ex_dir, env, fill_with_trained_poli
     algo = SAC(ex_dir, env, policy, **sac_hparam)
     algo.policy.param_values += to.tensor([42.0])
     algo.train()
+
+
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
+def test_arpl_wrappers(env):
+    env = StateAugmentationWrapper(env, domain_param=None)
+    assert len(inner_env(env).domain_param) == env.obs_space.flat_dim - env.offset
+    env.reset()
+    env.step(0.0)[0][env.offset:]
+
+
+def _qqsu_torch_observation(state: to.tensor) -> to.tensor:
+        return to.stack([
+            to.sin(state[0]),
+            to.cos(state[0]),
+            to.sin(state[1]),
+            to.cos(state[1]),
+            state[2],
+            state[3]])
+
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
+def test_arpl(ex_dir, env):
+    env = ActNormWrapper(env)
+    env = StateAugmentationWrapper(env, domain_param=None)
+
+    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    policy = FNNPolicy(spec=env.spec, **policy_hparam)
+
+    env = ARPL.wrap_env(
+        env,
+        policy,
+        dynamics=True,
+        process=True,
+        observation=True,
+        halfspan=0.05,
+        dyn_eps=0.07,
+        dyn_phi=0.25,
+        obs_phi=0.1,
+        obs_eps=0.05,
+        proc_phi=0.1,
+        proc_eps=0.03,
+        torch_observation=_qqsu_torch_observation
+    )
+
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    critic_hparam = dict(
+        gamma=0.98,
+        lamda=0.97,
+        num_epoch=5,
+        batch_size=100,
+        standardize_adv=False,
+        lr=0.0001698531,
+    )
+    critic = GAE(vfcn, **critic_hparam)
+
+    # Algorithm
+    subrtn_hparam = dict(
+        max_iter=0,
+        min_steps=3 * env.max_steps,
+        min_rollouts=None,
+        num_workers=12,
+        num_epoch=5,
+        eps_clip=0.08588362499920563,
+        batch_size=150,
+        std_init=0.994955464909253,
+        lr=0.0001558859,
+    )
+    algo_hparam = dict(
+        max_iter=2,
+        steps_num=3 * env.max_steps,
+    )
+    subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
+    algo = ARPL(ex_dir, env, subrtn, policy, subrtn.expl_strat, **algo_hparam)
+
+    algo.train(snapshot_mode="best")
+
+@pytest.mark.parametrize("env", ["default_qqsu", "default_bob"], ids=["qqsu", "bob"], indirect=True)
+def test_arpl_observation(env):
+    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    policy = FNNPolicy(spec=env.spec, **policy_hparam)
+    with pytest.raises(pyrado.TypeErr):
+        AdversarialStateWrapper(env, policy, eps=0.01, phi=0.01, torch_observation=None)
