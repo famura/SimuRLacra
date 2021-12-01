@@ -37,10 +37,8 @@ from pyrado.environment_wrappers.adversarial import (
 )
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environments.sim_base import SimEnv
-from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.sequences import *
 
 
@@ -61,11 +59,7 @@ class ARPL(Algorithm):
         env: Union[SimEnv, StateAugmentationWrapper],
         subrtn: Algorithm,
         policy: Policy,
-        expl_strat: StochasticActionExplStrat,
         max_iter: int,
-        num_rollouts: int = None,
-        steps_num: int = None,
-        apply_dynamics_noise: bool = False,
         logger: StepLogger = None,
     ):
         """
@@ -75,11 +69,7 @@ class ARPL(Algorithm):
         :param env: the environment in which the agent should be trained
         :param subrtn: algorithm which performs the policy / value-function optimization
         :param policy: policy to be updated
-        :param expl_strat: the exploration strategy
         :param max_iter: the maximum number of iterations
-        :param num_rollouts: the number of rollouts to be performed for each update step
-        :param steps_num: the number of steps to be performed for each update step
-        :param apply_dynamics_noise: whether adversarially generated dynamics noise should be applied
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         assert isinstance(subrtn, Algorithm)
@@ -107,7 +97,7 @@ class ARPL(Algorithm):
         halfspan: float = 0.25,
         proc_eps: float = 0.01,
         proc_phi: float = 0.05,
-        torch_observation = None,
+        torch_observation=None,
         obs_eps: float = 0.01,
         obs_phi: float = 0.05,
     ):
@@ -127,7 +117,9 @@ class ARPL(Algorithm):
         """
         # Initialize adversarial wrappers in the correct order
         if dynamics:
-            assert isinstance(env, StateAugmentationWrapper), pyrado.TypeErr(env, given_name='env', expected_type=StateAugmentationWrapper)
+            assert isinstance(env, StateAugmentationWrapper), pyrado.TypeErr(
+                env, given_name="env", expected_type=StateAugmentationWrapper
+            )
             env = AdversarialDynamicsWrapper(env, policy, dyn_eps, dyn_phi, halfspan)
         if process:
             env = AdversarialStateWrapper(env, policy, proc_eps, proc_phi, torch_observation=torch_observation)

@@ -502,17 +502,12 @@ def test_arpl_wrappers(env):
     env = StateAugmentationWrapper(env, domain_param=None)
     assert len(inner_env(env).domain_param) == env.obs_space.flat_dim - env.offset
     env.reset()
-    env.step(0.0)[0][env.offset:]
+    env.step(0.0)[0][env.offset :]
 
 
 def _qqsu_torch_observation(state: to.tensor) -> to.tensor:
-        return to.stack([
-            to.sin(state[0]),
-            to.cos(state[0]),
-            to.sin(state[1]),
-            to.cos(state[1]),
-            state[2],
-            state[3]])
+    return to.stack([to.sin(state[0]), to.cos(state[0]), to.sin(state[1]), to.cos(state[1]), state[2], state[3]])
+
 
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 def test_arpl(ex_dir, env):
@@ -535,7 +530,7 @@ def test_arpl(ex_dir, env):
         obs_eps=0.05,
         proc_phi=0.1,
         proc_eps=0.03,
-        torch_observation=_qqsu_torch_observation
+        torch_observation=_qqsu_torch_observation,
     )
 
     vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
@@ -564,12 +559,12 @@ def test_arpl(ex_dir, env):
     )
     algo_hparam = dict(
         max_iter=2,
-        steps_num=3 * env.max_steps,
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
-    algo = ARPL(ex_dir, env, subrtn, policy, subrtn.expl_strat, **algo_hparam)
+    algo = ARPL(ex_dir, env, subrtn, policy, **algo_hparam)
 
     algo.train(snapshot_mode="best")
+
 
 @pytest.mark.parametrize("env", ["default_qqsu", "default_bob"], ids=["qqsu", "bob"], indirect=True)
 def test_arpl_observation(env):

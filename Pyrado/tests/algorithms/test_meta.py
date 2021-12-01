@@ -409,18 +409,9 @@ def test_arpl(ex_dir, env: SimEnv):
     )
     arpl_hparam = dict(
         max_iter=2,
-        steps_num=23 * env.max_steps,
-        halfspan=0.05,
-        dyn_eps=0.07,
-        dyn_phi=0.25,
-        obs_phi=0.1,
-        obs_eps=0.05,
-        proc_phi=0.1,
-        proc_eps=0.03,
-        torch_observation=True,
     )
     ppo = PPO(ex_dir, env, policy, critic, **algo_hparam)
-    algo = ARPL(ex_dir, env, ppo, policy, ppo.expl_strat, **arpl_hparam)
+    algo = ARPL(ex_dir, env, ppo, policy, **arpl_hparam)
 
     algo.train(snapshot_mode="best")
     assert algo.curr_iter == algo.max_iter

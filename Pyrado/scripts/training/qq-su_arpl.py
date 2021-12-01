@@ -17,14 +17,10 @@ from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
+
 def torch_observation(state: to.tensor) -> to.tensor:
-        return to.stack([
-            to.sin(state[0]),
-            to.cos(state[0]),
-            to.sin(state[1]),
-            to.cos(state[1]),
-            state[2],
-            state[3]])
+    return to.stack([to.sin(state[0]), to.cos(state[0]), to.sin(state[1]), to.cos(state[1]), state[2], state[3]])
+
 
 if __name__ == "__main__":
     # Parse command line arguments
@@ -47,8 +43,6 @@ if __name__ == "__main__":
     policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
 
-        
-
     env = ARPL.wrap_env(
         env,
         policy,
@@ -62,7 +56,7 @@ if __name__ == "__main__":
         obs_eps=0.05,
         proc_phi=0.1,
         proc_eps=0.03,
-        torch_observation=torch_observation
+        torch_observation=torch_observation,
     )
 
     # Critic
@@ -94,10 +88,9 @@ if __name__ == "__main__":
     )
     algo_hparam = dict(
         max_iter=500,
-        steps_num=23 * env.max_steps,
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
-    algo = ARPL(ex_dir, env, subrtn, policy, subrtn.expl_strat, **algo_hparam)
+    algo = ARPL(ex_dir, env, subrtn, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(

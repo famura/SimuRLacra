@@ -31,17 +31,17 @@ from types import FunctionType
 from typing import Callable, Optional
 
 import numpy as np
-from numpy.core import numeric
-import pyrado
-from pyrado.algorithms.base import Algorithm
-from pyrado.environments.base import Env
-from pyrado.policies.base import Policy
 import torch as to
 from init_args_serializer import Serializable
+from numpy.core import numeric
 
+import pyrado
+from pyrado.algorithms.base import Algorithm
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env
+from pyrado.environments.base import Env
+from pyrado.policies.base import Policy
 
 
 class AdversarialWrapper(EnvWrapper, ABC):
@@ -107,7 +107,9 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
 class AdversarialStateWrapper(AdversarialWrapper, Serializable):
     """ " Wrapper to apply adversarial perturbations to the state (used in ARPL)"""
 
-    def __init__(self, wrapped_env: Env, policy: Policy, eps: numeric, phi, torch_observation:Optional[Callable]=None):
+    def __init__(
+        self, wrapped_env: Env, policy: Policy, eps: numeric, phi, torch_observation: Optional[Callable] = None
+    ):
         """
         Constructor
 
@@ -119,9 +121,8 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         Serializable._init(self, locals())
         AdversarialWrapper.__init__(self, wrapped_env, policy, eps, phi)
         if not torch_observation:
-            raise pyrado.TypeErr(msg='The observation must be passed as torch')
+            raise pyrado.TypeErr(msg="The observation must be passed as torch")
         self.torch_obs = torch_observation
-
 
     def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)
