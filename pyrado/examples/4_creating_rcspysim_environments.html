@@ -169,7 +169,7 @@ basic template:</p>
 <span class="k">namespace</span><span class="w"> </span><span class="nn">Rcs</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">ECHelloMichael</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExperimentConfig</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ECHelloMichael</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExperimentConfig</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 
 <span class="k">protected</span><span class="o">:</span><span class="w"></span>
@@ -225,12 +225,12 @@ one of the existing <cite>ISS&lt;NAME&gt;.h</cite> / <cite>ISS&lt;NAME&gt;.cpp</
 setting a custom initial state space, ect.</p>
 <p>We also need to add our new experiment configuration to <cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/CMakeLists.txt</cite></p>
 <div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="s">CORE_SRCS</span>
-    <span class="s">...</span>
-    <span class="s">ECHelloMichael.cpp</span>
-    <span class="s">...</span>
-    <span class="s">initState/ISSHelloMichael.cpp</span>
-    <span class="s">...</span>
-    <span class="p">)</span>
+<span class="w">    </span><span class="s">...</span>
+<span class="w">    </span><span class="s">ECHelloMichael.cpp</span>
+<span class="w">    </span><span class="s">...</span>
+<span class="w">    </span><span class="s">initState/ISSHelloMichael.cpp</span>
+<span class="w">    </span><span class="s">...</span>
+<span class="w">    </span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Part 2: Pyrado</strong></p>
