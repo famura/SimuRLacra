@@ -1,0 +1,131 @@
+
+
+meta
+====
+
+
+
+adr
+---
+
+.. automodule:: pyrado.algorithms.meta.adr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+arpl
+----
+
+.. automodule:: pyrado.algorithms.meta.arpl
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+bayessim
+--------
+
+.. automodule:: pyrado.algorithms.meta.bayessim
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+bayrn
+-----
+
+.. automodule:: pyrado.algorithms.meta.bayrn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+epopt
+-----
+
+.. automodule:: pyrado.algorithms.meta.epopt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+iudr
+----
+
+.. automodule:: pyrado.algorithms.meta.iudr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+npdr
+----
+
+.. automodule:: pyrado.algorithms.meta.npdr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+pddr
+----
+
+.. automodule:: pyrado.algorithms.meta.pddr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+sbi\_base
+---------
+
+.. automodule:: pyrado.algorithms.meta.sbi_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+simopt
+------
+
+.. automodule:: pyrado.algorithms.meta.simopt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+spdr
+----
+
+.. automodule:: pyrado.algorithms.meta.spdr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+spota
+-----
+
+.. automodule:: pyrado.algorithms.meta.spota
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+udr
+---
+
+.. automodule:: pyrado.algorithms.meta.udr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.algorithms.meta
+   :members:
+   :undoc-members:
+   :show-inheritance:
