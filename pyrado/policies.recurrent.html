@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>recurrent &mdash; Pyrado 0.7 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="special" href="policies.special.html" />
+    <link rel="prev" title="feed_forward" href="policies.feed_forward.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">recurrent</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.recurrent.adn">adn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.recurrent.base">base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.recurrent.neural_fields">neural_fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.recurrent.potential_based">potential_based</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.recurrent.rnn">rnn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.recurrent.two_headed_rnn">two_headed_rnn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.recurrent">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>recurrent</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/policies.recurrent.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="recurrent">
+<h1>recurrent<a class="headerlink" href="#recurrent" title="Permalink to this heading"></a></h1>
+<section id="module-pyrado.policies.recurrent.adn">
+<span id="adn"></span><h2>adn<a class="headerlink" href="#module-pyrado.policies.recurrent.adn" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.ADNPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ADNPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">spec:</span> <span class="pre">~pyrado.utils.data_types.EnvSpec,</span> <span class="pre">activation_nonlin:</span> <span class="pre">[typing.Callable,</span> <span class="pre">typing.Sequence[typing.Callable]],</span> <span class="pre">potentials_dyn_fcn:</span> <span class="pre">~typing.Callable,</span> <span class="pre">obs_layer:</span> <span class="pre">[&lt;class</span> <span class="pre">'torch.nn.modules.module.Module'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'pyrado.policies.base.Policy'&gt;]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">tau_init:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">10.0,</span> <span class="pre">tau_learnable:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">kappa_init:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.001,</span> <span class="pre">kappa_learnable:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">capacity_learnable:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">potential_init_learnable:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">init_param_kwargs:</span> <span class="pre">dict</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">use_cuda:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#ADNPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy" title="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">PotentialBasedPolicy</span></code></a></p>
+<p>Activation Dynamic Network (ADN)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The policy’s outputs are a nonlinear function of the potentials. Thus, you have to make sure that the output
+range of that matches the action space of the environment.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] T. Luksch, M. Gineger, M. Mühlig, T. Yoshiike, “Adaptive Movement Sequences and Predictive Decisions based
+on Hierarchical Dynamical Systems”, IROS, 2012</p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>activation_nonlin</strong> – nonlinearity for output layer, highly suggested functions:
+<cite>to.sigmoid</cite> for position <cite>to.tasks</cite>, tanh for velocity tasks</p></li>
+<li><p><strong>potentials_dyn_fcn</strong> – function to compute the derivative of the neurons’ potentials</p></li>
+<li><p><strong>obs_layer</strong> – specify a custom Pytorch Module;
+by default (<cite>None</cite>) a linear layer with biases is used</p></li>
+<li><p><strong>tau_init</strong> – initial value for the shared time constant of the potentials</p></li>
+<li><p><strong>tau_learnable</strong> – flag to determine if the time constant is a learnable parameter or fixed</p></li>
+<li><p><strong>kappa_init</strong> – initial value for the cubic decay</p></li>
+<li><p><strong>kappa_learnable</strong> – flag to determine if cubic decay is a learnable parameter or fixed</p></li>
+<li><p><strong>capacity_learnable</strong> – flag to determine if capacity is a learnable parameter or fixed</p></li>
+<li><p><strong>potential_init_learnable</strong> – flag to determine if the initial potentials are a learnable parameter or fixed</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.ADNPolicy.capacity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">capacity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;]</span></em><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.capacity" title="Permalink to this definition"></a></dt>
+<dd><p>Get the capacity parameter (exists for capacity-based dynamics functions), else return <cite>None</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.ADNPolicy.extra_repr">
+<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#ADNPolicy.extra_repr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.extra_repr" title="Permalink to this definition"></a></dt>
+<dd><p>Set the extra representation of the module</p>
+<p>To print customized extra information, you should re-implement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.ADNPolicy.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#ADNPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.ADNPolicy.init_param">
+<span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#ADNPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.init_param" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.ADNPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'adn'</span></em><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.ADNPolicy.potentials_dot">
+<span class="sig-name descname"><span class="pre">potentials_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">potentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stimuli</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#ADNPolicy.potentials_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.potentials_dot" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the derivative of the neurons’ potentials per time step.
+<span class="math notranslate nohighlight">\(/tau /dot{u} = f(u, s, h)\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>potentials</strong> – current potential values</p></li>
+<li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>time derivative of the potentials</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.pd_capacity_21">
+<span class="sig-name descname"><span class="pre">pd_capacity_21</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#pd_capacity_21"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.pd_capacity_21" title="Permalink to this definition"></a></dt>
+<dd><p>Capacity-based dynamics with 2 stable (<span class="math notranslate nohighlight">\(p=-C\)</span>, <span class="math notranslate nohighlight">\(p=C\)</span>) and 1 unstable fix points (<span class="math notranslate nohighlight">\(p=0\)</span>) for <span class="math notranslate nohighlight">\(s=0\)</span></p>
+<p><span class="math notranslate nohighlight">\(\tau \dot{p} =  s - (h - p) (1 - \frac{(h - p)^2}{C^2})\)</span></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Intended to be used with sigmoid activation function, e.g. for the position tasks in RcsPySim.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
+<li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
+<li><p><strong>h</strong> – resting level, a.k.a. constant offset</p></li>
+<li><p><strong>tau</strong> – time scaling factor, higher values lead to slower changes of the potentials (linear dependency)</p></li>
+<li><p><strong>kwargs</strong> – additional parameters to the potential dynamics</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.pd_capacity_21_abs">
+<span class="sig-name descname"><span class="pre">pd_capacity_21_abs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#pd_capacity_21_abs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.pd_capacity_21_abs" title="Permalink to this definition"></a></dt>
+<dd><p>Capacity-based dynamics with 2 stable (<span class="math notranslate nohighlight">\(p=-C\)</span>, <span class="math notranslate nohighlight">\(p=C\)</span>) and 1 unstable fix points (<span class="math notranslate nohighlight">\(p=0\)</span>) for <span class="math notranslate nohighlight">\(s=0\)</span></p>
+<p><span class="math notranslate nohighlight">\(\tau \dot{p} =  s - (h - p) (1 - \frac{\left| h - p \right|}{C})\)</span></p>
+<p>The “absolute version” of <cite>pd_capacity_21</cite> has a lower magnitude and a lower oder of the resulting polynomial.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Intended to be used with sigmoid activation function, e.g. for the position tasks in RcsPySim.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
+<li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
+<li><p><strong>h</strong> – resting level, a.k.a. constant offset</p></li>
+<li><p><strong>tau</strong> – time scaling factor, higher values lead to slower changes of the potentials (linear dependency)</p></li>
+<li><p><strong>kwargs</strong> – additional parameters to the potential dynamics</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.pd_capacity_32">
+<span class="sig-name descname"><span class="pre">pd_capacity_32</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#pd_capacity_32"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.pd_capacity_32" title="Permalink to this definition"></a></dt>
+<dd><p>Capacity-based dynamics with 3 stable (<span class="math notranslate nohighlight">\(p=-C\)</span>, <span class="math notranslate nohighlight">\(p=0\)</span>, <span class="math notranslate nohighlight">\(p=C\)</span>) and 2 unstable fix points (<span class="math notranslate nohighlight">\(p=-C/2\)</span>, <span class="math notranslate nohighlight">\(p=C/2\)</span>) for <span class="math notranslate nohighlight">\(s=0\)</span></p>
+<p><span class="math notranslate nohighlight">\(\tau \dot{p} =  s - (h - p) (1 - \frac{(h - p)^2}{C^2}) (1 - \frac{(2(h - p))^2}{C^2})\)</span></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Intended to be used with tanh activation function, e.g. for the velocity tasks in RcsPySim.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
+<li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
+<li><p><strong>h</strong> – resting level, a.k.a. constant offset</p></li>
+<li><p><strong>tau</strong> – time scaling factor, higher values lead to slower changes of the potentials (linear dependency)</p></li>
+<li><p><strong>kwargs</strong> – additional parameters to the potential dynamics</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.pd_capacity_32_abs">
+<span class="sig-name descname"><span class="pre">pd_capacity_32_abs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#pd_capacity_32_abs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.pd_capacity_32_abs" title="Permalink to this definition"></a></dt>
+<dd><p>Capacity-based dynamics with 3 stable (<span class="math notranslate nohighlight">\(p=-C\)</span>, <span class="math notranslate nohighlight">\(p=0\)</span>, <span class="math notranslate nohighlight">\(p=C\)</span>) and 2 unstable fix points (<span class="math notranslate nohighlight">\(p=-C/2\)</span>, <span class="math notranslate nohighlight">\(p=C/2\)</span>) for <span class="math notranslate nohighlight">\(s=0\)</span></p>
+<p><span class="math notranslate nohighlight">\(\tau \dot{p} =  \left( s + (h - p) (1 - \frac{\left| (h - p) \right|}{C})
+(1 - \frac{2 \left| (h - p) \right|}{C}) \right)\)</span></p>
+<p>The “absolute version” of <cite>pd_capacity_32</cite> is less skewed due to a lower oder of the resulting polynomial.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Intended to be used with tanh activation function, e.g. for the velocity tasks in RcsPySim.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
+<li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
+<li><p><strong>h</strong> – resting level, a.k.a. constant offset</p></li>
+<li><p><strong>tau</strong> – time scaling factor, higher values lead to slower changes of the potentials (linear dependency)</p></li>
+<li><p><strong>kwargs</strong> – additional parameters to the potential dynamics</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.pd_cubic">
+<span class="sig-name descname"><span class="pre">pd_cubic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#pd_cubic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.pd_cubic" title="Permalink to this definition"></a></dt>
+<dd><p>Basic proportional dynamics with additional cubic decay</p>
+<p><span class="math notranslate nohighlight">\(\tau \dot{p} = s + h - p + \kappa (h - p)^3\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
+<li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
+<li><p><strong>h</strong> – resting level, a.k.a. constant offset</p></li>
+<li><p><strong>tau</strong> – time scaling factor, higher values lead to slower changes of the potentials (linear dependency)</p></li>
+<li><p><strong>kwargs</strong> – additional parameters to the potential dynamics</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.pd_linear">
+<span class="sig-name descname"><span class="pre">pd_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#pd_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.pd_linear" title="Permalink to this definition"></a></dt>
+<dd><p>Basic proportional dynamics</p>
+<p><span class="math notranslate nohighlight">\(\tau \dot{p} = s - p\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
+<li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
+<li><p><strong>h</strong> – resting level, a.k.a. constant offset</p></li>
+<li><p><strong>tau</strong> – time scaling factor, higher values lead to slower changes of the potentials (linear dependency)</p></li>
+<li><p><strong>kwargs</strong> – additional parameters to the potential dynamics</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.policies.recurrent.base">
+<span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.policies.recurrent.base" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RecurrentPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Policy</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for recurrent policies.
+The policy does not store the hidden state on it’s own, so it requires two arguments: (observation, hidden) and
+returns two values: (action, new_hidden).
+The hidden tensor is an 1-dim vector of state variables with unspecified meaning. In the batching case,
+it should be a 2-dim array, where the first dimension is the batch size matching that of the observations.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy.evaluate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_states_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hidden_states'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
+This method makes sure that the gradient is propagated through the hidden state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
+Change this string for value functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy.forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy.hidden_size">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hidden_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.hidden_size" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of hidden state variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy.init_hidden">
+<span class="sig-name descname"><span class="pre">init_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy.init_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.init_hidden" title="Permalink to this definition"></a></dt>
+<dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy.is_recurrent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_recurrent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.is_recurrent" title="Permalink to this definition"></a></dt>
+<dd><p>Bool to signalise it the policy has a recurrent architecture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy.script">
+<span class="sig-name descname"><span class="pre">script</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ScriptModule</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy.script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.script" title="Permalink to this definition"></a></dt>
+<dd><p>Create a ScriptModule from this policy.
+The returned module will always have the signature <cite>action = tm(observation, hidden)</cite>.
+For recurrent networks, it returns a stateful module that keeps the hidden states internally.
+Such modules have a <cite>reset()</cite> method to reset the hidden states.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.StatefulRecurrentNetwork">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StatefulRecurrentNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyrado.policies.recurrent.base.RecurrentPolicy" title="pyrado.policies.recurrent.base.RecurrentPolicy"><span class="pre">RecurrentPolicy</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#StatefulRecurrentNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.StatefulRecurrentNetwork" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>A scripted wrapper for a recurrent neural network that stores the hidden state.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use this for transfer to C++.</p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>net</strong> – non-recurrent network to wrap</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Must not be a script module</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.StatefulRecurrentNetwork.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#StatefulRecurrentNetwork.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.StatefulRecurrentNetwork.input_size">
+<span class="sig-name descname"><span class="pre">input_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.input_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.StatefulRecurrentNetwork.output_size">
+<span class="sig-name descname"><span class="pre">output_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.output_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.StatefulRecurrentNetwork.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#StatefulRecurrentNetwork.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the policy’s internal state.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.default_pack_hidden">
+<span class="sig-name descname"><span class="pre">default_pack_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_recurrent_layers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#default_pack_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.default_pack_hidden" title="Permalink to this definition"></a></dt>
+<dd><p>Pack the hidden state returned by torch.nn.RNNBase subclasses into an 1d state vector.
+This is the reverse operation of default_unpack_hidden.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hidden</strong> – unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size</p></li>
+<li><p><strong>num_recurrent_layers</strong> – number of recurrent layers</p></li>
+<li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>batch_size</strong> – if not none, the result should be 2d, and the first dimension represents parts of a data batch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>packed hidden state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.base.default_unpack_hidden">
+<span class="sig-name descname"><span class="pre">default_unpack_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#default_unpack_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.default_unpack_hidden" title="Permalink to this definition"></a></dt>
+<dd><p>Unpack the flat hidden state vector into the form expected by torch.nn.RNNBase subclasses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hidden</strong> – packed hidden state</p></li>
+<li><p><strong>num_recurrent_layers</strong> – number of recurrent layers</p></li>
+<li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>batch_size</strong> – if not none, hidden is 2d, and the first dimension represents parts of a data batch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.policies.recurrent.neural_fields">
+<span id="neural-fields"></span><h2>neural_fields<a class="headerlink" href="#module-pyrado.policies.recurrent.neural_fields" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.neural_fields.NFPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NFPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec:</span> <span class="pre">~pyrado.utils.data_types.EnvSpec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_layer:</span> <span class="pre">[&lt;class</span> <span class="pre">'torch.nn.modules.module.Module'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'pyrado.policies.base.Policy'&gt;]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation_nonlin:</span> <span class="pre">~typing.Callable</span> <span class="pre">=</span> <span class="pre">&lt;built-in</span> <span class="pre">method</span> <span class="pre">sigmoid</span> <span class="pre">of</span> <span class="pre">type</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mirrored_conv_weights:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_out_channels:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_kernel_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_padding_mode:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'circular'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_init:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_learnable:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa_init:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa_learnable:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">potential_init_learnable:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs:</span> <span class="pre">dict</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/neural_fields.html#NFPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.neural_fields.NFPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy" title="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">PotentialBasedPolicy</span></code></a></p>
+<p>Neural Fields (NF)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The policy’s outputs are a nonlinear function of the potentials. Thus, you have to make sure that the output
+range of that matches the action space of the environment.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] S.-I. Amari “Dynamics of Pattern Formation in Lateral-Inhibition Type Neural Fields”,
+Biological Cybernetics, 1977</p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>hidden_size</strong> – number of neurons with potential</p></li>
+<li><p><strong>obs_layer</strong> – specify a custom PyTorch Module, by default (<cite>None</cite>) a linear layer with biases is used</p></li>
+<li><p><strong>activation_nonlin</strong> – nonlinearity to compute the activations from the potential levels</p></li>
+<li><p><strong>mirrored_conv_weights</strong> – re-use weights for the second half of the kernel to create a “symmetric” kernel</p></li>
+<li><p><strong>conv_out_channels</strong> – number of filter for the 1-dim convolution along the potential-based neurons</p></li>
+<li><p><strong>conv_kernel_size</strong> – size of the kernel for the 1-dim convolution along the potential-based neurons</p></li>
+<li><p><strong>tau_init</strong> – initial value for the shared time constant of the potentials</p></li>
+<li><p><strong>tau_learnable</strong> – flag to determine if the time constant is a learnable parameter or fixed</p></li>
+<li><p><strong>kappa_init</strong> – initial value for the cubic decay, pass 0 (default) to disable cubic decay</p></li>
+<li><p><strong>kappa_learnable</strong> – flag to determine if cubic decay is a learnable parameter or fixed</p></li>
+<li><p><strong>potential_init_learnable</strong> – flag to determine if the initial potentials are a learnable parameter or fixed</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.neural_fields.NFPolicy.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/neural_fields.html#NFPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.neural_fields.NFPolicy.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.neural_fields.NFPolicy.init_param">
+<span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/neural_fields.html#NFPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.neural_fields.NFPolicy.init_param" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.neural_fields.NFPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nf'</span></em><a class="headerlink" href="#pyrado.policies.recurrent.neural_fields.NFPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.neural_fields.NFPolicy.potentials_dot">
+<span class="sig-name descname"><span class="pre">potentials_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">potentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stimuli</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/neural_fields.html#NFPolicy.potentials_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.neural_fields.NFPolicy.potentials_dot" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the derivative of the neurons’ potentials per time step.
+<span class="math notranslate nohighlight">\(/tau /dot{u} = s + h - u + /kappa (h - u)^3,
+/quad /text{with} s = s_{int} + s_{ext} = W*o + /int{w(u, v) f(u) dv}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>potentials</strong> – current potential values</p></li>
+<li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>time derivative of the potentials</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.policies.recurrent.potential_based">
+<span id="potential-based"></span><h2>potential_based<a class="headerlink" href="#module-pyrado.policies.recurrent.potential_based" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PotentialBasedPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">spec:</span> <span class="pre">~pyrado.utils.data_types.EnvSpec,</span> <span class="pre">obs_layer:</span> <span class="pre">[&lt;class</span> <span class="pre">'torch.nn.modules.module.Module'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'pyrado.policies.base.Policy'&gt;],</span> <span class="pre">activation_nonlin:</span> <span class="pre">~typing.Callable,</span> <span class="pre">tau_init:</span> <span class="pre">float,</span> <span class="pre">tau_learnable:</span> <span class="pre">bool,</span> <span class="pre">kappa_init:</span> <span class="pre">float,</span> <span class="pre">kappa_learnable:</span> <span class="pre">bool,</span> <span class="pre">potential_init_learnable:</span> <span class="pre">bool,</span> <span class="pre">use_cuda:</span> <span class="pre">bool,</span> <span class="pre">hidden_size:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.base.RecurrentPolicy" title="pyrado.policies.recurrent.base.RecurrentPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecurrentPolicy</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for policies that work with potential-based neutral networks</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>obs_layer</strong> – specify a custom PyTorch Module, by default (<cite>None</cite>) a linear layer with biases is used</p></li>
+<li><p><strong>activation_nonlin</strong> – nonlinearity to compute the activations from the potential levels</p></li>
+<li><p><strong>tau_init</strong> – initial value for the shared time constant of the potentials</p></li>
+<li><p><strong>tau_learnable</strong> – flag to determine if the time constant is a learnable parameter or fixed</p></li>
+<li><p><strong>kappa_init</strong> – initial value for the cubic decay, pass 0 (default) to disable cubic decay</p></li>
+<li><p><strong>kappa_learnable</strong> – flag to determine if cubic decay is a learnable parameter or fixed</p></li>
+<li><p><strong>potential_init_learnable</strong> – flag to determine if the initial potentials are a learnable parameter or fixed</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+<li><p><strong>hidden_size</strong> – number of neurons with potential, by default <cite>None</cite> which sets the number of hidden neurons
+to the flat number of actions (in order to be compatible with ADNPolicy)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_states_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hidden_states'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
+This method makes sure that the gradient is propagated through the hidden state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
+Change this string for value functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.extra_repr">
+<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.extra_repr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.extra_repr" title="Permalink to this definition"></a></dt>
+<dd><p>Set the extra representation of the module</p>
+<p>To print customized extra information, you should re-implement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.hidden_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hidden_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.hidden_size" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of hidden state variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_hidden">
+<span class="sig-name descname"><span class="pre">init_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.init_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_hidden" title="Permalink to this definition"></a></dt>
+<dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_param">
+<span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_param" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.kappa">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kappa</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.kappa" title="Permalink to this definition"></a></dt>
+<dd><p>Get the cubic decay parameter.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.potentials_dot">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">potentials_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">potentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stimuli</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.potentials_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.potentials_dot" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the derivative of the neurons’ potentials per time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>potentials</strong> – current potential values</p></li>
+<li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>time derivative of the potentials</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.stimuli_external">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stimuli_external</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.stimuli_external" title="Permalink to this definition"></a></dt>
+<dd><p>Get the neurons’ external stimuli, resulting from the current observations.
+This is used for recording during a rollout.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.stimuli_internal">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stimuli_internal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.stimuli_internal" title="Permalink to this definition"></a></dt>
+<dd><p>Get the neurons’ internal stimuli, resulting from the previous activations of the neurons.
+This is used for recording during a rollout.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.tau">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tau</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.tau" title="Permalink to this definition"></a></dt>
+<dd><p>Get the time scale parameter.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.policies.recurrent.rnn">
+<span id="rnn"></span><h2>rnn<a class="headerlink" href="#module-pyrado.policies.recurrent.rnn" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.GRUPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GRUPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">recurrent_net_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#GRUPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.GRUPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase" title="pyrado.policies.recurrent.rnn.RNNPolicyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RNNPolicyBase</span></code></a></p>
+<p>Policy backed by a multi-layer GRU</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>num_recurrent_layers</strong> – number of equally sized hidden layers</p></li>
+<li><p><strong>output_nonlin</strong> – nonlinearity for output layer</p></li>
+<li><p><strong>dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>recurrent_net_kwargs</strong> – any extra kwargs are passed to the recurrent net’s constructor</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.GRUPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gru'</span></em><a class="headerlink" href="#pyrado.policies.recurrent.rnn.GRUPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.GRUPolicy.recurrent_network_type">
+<span class="sig-name descname"><span class="pre">recurrent_network_type</span></span><a class="headerlink" href="#pyrado.policies.recurrent.rnn.GRUPolicy.recurrent_network_type" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">GRU</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.LSTMPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LSTMPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">recurrent_net_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#LSTMPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.LSTMPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase" title="pyrado.policies.recurrent.rnn.RNNPolicyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RNNPolicyBase</span></code></a></p>
+<p>Policy backed by a multi-layer LSTM</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>num_recurrent_layers</strong> – number of equally sized hidden layers</p></li>
+<li><p><strong>output_nonlin</strong> – nonlinearity for output layer</p></li>
+<li><p><strong>dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>recurrent_net_kwargs</strong> – any extra kwargs are passed to the recurrent net’s constructor</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.LSTMPolicy.hidden_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hidden_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.recurrent.rnn.LSTMPolicy.hidden_size" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of hidden state variables.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.LSTMPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'lstm'</span></em><a class="headerlink" href="#pyrado.policies.recurrent.rnn.LSTMPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.LSTMPolicy.recurrent_network_type">
+<span class="sig-name descname"><span class="pre">recurrent_network_type</span></span><a class="headerlink" href="#pyrado.policies.recurrent.rnn.LSTMPolicy.recurrent_network_type" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">LSTM</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RNNPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tanh'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#RNNPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase" title="pyrado.policies.recurrent.rnn.RNNPolicyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RNNPolicyBase</span></code></a></p>
+<p>Policy backed by a multi-layer RNN</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>num_recurrent_layers</strong> – number of equally sized hidden layers</p></li>
+<li><p><strong>hidden_nonlin</strong> – nonlinearity for the hidden rnn layers, either ‘tanh’ or ‘relu’</p></li>
+<li><p><strong>output_nonlin</strong> – nonlinearity for output layer</p></li>
+<li><p><strong>dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rnn'</span></em><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicy.recurrent_network_type">
+<span class="sig-name descname"><span class="pre">recurrent_network_type</span></span><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicy.recurrent_network_type" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">RNN</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicyBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RNNPolicyBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">recurrent_net_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#RNNPolicyBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.base.RecurrentPolicy" title="pyrado.policies.recurrent.base.RecurrentPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecurrentPolicy</span></code></a></p>
+<p>Base class for recurrent policies wrapping torch.nn.RNNBase subclasses</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>num_recurrent_layers</strong> – number of equally sized hidden layers</p></li>
+<li><p><strong>output_nonlin</strong> – nonlinearity for output layer</p></li>
+<li><p><strong>dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>recurrent_net_kwargs</strong> – any extra kwargs are passed to the recurrent net’s constructor</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicyBase.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_states_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hidden_states'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#RNNPolicyBase.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
+This method makes sure that the gradient is propagated through the hidden state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
+Change this string for value functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicyBase.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#RNNPolicyBase.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicyBase.hidden_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hidden_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase.hidden_size" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of hidden state variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicyBase.init_param">
+<span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#RNNPolicyBase.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase.init_param" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicyBase.recurrent_network_type">
+<span class="sig-name descname"><span class="pre">recurrent_network_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase.recurrent_network_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicyBase.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.policies.recurrent.two_headed_rnn">
+<span id="two-headed-rnn"></span><h2>two_headed_rnn<a class="headerlink" href="#module-pyrado.policies.recurrent.two_headed_rnn" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TwoHeadedGRUPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_1_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_2_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_1_output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_2_output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">recurrent_net_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedGRUPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase" title="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoHeadedRNNPolicyBase</span></code></a></p>
+<p>Two-headed policy backed by a multi-layer GRU</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>shared_hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>shared_num_recurrent_layers</strong> – number of recurrent layers</p></li>
+<li><p><strong>head_1_size</strong> – size of the fully connected layer for head 1, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_2_size</strong> – size of the fully connected layer for head 2, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_1_output_nonlin</strong> – nonlinearity for output layer of the first head</p></li>
+<li><p><strong>head_2_output_nonlin</strong> – nonlinearity for output layer of the second head</p></li>
+<li><p><strong>shared_dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'thgru'</span></em><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.recurrent_network_type">
+<span class="sig-name descname"><span class="pre">recurrent_network_type</span></span><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.recurrent_network_type" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">GRU</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TwoHeadedLSTMPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_1_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_2_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_1_output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_2_output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">recurrent_net_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedLSTMPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase" title="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoHeadedRNNPolicyBase</span></code></a></p>
+<p>Two-headed policy backed by a multi-layer LSTM</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>shared_hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>shared_num_recurrent_layers</strong> – number of recurrent layers</p></li>
+<li><p><strong>head_1_size</strong> – size of the fully connected layer for head 1, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_2_size</strong> – size of the fully connected layer for head 2, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_1_output_nonlin</strong> – nonlinearity for output layer of the first head</p></li>
+<li><p><strong>head_2_output_nonlin</strong> – nonlinearity for output layer of the second head</p></li>
+<li><p><strong>shared_dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.hidden_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hidden_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.hidden_size" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of hidden state variables.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'thlstm'</span></em><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.recurrent_network_type">
+<span class="sig-name descname"><span class="pre">recurrent_network_type</span></span><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.recurrent_network_type" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">LSTM</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TwoHeadedRNNPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_hidden_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tanh'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_1_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_2_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_1_output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_2_output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedRNNPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase" title="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoHeadedRNNPolicyBase</span></code></a></p>
+<p>Two-headed policy backed by a multi-layer RNN</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>shared_hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>shared_num_recurrent_layers</strong> – number of recurrent layers</p></li>
+<li><p><strong>shared_hidden_nonlin</strong> – nonlinearity for the shared hidden rnn layers, either ‘tanh’ or ‘relu’</p></li>
+<li><p><strong>head_1_size</strong> – size of the fully connected layer for head 1, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_2_size</strong> – size of the fully connected layer for head 2, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_1_output_nonlin</strong> – nonlinearity for output layer of the first head</p></li>
+<li><p><strong>head_2_output_nonlin</strong> – nonlinearity for output layer of the second head</p></li>
+<li><p><strong>shared_dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'thrnn'</span></em><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy.recurrent_network_type">
+<span class="sig-name descname"><span class="pre">recurrent_network_type</span></span><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy.recurrent_network_type" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">RNN</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TwoHeadedRNNPolicyBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_1_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_2_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_1_output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_2_output_nonlin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_param_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">recurrent_net_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedRNNPolicyBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.TwoHeadedPolicy" title="pyrado.policies.base.TwoHeadedPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoHeadedPolicy</span></code></a>, <a class="reference internal" href="#pyrado.policies.recurrent.base.RecurrentPolicy" title="pyrado.policies.recurrent.base.RecurrentPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecurrentPolicy</span></code></a></p>
+<p>Base class for recurrent policies, which are wrapping torch.nn.RNNBase, and have a common body and two heads that
+have a separate last layer</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>shared_hidden_size</strong> – size of the hidden layers (all equal)</p></li>
+<li><p><strong>shared_num_recurrent_layers</strong> – number of recurrent layers</p></li>
+<li><p><strong>head_1_size</strong> – size of the fully connected layer for head 1, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_2_size</strong> – size of the fully connected layer for head 2, if <cite>None</cite> this is set to the action space dim</p></li>
+<li><p><strong>head_1_output_nonlin</strong> – nonlinearity for output layer of the first head</p></li>
+<li><p><strong>head_2_output_nonlin</strong> – nonlinearity for output layer of the second head</p></li>
+<li><p><strong>shared_dropout</strong> – dropout probability, default = 0 deactivates dropout</p></li>
+<li><p><strong>init_param_kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_states_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hidden_states'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedRNNPolicyBase.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
+The default implementation simply calls <cite>forward()</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
+Defaults to ‘hidden_states’. Change for value functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedRNNPolicyBase.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.hidden_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hidden_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.hidden_size" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of hidden state variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.init_param">
+<span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedRNNPolicyBase.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.init_param" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.recurrent_network_type">
+<span class="sig-name descname"><span class="pre">recurrent_network_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.recurrent_network_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.policies.recurrent">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.policies.recurrent" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="policies.feed_forward.html" class="btn btn-neutral float-left" title="feed_forward" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="policies.special.html" class="btn btn-neutral float-right" title="special" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
