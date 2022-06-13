@@ -66,7 +66,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.action_discrete">action_discrete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.action_noise">action_noise</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.action_normalization">action_normalization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#adversarial">adversarial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.adversarial">adversarial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.base">base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.domain_randomization">domain_randomization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.downsampling">downsampling</a></li>
@@ -250,8 +250,179 @@ This noise is independent for the potentially applied action-based exploration s
 </dd></dl>
 
 </section>
-<section id="adversarial">
-<h2>adversarial<a class="headerlink" href="#adversarial" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.environment_wrappers.adversarial">
+<span id="adversarial"></span><h2>adversarial<a class="headerlink" href="#module-pyrado.environment_wrappers.adversarial" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AdversarialDynamicsWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialDynamicsWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>” Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environemnt to be wrapped</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>eps</strong> – magnitude of perturbation</p></li>
+<li><p><strong>phi</strong> – probability of perturbation</p></li>
+<li><p><strong>width</strong> – width of distribution to sample from</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.get_arpl_grad">
+<span class="sig-name descname"><span class="pre">get_arpl_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialDynamicsWrapper.get_arpl_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.get_arpl_grad" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.re_adv">
+<span class="sig-name descname"><span class="pre">re_adv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialDynamicsWrapper.re_adv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.re_adv" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialDynamicsWrapper.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_state</strong> – set explicit initial state if not None</p></li>
+<li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return obs</dt>
+<dd class="field-even"><p>initial observation of the state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialDynamicsWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.step" title="Permalink to this definition"></a></dt>
+<dd><p>Perform one time step of the simulation. When a terminal condition is met, the reset function is called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
+</dd>
+<dt class="field-even">Return tuple of obs, reward, done, and info</dt>
+<dd class="field-even"><p>obs : current observation of the environment
+reward: reward depending on the selected reward function
+done: indicates whether the episode has ended
+env_info: contains diagnostic information about the environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AdversarialObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialObservationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>” Wrapper to apply adversarial perturbations to the observations (used in ARPL)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to be wrapped</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>eps</strong> – magnitude of perturbation</p></li>
+<li><p><strong>phi</strong> – probability of perturbation</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper.get_arpl_grad">
+<span class="sig-name descname"><span class="pre">get_arpl_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialObservationWrapper.get_arpl_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper.get_arpl_grad" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialObservationWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper.step" title="Permalink to this definition"></a></dt>
+<dd><p>Perform one time step of the simulation. When a terminal condition is met, the reset function is called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
+</dd>
+<dt class="field-even">Return tuple of obs, reward, done, and info</dt>
+<dd class="field-even"><p>obs : current observation of the environment
+reward: reward depending on the selected reward function
+done: indicates whether the episode has ended
+env_info: contains diagnostic information about the environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialStateWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AdversarialStateWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env:</span> <span class="pre">~pyrado.environments.base.Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy:</span> <span class="pre">~pyrado.policies.base.Policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps:</span> <span class="pre">&lt;module</span> <span class="pre">'numpy.core.numeric'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/numpy/core/numeric.py'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">torch_observation:</span> <span class="pre">~typing.Optional[~typing.Callable]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialStateWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialStateWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>” Wrapper to apply adversarial perturbations to the state (used in ARPL)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_env</strong> – environment to be wrapped</p></li>
+<li><p><strong>policy</strong> – policy to be updated</p></li>
+<li><p><strong>eps</strong> – magnitude of perturbation</p></li>
+<li><p><strong>phi</strong> – probability of perturbation</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialStateWrapper.get_arpl_grad">
+<span class="sig-name descname"><span class="pre">get_arpl_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonobserved</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialStateWrapper.get_arpl_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialStateWrapper.get_arpl_grad" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialStateWrapper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialStateWrapper.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialStateWrapper.step" title="Permalink to this definition"></a></dt>
+<dd><p>Perform one time step of the simulation. When a terminal condition is met, the reset function is called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
+</dd>
+<dt class="field-even">Return tuple of obs, reward, done, and info</dt>
+<dd class="field-even"><p>obs : current observation of the environment
+reward: reward depending on the selected reward function
+done: indicates whether the episode has ended
+env_info: contains diagnostic information about the environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AdversarialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for adversarial wrappers (used in ARPL)</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wrapped_env</strong> – environment to wrap</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialWrapper.decide_apply">
+<span class="sig-name descname"><span class="pre">decide_apply</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialWrapper.decide_apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper.decide_apply" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialWrapper.phi">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">phi</span></span><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper.phi" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialWrapper.quadratic_loss">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quadratic_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialWrapper.quadratic_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper.quadratic_loss" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-pyrado.environment_wrappers.base">
 <span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.environment_wrappers.base" title="Permalink to this heading"></a></h2>

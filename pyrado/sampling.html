@@ -101,7 +101,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">sampling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.bootstrapping">bootstrapping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cvar-sampler">cvar_sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.cvar_sampler">cvar_sampler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.data_format">data_format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.hyper_sphere">hyper_sphere</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.parallel_evaluation">parallel_evaluation</a></li>
@@ -199,8 +199,91 @@ Other estimates of the bias-correction factor than stat_emp possible, see [4].</
 </dd></dl>
 
 </section>
-<section id="cvar-sampler">
-<h2>cvar_sampler<a class="headerlink" href="#cvar-sampler" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.sampling.cvar_sampler">
+<span id="cvar-sampler"></span><h2>cvar_sampler<a class="headerlink" href="#module-pyrado.sampling.cvar_sampler" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.sampling.cvar_sampler.CVaRSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CVaRSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerBase</span></code></a>, <a class="reference internal" href="logger.html#pyrado.logger.step.LoggerAware" title="pyrado.logger.step.LoggerAware"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerAware</span></code></a></p>
+<p>Samples rollouts to optimize the CVaR of the discounted return.
+This is done by sampling more rollouts, and then only using the epsilon-qunatile of them.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrapped_sampler</strong> – the inner sampler used to sample the full data set</p></li>
+<li><p><strong>epsilon</strong> – quantile of rollouts that will be kept</p></li>
+<li><p><strong>gamma</strong> – discount factor to compute the discounted return, default is 1 (no discount)</p></li>
+<li><p><strong>min_rollouts</strong> – minimum number of complete rollouts to sample</p></li>
+<li><p><strong>min_steps</strong> – minimum total number of steps to sample</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.sampling.cvar_sampler.CVaRSampler.reinit">
+<span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler.reinit" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</p>
+<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy,
+they will not automatically propagate to all processes. This method exists as a workaround; call it to
+force a reinitialization of environment and policy in all subprocesses.</p>
+<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between
+sampling runs, the sample() method takes care of this on it’s own.</p>
+<p>You can use the env and policy parameters to completely replace the stored environment or policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – new environment to use, or None to keep the old one</p></li>
+<li><p><strong>policy</strong> – new policy to use, or None to keep the old one</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.sampling.cvar_sampler.CVaRSampler.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a list of rollouts. This method works exactly as specified in the class description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>sampled rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.sampling.cvar_sampler.CVaRSampler.set_min_count">
+<span class="sig-name descname"><span class="pre">set_min_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_rollouts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler.set_min_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler.set_min_count" title="Permalink to this definition"></a></dt>
+<dd><p>Adapt the sampling boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_rollouts</strong> – minimum number of complete rollouts to sample</p></li>
+<li><p><strong>min_steps</strong> – minimum total number of steps to sample</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.sampling.cvar_sampler.select_cvar">
+<span class="sig-name descname"><span class="pre">select_cvar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#select_cvar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.select_cvar" title="Permalink to this definition"></a></dt>
+<dd><p>Select a subset of rollouts so that their mean discounted return is the CVaR(eps) of the full rollout set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollouts</strong> – list of rollouts</p></li>
+<li><p><strong>epsilon</strong> – chosen return quantile</p></li>
+<li><p><strong>gamma</strong> – discount factor to compute the discounted return, default is 1 (no discount)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of selected rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-pyrado.sampling.data_format">
 <span id="data-format"></span><h2>data_format<a class="headerlink" href="#module-pyrado.sampling.data_format" title="Permalink to this heading"></a></h2>
