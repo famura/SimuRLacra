@@ -382,25 +382,8 @@ garbage collected or when the program exits.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'human'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.render" title="Permalink to this definition"></a></dt>
-<dd><p>Renders the environment.
-The set of supported modes varies per environment (some environments do not support rendering).
-By convention, if mode is:
-human: render to the current display or terminal and return nothing. Usually for human consumption.
-rgb_array: return an numpy.ndarray with shape (x, y, 3), representing RGB values for an x-by-y pixel image,</p>
-<blockquote>
-<div><p>suitable for turning into a video.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>ansi: return a string (str) or StringIO.StringIO containing a terminal-style text representation.</dt><dd><p>The text can include newlines and ANSI escape sequences (e.g. for colors).</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mode</strong> – the mode to render with (currently ignored until other modes besides human are implemented)</p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">RenderFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">RenderFrame</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.render" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.reset">
