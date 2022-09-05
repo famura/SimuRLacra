@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyrado.algorithms.meta.iudr &mdash; Pyrado 0.7 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+      <li>pyrado.algorithms.meta.iudr</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyrado.algorithms.meta.iudr</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.stopping_criteria.rollout_based_criteria</span> <span class="kn">import</span> <span class="n">MinReturnStoppingCriterion</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">RolloutSavingWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">SelfPacedDomainParam</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span>
+
+
+<div class="viewcode-block" id="IUDR"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.iudr.IUDR">[docs]</a><span class="k">class</span> <span class="nc">IUDR</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Incremental Uniform Domain Randomization (IUDR).</span>
+
+<span class="sd">    This is an ablation of SPDR in the sense that the optimization is omitted and the contextual distribution is naively</span>
+<span class="sd">    updated in fixed steps, disregarding the performance information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;iudr&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">DomainRandWrapper</span><span class="p">,</span>
+        <span class="n">subroutine</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">performance_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">param_adjustment_portion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env: environment wrapped in a `DomainRandWrapper`</span>
+<span class="sd">        :param subroutine: algorithm which performs the policy/value-function optimization; note that this algorithm</span>
+<span class="sd">                           must be capable of learning a sufficient policy in its maximum number of iterations</span>
+<span class="sd">        :param max_iter: iterations of the IUDR algorithm (not for the subroutine); changing the domain parameter</span>
+<span class="sd">                         distribution is done by linear interpolation over this many iterations</span>
+<span class="sd">        :param performance_threshold: lower bound for the performance that has to be reached until the domain parameter</span>
+<span class="sd">                                      randomization is changed</span>
+<span class="sd">        :param param_adjustment_portion: what portion of the IUDR iterations should be spent on adjusting the domain</span>
+<span class="sd">                                         parameter distributions; defaults to `90%`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subroutine</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subroutine</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Algorithm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">subroutine</span><span class="p">,</span> <span class="s2">&quot;sampler&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;The subroutine must have a sampler attribute!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">DomainRandWrapper</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DomainRandWrapper</span><span class="p">)</span>
+
+        <span class="c1"># Call Algorithm&#39;s constructor with the subroutine&#39;s properties</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subroutine</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">subroutine</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">subroutine</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span> <span class="o">=</span> <span class="n">subroutine</span>
+        <span class="c1"># Wrap the sampler with a rollout saving wrapper for the stopping criterion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">stopping_criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">stopping_criterion</span> <span class="o">|</span> <span class="n">MinReturnStoppingCriterion</span><span class="p">(</span>
+            <span class="n">return_threshold</span><span class="o">=</span><span class="n">performance_threshold</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_performance_threshold</span> <span class="o">=</span> <span class="n">performance_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_param_adjustment_scale</span> <span class="o">=</span> <span class="n">param_adjustment_portion</span> <span class="o">*</span> <span class="n">max_iter</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">domain_params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">SelfPacedDomainParam</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">param</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;randomizer contains more than one spl param&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># Forward to subroutine</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
+
+<div class="viewcode-block" id="IUDR.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.iudr.IUDR.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform a step of IUDR. This includes training the subroutine and updating the context distribution accordingly.</span>
+<span class="sd">        For a description of the parameters see `pyrado.algorithms.base.Algorithm.step`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_a_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">param_b_idx</span><span class="p">,</span> <span class="n">param_b_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;context cov for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">--</span><span class="si">{</span><span class="n">param_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">context_cov</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_b_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;context cov_chol for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">--</span><span class="si">{</span><span class="n">param_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">context_cov_chol</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_b_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">param_a_name</span> <span class="o">==</span> <span class="n">param_b_name</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;context mean for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">context_mean</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                    <span class="p">)</span>
+                    <span class="k">break</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="c1"># Also reset the rollouts to not stop too early because the stopping criterion is fulfilled</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">reset_rollouts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
+
+        <span class="c1"># Prevents the parameters from overshooting the target</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_adjustment_scale</span><span class="p">:</span>
+            <span class="n">context_mean_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">target_mean</span>
+            <span class="n">context_cov_chol_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">target_cov_chol</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">context_mean_new</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">context_mean</span>
+                <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">target_mean</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">init_mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_adjustment_scale</span>
+            <span class="p">)</span>
+            <span class="n">context_cov_chol_new</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">context_cov_chol</span>
+                <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">target_cov_chol</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">init_cov_chol</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_adjustment_scale</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="s2">&quot;context_mean&quot;</span><span class="p">,</span> <span class="n">context_mean_new</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="s2">&quot;context_cov_chol&quot;</span><span class="p">,</span> <span class="n">context_cov_chol_new</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IUDR.reset"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.iudr.IUDR.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Forward to subroutine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IUDR.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.iudr.IUDR.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
