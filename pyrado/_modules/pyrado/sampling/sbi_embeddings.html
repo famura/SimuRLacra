@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyrado.sampling.sbi_embeddings &mdash; Pyrado 0.7 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../pyrado.html">pyrado</a> &raquo;</li>
+      <li>pyrado.sampling.sbi_embeddings</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyrado.sampling.sbi_embeddings</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span> <span class="nn">dtw</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn.utils</span> <span class="kn">import</span> <span class="n">convert_parameters</span> <span class="k">as</span> <span class="n">cp</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.initialization</span> <span class="kn">import</span> <span class="n">init_param</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">merge_dicts</span>
+
+
+<span class="c1"># class SingleTensorDataset(Dataset[to.Tensor]):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Custom subclass of the`Dataset` class wrapping a single PyTorch tensor</span>
+<span class="c1">#</span>
+<span class="c1">#     .. note::</span>
+<span class="c1">#         Use in combination with `collate_fn=lambda x: x` in the `DataLoader` constructor.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     tensor: to.Tensor</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, tensor: to.Tensor) -&gt; None:</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Constructor</span>
+<span class="c1">#</span>
+<span class="c1">#         :param tensor: input tensor of at least 2 dimensions</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         if not isinstance(tensor, to.Tensor):</span>
+<span class="c1">#             raise pyrado.TypeErr(given=tensor, expected_type=to.Tensor)</span>
+<span class="c1">#         if not tensor.ndim == 4:</span>
+<span class="c1">#             raise pyrado.ShapeErr(</span>
+<span class="c1">#                 msg=f&quot;The input tensor must at have exactly 4 dimensions, but its shape is {tensor.shape}!&quot;</span>
+<span class="c1">#             )</span>
+<span class="c1">#         self.tensor = tensor.reshape(-1, tensor.shape[2], tensor.shape[3])</span>
+<span class="c1">#</span>
+<span class="c1">#     def __getitem__(self, idx: int):</span>
+<span class="c1">#         &quot;&quot;&quot; Get a slice though the 1-st dimension, i.e. the combined batch and rollout dimension. &quot;&quot;&quot;</span>
+<span class="c1">#         return self.tensor[idx]</span>
+<span class="c1">#</span>
+<span class="c1">#     def __len__(self):</span>
+<span class="c1">#         &quot;&quot;&quot; Get the length of the data set, i.e. batch_size * num_rollouts. &quot;&quot;&quot;</span>
+<span class="c1">#         return self.tensor.shape[0]</span>
+
+
+<div class="viewcode-block" id="Embedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.Embedding">[docs]</a><span class="k">class</span> <span class="nc">Embedding</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for all embeddings used for simulation-based inference with time series data</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The features of each rollout are concatenated, and since the inference procedure requires a consistent size of</span>
+<span class="sd">        the inputs, it is necessary that all rollouts yield the same number of features, i.e. have equal length!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">requires_target_domain_data</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+        <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param spec: environment specification</span>
+<span class="sd">        :param dim_data: number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the</span>
+<span class="sd">                         states and action spaces&#39; flat dimensions. This number is doubled if the embedding</span>
+<span class="sd">                         target domain data.</span>
+<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
+<span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_data</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">dim_data</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">dim_data</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">downsampling_factor</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">downsampling_factor</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span> <span class="o">=</span> <span class="n">spec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dim_data_orig</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dim_data</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_target_domain_data</span> <span class="k">else</span> <span class="n">dim_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downsampling_factor</span> <span class="o">=</span> <span class="n">downsampling_factor</span>
+
+        <span class="c1"># Optionally create a mask for filtering the states and actions that are passed to sbi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">state_mask_labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">act_mask_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">state_mask_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">state_data_mask</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">state_mask_labels</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>  <span class="c1"># to select the states from the joint data</span>
+                    <span class="p">[</span><span class="n">state_data_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state_data_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">act_mask_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">act_data_mask</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">act_mask_labels</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>  <span class="c1"># to select the states from the joint data</span>
+                    <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">),</span> <span class="n">act_data_mask</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">act_data_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">mask</span> <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="p">[</span><span class="n">state_data_mask</span><span class="p">,</span> <span class="n">act_data_mask</span><span class="p">]])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span><span class="p">)</span> <span class="o">!=</span> <span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="o">+</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                    <span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="o">+</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,)</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Manage device</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">use_cuda</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+        <span class="k">elif</span> <span class="n">use_cuda</span> <span class="ow">and</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
+        <span class="k">elif</span> <span class="n">use_cuda</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Tried to run on CUDA, but it is not available. Falling back to CPU.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the dimension of the embeddings output, i.e. its feature dimension.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the device (CPU or GPU) on which the embedding is stored.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
+
+<div class="viewcode-block" id="Embedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.Embedding.summary_statistic">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="Embedding.pack"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.Embedding.pack">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reshape the data such that the shape is [batch_dim, num_rollouts, data_points_flattened].</span>
+
+<span class="sd">        :param data: un-packed a.k.a. un-flattened data</span>
+<span class="sd">        :return: packed a.k.a. flattened data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># The data is not batched, and we have one target domain rollouts which is un-flattened</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># The data is not batched, but we have multiple target domain rollouts which are un-flattened</span>
+            <span class="n">num_rollouts</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="c1"># The data is batched, and we have multiple target domain rollouts</span>
+            <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_rollouts</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The data must have either 2, 3, or 4 dimensions, not </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Embedding.unpack"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.Embedding.unpack">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">dim_data_orig</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reshape the data such that the shape is [batch_dim, num_rollouts, len_time_series, dim_data].</span>
+
+<span class="sd">        :param data: packed a.k.a. flattened data</span>
+<span class="sd">        :param dim_data_orig: dimension of the original data</span>
+<span class="sd">        :return: un-pack a.k.a. un-flattened data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The data must have exactly 3 dimensions, but is of shape </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">! Check if packed before &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;unpacking. This error can also occur if the simulator is not batched. Either enable it to process &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;batches of domain parameters or implement a 2-dim case of pack() and unpack().&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_rollouts</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># packing is designed to ensure this</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim_data_orig</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data tensor must have exactly 4 dimensions after unpacking!&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Embedding.forward_one_batch"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.Embedding.forward_one_batch">[docs]</a>    <span class="k">def</span> <span class="nf">forward_one_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterate over all rollouts and compute the features for each rollout separately, then average the features</span>
+<span class="sd">        over the rollouts.</span>
+
+<span class="sd">        :param data_batch: data batch of shape [num_rollouts, len_time_series, dim_data]</span>
+<span class="sd">        :return: concatenation of the features for each rollout</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">summary_statistic</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data_batch</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Embedding.forward"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.Embedding.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transforms rollouts into the observations used for likelihood-free inference.</span>
+<span class="sd">        Currently a state-representation as well as state-action summary-statistics are available.</span>
+
+<span class="sd">        :param data: packed data of shape [batch_size, num_rollouts, len_time_series, dim_data]</span>
+<span class="sd">        :return: features of the data extracted from the embedding of shape [[batch_size, num_rollouts * dim_feat]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+
+        <span class="c1"># Bring the data back into the un-flattened form of shape [batch_size, num_rollouts, len_time_series, dim_data]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">Embedding</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim_data_orig</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsampling_factor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">::</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsampling_factor</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># Iterate over all data batches computing the features from the data</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_one_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Check the shape</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_output</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_output</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<div class="viewcode-block" id="LastStepEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.LastStepEmbedding">[docs]</a><span class="k">class</span> <span class="nc">LastStepEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embedding for simulation-based inference with time series data which selects the last state of the rollouts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lsemb&quot;</span>
+    <span class="n">requires_target_domain_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
+
+<div class="viewcode-block" id="LastStepEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.LastStepEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the last state of the rollout as a vector.</span>
+
+<span class="sd">        :param data: states and actions of a rollout or segment to be transformed for inference</span>
+<span class="sd">        :return: last states as a vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">last_state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">last_state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">last_state</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="AllStepsEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding">[docs]</a><span class="k">class</span> <span class="nc">AllStepsEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embedding for simulation-based inference with time series data which computes the same features of the rollouts</span>
+<span class="sd">    states and actions as done in [1]</span>
+
+<span class="sd">    [1] F. Ramos, R.C. Possas, D. Fox, &quot;BayesSim: adaptive domain randomization via probabilistic inference for</span>
+<span class="sd">        robotics simulators&quot;, RSS, 2019</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;asemb&quot;</span>
+    <span class="n">requires_target_domain_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+        <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">len_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param spec: environment specification</span>
+<span class="sd">        :param dim_data: number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the</span>
+<span class="sd">                         state and action spaces&#39; flat dimensions. This number is doubled if the embedding</span>
+<span class="sd">                         target domain data.</span>
+<span class="sd">        :param len_rollouts: number of time steps per rollout without considering a potential downsampling later</span>
+<span class="sd">                             (must be the same for all rollouts)</span>
+<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
+<span class="sd">                                    base class before calling `summary_statistic()`</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
+<span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">len_rollouts</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">state_mask_labels</span><span class="p">,</span> <span class="n">act_mask_labels</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">=</span> <span class="p">(</span><span class="n">len_rollouts</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">downsampling_factor</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span>
+
+<div class="viewcode-block" id="AllStepsEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the full states of the rollout as a vector i.e.</span>
+<span class="sd">            the time-steps and state dimension are flattend into one dimension.</span>
+
+<span class="sd">        :param data: states and actions of a rollout or segment to be transformed for inference</span>
+<span class="sd">        :return: all states as a flattened vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data tensor needs to contain at least two samples!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract the states, and compute the deltas</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">states</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DeltaStepsEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding">[docs]</a><span class="k">class</span> <span class="nc">DeltaStepsEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embedding for simulation-based inference with time series data which returns the change in the states between</span>
+<span class="sd">    consecutive time steps of the rollouts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dsemb&quot;</span>
+    <span class="n">requires_target_domain_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+        <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">len_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param spec: environment specification</span>
+<span class="sd">        :param dim_data: number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the</span>
+<span class="sd">                         state and action spaces&#39; flat dimensions. This number is doubled if the embedding</span>
+<span class="sd">                         target domain data.</span>
+<span class="sd">        :param len_rollouts: number of time steps per rollout without considering a potential downsampling later</span>
+<span class="sd">                             (must be the same for all rollouts)</span>
+<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
+<span class="sd">                                    base class before calling `summary_statistic()`</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
+<span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">len_rollouts</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">state_mask_labels</span><span class="p">,</span> <span class="n">act_mask_labels</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">=</span> <span class="p">(</span><span class="n">len_rollouts</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">downsampling_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
+
+<div class="viewcode-block" id="DeltaStepsEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the last states of the rollout as a vector.</span>
+
+<span class="sd">        :param data: states and actions of a rollout or segment to be transformed for inference</span>
+<span class="sd">        :return: all states as a flattened vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data tensor needs to contain at least two samples!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract the states, and compute the deltas</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
+
+        <span class="n">states_diff</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">states</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">states_diff</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BayesSimEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding">[docs]</a><span class="k">class</span> <span class="nc">BayesSimEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embedding for simulation-based inference with time series data which computes the same features of the rollouts</span>
+<span class="sd">    states and actions as done in [1]</span>
+
+<span class="sd">    [1] F. Ramos, R.C. Possas, D. Fox, &quot;BayesSim: adaptive domain randomization via probabilistic inference for</span>
+<span class="sd">        robotics simulators&quot;, RSS, 2019</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bsemb&quot;</span>
+    <span class="n">requires_target_domain_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">state_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">act_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">act_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span>
+        <span class="k">return</span> <span class="n">state_dim</span> <span class="o">*</span> <span class="n">act_dim</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">state_dim</span>
+
+<div class="viewcode-block" id="BayesSimEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computing summary statistics based on approach in [1], see eq. (22).</span>
+<span class="sd">        This method guarantees output which has the same size for every trajectory.</span>
+
+<span class="sd">        [1] F. Ramos, R.C. Possas, D. Fox, &quot;BayesSim: adaptive domain randomization via probabilistic inference for</span>
+<span class="sd">            robotics simulators&quot;, RSS, 2019</span>
+
+<span class="sd">        :param data: states and actions of a rollout or segment to be transformed for inference</span>
+<span class="sd">        :return: summary statistics of the rollout</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data tensor needs to contain at least two samples!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract the states and actions from the data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span><span class="p">]</span>  <span class="c1"># cut off one act due to using the delta state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="p">:]</span>  <span class="c1"># cut off one act due to using the delta state</span>
+
+        <span class="c1"># Compute the statistics</span>
+        <span class="n">state_diff</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">state</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">act_state_dot_prod</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ij,ik-&gt;jk&quot;</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">state_diff</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mean_state_diff</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">state_diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">var_state_diff</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">mean_state_diff</span> <span class="o">-</span> <span class="n">state_diff</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Combine all the statistics</span>
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">act_state_dot_prod</span><span class="p">,</span> <span class="n">mean_state_diff</span><span class="p">,</span> <span class="n">var_state_diff</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RNNEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding">[docs]</a><span class="k">class</span> <span class="nc">RNNEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embedding for simulation-based inference with time series data which uses an recurrent neural network, e.g. RNN,</span>
+<span class="sd">    LSTM, or GRU, to compute features of the rollouts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rnnemb&quot;</span>
+    <span class="n">requires_target_domain_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+        <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_recurrent_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">recurrent_network_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">RNN</span><span class="p">,</span>
+        <span class="n">only_last_output</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">len_rollouts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_nonlin</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">recurrent_net_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param spec: environment specification</span>
+<span class="sd">        :param dim_data: number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the</span>
+<span class="sd">                         state and action spaces&#39; flat dimensions. This number is doubled if the embedding</span>
+<span class="sd">                         target domain data.</span>
+<span class="sd">        :param hidden_size: size of the hidden layers (all equal)</span>
+<span class="sd">        :param num_recurrent_layers: number of equally sized hidden layers</span>
+<span class="sd">        :param recurrent_network_type: PyTorch recurrent network class, e.g. `nn.RNN`, `nn.LSTM`, or `nn.GRU`</span>
+<span class="sd">        :param output_size: size of the features at every time step, which are eventually reshaped into a vector</span>
+<span class="sd">        :param only_last_output: if `True`, only the last output of the network is used as a feature for sbi, else</span>
+<span class="sd">                                 there will be an output every `downsampling_factor` time steps. Moreover, if `True` the</span>
+<span class="sd">                                 constructor does not need to know how long the rollouts are.</span>
+<span class="sd">        :param len_rollouts: number of time steps per rollout without considering a potential downsampling later</span>
+<span class="sd">                             (must be the same for all rollouts)</span>
+<span class="sd">        :param output_nonlin: nonlinearity for output layer</span>
+<span class="sd">        :param dropout: dropout probability, default = 0 deactivates dropout</span>
+<span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
+<span class="sd">        :param recurrent_net_kwargs: any extra kwargs are passed to the recurrent net&#39;s constructor</span>
+<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
+<span class="sd">                                    base class before calling `summary_statistic()`</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
+<span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">state_mask_labels</span><span class="p">,</span> <span class="n">act_mask_labels</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+
+        <span class="c1"># Check the time sequence length if necessary</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">only_last_output</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">len_rollouts</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">=</span> <span class="n">len_rollouts</span> <span class="o">//</span> <span class="n">downsampling_factor</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># use to signal only_last_output == True</span>
+
+        <span class="k">if</span> <span class="n">recurrent_network_type</span> <span class="o">==</span> <span class="n">nn</span><span class="o">.</span><span class="n">RNN</span><span class="p">:</span>
+            <span class="n">recurrent_net_kwargs</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="nb">dict</span><span class="p">(</span><span class="n">nonlinearity</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">),</span> <span class="n">recurrent_net_kwargs</span><span class="p">])</span>
+
+        <span class="c1"># Create the RNN layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span> <span class="o">=</span> <span class="n">recurrent_network_type</span><span class="p">(</span>
+            <span class="n">input_size</span><span class="o">=</span><span class="n">dim_data</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span><span class="p">),</span>  <span class="c1"># includes actions</span>
+            <span class="n">hidden_size</span><span class="o">=</span><span class="n">hidden_size</span><span class="p">,</span>
+            <span class="n">num_layers</span><span class="o">=</span><span class="n">num_recurrent_layers</span><span class="p">,</span>
+            <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+            <span class="n">bidirectional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">recurrent_net_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create the output layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_nonlin</span> <span class="o">=</span> <span class="n">output_nonlin</span>
+
+        <span class="c1"># Initialize parameter values</span>
+        <span class="n">init_param_kwargs</span> <span class="o">=</span> <span class="n">init_param_kwargs</span> <span class="k">if</span> <span class="n">init_param_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">init_param_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># Detach the complete network, i.e. use it with the random initialization</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Only use the last output</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="o">.</span><span class="n">out_features</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="o">.</span><span class="n">out_features</span>
+
+<div class="viewcode-block" id="RNNEmbedding.init_param"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># See RNNPolicyBase</span>
+        <span class="k">if</span> <span class="n">init_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Initialize the layers using default initialization</span>
+            <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cp</span><span class="o">.</span><span class="n">vector_to_parameters</span><span class="p">(</span><span class="n">init_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="RNNEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.summary_statistic">[docs]</a>    <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pass the time series data through a recurrent neural network.</span>
+
+<span class="sd">        .. seealso:</span>
+<span class="sd">            RNNPolicy with `hidden = None`</span>
+
+<span class="sd">        :param data: states and actions of a rollout or segment to be transformed for inference</span>
+<span class="sd">        :return: features obtained from the RNN at every time step, fattened into a vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span><span class="p">]</span>
+
+        <span class="c1"># Reshape the data to match the shape desired by PyTorch</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape [len_time_series, 1, dim_data]</span>
+
+        <span class="c1"># Pass the input through hidden RNN layers, select the last output, and pass that through the output layer.</span>
+        <span class="c1"># We always let the NN initialize its hidden states by passing None.</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Only use the output of the last time step</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Pass through the final output layer</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_nonlin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_nonlin</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="c1"># Reshape the outputs of every time step into a 1-dim feature vector</span>
+        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DynamicTimeWarpingEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding">[docs]</a><span class="k">class</span> <span class="nc">DynamicTimeWarpingEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embedding for simulation-based inference with time series data which uses the dtw-python package to compute the</span>
+<span class="sd">    Dynamic Time Warping (DTW) distance between the states as features of the data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dtwemb&quot;</span>
+    <span class="n">requires_target_domain_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+        <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">step_pattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dtw</span><span class="o">.</span><span class="n">stepPattern</span><span class="o">.</span><span class="n">StepPattern</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param spec: environment specification</span>
+<span class="sd">        :param dim_data: number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the</span>
+<span class="sd">                         states and action spaces&#39; flat dimensions. This number is doubled if the embedding</span>
+<span class="sd">                         target domain data.</span>
+<span class="sd">        :param step_pattern: method passed to dtw-python for computing the distance. Here the same default as in the</span>
+<span class="sd">                             dtw-python package is used (&quot;symmetric2&quot;). To for example use  the Rabiner-Juang type VI-c</span>
+<span class="sd">                             unsmoothed recursion step pattern pass `dtw.stepPattern.rabinerJuangStepPattern(6, &quot;c&quot;)`</span>
+<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
+<span class="sd">                                    base class before calling `summary_statistic()`</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
+<span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">state_mask_labels</span><span class="p">,</span> <span class="n">act_mask_labels</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_pattern</span> <span class="o">=</span> <span class="n">step_pattern</span> <span class="ow">or</span> <span class="s2">&quot;symmetric2&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="DynamicTimeWarpingEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the dynamic time warping distance between the simulated rollouts&quot; and the real rollouts&#39; states.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            It is necessary to take the mean over all distances since the same function is used to compute the</span>
+<span class="sd">            observations (for sbi) form the target domain rollouts. At this point in time there might be only one target</span>
+<span class="sd">            domain rollout, thus the target domain rollouts are only compared with themselves, thus yield a scalar</span>
+<span class="sd">            distance value.</span>
+
+<span class="sd">        :param data: data tensor containing the simulated states (1st part of the 1st half of the 1st dim) and the</span>
+<span class="sd">                     real states (1st part of the 2nd half of the 1st dim)</span>
+<span class="sd">        :return: dynamic time warping distance in multi-dim state space</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Split the data</span>
+        <span class="n">data_sim</span><span class="p">,</span> <span class="n">data_real</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Extract the states</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_sim</span> <span class="o">=</span> <span class="n">data_sim</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
+            <span class="n">data_real</span> <span class="o">=</span> <span class="n">data_real</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_sim</span> <span class="o">=</span> <span class="n">data_sim</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
+            <span class="n">data_real</span> <span class="o">=</span> <span class="n">data_real</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
+
+        <span class="c1"># Use the dtw package to compute the distance using the specified metric</span>
+        <span class="n">data_sim</span><span class="p">,</span> <span class="n">data_real</span> <span class="o">=</span> <span class="n">data_sim</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">data_real</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">alignment</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">dtw</span><span class="o">.</span><span class="n">dtw</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">open_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">step_pattern</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">step_pattern</span><span class="p">,</span> <span class="n">distance_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">distance</span>
+            <span class="k">for</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data_sim</span><span class="p">,</span> <span class="n">data_real</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">alignment</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

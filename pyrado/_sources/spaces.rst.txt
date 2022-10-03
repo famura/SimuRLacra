@@ -1,0 +1,77 @@
+
+
+spaces
+======
+
+
+
+base
+----
+
+.. automodule:: pyrado.spaces.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+box
+---
+
+.. automodule:: pyrado.spaces.box
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+compound
+--------
+
+.. automodule:: pyrado.spaces.compound
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+discrete
+--------
+
+.. automodule:: pyrado.spaces.discrete
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+empty
+-----
+
+.. automodule:: pyrado.spaces.empty
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+polar
+-----
+
+.. automodule:: pyrado.spaces.polar
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+singular
+--------
+
+.. automodule:: pyrado.spaces.singular
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.spaces
+   :members:
+   :undoc-members:
+   :show-inheritance:

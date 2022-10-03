@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyrado.algorithms.stopping_criteria.rollout_based_criteria &mdash; Pyrado 0.7 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+      <li>pyrado.algorithms.stopping_criteria.rollout_based_criteria</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyrado.algorithms.stopping_criteria.rollout_based_criteria</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">NoReturn</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.stopping_criteria.stopping_criterion</span> <span class="kn">import</span> <span class="n">StoppingCriterion</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">RolloutSavingWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sampler</span> <span class="kn">import</span> <span class="n">SamplerBase</span>
+
+
+<div class="viewcode-block" id="ReturnStatistic"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic">[docs]</a><span class="k">class</span> <span class="nc">ReturnStatistic</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;All the different return statistics supported by `ReturnStatisticBasedStoppingCriterion`.&quot;&quot;&quot;</span>
+
+    <span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="nb">max</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">median</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">variance</span> <span class="o">=</span> <span class="mi">4</span></div>
+
+
+<div class="viewcode-block" id="RolloutBasedStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">RolloutBasedStoppingCriterion</span><span class="p">(</span><span class="n">StoppingCriterion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract extension of the base `StoppingCriterion` class for criteria that are based on having access to rollouts.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Requires the algorithm to expose a `RolloutSavingWrapper` via a property `sampler`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RolloutBasedStoppingCriterion.is_met"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion.is_met">[docs]</a>    <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the check if of the</span>
+<span class="sd">        stopping criterion to `_is_met_with_sampler(..)`.</span>
+
+<span class="sd">        :param algo: instance of `Algorithm` that has to be evaluated</span>
+<span class="sd">        :return: `True` if the criterion is met, and `False` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="s2">&quot;sampler&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Any rollout-based stopping criterion requires the algorithm to expose a property &#39;sampler&#39;!&quot;</span>
+            <span class="p">)</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SamplerBase</span><span class="p">]</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">sampler</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">RolloutSavingWrapper</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Any rollout-based stopping criterion requires the algorithm to expose a sampler of type &quot;</span>
+                <span class="s2">&quot;&#39;RolloutSavingWrapper&#39; via the property &#39;sampler&#39;!&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_met_with_sampler</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">)</span></div>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_is_met_with_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether the stopping criterion is met.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Has to be overwritten by sub-classes.</span>
+
+<span class="sd">        :param algo: instance of `Algorithm` that has to be evaluated</span>
+<span class="sd">        :param sampler: instance of `RolloutSavingWrapper`, the sampler of `algo`, that has to be evaluated</span>
+<span class="sd">        :return: `True` if the criterion is met, and `False` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ReturnStatisticBasedStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">ReturnStatisticBasedStoppingCriterion</span><span class="p">(</span><span class="n">RolloutBasedStoppingCriterion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract extension of the base `RolloutBasedStoppingCriterion` class for criteria that are based on a specific</span>
+<span class="sd">    statistic of the returns of rollouts of the last iteration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">median</span><span class="p">,</span> <span class="n">num_lookbacks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param return_statistic: statistic to compute; defaults to median</span>
+<span class="sd">        :param num_lookbacks: over how many iterations the statistic should be computed; for example, a value of two</span>
+<span class="sd">                              means that the rollouts of both the current and the previous iteration will be used for</span>
+<span class="sd">                              computing the statistic; defaults to one</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="o">=</span> <span class="n">return_statistic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_lookbacks</span> <span class="o">=</span> <span class="n">num_lookbacks</span>
+
+    <span class="k">def</span> <span class="nf">_is_met_with_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the return statistic if enough iterations have passed and forwards the computed statistic to the</span>
+<span class="sd">        method `_is_met_with_return_statistic`.</span>
+
+<span class="sd">        :param algo: instance of `Algorithm` that has to be evaluated</span>
+<span class="sd">        :param sampler: instance of `RolloutSavingWrapper`, the sampler of `algo`, that has to be evaluated</span>
+<span class="sd">        :return: `True` if the criterion is met, and `False` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_lookbacks</span><span class="p">:</span>
+            <span class="n">return_statistic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step_sequences</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">rollouts</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_lookbacks</span> <span class="p">:]</span>
+            <span class="n">returns</span> <span class="o">=</span> <span class="p">[</span><span class="n">rollout</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">step_sequence</span> <span class="ow">in</span> <span class="n">step_sequences</span> <span class="k">for</span> <span class="n">rollout</span> <span class="ow">in</span> <span class="n">step_sequence</span><span class="p">]</span>
+            <span class="n">return_statistic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_return_statistic</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">returns</span><span class="p">))</span>
+        <span class="n">algo</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Criterion </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> - Return Statistic&quot;</span><span class="p">,</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">return_statistic</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">return_statistic</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_met_with_return_statistic</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_is_met_with_return_statistic</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether the stopping criterion is met.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Has to be overwritten by sub-classes.</span>
+
+<span class="sd">        :param algo: instance of `Algorithm` that has to be evaluated</span>
+<span class="sd">        :param sampler: instance of `RolloutSavingWrapper`, the sampler of `algo`, that has to be evaluated</span>
+<span class="sd">        :param return_statistic: statistic that has been computed for the latest rollouts; might be `None` if the</span>
+<span class="sd">                                 statistic could not be computed yet; should return `False` then</span>
+<span class="sd">        :return: `True` if the criterion is met, and `False` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_compute_return_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">returns</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the desired statistic of the given list of returns according to the statistic requested in the</span>
+<span class="sd">        constructor.</span>
+
+<span class="sd">        :param returns: returns</span>
+<span class="sd">        :return: statistic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">min</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">median</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.50</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">mean</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">variance</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">returns</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Unexpected return statistic </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MinReturnStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.MinReturnStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">MinReturnStoppingCriterion</span><span class="p">(</span><span class="n">ReturnStatisticBasedStoppingCriterion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses any statistic (defaulting to min) of the return of the latest rollout as a stopping criterion and stops if this</span>
+<span class="sd">    statistic exceeds a certain threshold.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">min</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param return_threshold: return threshold; if the return statistic reaches this threshold, the stopping</span>
+<span class="sd">                                 criterion is met</span>
+<span class="sd">        :param return_statistic: statistic to compute; defaults to minimum</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">return_statistic</span><span class="o">=</span><span class="n">return_statistic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_threshold</span> <span class="o">=</span> <span class="n">return_threshold</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;MinReturnStoppingCriterion[return_statistic=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2">, min_return=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_threshold</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2"> return &gt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_threshold</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_is_met_with_return_statistic</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns whether the return statistic is greater than or equal to the return threshold.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">return_statistic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">return_statistic</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_threshold</span></div>
+
+
+<div class="viewcode-block" id="ConvergenceStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ConvergenceStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">ConvergenceStoppingCriterion</span><span class="p">(</span><span class="n">ReturnStatisticBasedStoppingCriterion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks for convergence of the returns for a given statistic that can be specified in the constructor. This is done</span>
+<span class="sd">    by fitting a linear regression model to all the previous statistics (stored in a list) and performing a Wald test</span>
+<span class="sd">    with a t-distribution of the test statistic (with the null hypothesis that the slope is zero). The resulting</span>
+<span class="sd">    p-value is called the *probability of convergence* and is used for checking if the algorithm has converged.</span>
+
+<span class="sd">    This procedure can intuitively be explained by measuring &quot;how flat the returns are&quot; in the presence of noise. It has</span>
+<span class="sd">    the advantage over just checking how much the return changes that it is independent of the noise on the returns,</span>
+<span class="sd">    i.e. no specific threshold has to be hand-tuned.</span>
+
+<span class="sd">    This criterion has to modes: moving and cumulative. In the moving mode, only the latest `M` values are used for</span>
+<span class="sd">    fitting the linear model, and in the first `M - 1` iterations the criterion is treated as not being met. In the</span>
+<span class="sd">    cumulative mode, all the previous values are used and only the first iteration is treated as not being met as there</span>
+<span class="sd">    have to be at least two points to fit a linear model. While the former is primarily useful for convergence checking</span>
+<span class="sd">    for a regular algorithm, the latter is primarily useful for checking convergence of the subroutine in a</span>
+<span class="sd">    meta-algorithm as here it is possible that convergence kicks in far at the beginning of the learning process as the</span>
+<span class="sd">    environment did not change much (see for example SPDR).</span>
+
+<span class="sd">    It might be helpful to use this stopping criterion in conjunction with an iterations criterion</span>
+<span class="sd">    (`IterCountStoppingCriterion`) to ensure that the algorithm does not terminate prematurely due to initialization</span>
+<span class="sd">    issues. For example, PPO usually takes some iterations to make progress which leads to a flat learning curve that</span>
+<span class="sd">    however does not correspond to the algorithm being converged.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">convergence_probability_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.99</span><span class="p">,</span>
+        <span class="n">num_iter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">median</span><span class="p">,</span>
+        <span class="n">num_lookbacks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param convergence_probability_threshold: threshold of the p-value above which the algorithm is considered to be</span>
+<span class="sd">                                                  converged; defaults to `0.99`, i.e. a `99%` certainty that the data</span>
+<span class="sd">                                                  can be explained</span>
+<span class="sd">        :param num_iter: number of iterations to use for the moving mode. If `None`, the cumulative mode is used</span>
+<span class="sd">        :param return_statistic: statistic to compute; defaults to median</span>
+<span class="sd">        :param num_lookbacks: over how many iterations the statistic should be computed; for example, a value of two</span>
+<span class="sd">                              means that the rollouts of both the current and the previous iteration will be used for</span>
+<span class="sd">                              computing the statistic; defaults to one</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">return_statistic</span><span class="p">,</span> <span class="n">num_lookbacks</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">num_iter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">num_iter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;M must be either None or a positive number.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_convergence_probability_threshold</span> <span class="o">=</span> <span class="n">convergence_probability_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="o">=</span> <span class="n">num_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ConvergenceStoppingCriterion[&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;convergence_probability_threshold=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_convergence_probability_threshold</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;num_iter=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;return_statistic=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;num_lookbacks=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_lookbacks</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;return_statistic_history=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2"> return converged, </span><span class="si">{</span><span class="s1">&#39;cumulative&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;moving&#39;</span><span class="si">}</span><span class="s2"> mode)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_is_met_with_return_statistic</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns whether the convergence probability is greater than or equal to the threshold.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">return_statistic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">convergence_prob</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">return_statistic</span><span class="p">)</span>
+            <span class="n">convergence_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_convergence_probability</span><span class="p">()</span>
+        <span class="n">algo</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Criterion </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> - Convergence Probability&quot;</span><span class="p">,</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">convergence_prob</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">convergence_prob</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">convergence_prob</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">convergence_prob</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convergence_probability_threshold</span>
+
+    <span class="k">def</span> <span class="nf">_compute_convergence_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the convergence probability for the current data. By invoking `_get_relevant_return_statistic_subset`,</span>
+<span class="sd">        the two modes (moving and cumulative) are implemented. If not enough data is present, this method does not</span>
+<span class="sd">        return the probability, but `None`.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This invoked the method `linregress` of `scipy.stats` and returns the corresponing p-value.</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html</span>
+
+<span class="sd">        :return the convergence probability or `None` if not enough data is present</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">statistic_subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_relevant_return_statistic_subset</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">statistic_subset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">linregress</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">statistic_subset</span><span class="p">)),</span> <span class="n">statistic_subset</span><span class="p">)</span><span class="o">.</span><span class="n">pvalue</span>
+
+    <span class="k">def</span> <span class="nf">_get_relevant_return_statistic_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts the relevant subset of the return statistic history, implementing the two modes described in the class</span>
+<span class="sd">        documentation: moving and cumulative.</span>
+
+<span class="sd">        If either the return history is empty or does not contain enough elements for getting `M` elements, `None` is</span>
+<span class="sd">        returned. The convergence checking method shall treat this as the convergence criterion not being met as there</span>
+<span class="sd">        is not enough data.</span>
+
+<span class="sd">        :return: the relevant subset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="p">:]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
