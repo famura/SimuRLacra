@@ -727,6 +727,8 @@ instances, e.g. samples from a posterior coming from <cite>NDPR</cite></p></li>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Normalize</span></code></p>
 <p>Accumulative normalizer which is useful to have one colormap consistent for multiple images.
 Adding new data will expand the limits.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
 <dl>
 <dt>vmin, vmax<span class="classifier">float or None</span></dt><dd><p>If <em>vmin</em> and/or <em>vmax</em> is not given, they are initialized from the
 minimum and maximum value, respectively, of the first input
@@ -740,6 +742,9 @@ and masked colors in a colormap, so it is likely to lead to
 surprises; therefore the default is <code class="docutils literal notranslate"><span class="pre">clip=False</span></code>.</p>
 </dd>
 </dl>
+</section>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h3>
 <p>Returns 0 if <code class="docutils literal notranslate"><span class="pre">vmin</span> <span class="pre">==</span> <span class="pre">vmax</span></code>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.plotting.utils.AccNorm.autoscale">
@@ -753,6 +758,7 @@ surprises; therefore the default is <code class="docutils literal notranslate"><
 <dd><p>If vmin or vmax are not set, use the min/max of <em>A</em> to set them.</p>
 </dd></dl>
 
+</section>
 </dd></dl>
 
 <dl class="py function">
