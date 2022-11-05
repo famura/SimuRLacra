@@ -244,7 +244,7 @@
         <span class="c1"># Dynamics (pendulum modeled as a rod)</span>
         <span class="n">th</span><span class="p">,</span> <span class="n">th_dot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
         <span class="n">th_ddot</span> <span class="o">=</span> <span class="p">(</span><span class="n">act</span> <span class="o">-</span> <span class="n">m_pole</span> <span class="o">*</span> <span class="n">gravity_const</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">-</span> <span class="n">d_pole</span> <span class="o">*</span> <span class="n">th_dot</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
-            <span class="n">m_pole</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">3.0</span>
+            <span class="n">m_pole</span> <span class="o">*</span> <span class="n">l_pole</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">3.0</span>
         <span class="p">)</span>
 
         <span class="c1"># Integration step (symplectic Euler)</span>

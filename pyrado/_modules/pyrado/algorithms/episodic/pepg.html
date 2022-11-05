@@ -315,7 +315,7 @@
         <span class="c1"># Old version without PyTorch optimizer: self._expl_strat.policy.param_values += delta_mean * self.lr</span>
 
         <span class="c1"># Update the std</span>
-        <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">epsilon</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_update</span><span class="p">:</span>
             <span class="c1"># See equation (15, bottom) in [1]</span>
