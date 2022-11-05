@@ -109,7 +109,7 @@ class PendulumSim(SimPyEnv, Serializable):
         # Dynamics (pendulum modeled as a rod)
         th, th_dot = self.state
         th_ddot = (act - m_pole * gravity_const * l_pole / 2.0 * np.sin(th) - d_pole * th_dot) / (
-            m_pole * l_pole ** 2 / 3.0
+            m_pole * l_pole**2 / 3.0
         )
 
         # Integration step (symplectic Euler)

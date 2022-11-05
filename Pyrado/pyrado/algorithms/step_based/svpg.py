@@ -164,14 +164,14 @@ class SVPG(Algorithm):
         h = np.sqrt(0.5 * h / np.log(self.num_particles + 1))
 
         # Compute RBF Kernel
-        kernel = to.exp(-to.from_numpy(pairwise_dists).to(to.get_default_dtype()) / h ** 2 / 2)
+        kernel = to.exp(-to.from_numpy(pairwise_dists).to(to.get_default_dtype()) / h**2 / 2)
 
         # Compute kernel gradient
         grads = -kernel.matmul(X)
         kernel_sum = kernel.sum(1)
         for i in range(X.shape[1]):
             grads[:, i] = grads[:, i] + X[:, i].matmul(kernel_sum)
-        grads /= h ** 2
+        grads /= h**2
 
         return kernel, grads
 

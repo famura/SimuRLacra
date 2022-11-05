@@ -90,13 +90,13 @@ def test_modulated_rew_fcn():
     rew_fcn = QuadrErrRewFcn(Q, R)
     task = RadiallySymmDesStateTask(EnvSpec(None, None, None), np.zeros(4), rew_fcn, idcs, 2)
     r = task.step_rew(s, a)
-    assert r == -(1 ** 2 + 3 ** 2)
+    assert r == -(1**2 + 3**2)
 
     # Different modulo factor for the selected states
     idcs = [1, 3]
     task = RadiallySymmDesStateTask(EnvSpec(None, None, None), np.zeros(4), rew_fcn, idcs, np.array([2, 3]))
     r = task.step_rew(s, a)
-    assert r == -(1 ** 2 + 3 ** 2 + 1 ** 2)
+    assert r == -(1**2 + 3**2 + 1**2)
 
 
 @pytest.mark.parametrize(

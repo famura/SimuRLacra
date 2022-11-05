@@ -407,7 +407,7 @@ class EpsGreedyExplStrat(StochasticActionExplStrat):
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def schedule_eps(self, steps: int):
-        self.eps.data = self._eps_final + (self._eps_init - self._eps_final) * self.eps_gamma ** steps
+        self.eps.data = self._eps_final + (self._eps_init - self._eps_final) * self.eps_gamma**steps
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def forward(self, obs: to.Tensor, *extra) -> (to.Tensor, tuple):

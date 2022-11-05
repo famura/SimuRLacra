@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # Create a fake ground truth target domain
     num_real_rollouts = 1
     env_real = deepcopy(env_sim)
-    env_real.domain_param = dict(pole_mass=1 / 1.2 ** 2, pole_length=1.2)
+    env_real.domain_param = dict(pole_mass=1 / 1.2**2, pole_length=1.2)
 
     # Define a mapping: index - domain parameter
     dp_mapping = {0: "pole_mass", 1: "pole_length"}

@@ -93,9 +93,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         l_beam = self.domain_param["beam_length"]
         d_beam = self.domain_param["beam_thickness"]
 
-        self.J_ball = 2.0 / 5 * m_ball * r_ball ** 2
-        self.J_beam = 1.0 / 12 * m_beam * (l_beam ** 2 + d_beam ** 2)
-        self.zeta_ball = m_ball + self.J_ball / r_ball ** 2
+        self.J_ball = 2.0 / 5 * m_ball * r_ball**2
+        self.J_beam = 1.0 / 12 * m_beam * (l_beam**2 + d_beam**2)
+        self.zeta_ball = m_ball + self.J_ball / r_ball**2
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
@@ -118,10 +118,10 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         a = self.state[1] + ang_offset  # beam angular position
         x_dot = self.state[2]  # ball velocity
         a_dot = self.state[3]  # beam angular velocity
-        zeta_beam = m_ball * x ** 2 + self.J_beam  # depends on the bal position
+        zeta_beam = m_ball * x**2 + self.J_beam  # depends on the bal position
 
         # EoM solved for the accelerations
-        x_ddot = (-c_frict * x_dot + m_ball * x * a_dot ** 2 - m_ball * gravity_const * np.sin(a)) / self.zeta_ball
+        x_ddot = (-c_frict * x_dot + m_ball * x * a_dot**2 - m_ball * gravity_const * np.sin(a)) / self.zeta_ball
         a_ddot = (float(act) - 2.0 * m_ball * x * x_dot * a_dot - m_ball * gravity_const * np.cos(a) * x) / zeta_beam
 
         # Integration step (symplectic Euler)

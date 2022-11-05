@@ -166,17 +166,17 @@ class PolySplineTimePolicy(Policy):
             # 3rd order polynomials, i.e. position and velocity level constrains
             feats = to.tensor(
                 [
-                    [1.0, t, t ** 2, t ** 3],
-                    [0.0, 1.0, 2 * t, 3 * t ** 2],
+                    [1.0, t, t**2, t**3],
+                    [0.0, 1.0, 2 * t, 3 * t**2],
                 ]
             )
         else:
             # 5th order polynomials, i.e. position velocity, and acceleration level constrains
             feats = to.tensor(
                 [
-                    [1.0, t, t ** 2, t ** 3, t ** 4, t ** 5],
-                    [0.0, 1.0, 2 * t, 3 * t ** 2, 4 * t ** 3, 5 * t ** 4],
-                    [0.0, 0.0, 2.0, 6 * t, 12 * t ** 2, 20 * t ** 3],
+                    [1.0, t, t**2, t**3, t**4, t**5],
+                    [0.0, 1.0, 2 * t, 3 * t**2, 4 * t**3, 5 * t**4],
+                    [0.0, 0.0, 2.0, 6 * t, 12 * t**2, 20 * t**3],
                 ]
             )
         return feats
@@ -195,7 +195,7 @@ class PolySplineTimePolicy(Policy):
         if self._t_curr < self._t_end:
             # Get a vector of powers of the current time
             t_powers = to.tensor(
-                [self._t_curr ** o for o in range(self._order + 1)], dtype=self.coeffs.dtype, device=self.device
+                [self._t_curr**o for o in range(self._order + 1)], dtype=self.coeffs.dtype, device=self.device
             )
             # Compute the action
             act = to.mv(self.coeffs.T, t_powers)
@@ -203,7 +203,7 @@ class PolySplineTimePolicy(Policy):
         elif self._overtime_behavior == "hold":
             # Get a vector of powers of the current time
             t_powers = to.tensor(
-                [self._t_end ** o for o in range(self._order + 1)], dtype=self.coeffs.dtype, device=self.device
+                [self._t_end**o for o in range(self._order + 1)], dtype=self.coeffs.dtype, device=self.device
             )
             # Compute the action
             act = to.mv(self.coeffs.T, t_powers)
@@ -353,17 +353,17 @@ class TraceablePolySplineTimePolicy(nn.Module):
             # 3rd order polynomials, i.e. position and velocity level constrains
             feats = to.tensor(
                 [
-                    [1.0, t, t ** 2, t ** 3],
-                    [0.0, 1.0, 2 * t, 3 * t ** 2],
+                    [1.0, t, t**2, t**3],
+                    [0.0, 1.0, 2 * t, 3 * t**2],
                 ]
             )
         else:
             # 5th order polynomials, i.e. position velocity, and acceleration level constrains
             feats = to.tensor(
                 [
-                    [1.0, t, t ** 2, t ** 3, t ** 4, t ** 5],
-                    [0.0, 1.0, 2 * t, 3 * t ** 2, 4 * t ** 3, 5 * t ** 4],
-                    [0.0, 0.0, 2.0, 6 * t, 12 * t ** 2, 20 * t ** 3],
+                    [1.0, t, t**2, t**3, t**4, t**5],
+                    [0.0, 1.0, 2 * t, 3 * t**2, 4 * t**3, 5 * t**4],
+                    [0.0, 0.0, 2.0, 6 * t, 12 * t**2, 20 * t**3],
                 ]
             )
         return feats
@@ -377,13 +377,13 @@ class TraceablePolySplineTimePolicy(nn.Module):
         # Check in which time regime the policy/environment is currently in
         if self.t_curr < self.t_end:
             # Get a vector of powers of the current time
-            t_powers = to.tensor([self.t_curr ** o for o in range(self.order + 1)], dtype=self.coeffs.dtype)
+            t_powers = to.tensor([self.t_curr**o for o in range(self.order + 1)], dtype=self.coeffs.dtype)
             # Compute the action
             act = to.mv(self.coeffs.T, t_powers)
 
         elif self.overtime_behavior == "hold":
             # Get a vector of powers of the current time
-            t_powers = to.tensor([self.t_end ** o for o in range(self.order + 1)], dtype=self.coeffs.dtype)
+            t_powers = to.tensor([self.t_end**o for o in range(self.order + 1)], dtype=self.coeffs.dtype)
             # Compute the action
             act = to.mv(self.coeffs.T, t_powers)
 

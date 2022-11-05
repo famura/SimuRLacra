@@ -48,7 +48,7 @@ def compute_trajectory(weights, time, width):
     diffs = time - centers
 
     # Features
-    w = np.exp(-(diffs ** 2) / (2 * width))
+    w = np.exp(-(diffs**2) / (2 * width))
     wd = -(diffs / width) * w
 
     w_sum = np.sum(w, axis=1, keepdims=True)
@@ -56,7 +56,7 @@ def compute_trajectory(weights, time, width):
 
     # Normalized features
     pos_features = w / w_sum
-    vel_features = (wd * w_sum - w * wd_sum) / w_sum ** 2
+    vel_features = (wd * w_sum - w * wd_sum) / w_sum**2
 
     # Trajectory
     q = pos_features @ weights

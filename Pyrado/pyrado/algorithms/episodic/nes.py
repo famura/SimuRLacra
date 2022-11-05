@@ -171,7 +171,7 @@ class NES(ParameterExploring):
             self._policy.param_values += self.lr_mean * delta_mean
 
             # Update the std (see [1, 2])
-            grad_std = self.eta_std_util @ (s_asc ** 2 - 1.0)
+            grad_std = self.eta_std_util @ (s_asc**2 - 1.0)
             new_std = self._expl_strat.std * to.exp(self.lr_std * grad_std / 2.0)
             self._expl_strat.adapt(std=new_std)
 
@@ -185,7 +185,7 @@ class NES(ParameterExploring):
             self._policy.param_values += self.lr_mean * delta_mean
 
             # Update the std (monotonous exponential decay)
-            new_std = self._expl_strat.std * 0.999 ** self._curr_iter
+            new_std = self._expl_strat.std * 0.999**self._curr_iter
             self._expl_strat.adapt(std=new_std)
 
         self.logger.add_value("min expl strat std", to.min(self._expl_strat.std), 4)

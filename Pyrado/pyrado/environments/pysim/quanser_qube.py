@@ -75,13 +75,13 @@ class QQubeSim(SimPyEnv, Serializable):
         gravity_const = self.domain_param["gravity_const"]
 
         # Moments of inertia
-        Jr = mass_rot_pole * length_rot_pole ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
-        Jp = mass_pend_pole * length_pend_pole ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
+        Jr = mass_rot_pole * length_rot_pole**2 / 12  # inertia about COM of the rotary pole [kg*m^2]
+        Jp = mass_pend_pole * length_pend_pole**2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
 
         # Constants for equations of motion
         self._c = np.zeros(5)
-        self._c[0] = Jr + mass_pend_pole * length_rot_pole ** 2
-        self._c[1] = 0.25 * mass_pend_pole * length_pend_pole ** 2
+        self._c[0] = Jr + mass_pend_pole * length_rot_pole**2
+        self._c[1] = 0.25 * mass_pend_pole * length_pend_pole**2
         self._c[2] = 0.5 * mass_pend_pole * length_pend_pole * length_rot_pole
         self._c[3] = Jp + self._c[1]
         self._c[4] = 0.5 * mass_pend_pole * length_pend_pole * gravity_const
@@ -106,7 +106,7 @@ class QQubeSim(SimPyEnv, Serializable):
         sin_2al = np.sin(2 * al)
 
         # Define mass matrix M = [[a, b], [b, c]]
-        a = self._c[0] + self._c[1] * sin_al ** 2
+        a = self._c[0] + self._c[1] * sin_al**2
         b = self._c[2] * np.cos(al)
         c = self._c[3]
         det = a * c - b * b

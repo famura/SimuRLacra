@@ -165,7 +165,7 @@ def set_seed(
             print(f"Base seed {base_seed} is not an integer -- the random number generators' seeds were not set.")
         return None
 
-    seed = int(hashlib.md5(f"{base_seed}-{sub_seed}-{sub_sub_seed}".encode()).hexdigest(), 16) % (2 ** 32)
+    seed = int(hashlib.md5(f"{base_seed}-{sub_seed}-{sub_sub_seed}".encode()).hexdigest(), 16) % (2**32)
 
     random.seed(seed)
     np.random.seed(seed)

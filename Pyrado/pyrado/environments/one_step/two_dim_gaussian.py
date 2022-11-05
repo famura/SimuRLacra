@@ -87,7 +87,7 @@ class TwoDimGaussian(SimEnv, Serializable):
         s2 = dp["s_2"] ** 2
         rho = np.tanh(dp["rho"])
         cov12 = rho * s1 * s2
-        covariance_matrix = np.array([[s1 ** 2, cov12], [cov12, s2 ** 2]]) + 1e-6 * np.eye(2)
+        covariance_matrix = np.array([[s1**2, cov12], [cov12, s2**2]]) + 1e-6 * np.eye(2)
         return mean, covariance_matrix
 
     @property

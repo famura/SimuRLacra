@@ -381,7 +381,7 @@ class Algorithm(ABC, LoggerAware):
         for p in list(filter(lambda p: p.grad is not None, module.parameters())):
             param_norm = p.grad.data.norm(2)
             total_norm += param_norm.item() ** 2
-        return total_norm ** 0.5
+        return total_norm**0.5
 
     def __getstate__(self):
         # Disassemble the directory on pickling

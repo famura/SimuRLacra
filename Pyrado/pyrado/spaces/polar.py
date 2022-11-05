@@ -73,7 +73,7 @@ class Polar2DPosSpace(BoxSpace):
         # Transform candidate to polar space
         x, y = cand[0], cand[1]
         polar = np.array(
-            [np.sqrt(x ** 2 + y ** 2), np.arctan2(y, x)]
+            [np.sqrt(x**2 + y**2), np.arctan2(y, x)]
         )  # arctan2 returns in range [-pi, pi] -> check bounds
         # Query base
         return super().contains(polar, verbose=verbose)
@@ -117,7 +117,7 @@ class Polar2DPosVelSpace(BoxSpace):
         # Transform candidate to polar space
         x, y = cand[0], cand[1]
         polar = np.array(
-            [np.sqrt(x ** 2 + y ** 2), np.arctan2(y, x)]
+            [np.sqrt(x**2 + y**2), np.arctan2(y, x)]
         )  # arctan2 returns in range [-pi, pi] -> check bounds
         # Query base
         return super().contains(np.r_[polar, cand[2:]], verbose=verbose)

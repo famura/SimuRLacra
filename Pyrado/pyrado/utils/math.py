@@ -292,7 +292,7 @@ def numerical_differentiation_coeffs(
     for idx in range(num_eqs):
         A[idx, :] = np.power(stencils, idx)
     b = np.zeros(num_eqs)
-    b[order] = np.math.factorial(order) / step_size ** order
+    b[order] = np.math.factorial(order) / step_size**order
 
     coeffs = np.linalg.solve(A, b)
     return coeffs, num_eqs - order

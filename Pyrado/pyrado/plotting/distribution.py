@@ -442,11 +442,11 @@ def draw_posterior_heatmap_2d(
         grids = to.stack([x, y], dim=1).repeat(num_iter, 1, 1)
     else:
         # A condition is necessary since dim(posterior) > dim(grid) = 2
-        grids = condition.repeat(1, grid_res ** 2, 1)
+        grids = condition.repeat(1, grid_res**2, 1)
         grids[:, :, dim_x] = x
         grids[:, :, dim_y] = y
-    if grids.shape != (num_iter, grid_res ** 2, len(dp_mapping)):
-        raise pyrado.ShapeErr(given=grids, expected_match=(grid_res ** 2, len(dp_mapping)))
+    if grids.shape != (num_iter, grid_res**2, len(dp_mapping)):
+        raise pyrado.ShapeErr(given=grids, expected_match=(grid_res**2, len(dp_mapping)))
 
     fig = plt.gcf()
     if plot_type == "joint":

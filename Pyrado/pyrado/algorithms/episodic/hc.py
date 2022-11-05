@@ -155,7 +155,7 @@ class HCNormal(HC):
     def update_expl_strat(self, rets_avg_ros: np.ndarray, ret_avg_curr: float):
         # Update the exploration distribution
         if np.max(rets_avg_ros) > ret_avg_curr:
-            self._expl_strat.adapt(std=self._expl_strat.std / self.expl_factor ** 2)
+            self._expl_strat.adapt(std=self._expl_strat.std / self.expl_factor**2)
         else:
             self._expl_strat.adapt(std=self._expl_strat.std * self.expl_factor)
 
@@ -200,7 +200,7 @@ class HCHyper(HC):
     def update_expl_strat(self, rets_avg_ros: np.ndarray, ret_avg_curr: float):
         # Update the exploration strategy
         if np.max(rets_avg_ros) > ret_avg_curr:
-            self._expl_strat.adapt(r=self._expl_strat.r / self.expl_factor ** 2)
+            self._expl_strat.adapt(r=self._expl_strat.r / self.expl_factor**2)
         else:
             self._expl_strat.adapt(r=self._expl_strat.r * self.expl_factor)
 

@@ -143,8 +143,8 @@ class QCartPoleSim(SimPyEnv, Serializable):
         J_m = self.domain_param["motor_inertia"]
         r_mp = self.domain_param["pinion_radius"]
 
-        self.J_pole = l_pole ** 2 * m_pole / 3.0  # pole inertia [kg*m**2]
-        self.J_eq = m_cart + (eta_g * K_g ** 2 * J_m) / r_mp ** 2  # equiv. inertia [kg]
+        self.J_pole = l_pole**2 * m_pole / 3.0  # pole inertia [kg*m**2]
+        self.J_eq = m_cart + (eta_g * K_g**2 * J_m) / r_mp**2  # equiv. inertia [kg]
 
     def _step_dynamics(self, u: np.ndarray):
         gravity_const = self.domain_param["gravity_const"]
@@ -182,7 +182,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         else:
             # Force normal to the rail causing the Coulomb friction
-            f_normal = m_tot * gravity_const - m_p * l_p / 2 * (sin_th * self._th_ddot + cos_th * th_dot ** 2)
+            f_normal = m_tot * gravity_const - m_p * l_p / 2 * (sin_th * self._th_ddot + cos_th * th_dot**2)
             if f_normal < 0:
                 # The normal force on the cart is negative, i.e. it is lifted up. This can be cause by a very high
                 # angular momentum of the pole. Here we neglect this effect.
@@ -194,12 +194,12 @@ class QCartPoleSim(SimPyEnv, Serializable):
         M = np.array(
             [
                 [m_p + self.J_eq, m_p * l_p * cos_th],
-                [m_p * l_p * cos_th, self.J_pole + m_p * l_p ** 2],
+                [m_p * l_p * cos_th, self.J_pole + m_p * l_p**2],
             ]
         )
         rhs = np.array(
             [
-                f_tot - B_eq * x_dot - m_p * l_p * sin_th * th_dot ** 2,
+                f_tot - B_eq * x_dot - m_p * l_p * sin_th * th_dot**2,
                 -B_p * th_dot - m_p * l_p * gravity_const * sin_th,
             ]
         )

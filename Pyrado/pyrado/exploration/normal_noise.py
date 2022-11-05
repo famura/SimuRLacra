@@ -226,7 +226,7 @@ class FullNormalNoise(nn.Module):
 
         # Initialize parameters
         self.cov_init = (
-            std_init ** 2 * to.eye(noise_dim) if isinstance(std_init, float) else to.diag(to.pow(std_init, 2))
+            std_init**2 * to.eye(noise_dim) if isinstance(std_init, float) else to.diag(to.pow(std_init, 2))
         )
         self.std_min = to.tensor(std_min) if isinstance(std_min, float) else std_min
         self.std_min = self.std_min.to(device=self.device)
@@ -288,7 +288,7 @@ class FullNormalNoise(nn.Module):
 
             # Check if the diagonal elements of the new covariance matrix are neither too small nor too big
             for i in range(cov.shape[0]):
-                self.cov.data[i, i] = to.max(self.cov.data[i, i], self.std_min ** 2)
+                self.cov.data[i, i] = to.max(self.cov.data[i, i], self.std_min**2)
 
     def forward(self, value: to.Tensor) -> MultivariateNormal:
         """

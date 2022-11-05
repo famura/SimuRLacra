@@ -61,7 +61,7 @@ def most_square_product(n: int) -> Tuple[int, int]:
     """
     o = math.ceil(math.sqrt(n))
     m = o - 1
-    if o ** 2 == n:
+    if o**2 == n:
         return o, o
     else:
         i = 0

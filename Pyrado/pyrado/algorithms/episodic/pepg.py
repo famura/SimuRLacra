@@ -180,7 +180,7 @@ class PEPG(ParameterExploring):
         # Old version without PyTorch optimizer: self._expl_strat.policy.param_values += delta_mean * self.lr
 
         # Update the std
-        S = (epsilon ** 2 - self._expl_strat.std ** 2) / self._expl_strat.std
+        S = (epsilon**2 - self._expl_strat.std**2) / self._expl_strat.std
 
         if self.normalize_update:
             # See equation (15, bottom) in [1]

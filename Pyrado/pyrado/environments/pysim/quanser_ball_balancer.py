@@ -215,12 +215,12 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         R_m = self.domain_param["motor_resistance"]
         B_eq = self.domain_param["combined_damping"]
 
-        self.J_ball = 2.0 / 5 * m_ball * r_ball ** 2  # inertia of the ball [kg*m**2]
-        self.J_eq = eta_g * K_g ** 2 * J_m + J_l  # equivalent moment of inertia [kg*m**2]
+        self.J_ball = 2.0 / 5 * m_ball * r_ball**2  # inertia of the ball [kg*m**2]
+        self.J_eq = eta_g * K_g**2 * J_m + J_l  # equivalent moment of inertia [kg*m**2]
         self.c_kin = 2.0 * r_arm / l_plate  # coefficient for the rod-plate kinematic
         self.A_m = eta_g * K_g * eta_m * k_m / R_m
-        self.B_eq_v = eta_g * K_g ** 2 * eta_m * k_m ** 2 / R_m + B_eq
-        self.zeta = m_ball * r_ball ** 2 + self.J_ball  # combined moment of inertial for the ball
+        self.B_eq_v = eta_g * K_g**2 * eta_m * k_m**2 / R_m + B_eq
+        self.zeta = m_ball * r_ball**2 + self.J_ball  # combined moment of inertial for the ball
 
     def _state_from_init(self, init_state):
         state = np.zeros(8)
@@ -294,32 +294,32 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         a_ddot = (
             1.0
             / np.cos(a)
-            * (self.c_kin * (th_x_ddot * np.cos(th_x) - th_x_dot ** 2 * np.sin(th_x)) + a_dot ** 2 * np.sin(a))
+            * (self.c_kin * (th_x_ddot * np.cos(th_x) - th_x_dot**2 * np.sin(th_x)) + a_dot**2 * np.sin(a))
         )
         b_ddot = (
             1.0
             / np.cos(b)
-            * (self.c_kin * (-th_y_ddot * np.cos(th_y) - (-th_y_dot) ** 2 * np.sin(-th_y)) + b_dot ** 2 * np.sin(b))
+            * (self.c_kin * (-th_y_ddot * np.cos(th_y) - (-th_y_dot) ** 2 * np.sin(-th_y)) + b_dot**2 * np.sin(b))
         )
 
         # kinematics: sin(a) = self.c_kin * sin(th_x)
         if self._simple_dynamics:
             # Ball dynamic without friction and Coriolis forces
-            x_ddot = self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_x) / self.zeta  # symm inertia
-            y_ddot = self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_y) / self.zeta  # symm inertia
+            x_ddot = self.c_kin * m_ball * gravity_const * r_ball**2 * np.sin(th_x) / self.zeta  # symm inertia
+            y_ddot = self.c_kin * m_ball * gravity_const * r_ball**2 * np.sin(th_y) / self.zeta  # symm inertia
         else:
             # Ball dynamic with friction and Coriolis forces
             x_ddot = (
-                -ball_damping * x_dot * r_ball ** 2  # friction
+                -ball_damping * x_dot * r_ball**2  # friction
                 - self.J_ball * r_ball * a_ddot  # plate influence
-                + m_ball * x * a_dot ** 2 * r_ball ** 2  # centripetal
-                + self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_x)  # gravity
+                + m_ball * x * a_dot**2 * r_ball**2  # centripetal
+                + self.c_kin * m_ball * gravity_const * r_ball**2 * np.sin(th_x)  # gravity
             ) / self.zeta
             y_ddot = (
-                -ball_damping * y_dot * r_ball ** 2  # friction
+                -ball_damping * y_dot * r_ball**2  # friction
                 - self.J_ball * r_ball * b_ddot  # plate influence
-                + m_ball * y * (-b_dot) ** 2 * r_ball ** 2  # centripetal
-                + self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_y)  # gravity
+                + m_ball * y * (-b_dot) ** 2 * r_ball**2  # centripetal
+                + self.c_kin * m_ball * gravity_const * r_ball**2 * np.sin(th_y)  # gravity
             ) / self.zeta
 
         # Integration step (symplectic Euler)

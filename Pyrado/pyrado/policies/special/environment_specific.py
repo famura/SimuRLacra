@@ -228,7 +228,7 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         )
 
         # Energy terms: E_pot(0) = 0; E_pot(pi) = E_pot(-pi) = 2 mgl
-        E_kin = J_pole / 2.0 * theta_dot ** 2
+        E_kin = J_pole / 2.0 * theta_dot**2
         E_pot = self.dp_nom["pole_mass"] * self.dp_nom["gravity_const"] * self.dp_nom["pole_length"] * (1 - cos_th)
         E_ref = 2.0 * self.dp_nom["pole_mass"] * self.dp_nom["gravity_const"] * self.dp_nom["pole_length"]
 
@@ -475,7 +475,7 @@ class QQubeEnergyCtrl(Policy):
 
         # Compute energies
         J_pole = self._domain_param["mass_pend_pole"] * self._domain_param["length_pend_pole"] ** 2 / 12.0
-        E_kin = 0.5 * J_pole * ald ** 2
+        E_kin = 0.5 * J_pole * ald**2
         E_pot = (
             0.5
             * self._domain_param["mass_pend_pole"]
@@ -682,7 +682,7 @@ def wam_jsp_7dof_sin(t: float, flip_sign: bool = False):
     :return: joint angle positions and velocities
     """
     flip_sign = int(flip_sign)
-    return -(1 ** flip_sign) * np.array(
+    return -(1**flip_sign) * np.array(
         [
             0.5 * np.sin(2 * np.pi * t * 0.23),
             0.5 * np.sin(2 * np.pi * t * 0.51),

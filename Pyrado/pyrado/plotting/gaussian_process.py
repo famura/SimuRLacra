@@ -210,7 +210,7 @@ def render_singletask_gp(
         x0_mesh, x1_mesh = x0_mesh.t(), x1_mesh.t()  # transpose not necessary but makes identical mesh as np.meshgrid
 
         # Mean and standard deviation of the surrogate model
-        x_test = to.stack([x0_mesh.reshape(resolution ** 2, 1), x1_mesh.reshape(resolution ** 2, 1)], -1).squeeze(1)
+        x_test = to.stack([x0_mesh.reshape(resolution**2, 1), x1_mesh.reshape(resolution**2, 1)], -1).squeeze(1)
         posterior = gp.posterior(x_test)  # identical to  gp.likelihood(gp(x_test))
         mean = posterior.mean.detach().reshape(resolution, resolution)
         std = to.sqrt(posterior.variance.detach()).reshape(resolution, resolution)

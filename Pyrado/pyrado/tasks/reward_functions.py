@@ -335,7 +335,7 @@ class UnderActuatedSwingUpRewFcn(RewFcn):
     def __call__(self, err_s: np.ndarray, err_a: np.ndarray, remaining_steps: int = None) -> float:
         cost_pole = self.c_theta_sq * err_s[self.idx_th] ** 2 + np.log(err_s[self.idx_th] ** 2 + self.c_theta_log)
         cost_cart = np.abs(err_s[self.idx_x])  # cart position = cart position error
-        cost_act = err_a ** 2
+        cost_act = err_a**2
         return float(-self.c_costs @ np.hstack([cost_pole, cost_cart, cost_act]) + 10.0)
 
 
@@ -365,7 +365,7 @@ class StateBasedRewFcn:
         :param state: state
         :return: scalar reward
         """
-        return -(1 ** self._flip_sign) * self._fcn(state)
+        return -(1**self._flip_sign) * self._fcn(state)
 
 
 class ForwardVelocityRewFcn(RewFcn):

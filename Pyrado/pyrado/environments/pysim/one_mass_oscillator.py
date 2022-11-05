@@ -94,11 +94,11 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         self.omega = np.sqrt(k / m)  # eigen frequency [Hz]
         self.zeta = d / (2.0 * np.sqrt(m * k))  # damping ratio [-]
         if self.zeta < 1.0:
-            self._omega_d = np.sqrt(1 - self.zeta ** 2) * self.omega  # damped eigen frequency [Hz]
+            self._omega_d = np.sqrt(1 - self.zeta**2) * self.omega  # damped eigen frequency [Hz]
         else:
             self._omega_d = None  # overdamped case, no oscillation
         if self.zeta < np.sqrt(1 / 2):
-            self._omega_res = np.sqrt(1 - 2.0 * self.zeta ** 2) * self.omega  # resonance frequency [Hz]
+            self._omega_res = np.sqrt(1 - 2.0 * self.zeta**2) * self.omega  # resonance frequency [Hz]
         else:
             self._omega_res = None  # damping too high, no resonance
 
@@ -106,7 +106,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         m = self.domain_param["mass"]
 
         # Linear Dynamics
-        A = np.array([[0, 1], [-self.omega ** 2, -2.0 * self.zeta * self.omega]])
+        A = np.array([[0, 1], [-self.omega**2, -2.0 * self.zeta * self.omega]])
         B = np.array([[0], [1.0 / m]])
         state_dot = A.dot(self.state) + B.dot(act).reshape(2)
 
@@ -140,7 +140,7 @@ class OneMassOscillatorDyn(Serializable):
         self.omega = to.sqrt(domain_param["stiffness"] / domain_param["mass"])
         self.zeta = domain_param["damping"] / (2.0 * to.sqrt(domain_param["mass"] * domain_param["stiffness"]))
 
-        self.A = to.stack([to.tensor([0.0, 1.0]), to.stack([-self.omega ** 2, -2.0 * self.zeta * self.omega])])
+        self.A = to.stack([to.tensor([0.0, 1.0]), to.stack([-self.omega**2, -2.0 * self.zeta * self.omega])])
         self.B = to.stack([to.tensor(0.0), 1.0 / domain_param["mass"]]).view(-1, 1)
 
     def __call__(self, state: to.Tensor, act: to.Tensor, domain_param: dict) -> to.Tensor:
