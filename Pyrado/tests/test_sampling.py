@@ -290,7 +290,8 @@ def test_sequences(sequence: Callable, x_init: np.ndarray, plot: bool):
         for i in range(x_full.shape[1]):
             plt.stem(x_full[:, i], label=str(x_init[i]))
         plt.legend()
-        plt.show()
+        # plt.show()
+        plt.close()
 
 
 @pytest.mark.parametrize("sample", [np.array([30, 37, 36, 43, 42, 43, 43, 46, 41, 42])])

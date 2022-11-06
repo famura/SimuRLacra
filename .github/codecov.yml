@@ -7,6 +7,7 @@ ignore:
   - "Pyrado/pyrado/environments/mujoco"
   - "Pyrado/pyrado/environments/quanser"
   - "Pyrado/pyrado/environments/gym_wrapper"
+  - "Pyrado/pyrado/plotting"
   - "Pyrado/scripts"
   - "Pyrado/setup.py"
   - "RcsPySim/doc"

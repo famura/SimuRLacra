@@ -83,4 +83,5 @@ def test_velocity_filter(plot: bool):
         axs[1].set_xlabel("time steps")
         axs[1].set_ylabel(r"$\dot{\alpha}$ [rad/s]")
         axs[1].legend()
-        plt.show()
+        # plt.show()
+        plt.close()

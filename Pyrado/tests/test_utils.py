@@ -546,7 +546,8 @@ def test_gss_optimizer_nlin_fcn():
     plt.xlabel("$x$")
     plt.ylabel("$f(x)$")
     plt.legend()
-    plt.show()
+    # plt.show()
+    plt.close()
     assert noisy_nonlin_fcn(x, f=f, noise_std=noise_std) < noisy_nonlin_fcn(x_init, f=f, noise_std=noise_std)
 
 

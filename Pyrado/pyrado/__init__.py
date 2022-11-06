@@ -39,7 +39,7 @@ from colorama import init
 
 
 # Pyrado version number
-VERSION = "0.7"
+VERSION = "0.7.1"
 
 # Provide global data directories
 PERMA_DIR = osp.join(osp.dirname(__file__), "..", "data", "perma")
