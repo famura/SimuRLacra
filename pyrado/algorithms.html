@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>algorithms &mdash; Pyrado 0.7.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="episodic" href="algorithms.episodic.html" />
+    <link rel="prev" title="domain_randomization" href="domain_randomization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.base">base</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm"><code class="docutils literal notranslate"><span class="pre">Algorithm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.clip_grad"><code class="docutils literal notranslate"><span class="pre">Algorithm.clip_grad()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.curr_iter"><code class="docutils literal notranslate"><span class="pre">Algorithm.curr_iter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.expl_strat"><code class="docutils literal notranslate"><span class="pre">Algorithm.expl_strat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.init_modules"><code class="docutils literal notranslate"><span class="pre">Algorithm.init_modules()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.iteration_key"><code class="docutils literal notranslate"><span class="pre">Algorithm.iteration_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.load_snapshot"><code class="docutils literal notranslate"><span class="pre">Algorithm.load_snapshot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.make_snapshot"><code class="docutils literal notranslate"><span class="pre">Algorithm.make_snapshot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.max_iter"><code class="docutils literal notranslate"><span class="pre">Algorithm.max_iter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.name"><code class="docutils literal notranslate"><span class="pre">Algorithm.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.policy"><code class="docutils literal notranslate"><span class="pre">Algorithm.policy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.reset"><code class="docutils literal notranslate"><span class="pre">Algorithm.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.sample_count"><code class="docutils literal notranslate"><span class="pre">Algorithm.sample_count</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.sampler"><code class="docutils literal notranslate"><span class="pre">Algorithm.sampler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.save_dir"><code class="docutils literal notranslate"><span class="pre">Algorithm.save_dir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.save_name"><code class="docutils literal notranslate"><span class="pre">Algorithm.save_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.save_snapshot"><code class="docutils literal notranslate"><span class="pre">Algorithm.save_snapshot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.step"><code class="docutils literal notranslate"><span class="pre">Algorithm.step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.stopping_criterion"><code class="docutils literal notranslate"><span class="pre">Algorithm.stopping_criterion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.stopping_criterion_met"><code class="docutils literal notranslate"><span class="pre">Algorithm.stopping_criterion_met()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.train"><code class="docutils literal notranslate"><span class="pre">Algorithm.train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm.update"><code class="docutils literal notranslate"><span class="pre">Algorithm.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.base.InterruptableAlgorithm"><code class="docutils literal notranslate"><span class="pre">InterruptableAlgorithm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.InterruptableAlgorithm.curr_checkpoint"><code class="docutils literal notranslate"><span class="pre">InterruptableAlgorithm.curr_checkpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.InterruptableAlgorithm.reached_checkpoint"><code class="docutils literal notranslate"><span class="pre">InterruptableAlgorithm.reached_checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.InterruptableAlgorithm.reset"><code class="docutils literal notranslate"><span class="pre">InterruptableAlgorithm.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.base.InterruptableAlgorithm.reset_checkpoint"><code class="docutils literal notranslate"><span class="pre">InterruptableAlgorithm.reset_checkpoint()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.utils">utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.utils.ActionStatistics"><code class="docutils literal notranslate"><span class="pre">ActionStatistics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ActionStatistics.act_distr"><code class="docutils literal notranslate"><span class="pre">ActionStatistics.act_distr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ActionStatistics.entropy"><code class="docutils literal notranslate"><span class="pre">ActionStatistics.entropy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ActionStatistics.log_probs"><code class="docutils literal notranslate"><span class="pre">ActionStatistics.log_probs</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.utils.ReplayMemory"><code class="docutils literal notranslate"><span class="pre">ReplayMemory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ReplayMemory.avg_reward"><code class="docutils literal notranslate"><span class="pre">ReplayMemory.avg_reward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ReplayMemory.isempty"><code class="docutils literal notranslate"><span class="pre">ReplayMemory.isempty</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ReplayMemory.memory"><code class="docutils literal notranslate"><span class="pre">ReplayMemory.memory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ReplayMemory.push"><code class="docutils literal notranslate"><span class="pre">ReplayMemory.push()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ReplayMemory.reset"><code class="docutils literal notranslate"><span class="pre">ReplayMemory.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.ReplayMemory.sample"><code class="docutils literal notranslate"><span class="pre">ReplayMemory.sample()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.utils.RolloutSavingWrapper"><code class="docutils literal notranslate"><span class="pre">RolloutSavingWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.RolloutSavingWrapper.reset_rollouts"><code class="docutils literal notranslate"><span class="pre">RolloutSavingWrapper.reset_rollouts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.RolloutSavingWrapper.rollouts"><code class="docutils literal notranslate"><span class="pre">RolloutSavingWrapper.rollouts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.RolloutSavingWrapper.sample"><code class="docutils literal notranslate"><span class="pre">RolloutSavingWrapper.sample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.utils.RolloutSavingWrapper.wrapped_sampler"><code class="docutils literal notranslate"><span class="pre">RolloutSavingWrapper.wrapped_sampler</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.utils.compute_action_statistics"><code class="docutils literal notranslate"><span class="pre">compute_action_statistics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.utils.get_grad_via_torch"><code class="docutils literal notranslate"><span class="pre">get_grad_via_torch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.utils.num_iter_from_rollouts"><code class="docutils literal notranslate"><span class="pre">num_iter_from_rollouts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.utils.until_thold_exceeded"><code class="docutils literal notranslate"><span class="pre">until_thold_exceeded()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">algorithms</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/algorithms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="algorithms">
+<h1>algorithms<a class="headerlink" href="#algorithms" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-pyrado.algorithms.base">
+<span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.algorithms.base" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Algorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">StepLogger</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'algo'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="logger.html#pyrado.logger.step.LoggerAware" title="pyrado.logger.step.LoggerAware"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerAware</span></code></a></p>
+<p>Base class of all algorithms in Pyrado
+Algorithms specify the way how the policy is updated as well as the exploration strategy used to acquire samples.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
+<li><p><strong>policy</strong> – Pyrado policy (subclass of PyTorch’s Module) to train</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+<li><p><strong>save_name</strong> – name of the algorithm’s pickle file without the ending, this becomes important if the
+algorithm is run as a subroutine</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.clip_grad">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clip_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_grad_norm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.clip_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.clip_grad" title="Permalink to this definition"></a></dt>
+<dd><p>Clip all gradients of the provided Module (e.g., a policy or an advantage estimator) by their L2 norm value.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The gradient clipping has to be applied between loss.backward() and optimizer.step()</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module</strong> – Module containing parameters</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm for the gradient</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>total norm of the parameters (viewed as a single vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.curr_iter">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">curr_iter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.curr_iter" title="Permalink to this definition"></a></dt>
+<dd><p>Get the current iteration counter.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.expl_strat">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><span class="pre">StochasticActionExplStrat</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_params.StochasticParamExplStrat" title="pyrado.exploration.stochastic_params.StochasticParamExplStrat"><span class="pre">StochasticParamExplStrat</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.expl_strat" title="Permalink to this definition"></a></dt>
+<dd><p>Get the algorithm’s exploration strategy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.init_modules">
+<span class="sig-name descname"><span class="pre">init_modules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warmstart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.init_modules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.init_modules" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
+Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>warmstart</strong> – if <cite>True</cite>, the algorithm starts learning with a non-random initialization. This can either
+be the a fixed parameter vector, or the loaded results of the previous iteration.</p></li>
+<li><p><strong>suffix</strong> – keyword for <cite>meta_info</cite> when loading from previous iteration</p></li>
+<li><p><strong>prefix</strong> – keyword for <cite>meta_info</cite> when loading from previous iteration</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments for initialization, e.g. <cite>policy_param_init</cite> or <cite>valuefcn_param_init</cite></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.iteration_key">
+<span class="sig-name descname"><span class="pre">iteration_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.iteration_key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.load_snapshot">
+<span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.load_snapshot" title="Permalink to this definition"></a></dt>
+<dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.make_snapshot">
+<span class="sig-name descname"><span class="pre">make_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_avg_ret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.make_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.make_snapshot" title="Permalink to this definition"></a></dt>
+<dd><p>Make a snapshot of the training progress.
+This method is called from the subclasses and delegates to the custom method <cite>save_snapshot()</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>curr_avg_ret</strong> – current average return used for the snapshot_mode ‘best’ to trigger <cite>save_snapshot()</cite></p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.max_iter">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_iter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.max_iter" title="Permalink to this definition"></a></dt>
+<dd><p>Get the maximum number of iterations.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.policy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">policy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.policy" title="Permalink to this definition"></a></dt>
+<dd><p>Get the algorithm’s policy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+By default, this resets the iteration count and the exploration strategy.
+Be sure to call this function if you override it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.sample_count">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sample_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.sample_count" title="Permalink to this definition"></a></dt>
+<dd><p>Get the total number of samples, i.e. steps of a rollout, used for training so far.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.sampler">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><span class="pre">SamplerBase</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.sampler" title="Permalink to this definition"></a></dt>
+<dd><p>Get the sampler. For algorithms with multiple samplers, this is the once collecting the training data.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.save_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.save_dir" title="Permalink to this definition"></a></dt>
+<dd><p>Get the directory where the data is saved to.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.save_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.save_name" title="Permalink to this definition"></a></dt>
+<dd><p>Get the name for saving this algorithm instance, e.g. ‘algo’ if saved to ‘algo.pkl’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.save_snapshot">
+<span class="sig-name descname"><span class="pre">save_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.save_snapshot" title="Permalink to this definition"></a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.step">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.step" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.stopping_criterion">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stopping_criterion</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><span class="pre">StoppingCriterion</span></a></em><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.stopping_criterion" title="Permalink to this definition"></a></dt>
+<dd><p>Get the stopping criterion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.stopping_criterion_met">
+<span class="sig-name descname"><span class="pre">stopping_criterion_met</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.stopping_criterion_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.stopping_criterion_met" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the stopping criterion is met.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We need this method because the stopping criterion’s <cite>is_met(algo)</cite> method requires an instance of the
+algorithm. If we would simply use the <cite>is_met(algo)</cite> function of the exposed property, we would have to pass
+the algorithm instance manually. Moreover, if we would change the <cite>is_met(algo)</cite> function to not require the
+algorithm, initializing the latter would require the former and vice versa. This would be a circular
+dependency.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><cite>True</cite> if the stopping criterion is met, see also <cite>StoppingCriterion.is_met(algo)</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.train" title="Permalink to this definition"></a></dt>
+<dd><p>Train one/multiple policy/policies in a given environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new high-score)</p></li>
+<li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.Algorithm.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update the policy’s (and value functions’) parameters based on the collected rollout data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.InterruptableAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">InterruptableAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_checkpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_checkpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">Algorithm</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>A simple checkpoint system too keep track of the algorithms progress. The cyclic counter starts at <cite>init_checkpoint</cite>
+and counts until (including) <cite>num_checkpoints</cite>, and is then reset to zero.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_checkpoints</strong> – total number of checkpoints</p></li>
+<li><p><strong>init_checkpoint</strong> – initial value of the cyclic counter, defaults to 0, use negative values can to mark
+sections that should only be executed once</p></li>
+<li><p><strong>args</strong> – positional arguments forwarded to Algorithm’s constructor</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments forwarded to Algorithm’s constructor</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.InterruptableAlgorithm.curr_checkpoint">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">curr_checkpoint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.curr_checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Get the current checkpoint counter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.InterruptableAlgorithm.reached_checkpoint">
+<span class="sig-name descname"><span class="pre">reached_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm.reached_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.reached_checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Increase the cyclic counter by 1. When the counter reached the maximum number of checkpoints, defined in the
+constructor, it is automatically reset to zero.
+This method also saves the algorithm instance using <cite>save_snapshot()</cite>, otherwise increasing the checkpoint
+counter can have no effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – information forwarded to <cite>save_snapshot()</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.InterruptableAlgorithm.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+By default, this resets the iteration count and the exploration strategy.
+Be sure to call this function if you override it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.base.InterruptableAlgorithm.reset_checkpoint">
+<span class="sig-name descname"><span class="pre">reset_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm.reset_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.reset_checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Explicitly reset the cyclic counter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>curr</strong> – value to set the counter to, defaults to 0</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.algorithms.utils">
+<span id="utils"></span><h2>utils<a class="headerlink" href="#module-pyrado.algorithms.utils" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ActionStatistics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ActionStatistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act_distr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_probs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entropy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ActionStatistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ActionStatistics" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>act_distr: probability distribution at the given policy output values
+log_probs: <span class="math notranslate nohighlight">\(\log (p(act|obs, hidden))\)</span> if hidden exists, else <span class="math notranslate nohighlight">\(\log (p(act|obs))\)</span>
+entropy: entropy of the action distribution</p>
+<p>Create new instance of ActionStatistics(act_distr, log_probs, entropy)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ActionStatistics.act_distr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_distr</span></span><a class="headerlink" href="#pyrado.algorithms.utils.ActionStatistics.act_distr" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ActionStatistics.entropy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entropy</span></span><a class="headerlink" href="#pyrado.algorithms.utils.ActionStatistics.entropy" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ActionStatistics.log_probs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_probs</span></span><a class="headerlink" href="#pyrado.algorithms.utils.ActionStatistics.log_probs" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ReplayMemory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ReplayMemory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capacity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ReplayMemory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for storing step transitions</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>capacity</strong> – number of steps a.k.a. transitions in the memory</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ReplayMemory.avg_reward">
+<span class="sig-name descname"><span class="pre">avg_reward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ReplayMemory.avg_reward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.avg_reward" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the average reward for all steps stored in the replay memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>average reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ReplayMemory.isempty">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isempty</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.isempty" title="Permalink to this definition"></a></dt>
+<dd><p>Check if the replay buffer is empty.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ReplayMemory.memory">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">memory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></em><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.memory" title="Permalink to this definition"></a></dt>
+<dd><p>Get the replay buffer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ReplayMemory.push">
+<span class="sig-name descname"><span class="pre">push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ros</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ReplayMemory.push"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.push" title="Permalink to this definition"></a></dt>
+<dd><p>Save a sequence of steps and drop of steps if the capacity is exceeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ros</strong> – list of rollouts or one concatenated rollout</p></li>
+<li><p><strong>truncate_last</strong> – remove the last step from each rollout, forwarded to <cite>StepSequence.concat</cite></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ReplayMemory.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ReplayMemory.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.reset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.ReplayMemory.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ReplayMemory.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Sample randomly from the replay memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – number of samples</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple of transition steps and associated next steps</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.RolloutSavingWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RolloutSavingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_sampler:</span> <span class="pre">~pyrado.sampling.sampler.SamplerBase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rollouts:</span> <span class="pre">~typing.List[~typing.List[~pyrado.sampling.step_sequence.StepSequence]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#RolloutSavingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A wrapper for <cite>SamplerBase</cite> objects where calls to <cite>SamplerBase.sample()</cite> are intercepted and the results stored
+in this wrapper before they are returned to the caller.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Usage</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ros</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
+<span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ros</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.RolloutSavingWrapper.reset_rollouts">
+<span class="sig-name descname"><span class="pre">reset_rollouts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#RolloutSavingWrapper.reset_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper.reset_rollouts" title="Permalink to this definition"></a></dt>
+<dd><p>Resets the internal rollout variable. Intended to be called before <cite>save_snapshot()</cite>, in order to
+reduce serialized object’s size.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.RolloutSavingWrapper.rollouts">
+<span class="sig-name descname"><span class="pre">rollouts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper.rollouts" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.RolloutSavingWrapper.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#RolloutSavingWrapper.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Like <cite>SamplerBase.sample()</cite> but keeps a copy of all returned values.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.RolloutSavingWrapper.wrapped_sampler">
+<span class="sig-name descname"><span class="pre">wrapped_sampler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sampling.html#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><span class="pre">SamplerBase</span></a></em><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper.wrapped_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.compute_action_statistics">
+<span class="sig-name descname"><span class="pre">compute_action_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_strat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><span class="pre">StochasticActionExplStrat</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyrado.algorithms.utils.ActionStatistics" title="pyrado.algorithms.utils.ActionStatistics"><span class="pre">ActionStatistics</span></a></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#compute_action_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.compute_action_statistics" title="Permalink to this definition"></a></dt>
+<dd><p>Get the action distribution from the exploration strategy, compute the log action probabilities and entropy
+for the given rollout using the given exploration strategy.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Requires the exploration strategy to have a (most likely custom) <cite>evaluate()</cite> method.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>steps</strong> – recorded rollout data</p></li>
+<li><p><strong>expl_strat</strong> – exploration strategy used to generate the data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>collected action statistics, see <cite>ActionStatistics</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.get_grad_via_torch">
+<span class="sig-name descname"><span class="pre">get_grad_via_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_np</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fcn_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args_to</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs_to</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#get_grad_via_torch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.get_grad_via_torch" title="Permalink to this definition"></a></dt>
+<dd><p>Get the gradient of a function operating on PyTorch tensors, by casting the input <cite>x_np</cite> as well as the
+resulting gradient to PyTorch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_np</strong> – input vector <span class="math notranslate nohighlight">\(x\)</span></p></li>
+<li><p><strong>fcn_to</strong> – function <span class="math notranslate nohighlight">\(f(x, \cdot)\)</span></p></li>
+<li><p><strong>args_to</strong> – other arguments to the function</p></li>
+<li><p><strong>kwargs_to</strong> – other keyword arguments to the function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(\nabla_x f(x, \cdot)\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.num_iter_from_rollouts">
+<span class="sig-name descname"><span class="pre">num_iter_from_rollouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ros:</span> <span class="pre">[typing.Sequence[pyrado.sampling.step_sequence.StepSequence],</span> <span class="pre">None],</span> <span class="pre">concat_ros:</span> <span class="pre">[&lt;class</span> <span class="pre">'pyrado.sampling.step_sequence.StepSequence'&gt;,</span> <span class="pre">None],</span> <span class="pre">batch_size:</span> <span class="pre">int</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#num_iter_from_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.num_iter_from_rollouts" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of iterations from the given rollout data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ros</strong> – multiple rollouts</p></li>
+<li><p><strong>concat_ros</strong> – concatenated rollouts</p></li>
+<li><p><strong>batch_size</strong> – number of samples per batch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of iterations (e.g. used for the progress bar)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.algorithms.utils.until_thold_exceeded">
+<span class="sig-name descname"><span class="pre">until_thold_exceeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#until_thold_exceeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.until_thold_exceeded" title="Permalink to this definition"></a></dt>
+<dd><p>Designed to wrap a function and repeat it until the return value exceeds a threshold.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The wrapped function must accept the kwarg <cite>cnt_rep</cite>. This can be useful to trigger different behavior
+depending on the number of already done repetition.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>thold</strong> – threshold</p></li>
+<li><p><strong>max_rep</strong> – maximum number of repetitions of the wrapped function, set to <cite>None</cite> to run the loop relentlessly</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>wrapped function</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.algorithms">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.algorithms" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="domain_randomization.html" class="btn btn-neutral float-left" title="domain_randomization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="algorithms.episodic.html" class="btn btn-neutral float-right" title="episodic" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

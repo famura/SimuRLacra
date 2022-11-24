@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regression &mdash; Pyrado 0.7.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="stopping_criteria" href="algorithms.stopping_criteria.html" />
+    <link rel="prev" title="meta" href="algorithms.meta.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">regression</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.regression.nonlin_regression">nonlin_regression</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression"><code class="docutils literal notranslate"><span class="pre">NonlinRegression</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.name"><code class="docutils literal notranslate"><span class="pre">NonlinRegression.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.reset"><code class="docutils literal notranslate"><span class="pre">NonlinRegression.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.save_snapshot"><code class="docutils literal notranslate"><span class="pre">NonlinRegression.save_snapshot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.step"><code class="docutils literal notranslate"><span class="pre">NonlinRegression.step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.regression.timeseries_prediction">timeseries_prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred"><code class="docutils literal notranslate"><span class="pre">TSPred</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.evaluate"><code class="docutils literal notranslate"><span class="pre">TSPred.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.load_snapshot"><code class="docutils literal notranslate"><span class="pre">TSPred.load_snapshot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.name"><code class="docutils literal notranslate"><span class="pre">TSPred.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.predict"><code class="docutils literal notranslate"><span class="pre">TSPred.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.save_snapshot"><code class="docutils literal notranslate"><span class="pre">TSPred.save_snapshot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.step"><code class="docutils literal notranslate"><span class="pre">TSPred.step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.regression">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">regression</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/algorithms.regression.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="regression">
+<h1>regression<a class="headerlink" href="#regression" title="Permalink to this heading"></a></h1>
+<section id="module-pyrado.algorithms.regression.nonlin_regression">
+<span id="nonlin-regression"></span><h2>nonlin_regression<a class="headerlink" href="#module-pyrado.algorithms.regression.nonlin_regression" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.nonlin_regression.NonlinRegression">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NonlinRegression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir:</span> <span class="pre">~pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy:</span> <span class="pre">~pyrado.policies.base.Policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter_no_improvement:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_class=&lt;class</span> <span class="pre">'torch.optim.adam.Adam'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_hparam:</span> <span class="pre">~typing.Optional[dict]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fcn=MSELoss()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_train:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_grad_norm:</span> <span class="pre">~typing.Optional[float]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scheduler=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scheduler_hparam:</span> <span class="pre">~typing.Optional[dict]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger:</span> <span class="pre">~typing.Optional[~pyrado.logger.step.StepLogger]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/nonlin_regression.html#NonlinRegression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">Algorithm</span></code></a></p>
+<p>Train a policy using stochastic gradient descent to approximate the given data.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>inputs</strong> – input data set, where the samples are along the first dimension</p></li>
+<li><p><strong>targets</strong> – target data set, where the samples are along the first dimension</p></li>
+<li><p><strong>policy</strong> – Pyrado policy (subclass of PyTorch’s Module) to train</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations</p></li>
+<li><p><strong>max_iter_no_improvement</strong> – if the performance on the validation set did not improve for this many
+iterations, the policy is considered to have converged, i.e. training stops</p></li>
+<li><p><strong>optim_class</strong> – PyTorch optimizer class</p></li>
+<li><p><strong>optim_hparam</strong> – hyper-parameters for the PyTorch optimizer</p></li>
+<li><p><strong>loss_fcn</strong> – loss function for training, by default <cite>torch.nn.MSELoss()</cite></p></li>
+<li><p><strong>batch_size</strong> – number of samples per policy update batch</p></li>
+<li><p><strong>ratio_train</strong> – ratio of the training samples w.r.t. the total sample count</p></li>
+<li><p><strong>max_grad_norm</strong> – maximum L2 norm of the gradients for clipping, set to <cite>None</cite> to disable gradient clipping</p></li>
+<li><p><strong>lr_scheduler</strong> – learning rate scheduler that does one step per epoch (pass through the whole data set)</p></li>
+<li><p><strong>lr_scheduler_hparam</strong> – hyper-parameters for the learning rate scheduler</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.nonlin_regression.NonlinRegression.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'regr'</span></em><a class="headerlink" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.nonlin_regression.NonlinRegression.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/nonlin_regression.html#NonlinRegression.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+By default, this resets the iteration count and the exploration strategy.
+Be sure to call this function if you override it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.nonlin_regression.NonlinRegression.save_snapshot">
+<span class="sig-name descname"><span class="pre">save_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/nonlin_regression.html#NonlinRegression.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.save_snapshot" title="Permalink to this definition"></a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.nonlin_regression.NonlinRegression.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/nonlin_regression.html#NonlinRegression.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.step" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.algorithms.regression.timeseries_prediction">
+<span id="timeseries-prediction"></span><h2>timeseries_prediction<a class="headerlink" href="#module-pyrado.algorithms.regression.timeseries_prediction" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.timeseries_prediction.TSPred">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TSPred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir:</span> <span class="pre">~pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset:</span> <span class="pre">~pyrado.utils.data_sets.TimeSeriesDataSet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy:</span> <span class="pre">~pyrado.policies.base.Policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windowed:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cascaded:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_class=&lt;class</span> <span class="pre">'torch.optim.adam.Adam'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_hparam:</span> <span class="pre">~typing.Optional[dict]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fcn=MSELoss()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scheduler=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scheduler_hparam:</span> <span class="pre">~typing.Optional[dict]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger:</span> <span class="pre">~typing.Optional[~pyrado.logger.step.StepLogger]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/timeseries_prediction.html#TSPred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">Algorithm</span></code></a></p>
+<p>Train a policy to predict a time series of data.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
+<li><p><strong>dataset</strong> – complete data set, where the samples are along the first dimension</p></li>
+<li><p><strong>policy</strong> – Pyrado policy (subclass of PyTorch’s Module) to train</p></li>
+<li><p><strong>max_iter</strong> – maximum number of iterations</p></li>
+<li><p><strong>windowed</strong> – if <cite>True</cite>, one fixed-length (short) input sequence is provided to the policy which then
+predicts one sample, else the complete (long) input sequence is fed to the policy which then
+predicts an sequence of samples of equal length</p></li>
+<li><p><strong>cascaded</strong> – it <cite>True</cite>, the predictions are made based on previous predictions instead of the current input</p></li>
+<li><p><strong>optim_class</strong> – PyTorch optimizer class</p></li>
+<li><p><strong>optim_hparam</strong> – hyper-parameters for the PyTorch optimizer</p></li>
+<li><p><strong>loss_fcn</strong> – loss function for training, by default <cite>torch.nn.MSELoss()</cite></p></li>
+<li><p><strong>lr_scheduler</strong> – learning rate scheduler that does one step per epoch (pass through the whole data set)</p></li>
+<li><p><strong>lr_scheduler_hparam</strong> – hyper-parameters for the learning rate scheduler</p></li>
+<li><p><strong>logger</strong> – logger for every step of the algorithm, if <cite>None</cite> the default logger will be created</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.timeseries_prediction.TSPred.evaluate">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windowed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cascaded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fcn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MSELoss()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/timeseries_prediction.html#TSPred.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.evaluate" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.timeseries_prediction.TSPred.load_snapshot">
+<span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/regression/timeseries_prediction.html#TSPred.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.load_snapshot" title="Permalink to this definition"></a></dt>
+<dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.timeseries_prediction.TSPred.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tspred'</span></em><a class="headerlink" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.timeseries_prediction.TSPred.predict">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy:</span> <span class="pre">~pyrado.policies.base.Policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp_seq:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windowed:</span> <span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cascaded:</span> <span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/timeseries_prediction.html#TSPred.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the hidden states, predict one output given a arbitrary long sequence of inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>policy</strong> – policy used to make the predictions</p></li>
+<li><p><strong>inp_seq</strong> – input sequence</p></li>
+<li><p><strong>hidden</strong> – initial hidden states, pass <cite>None</cite> to let the network pick its default hidden state</p></li>
+<li><p><strong>windowed</strong> – if <cite>True</cite>, one fixed-length (short) input sequence is provided to the policy which then
+predicts one sample, else the complete (long) input sequence is fed to the policy which then
+predicts an sequence of samples of equal length</p></li>
+<li><p><strong>cascaded</strong> – it <cite>True</cite>, the predictions are made based on previous predictions instead of the current input</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>predicted output and latest hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.timeseries_prediction.TSPred.save_snapshot">
+<span class="sig-name descname"><span class="pre">save_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/timeseries_prediction.html#TSPred.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.save_snapshot" title="Permalink to this definition"></a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.regression.timeseries_prediction.TSPred.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/regression/timeseries_prediction.html#TSPred.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.regression.timeseries_prediction.TSPred.step" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.algorithms.regression">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.algorithms.regression" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="algorithms.meta.html" class="btn btn-neutral float-left" title="meta" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="algorithms.stopping_criteria.html" class="btn btn-neutral float-right" title="stopping_criteria" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

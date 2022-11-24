@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>policies &mdash; Pyrado 0.7.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="feed_back" href="policies.feed_back.html" />
+    <link rel="prev" title="exploration" href="exploration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">policies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.base">base</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.base.Policy"><code class="docutils literal notranslate"><span class="pre">Policy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.device"><code class="docutils literal notranslate"><span class="pre">Policy.device</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.env_spec"><code class="docutils literal notranslate"><span class="pre">Policy.env_spec</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.evaluate"><code class="docutils literal notranslate"><span class="pre">Policy.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.forward"><code class="docutils literal notranslate"><span class="pre">Policy.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.init_hidden"><code class="docutils literal notranslate"><span class="pre">Policy.init_hidden()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.init_param"><code class="docutils literal notranslate"><span class="pre">Policy.init_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.is_recurrent"><code class="docutils literal notranslate"><span class="pre">Policy.is_recurrent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.name"><code class="docutils literal notranslate"><span class="pre">Policy.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.num_param"><code class="docutils literal notranslate"><span class="pre">Policy.num_param</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.param_grad"><code class="docutils literal notranslate"><span class="pre">Policy.param_grad</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.param_values"><code class="docutils literal notranslate"><span class="pre">Policy.param_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.reset"><code class="docutils literal notranslate"><span class="pre">Policy.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.Policy.script"><code class="docutils literal notranslate"><span class="pre">Policy.script()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.base.TracedPolicyWrapper"><code class="docutils literal notranslate"><span class="pre">TracedPolicyWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.TracedPolicyWrapper.forward"><code class="docutils literal notranslate"><span class="pre">TracedPolicyWrapper.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.TracedPolicyWrapper.input_size"><code class="docutils literal notranslate"><span class="pre">TracedPolicyWrapper.input_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.TracedPolicyWrapper.output_size"><code class="docutils literal notranslate"><span class="pre">TracedPolicyWrapper.output_size</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.base.TwoHeadedPolicy"><code class="docutils literal notranslate"><span class="pre">TwoHeadedPolicy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.TwoHeadedPolicy.forward"><code class="docutils literal notranslate"><span class="pre">TwoHeadedPolicy.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.TwoHeadedPolicy.init_param"><code class="docutils literal notranslate"><span class="pre">TwoHeadedPolicy.init_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.base.TwoHeadedPolicy.training"><code class="docutils literal notranslate"><span class="pre">TwoHeadedPolicy.training</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.features">features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.ATan2Feat"><code class="docutils literal notranslate"><span class="pre">ATan2Feat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.FeatureStack"><code class="docutils literal notranslate"><span class="pre">FeatureStack</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.features.FeatureStack.get_num_feat"><code class="docutils literal notranslate"><span class="pre">FeatureStack.get_num_feat()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.MultFeat"><code class="docutils literal notranslate"><span class="pre">MultFeat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.RBFFeat"><code class="docutils literal notranslate"><span class="pre">RBFFeat</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.policies.features.RBFFeat.derivative"><code class="docutils literal notranslate"><span class="pre">RBFFeat.derivative()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.RFFeat"><code class="docutils literal notranslate"><span class="pre">RFFeat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.abs_feat"><code class="docutils literal notranslate"><span class="pre">abs_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.bell_feat"><code class="docutils literal notranslate"><span class="pre">bell_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.const_feat"><code class="docutils literal notranslate"><span class="pre">const_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.cos_feat"><code class="docutils literal notranslate"><span class="pre">cos_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.cubic_feat"><code class="docutils literal notranslate"><span class="pre">cubic_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.identity_feat"><code class="docutils literal notranslate"><span class="pre">identity_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.sig_feat"><code class="docutils literal notranslate"><span class="pre">sig_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.sign_feat"><code class="docutils literal notranslate"><span class="pre">sign_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.sin_feat"><code class="docutils literal notranslate"><span class="pre">sin_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.sincos_feat"><code class="docutils literal notranslate"><span class="pre">sincos_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.sinsin_feat"><code class="docutils literal notranslate"><span class="pre">sinsin_feat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.features.squared_feat"><code class="docutils literal notranslate"><span class="pre">squared_feat()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.initialization">initialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.policies.initialization.init_param"><code class="docutils literal notranslate"><span class="pre">init_param()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">policies</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/policies.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="policies">
+<h1>policies<a class="headerlink" href="#policies" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-pyrado.policies.base">
+<span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.policies.base" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for all policies in Pyrado</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.device">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyrado.policies.base.Policy.device" title="Permalink to this definition"></a></dt>
+<dd><p>Get the device (CPU or GPU) on which the policy is stored.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.env_spec">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">env_spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></em><a class="headerlink" href="#pyrado.policies.base.Policy.env_spec" title="Permalink to this definition"></a></dt>
+<dd><p>Get the specification of environment the policy acts in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_states_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hidden_states'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
+The default implementation simply calls <cite>forward()</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
+Defaults to ‘hidden_states’. Change for value functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Get the action according to the policy and the observations (forward pass).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+<li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.init_hidden">
+<span class="sig-name descname"><span class="pre">init_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_hidden" title="Permalink to this definition"></a></dt>
+<dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.
+The default implementation will raise an error, to enforce override this function for recurrent policies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.init_param">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_param" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.is_recurrent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_recurrent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyrado.policies.base.Policy.is_recurrent" title="Permalink to this definition"></a></dt>
+<dd><p>Bool to signalise it the policy has a recurrent architecture.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyrado.policies.base.Policy.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.num_param">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.base.Policy.num_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of policy parameters.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.param_grad">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">param_grad</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#pyrado.policies.base.Policy.param_grad" title="Permalink to this definition"></a></dt>
+<dd><p>Get the gradient of the parameters as 1d array.
+The values are copied, modifying the return value does not propagate to the actual policy parameters.
+However, setting this variable will change the gradient.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.param_values">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">param_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#pyrado.policies.base.Policy.param_values" title="Permalink to this definition"></a></dt>
+<dd><p>Get the parameters of the policy as 1d array.
+The values are copied, modifying the return value does not propagate to the actual policy parameters.
+However, setting this variable will change the parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the policy’s internal state. This should be called at the start of a rollout.
+The default implementation does nothing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.Policy.script">
+<span class="sig-name descname"><span class="pre">script</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ScriptModule</span></span></span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.script" title="Permalink to this definition"></a></dt>
+<dd><p>Create a ScriptModule from this policy.
+The returned module will always have the signature <cite>action = tm(observation)</cite>.
+For recurrent networks, it returns a stateful module that keeps the hidden states internally.
+Such modules have a reset() method to reset the hidden states.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.base.TracedPolicyWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TracedPolicyWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TracedPolicyWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Wrapper for a traced policy. Mainly used to add <cite>input_size</cite> and <cite>output_size</cite> attributes.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>module</strong> – non-recurrent network to wrap, which must not be a script module</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.TracedPolicyWrapper.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TracedPolicyWrapper.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.base.TracedPolicyWrapper.input_size">
+<span class="sig-name descname"><span class="pre">input_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.input_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.base.TracedPolicyWrapper.output_size">
+<span class="sig-name descname"><span class="pre">output_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.output_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.base.TwoHeadedPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TwoHeadedPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Policy</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for policies with a shared body and two separate heads.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec</strong> – environment specification</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.TwoHeadedPolicy.forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Get the action according to the policy and the observations (forward pass).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+<li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.base.TwoHeadedPolicy.init_param">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.init_param" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.policies.base.TwoHeadedPolicy.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.policies.features">
+<span id="features"></span><h2>features<a class="headerlink" href="#module-pyrado.policies.features" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.features.ATan2Feat">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ATan2Feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx_sin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_cos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#ATan2Feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.ATan2Feat" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Feature that computes the atan2 from two dimensions of the given input / observation.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx_sin</strong> – indices of the numerator, i.e. the sin-transformed observation dimension</p></li>
+<li><p><strong>idx_cos</strong> – indices of the denominator, i.e. the cos-transformed observation dimension</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.features.FeatureStack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FeatureStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">feat_fcns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Features are nonlinear transformations of the inputs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We only consider 1-dim inputs.</p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>feat_fcns</strong> – feature functions, each of them maps from a multi-dim input to a multi-dim output
+(e.g. <cite>identity_feat</cite>, <cite>squared_feat</cite>, exception: <cite>const_feat</cite>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.features.FeatureStack.get_num_feat">
+<span class="sig-name descname"><span class="pre">get_num_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_flat_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack.get_num_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack.get_num_feat" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the number of features which depends on the dimension of the input and the selected feature functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inp_flat_dim</strong> – flattened dimension input to the feature functions</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of feature values</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.features.MultFeat">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultFeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#MultFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.MultFeat" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Feature that multiplies two dimensions of the given input / observation</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idcs</strong> – indices of the dimensions to multiply</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.features.RBFFeat">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RBFFeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_feat_per_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_wise_norm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Normalized Gaussian radial basis function features</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_feat_per_dim</strong> – number of radial basis functions, identical for every dimension of the input</p></li>
+<li><p><strong>bounds</strong> – lower and upper bound for the Gaussians’ centers, the input dimension is inferred from them</p></li>
+<li><p><strong>scale</strong> – scaling factor for the squared distance, if <cite>None</cite> the factor is determined such that two
+neighboring RBFs have a value of 0.2 at the other center</p></li>
+<li><p><strong>state_wise_norm</strong> – <cite>True</cite> to apply the normalization across input state dimensions separately (every
+dimension sums to one), or <cite>False</cite> to jointly normalize them</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the module to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.policies.features.RBFFeat.derivative">
+<span class="sig-name descname"><span class="pre">derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat.derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat.derivative" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the derivative of the features w.r.t. the inputs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only processing of 1-dim input (e.g., no images)! The input can be batched along the first dimension.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inp</strong> – input i.e. observations in the RL setting</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>value of all features derivatives given the observations</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.policies.features.RFFeat">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RFFeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_feat_per_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RFFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.RFFeat" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Random Fourier (RF) features</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] A. Rahimi and B. Recht “Random Features for Large-Scale Kernel Machines”, NIPS, 2007</p>
+</div>
+<dl class="simple">
+<dt>Gaussian kernel: <span class="math notranslate nohighlight">\(k(x,y) = \exp(-\sigma**2 / (2*d) * ||x-y||^2)\)</span></dt><dd><p>Sample from <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span> and scale the result by <span class="math notranslate nohighlight">\(\sigma / \sqrt{2*d}\)</span></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp_dim</strong> – flat dimension of the inputs i.e. the observations, called <span class="math notranslate nohighlight">\(d\)</span> in [1]</p></li>
+<li><p><strong>num_feat_per_dim</strong> – number of random Fourier features, called <span class="math notranslate nohighlight">\(D\)</span> in [1]. In contrast to the <cite>RBFFeat</cite>
+class, the output dimensionality, thus the number of associated policy parameters is
+<cite>num_feat_per_dim</cite> and not`num_feat_per_dim * inp_dim`.</p></li>
+<li><p><strong>bandwidth</strong> – scaling factor for the sampled frequencies. Pass a constant scalar value, for example
+<cite>env.obs_space.bound_up</cite>. According to [1] and the note above we should use d here.
+Actually, it is not a bandwidth since it is not a frequency.</p></li>
+<li><p><strong>use_cuda</strong> – <cite>True</cite> to move the module to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.abs_feat">
+<span class="sig-name descname"><span class="pre">abs_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#abs_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.abs_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.bell_feat">
+<span class="sig-name descname"><span class="pre">bell_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#bell_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.bell_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.const_feat">
+<span class="sig-name descname"><span class="pre">const_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#const_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.const_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.cos_feat">
+<span class="sig-name descname"><span class="pre">cos_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#cos_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.cos_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.cubic_feat">
+<span class="sig-name descname"><span class="pre">cubic_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#cubic_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.cubic_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.identity_feat">
+<span class="sig-name descname"><span class="pre">identity_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#identity_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.identity_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.sig_feat">
+<span class="sig-name descname"><span class="pre">sig_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sig_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sig_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.sign_feat">
+<span class="sig-name descname"><span class="pre">sign_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sign_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sign_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.sin_feat">
+<span class="sig-name descname"><span class="pre">sin_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sin_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sin_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.sincos_feat">
+<span class="sig-name descname"><span class="pre">sincos_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sincos_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sincos_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.sinsin_feat">
+<span class="sig-name descname"><span class="pre">sinsin_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sinsin_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sinsin_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.features.squared_feat">
+<span class="sig-name descname"><span class="pre">squared_feat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#squared_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.squared_feat" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pyrado.policies.initialization">
+<span id="initialization"></span><h2>initialization<a class="headerlink" href="#module-pyrado.policies.initialization" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.initialization.init_param">
+<span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/initialization.html#init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.initialization.init_param" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the parameters of the PyTorch Module / layer / network / cell according to its type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> – PyTorch Module / layer / network / cell to initialize</p></li>
+<li><p><strong>kwargs</strong> – optional keyword arguments, e.g. <cite>t_max</cite> for LSTM’s chrono initialization [2], or <cite>uniform_bias</cite></p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] A.M. Sachse, J. L. McClelland, S. Ganguli, “Exact solutions to the nonlinear dynamics of learning in
+deep linear neural networks”, 2014</p>
+<p>[2] C. Tallec, Y. Ollivier, “Can recurrent neural networks warp time?”, 2018, ICLR</p>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.policies">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.policies" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="exploration.html" class="btn btn-neutral float-left" title="exploration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="policies.feed_back.html" class="btn btn-neutral float-right" title="feed_back" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
