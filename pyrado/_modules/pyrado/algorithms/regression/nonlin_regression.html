@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyrado.algorithms.regression.nonlin_regression &mdash; Pyrado 0.7.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../pyrado.html">pyrado</a></li>
+      <li class="breadcrumb-item active">pyrado.algorithms.regression.nonlin_regression</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyrado.algorithms.regression.nonlin_regression</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">SubsetRandomSampler</span><span class="p">,</span> <span class="n">TensorDataset</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.stopping_criteria.predefined_criteria</span> <span class="kn">import</span> <span class="n">CustomStoppingCriterion</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
+
+
+<div class="viewcode-block" id="NonlinRegression"><a class="viewcode-back" href="../../../../algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression">[docs]</a><span class="k">class</span> <span class="nc">NonlinRegression</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Train a policy using stochastic gradient descent to approximate the given data.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;regr&quot;</span>  <span class="c1"># unique identifier</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">targets</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">max_iter_no_improvement</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">optim_class</span><span class="o">=</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+        <span class="n">optim_hparam</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loss_fcn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+        <span class="n">ratio_train</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">max_grad_norm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lr_scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
+<span class="sd">        :param inputs: input data set, where the samples are along the first dimension</span>
+<span class="sd">        :param targets: target data set, where the samples are along the first dimension</span>
+<span class="sd">        :param policy: Pyrado policy (subclass of PyTorch&#39;s Module) to train</span>
+<span class="sd">        :param max_iter: maximum number of iterations</span>
+<span class="sd">        :param max_iter_no_improvement: if the performance on the validation set did not improve for this many</span>
+<span class="sd">                                        iterations, the policy is considered to have converged, i.e. training stops</span>
+<span class="sd">        :param optim_class: PyTorch optimizer class</span>
+<span class="sd">        :param optim_hparam: hyper-parameters for the PyTorch optimizer</span>
+<span class="sd">        :param loss_fcn: loss function for training, by default `torch.nn.MSELoss()`</span>
+<span class="sd">        :param batch_size: number of samples per policy update batch</span>
+<span class="sd">        :param ratio_train: ratio of the training samples w.r.t. the total sample count</span>
+<span class="sd">        :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping</span>
+<span class="sd">        :param lr_scheduler: learning rate scheduler that does one step per epoch (pass through the whole data set)</span>
+<span class="sd">        :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler</span>
+<span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ratio_train</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">ratio_train</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">ratio_train</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">ratio_train</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">l_constraint</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Call Algorithm&#39;s constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+        <span class="c1"># Construct the dataset (samples along rows)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">inputs</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">inputs</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">targets</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">targets</span>
+        <span class="k">if</span> <span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="n">num_samples_all</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>  <span class="c1"># shared for training and validation loaders</span>
+
+        <span class="c1"># Create training and validation loader</span>
+        <span class="n">idcs_all</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">num_samples_all</span><span class="p">)</span>
+        <span class="n">num_samples_trn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ratio_train</span> <span class="o">*</span> <span class="n">num_samples_all</span><span class="p">)</span>
+        <span class="n">num_samples_val</span> <span class="o">=</span> <span class="n">num_samples_all</span> <span class="o">-</span> <span class="n">num_samples_trn</span>
+        <span class="n">idcs_trn</span><span class="p">,</span> <span class="n">idcs_val</span> <span class="o">=</span> <span class="n">idcs_all</span><span class="p">[:</span><span class="n">num_samples_trn</span><span class="p">],</span> <span class="n">idcs_all</span><span class="p">[</span><span class="n">num_samples_trn</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_trn</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_samples_trn</span><span class="p">),</span>
+            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">SubsetRandomSampler</span><span class="p">(</span><span class="n">idcs_trn</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_val</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_samples_val</span><span class="p">),</span>
+            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">SubsetRandomSampler</span><span class="p">(</span><span class="n">idcs_val</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Set defaults which can be overwritten by passing optim_hparam, and create the optimizer</span>
+        <span class="n">optim_hparam</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">5e-3</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">),</span> <span class="n">optim_hparam</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">optim_class</span><span class="p">([{</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span> <span class="o">**</span><span class="n">optim_hparam</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ratio_train</span> <span class="o">=</span> <span class="n">ratio_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span> <span class="o">=</span> <span class="n">loss_fcn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_grad_norm</span> <span class="o">=</span> <span class="n">max_grad_norm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_hparam</span> <span class="o">=</span> <span class="n">lr_scheduler_hparam</span>
+        <span class="k">if</span> <span class="n">lr_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lr_scheduler_hparam</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="p">,</span> <span class="o">**</span><span class="n">lr_scheduler_hparam</span><span class="p">)</span>
+
+        <span class="c1"># Stopping criterion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curr_loss_val</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_loss_val</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_iter_no_improvement</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter_no_improvement</span> <span class="o">=</span> <span class="n">max_iter_no_improvement</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopping_criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopping_criterion</span> <span class="o">|</span> <span class="n">CustomStoppingCriterion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_custom_stopping_criterion</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_custom_stopping_criterion</span><span class="p">(</span><span class="n">algo</span><span class="p">:</span> <span class="s2">&quot;NonlinRegression&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Keep track of the best validation performance and check if it does not improve for a given number of iterations.</span>
+
+<span class="sd">        :return: `True` if the performance on the validation set did not improve for, i.e. network has converged</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">algo</span><span class="o">.</span><span class="n">_cnt_iter_no_improvement</span> <span class="o">&gt;=</span> <span class="n">algo</span><span class="o">.</span><span class="n">_max_iter_no_improvement</span><span class="p">:</span>
+            <span class="c1"># No improvement over on the validation set for self._max_iter_no_improvement iterations</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">_curr_loss_val</span> <span class="o">&lt;</span> <span class="n">algo</span><span class="o">.</span><span class="n">_best_loss_val</span><span class="p">:</span>
+                <span class="c1"># Reset the counter if first epoch or any improvement</span>
+                <span class="n">algo</span><span class="o">.</span><span class="n">_best_loss_val</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">_curr_loss_val</span>
+                <span class="n">algo</span><span class="o">.</span><span class="n">_cnt_iter_no_improvement</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">algo</span><span class="o">.</span><span class="n">_cnt_iter_no_improvement</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Continue training</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="NonlinRegression.reset"><a class="viewcode-back" href="../../../../algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Reset the exploration strategy, internal variables and the random seeds</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="c1"># Re-initialize the the stopping criterion&#39;s temporary variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curr_loss_val</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_loss_val</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span></div>
+
+<div class="viewcode-block" id="NonlinRegression.step"><a class="viewcode-back" href="../../../../algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Update on the training set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">losses_trn</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_trn</span><span class="p">:</span>
+            <span class="c1"># Get the batch&#39;s data and predict</span>
+            <span class="n">inps</span><span class="p">,</span> <span class="n">targs</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">(</span><span class="n">inps</span><span class="p">)</span>
+
+            <span class="c1"># Reset the gradients, compute and store the loss</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">loss_trn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">targs</span><span class="p">)</span>
+            <span class="n">losses_trn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss_trn</span><span class="p">)</span>
+            <span class="n">loss_trn</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+            <span class="c1"># Clip the gradients if desired</span>
+            <span class="n">Algorithm</span><span class="o">.</span><span class="n">clip_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_grad_norm</span><span class="p">)</span>
+
+            <span class="c1"># call the optimizer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="c1"># Calculate performance on the validation set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">losses_val</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_val</span><span class="p">:</span>
+                <span class="c1"># Get the batch&#39;s data and predict</span>
+                <span class="n">inps</span><span class="p">,</span> <span class="n">targs</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">(</span><span class="n">inps</span><span class="p">)</span>
+
+                <span class="c1"># Compute and store the loss</span>
+                <span class="n">losses_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">targs</span><span class="p">))</span>
+
+            <span class="c1"># Log metrics computed from the old policy (loss value from update on this training sample)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curr_loss_val</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">losses_val</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;avg trn loss&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">losses_trn</span><span class="p">)),</span> <span class="mi">6</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;avg val loss&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_loss_val</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+                <span class="s2">&quot;min mag policy param&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">))]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+                <span class="s2">&quot;max mag policy param&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">))]</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;avg lr&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span><span class="o">.</span><span class="n">get_last_lr</span><span class="p">()),</span> <span class="mi">6</span><span class="p">)</span>
+
+        <span class="c1"># Save snapshot data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_loss_val</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">meta_info</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NonlinRegression.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_trn</span><span class="p">,</span> <span class="s2">&quot;loader_trn.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_val</span><span class="p">,</span> <span class="s2">&quot;loader_val.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is a subroutine of another algorithm</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
+                <span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suffix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">loader_trn</span><span class="p">,</span>
+                    <span class="s2">&quot;loader_trn.pt&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">suffix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suffix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">loader_trn</span><span class="p">,</span>
+                    <span class="s2">&quot;loader_val.pt&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">suffix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suffix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

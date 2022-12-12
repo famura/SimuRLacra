@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>plotting &mdash; Pyrado 0.7.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="utils" href="utils.html" />
+    <link rel="prev" title="sampling" href="sampling.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Pyrado
+          </a>
+              <div class="version">
+                0.7.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.categorical">categorical</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.categorical.draw_categorical"><code class="docutils literal notranslate"><span class="pre">draw_categorical()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.curve">curve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.curve.draw_curve"><code class="docutils literal notranslate"><span class="pre">draw_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.curve.draw_curve_from_data"><code class="docutils literal notranslate"><span class="pre">draw_curve_from_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.curve.draw_dts"><code class="docutils literal notranslate"><span class="pre">draw_dts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#distribution">distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gaussian-process">gaussian_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.heatmap">heatmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.heatmap.draw_heatmap"><code class="docutils literal notranslate"><span class="pre">draw_heatmap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.live_update">live_update</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.live_update.LiveFigureManager"><code class="docutils literal notranslate"><span class="pre">LiveFigureManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.plotting.live_update.LiveFigureManager.figure"><code class="docutils literal notranslate"><span class="pre">LiveFigureManager.figure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.plotting.live_update.LiveFigureManager.spin"><code class="docutils literal notranslate"><span class="pre">LiveFigureManager.spin()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.policy_parameters">policy_parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.policy_parameters.draw_policy_params"><code class="docutils literal notranslate"><span class="pre">draw_policy_params()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.rollout_based">rollout_based</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_actions"><code class="docutils literal notranslate"><span class="pre">plot_actions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_features"><code class="docutils literal notranslate"><span class="pre">plot_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_mean_std_across_rollouts"><code class="docutils literal notranslate"><span class="pre">plot_mean_std_across_rollouts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_observations"><code class="docutils literal notranslate"><span class="pre">plot_observations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_observations_actions_rewards"><code class="docutils literal notranslate"><span class="pre">plot_observations_actions_rewards()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_potentials"><code class="docutils literal notranslate"><span class="pre">plot_potentials()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_rewards"><code class="docutils literal notranslate"><span class="pre">plot_rewards()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_rollouts_segment_wise"><code class="docutils literal notranslate"><span class="pre">plot_rollouts_segment_wise()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_states"><code class="docutils literal notranslate"><span class="pre">plot_states()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.rollout_based.plot_statistic_across_rollouts"><code class="docutils literal notranslate"><span class="pre">plot_statistic_across_rollouts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.surface">surface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.surface.draw_surface"><code class="docutils literal notranslate"><span class="pre">draw_surface()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.utils">utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.utils.AccNorm"><code class="docutils literal notranslate"><span class="pre">AccNorm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.plotting.utils.AccNorm.autoscale"><code class="docutils literal notranslate"><span class="pre">AccNorm.autoscale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.plotting.utils.AccNorm.autoscale_None"><code class="docutils literal notranslate"><span class="pre">AccNorm.autoscale_None()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.utils.draw_sep_cbar"><code class="docutils literal notranslate"><span class="pre">draw_sep_cbar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.utils.max_prime_factor"><code class="docutils literal notranslate"><span class="pre">max_prime_factor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.utils.most_square_product"><code class="docutils literal notranslate"><span class="pre">most_square_product()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.utils.num_rows_cols_from_length"><code class="docutils literal notranslate"><span class="pre">num_rows_cols_from_length()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.plotting.set_style"><code class="docutils literal notranslate"><span class="pre">set_style()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">plotting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/plotting.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="plotting">
+<h1>plotting<a class="headerlink" href="#plotting" title="Permalink to this heading"></a></h1>
+<section id="module-pyrado.plotting.categorical">
+<span id="categorical"></span><h2>categorical<a class="headerlink" href="#module-pyrado.plotting.categorical" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.categorical.draw_categorical">
+<span class="sig-name descname"><span class="pre">draw_categorical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vline_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vline_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'approx.</span> <span class="pre">solved'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/pyrado/plotting/categorical.html#draw_categorical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.categorical.draw_categorical" title="Permalink to this definition"></a></dt>
+<dd><p>Create a box or violin plot for a list of data arrays or a pandas DataFrame.
+The plot is neither shown nor saved.</p>
+<p>If you want to order the 4th element to the 2nd position in terms of colors use</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">palette</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">palette</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
+<cite>constrained_layout=True</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_type</strong> – tye of categorical plot, pass box or violin</p></li>
+<li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
+<li><p><strong>data</strong> – list of data sets to plot as separate boxes</p></li>
+<li><p><strong>x_label</strong> – labels for the categories on the x-axis, if <cite>data</cite> is not given as a <cite>DataFrame</cite></p></li>
+<li><p><strong>y_label</strong> – label for the y-axis, pass <cite>None</cite> to set no label</p></li>
+<li><p><strong>vline_level</strong> – if not <cite>None</cite> (default) add a vertical line at the given level</p></li>
+<li><p><strong>vline_label</strong> – label for the vertical line</p></li>
+<li><p><strong>palette</strong> – seaborn color palette, pass <cite>None</cite> to use the default palette</p></li>
+<li><p><strong>show_legend</strong> – if <cite>True</cite> the legend is shown, useful when handling multiple subplots</p></li>
+<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
+<li><p><strong>legend_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>legend()</cite> function, e.g. <cite>loc=’best’</cite></p></li>
+<li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to seaborn’s <cite>boxplot()</cite> or <cite>violinplot()</cite> function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handle to the resulting figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.plotting.curve">
+<span id="curve"></span><h2>curve<a class="headerlink" href="#module-pyrado.plotting.curve" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.curve.draw_curve">
+<span class="sig-name descname"><span class="pre">draw_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vline_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vline_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'approx.</span> <span class="pre">solved'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/pyrado/plotting/curve.html#draw_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.curve.draw_curve" title="Permalink to this definition"></a></dt>
+<dd><p>Create a box or violin plot for a list of data arrays or a pandas DataFrame.
+The plot is neither shown nor saved.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
+<cite>constrained_layout=True</cite>.</p>
+<p>If you want to order the 4th element to the 2nd position in terms of colors use
+.. code-block:: python</p>
+<blockquote>
+<div><p>palette.insert(1, palette.pop(3))</p>
+</div></blockquote>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_type</strong> – tye of 1-dim plot: <cite>mean_std</cite>, <cite>min_mean_max</cite>, or <cite>ci_on_mean</cite></p></li>
+<li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
+<li><p><strong>data</strong> – pandas DataFrame containing the columns <cite>mean</cite>, <cite>std</cite>, <cite>min</cite>, and <cite>max</cite> depending on the <cite>plot_type</cite></p></li>
+<li><p><strong>x_grid</strong> – values to plot the data over, e.g. time</p></li>
+<li><p><strong>x_label</strong> – labels for the categories on the x-axis, if <cite>data</cite> is not given as a <cite>DataFrame</cite></p></li>
+<li><p><strong>y_label</strong> – label for the y-axis, pass <cite>None</cite> to set no label</p></li>
+<li><p><strong>curve_label</strong> – label of the (1-dim) curve, pass <cite>None</cite> for no label</p></li>
+<li><p><strong>area_label</strong> – label of the (transparent) area, pass <cite>None</cite> for no label and “” for the default label</p></li>
+<li><p><strong>vline_level</strong> – if not <cite>None</cite> (default) add a vertical line at the given level</p></li>
+<li><p><strong>vline_label</strong> – label for the vertical line</p></li>
+<li><p><strong>show_legend</strong> – if <cite>True</cite> the legend is shown, useful when handling multiple subplots</p></li>
+<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
+<li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to the plotting` functions</p></li>
+<li><p><strong>legend_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>legend()</cite> function, e.g. <cite>loc=’best’</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handle to the resulting figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.curve.draw_curve_from_data">
+<span class="sig-name descname"><span class="pre">draw_curve_from_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax_calc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vline_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vline_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'approx.</span> <span class="pre">solved'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/pyrado/plotting/curve.html#draw_curve_from_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.curve.draw_curve_from_data" title="Permalink to this definition"></a></dt>
+<dd><p>Create a box or violin plot for a list of data arrays or a pandas DataFrame.
+The plot is neither shown nor saved.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
+<cite>constrained_layout=True</cite>.</p>
+<p>If you want to order the 4th element to the 2nd position in terms of colors use
+.. code-block:: python</p>
+<blockquote>
+<div><p>palette.insert(1, palette.pop(3))</p>
+</div></blockquote>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_type</strong> – tye of 1-dim plot: <cite>mean_std</cite>, <cite>min_mean_max</cite>, or <cite>ci_on_mean</cite></p></li>
+<li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
+<li><p><strong>data</strong> – data to plot,me.g. a time series</p></li>
+<li><p><strong>x_grid</strong> – values to plot the data over, e.g. time</p></li>
+<li><p><strong>ax_calc</strong> – axis of the data array to calculate the mean, min and max, or std over</p></li>
+<li><p><strong>x_label</strong> – labels for the categories on the x-axis, if <cite>data</cite> is not given as a <cite>DataFrame</cite></p></li>
+<li><p><strong>y_label</strong> – label for the y-axis, pass <cite>None</cite> to set no label</p></li>
+<li><p><strong>curve_label</strong> – label of the (1-dim) curve, pass <cite>None</cite> for no label</p></li>
+<li><p><strong>area_label</strong> – label of the (transparent) area, pass <cite>None</cite> for no label and “” for the default label</p></li>
+<li><p><strong>vline_level</strong> – if not <cite>None</cite> (default) add a vertical line at the given level</p></li>
+<li><p><strong>vline_label</strong> – label for the vertical line</p></li>
+<li><p><strong>show_legend</strong> – if <cite>True</cite> the legend is shown, useful when handling multiple subplots</p></li>
+<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
+<li><p><strong>cmp_kwargs</strong> – keyword arguments forwarded to functions computing the statistics of interest</p></li>
+<li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to the plotting` functions</p></li>
+<li><p><strong>legend_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>legend()</cite> function, e.g. <cite>loc=’best’</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handle to the resulting figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.curve.draw_dts">
+<span class="sig-name descname"><span class="pre">draw_dts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dts_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dts_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dts_remainder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_top_lim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/curve.html#draw_dts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.curve.draw_dts" title="Permalink to this definition"></a></dt>
+<dd><p>Create a figure and draw the time intervals <span class="math notranslate nohighlight">\(\Delta_t\)</span> of various parts of one time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dts_policy</strong> – time it took to compute the policy’s action</p></li>
+<li><p><strong>dts_step</strong> – time it took to perform the</p></li>
+<li><p><strong>dts_remainder</strong> – time it took to execute all remaining commands (e.g. soring the data)</p></li>
+<li><p><strong>y_top_lim</strong> – upper bound for the y-axis in ms, no limit by default</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="distribution">
+<h2>distribution<a class="headerlink" href="#distribution" title="Permalink to this heading"></a></h2>
+</section>
+<section id="gaussian-process">
+<h2>gaussian_process<a class="headerlink" href="#gaussian-process" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-pyrado.plotting.heatmap">
+<span id="heatmap"></span><h2>heatmap<a class="headerlink" href="#module-pyrado.plotting.heatmap" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.heatmap.draw_heatmap">
+<span class="sig-name descname"><span class="pre">draw_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data:</span> <span class="pre">~pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax_hm:</span> <span class="pre">~typing.Optional[~matplotlib.axes._axes.Axes]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap:</span> <span class="pre">~typing.Optional[~matplotlib.colors.Colormap]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm:</span> <span class="pre">~typing.Optional[~matplotlib.colors.Normalize]</span> <span class="pre">=</span> <span class="pre">&lt;matplotlib.colors.Normalize</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_valfmt:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">'{x:.0f}'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_cbar:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separate_cbar:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax_cb:</span> <span class="pre">~typing.Optional[~matplotlib.axes._axes.Axes]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar_label:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar_orientation:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_index_labels:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_canvas_title:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_size:</span> <span class="pre">~typing.Optional[tuple]</span> <span class="pre">=</span> <span class="pre">(8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tick_label_prec:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xtick_label_prec:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytick_label_prec:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_major_ticks_hm:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_major_ticks_cb:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'matplotlib.figure.Figure'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'matplotlib.figure.Figure'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/heatmap.html#draw_heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.heatmap.draw_heatmap" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a 2D heat map from a 2D <cite>pandas.DataFrame</cite> using pyplot.
+The data frame should have exactly one column index level and one row index level. These will automatically become
+the axis ticks. It is assumed that the data is equally spaced.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
+<cite>constrained_layout=True</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – 2D pandas DataFrame</p></li>
+<li><p><strong>ax_hm</strong> – axis to draw the heat map onto, if <cite>None</cite> a new figure is created</p></li>
+<li><p><strong>cmap</strong> – colormap passed to <cite>imshow()</cite></p></li>
+<li><p><strong>norm</strong> – colormap normalizer passed to <cite>imshow()</cite></p></li>
+<li><p><strong>annotate</strong> – select if the heat map should be annotated</p></li>
+<li><p><strong>annotation_valfmt</strong> – format of the annotations inside the heat map, irrelevant if annotate = False</p></li>
+<li><p><strong>add_cbar</strong> – if <cite>True</cite>, add a color bar in the same figure</p></li>
+<li><p><strong>separate_cbar</strong> – if <cite>True</cite>, the color bar is added in a seperate figure</p></li>
+<li><p><strong>ax_cb</strong> – axis to draw the color bar onto, if <cite>None</cite> a new figure is created</p></li>
+<li><p><strong>cbar_label</strong> – label for the color bar</p></li>
+<li><p><strong>cbar_orientation</strong> – orientation of the color bar</p></li>
+<li><p><strong>use_index_labels</strong> – flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.
+This can can be overridden by <cite>x_label</cite> and <cite>y_label</cite></p></li>
+<li><p><strong>x_label</strong> – label for the x axis</p></li>
+<li><p><strong>y_label</strong> – label for the y axis</p></li>
+<li><p><strong>fig_canvas_title</strong> – window title for the heat map plot, no title by default</p></li>
+<li><p><strong>fig_size</strong> – width and height of the figure in inches</p></li>
+<li><p><strong>tick_label_prec</strong> – floating point precision of the x- and y-axis labels
+This can be overwritten <cite>xtick_label_prec</cite> and <cite>ytick_label_prec</cite></p></li>
+<li><p><strong>xtick_label_prec</strong> – floating point precision of the x-axis labels, set <cite>None</cite> for default behavior</p></li>
+<li><p><strong>ytick_label_prec</strong> – floating point precision of the y-axis labels, set <cite>None</cite> for default behavior</p></li>
+<li><p><strong>num_major_ticks_hm</strong> – number of major axis ticks for the heat map, set <cite>None</cite> for default behavior</p></li>
+<li><p><strong>num_major_ticks_cb</strong> – number of major axis ticks for the color bar, set <cite>None</cite> for default behavior</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handles to the heat map and the color bar figures (<cite>None</cite> if not existent)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.plotting.live_update">
+<span id="live-update"></span><h2>live_update<a class="headerlink" href="#module-pyrado.plotting.live_update" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.plotting.live_update.LiveFigureManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LiveFigureManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/live_update.html#LiveFigureManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.live_update.LiveFigureManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manages multiple matplotlib figures and refreshes them when the input file changes.
+It also ensures that if you close a figure, it does not reappear on the next update.
+If all figures are closed, the update loop is stopped.</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – name of file to load updates from</p></li>
+<li><p><strong>data_loader</strong> – called to load the file contents into some internal representation like a pandas <cite>DataFrame</cite></p></li>
+<li><p><strong>args</strong> – parsed command line arguments</p></li>
+<li><p><strong>update_interval</strong> – time to wait between figure updates [s]</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.plotting.live_update.LiveFigureManager.figure">
+<span class="sig-name descname"><span class="pre">figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/live_update.html#LiveFigureManager.figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.live_update.LiveFigureManager.figure" title="Permalink to this definition"></a></dt>
+<dd><p>Decorator to define a figure update function.
+Every marked function will be called when the file changes to visualize the updated data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Usage</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@lfm</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;A figure&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">a_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>title</strong> – figure title</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>decorator for the plotting function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.plotting.live_update.LiveFigureManager.spin">
+<span class="sig-name descname"><span class="pre">spin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/live_update.html#LiveFigureManager.spin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.live_update.LiveFigureManager.spin" title="Permalink to this definition"></a></dt>
+<dd><p>Run the plot update loop.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyrado.plotting.policy_parameters">
+<span id="policy-parameters"></span><h2>policy_parameters<a class="headerlink" href="#module-pyrado.plotting.policy_parameters" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.policy_parameters.draw_policy_params">
+<span class="sig-name descname"><span class="pre">draw_policy_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'RdBu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax_hm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_valfmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{x:.2f}'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/pyrado/plotting/policy_parameters.html#draw_policy_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.policy_parameters.draw_policy_params" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the weights and biases as images, and a color bar.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
+<cite>constrained_layout=True</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>policy</strong> – policy to visualize</p></li>
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>cmap_name</strong> – name of the color map, e.g. ‘inferno’, ‘RdBu’, or ‘viridis’</p></li>
+<li><p><strong>ax_hm</strong> – axis to draw the heat map onto, if equal to None a new figure is opened</p></li>
+<li><p><strong>annotate</strong> – select if the heat map should be annotated</p></li>
+<li><p><strong>annotation_valfmt</strong> – format of the annotations inside the heat map, irrelevant if annotate = False</p></li>
+<li><p><strong>cbar_label</strong> – label for the color bar</p></li>
+<li><p><strong>x_label</strong> – label for the x axis</p></li>
+<li><p><strong>y_label</strong> – label for the y axis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handles to figures</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.plotting.rollout_based">
+<span id="rollout-based"></span><h2>rollout_based<a class="headerlink" href="#module-pyrado.plotting.rollout_based" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_actions">
+<span class="sig-name descname"><span class="pre">plot_actions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_actions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_actions" title="Permalink to this definition"></a></dt>
+<dd><p>Plot all action trajectories of the given rollout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ro</strong> – input rollout</p></li>
+<li><p><strong>env</strong> – environment (used for getting the clipped action values)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_features">
+<span class="sig-name descname"><span class="pre">plot_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_features" title="Permalink to this definition"></a></dt>
+<dd><p>Plot all features given the policy and the observation trajectories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>policy</strong> – linear policy used during the rollout</p></li>
+<li><p><strong>ro</strong> – input rollout</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_mean_std_across_rollouts">
+<span class="sig-name descname"><span class="pre">plot_mean_std_across_rollouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_applied_actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_mean_std_across_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_mean_std_across_rollouts" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the mean and standard deviation across a selection of rollouts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollouts</strong> – list of rollouts, they can be of unequal length but are assumed to be from the same type of env</p></li>
+<li><p><strong>idcs_obs</strong> – indices of the observations to process and plot, pass <cite>None</cite> to select all</p></li>
+<li><p><strong>idcs_act</strong> – indices of the actions to process and plot, pass <cite>None</cite> to select all</p></li>
+<li><p><strong>show_applied_actions</strong> – if <cite>True</cite> show the actions applied to the environment insead of the commanded ones</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_observations">
+<span class="sig-name descname"><span class="pre">plot_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_sel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_observations" title="Permalink to this definition"></a></dt>
+<dd><p>Plot all observation trajectories of the given rollout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ro</strong> – input rollout</p></li>
+<li><p><strong>idcs_sel</strong> – indices of the selected selected observations, if <cite>None</cite> plot all</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_observations_actions_rewards">
+<span class="sig-name descname"><span class="pre">plot_observations_actions_rewards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_observations_actions_rewards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_observations_actions_rewards" title="Permalink to this definition"></a></dt>
+<dd><p>Plot all observation, action, and reward trajectories of the given rollout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ro</strong> – input rollout</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_potentials">
+<span class="sig-name descname"><span class="pre">plot_potentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'joint'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_potentials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_potentials" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the trajectories specific to a potential-based policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ro</strong> – input rollout</p></li>
+<li><p><strong>layout</strong> – group jointly (default), or create a separate sub-figure for each plot</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_rewards">
+<span class="sig-name descname"><span class="pre">plot_rewards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_rewards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_rewards" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the reward trajectories of the given rollout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ro</strong> – input rollout</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_rollouts_segment_wise">
+<span class="sig-name descname"><span class="pre">plot_rollouts_segment_wise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments_ground_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments_multiple_envs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments_nominal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rec_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_round</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'states'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Colormap</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">PathLike</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('pdf',</span> <span class="pre">'pgf',</span> <span class="pre">'png')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_rollouts_segment_wise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_rollouts_segment_wise" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the different rollouts in separate figures and the different state dimensions along the columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_type</strong> – type of plot, pass “samples” to plot the rollouts of the most likely domain parameters as
+individual lines, or pass “confidence” to plot the most likely one, and the mean <span class="math notranslate nohighlight">\(\pm\)</span> 1 std</p></li>
+<li><p><strong>segments_ground_truth</strong> – list of lists containing rollout segments from the ground truth environment</p></li>
+<li><p><strong>segments_multiple_envs</strong> – list of lists of lists containing rollout segments from different environment
+instances, e.g. samples from a posterior coming from <cite>NDPR</cite></p></li>
+<li><p><strong>segments_nominal</strong> – list of lists containing rollout segments from the nominal environment</p></li>
+<li><p><strong>use_rec_str</strong> – <cite>True</cite> if pre-recorded actions have been used to generate the rollouts</p></li>
+<li><p><strong>idx_iter</strong> – selected iteration</p></li>
+<li><p><strong>idx_round</strong> – selected round</p></li>
+<li><p><strong>state_labels</strong> – y-axes labels to for the state trajectories, no label by default</p></li>
+<li><p><strong>act_labels</strong> – y-axes labels to for the action trajectories, no label by default</p></li>
+<li><p><strong>x_limits</strong> – tuple containing the lower and upper limits for the x-axis</p></li>
+<li><p><strong>plot_act</strong> – if <cite>True</cite>, also plot the actions</p></li>
+<li><p><strong>data_field</strong> – data field of the rollout, e.g. “states” or “observations”</p></li>
+<li><p><strong>cmap_samples</strong> – color map for the trajectories resulting from different domain parameter samples</p></li>
+<li><p><strong>save_dir</strong> – if not <cite>None</cite> create a subfolder plots in <cite>save_dir</cite> and save the plots in there</p></li>
+<li><p><strong>file_format</strong> – select the file format to store the plots</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of handles to the created figures</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_states">
+<span class="sig-name descname"><span class="pre">plot_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_sel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_states" title="Permalink to this definition"></a></dt>
+<dd><p>Plot all state trajectories of the given rollout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ro</strong> – input rollout</p></li>
+<li><p><strong>idcs_sel</strong> – indices of the selected selected states, if <cite>None</cite> plot all</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.rollout_based.plot_statistic_across_rollouts">
+<span class="sig-name descname"><span class="pre">plot_statistic_across_rollouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_fcn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_fcn_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_idcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_idcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_statistic_across_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_statistic_across_rollouts" title="Permalink to this definition"></a></dt>
+<dd><p>Plot one statistic of interest (e.g. mean) across a list of rollouts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollouts</strong> – list of rollouts, they can be of unequal length but are assumed to be from the same type of env</p></li>
+<li><p><strong>stat_fcn</strong> – function to calculate the statistic of interest (e.g. np.mean)</p></li>
+<li><p><strong>stat_fcn_kwargs</strong> – keyword arguments for the stat_fcn (e.g. {‘axis’: 0})</p></li>
+<li><p><strong>obs_idcs</strong> – indices of the observations to process and plot, pass <cite>None</cite> to select all</p></li>
+<li><p><strong>act_idcs</strong> – indices of the actions to process and plot, pass <cite>None</cite> to select all</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.plotting.surface">
+<span id="surface"></span><h2>surface<a class="headerlink" href="#module-pyrado.plotting.surface" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.surface.draw_surface">
+<span class="sig-name descname"><span class="pre">draw_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_fcn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Module</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'numpy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/pyrado/plotting/surface.html#draw_surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.surface.draw_surface" title="Permalink to this definition"></a></dt>
+<dd><p>Render a 3-dim surface plot by providing a 1-dim array of x and y points and a function to calculate the z values.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
+<cite>constrained_layout=True</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – x-axis 1-dim grid for constructing the 2-dim mesh grid</p></li>
+<li><p><strong>y</strong> – y-axis 1-dim grid for constructing the 2-dim mesh grid</p></li>
+<li><p><strong>z_fcn</strong> – function that defines the surface, takes a 2-dim vector as input</p></li>
+<li><p><strong>x_label</strong> – label for the x-axis</p></li>
+<li><p><strong>y_label</strong> – label for the y-axis</p></li>
+<li><p><strong>z_label</strong> – label for the z-axis</p></li>
+<li><p><strong>data_format</strong> – data format, ‘numpy’ or ‘torch’</p></li>
+<li><p><strong>fig</strong> – handle to figure, pass None to create a new figure</p></li>
+<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
+<li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>plot_surface()</cite> function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handle to figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.plotting.utils">
+<span id="utils"></span><h2>utils<a class="headerlink" href="#module-pyrado.plotting.utils" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.plotting.utils.AccNorm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AccNorm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#AccNorm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.AccNorm" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Normalize</span></code></p>
+<p>Accumulative normalizer which is useful to have one colormap consistent for multiple images.
+Adding new data will expand the limits.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<dl>
+<dt>vmin, vmax<span class="classifier">float or None</span></dt><dd><p>If <em>vmin</em> and/or <em>vmax</em> is not given, they are initialized from the
+minimum and maximum value, respectively, of the first input
+processed; i.e., <code class="docutils literal notranslate"><span class="pre">__call__(A)</span></code> calls <code class="docutils literal notranslate"><span class="pre">autoscale_None(A)</span></code>.</p>
+</dd>
+<dt>clip<span class="classifier">bool, default: False</span></dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> values falling outside the range <code class="docutils literal notranslate"><span class="pre">[vmin,</span> <span class="pre">vmax]</span></code>,
+are mapped to 0 or 1, whichever is closer, and masked values are
+set to 1.  If <code class="docutils literal notranslate"><span class="pre">False</span></code> masked values remain masked.</p>
+<p>Clipping silently defeats the purpose of setting the over, under,
+and masked colors in a colormap, so it is likely to lead to
+surprises; therefore the default is <code class="docutils literal notranslate"><span class="pre">clip=False</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h3>
+<p>Returns 0 if <code class="docutils literal notranslate"><span class="pre">vmin</span> <span class="pre">==</span> <span class="pre">vmax</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.plotting.utils.AccNorm.autoscale">
+<span class="sig-name descname"><span class="pre">autoscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#AccNorm.autoscale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.AccNorm.autoscale" title="Permalink to this definition"></a></dt>
+<dd><p>Set <em>vmin</em>, <em>vmax</em> to min, max of <em>A</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.plotting.utils.AccNorm.autoscale_None">
+<span class="sig-name descname"><span class="pre">autoscale_None</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#AccNorm.autoscale_None"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.AccNorm.autoscale_None" title="Permalink to this definition"></a></dt>
+<dd><p>If vmin or vmax are not set, use the min/max of <em>A</em> to set them.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.utils.draw_sep_cbar">
+<span class="sig-name descname"><span class="pre">draw_sep_cbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax_cb:</span> <span class="pre">~typing.Optional[~matplotlib.axes._axes.Axes]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar_label:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar_orientation:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_size:</span> <span class="pre">~typing.Optional[tuple]</span> <span class="pre">=</span> <span class="pre">(8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap:</span> <span class="pre">~typing.Optional[~matplotlib.colors.Colormap]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm:</span> <span class="pre">~typing.Optional[~matplotlib.colors.Normalize]</span> <span class="pre">=</span> <span class="pre">&lt;matplotlib.colors.Normalize</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_major_ticks_cb:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#draw_sep_cbar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.draw_sep_cbar" title="Permalink to this definition"></a></dt>
+<dd><p>Add a separate figure with a color bar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax_cb</strong> – axis to draw the color bar onto, if <cite>None</cite> a new figure is created</p></li>
+<li><p><strong>cbar_label</strong> – label for the color bar, if <cite>None</cite> no label is printed</p></li>
+<li><p><strong>cbar_orientation</strong> – orientation to <cite>ColorbarBase</cite> (vertical of horizontal)</p></li>
+<li><p><strong>fig_size</strong> – width and height of the figure in inches</p></li>
+<li><p><strong>cmap</strong> – colormap passed to <cite>ColorbarBase</cite></p></li>
+<li><p><strong>norm</strong> – colormap normalizer passed to <cite>ColorbarBase</cite></p></li>
+<li><p><strong>num_major_ticks_cb</strong> – number of major axis ticks for the color bar, set <cite>None</cite> for default behavior</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handle color bar figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.utils.max_prime_factor">
+<span class="sig-name descname"><span class="pre">max_prime_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#max_prime_factor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.max_prime_factor" title="Permalink to this definition"></a></dt>
+<dd><p>Get the largest prime number that is a factor of the given number</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-35.php">https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-35.php</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – given number <span class="math notranslate nohighlight">\(n\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>largest prime number <span class="math notranslate nohighlight">\(p\)</span> such that <span class="math notranslate nohighlight">\(p \cdot x = n\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.utils.most_square_product">
+<span class="sig-name descname"><span class="pre">most_square_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#most_square_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.most_square_product" title="Permalink to this definition"></a></dt>
+<dd><p>Heuristic to get two square-like integers that when multiplied yield the input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – given number <span class="math notranslate nohighlight">\(n\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>lower and higher integer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.utils.num_rows_cols_from_length">
+<span class="sig-name descname"><span class="pre">num_rows_cols_from_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#num_rows_cols_from_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.num_rows_cols_from_length" title="Permalink to this definition"></a></dt>
+<dd><p>Use a heuristic to get the number of rows and columns for a plotting grid, given the total number of plots to draw.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – total number of plots to draw</p></li>
+<li><p><strong>transposed</strong> – change number of rows and number of columns</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of rows and columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyrado.plotting">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.plotting" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.plotting.set_style">
+<span class="sig-name descname"><span class="pre">set_style</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting.html#set_style"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.set_style" title="Permalink to this definition"></a></dt>
+<dd><p>Sets colors, fonts, font sizes, bounding boxes, and more for plots using pyplot.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The font sizes of the predefined styles will be overwritten!</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://matplotlib.org/users/customizing.html">https://matplotlib.org/users/customizing.html</a>
+<a class="reference external" href="https://matplotlib.org/tutorials/introductory/customizing.html#matplotlib-rcparams">https://matplotlib.org/tutorials/introductory/customizing.html#matplotlib-rcparams</a>
+<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.rc.html">https://matplotlib.org/api/_as_gen/matplotlib.pyplot.rc.html</a>
+<a class="reference external" href="https://matplotlib.org/users/usetex.html">https://matplotlib.org/users/usetex.html</a>
+<a class="reference external" href="https://stackoverflow.com/questions/11367736/matplotlib-consistent-font-using-latex">https://stackoverflow.com/questions/11367736/matplotlib-consistent-font-using-latex</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>style_name</strong> – str containing the matplotlib style name, or ‘default’ for the Pyrado default style</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sampling.html" class="btn btn-neutral float-left" title="sampling" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utils.html" class="btn btn-neutral float-right" title="utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
