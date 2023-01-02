@@ -188,7 +188,7 @@
 
 
 <div class="viewcode-block" id="SysIdViaEpisodicRL"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL">[docs]</a><span class="k">class</span> <span class="nc">SysIdViaEpisodicRL</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper to frame black-box system identification as an episodic reinforcement learning problem</span>
 
 <span class="sd">    .. note::</span>
@@ -211,7 +211,7 @@
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">base_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1001</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param subrtn: wrapped algorithm to fit the domain parameter distribution</span>
@@ -275,7 +275,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subrtn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParameterExploring</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the subroutine used for updating the domain parameter distribution.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the subroutine used for updating the domain parameter distribution.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span>
 
 <div class="viewcode-block" id="SysIdViaEpisodicRL.reset"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -378,7 +378,7 @@
 
 <div class="viewcode-block" id="SysIdViaEpisodicRL.override_obs_bounds"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">override_obs_bounds</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">bound_up</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Default overriding method for the bounds of an observation space. This is necessary when the observations</span>
 <span class="sd">        are scaled with their range, e.g. to compare a deviation over different kinds of observations like position and</span>
 <span class="sd">        annular velocity. Thus, infinite bounds are not feasible.</span>
@@ -394,7 +394,7 @@
 
 <div class="viewcode-block" id="SysIdViaEpisodicRL.weighted_l1_l2_metric"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.weighted_l1_l2_metric">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">weighted_l1_l2_metric</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">w_abs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">w_sq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">obs_dim_weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the weighted linear combination of the observation error&#39;s MAE and MSE, averaged over time</span>
 
 <span class="sd">        .. note::</span>
@@ -411,7 +411,7 @@
         <span class="k">return</span> <span class="n">w_abs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err_w</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">w_sq</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">err_w</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SysIdViaEpisodicRL.loss_fcn"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.loss_fcn">[docs]</a>    <span class="k">def</span> <span class="nf">loss_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout_real</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">rollout_sim</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the discrepancy between two time sequences of observations given metric.</span>
 <span class="sd">        Be sure to align and truncate the rollouts beforehand.</span>
 
@@ -444,7 +444,7 @@
     <span class="k">def</span> <span class="nf">truncate_rollouts</span><span class="p">(</span>
         <span class="n">rollouts_real</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="n">rollouts_sim</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="n">replicate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        In case (some of the) rollouts failed or succeed in one domain, but not in the other, we truncate the longer</span>
 <span class="sd">        observation sequence. When truncating, we compare every of the M real rollouts to every of the N simulated</span>
 <span class="sd">        rollouts, thus replicate the real rollout N times and the simulated rollouts M times.</span>

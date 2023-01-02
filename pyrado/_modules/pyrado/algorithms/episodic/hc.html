@@ -178,7 +178,7 @@
 
 
 <div class="viewcode-block" id="HC"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.hc.HC">[docs]</a><span class="k">class</span> <span class="nc">HC</span><span class="p">(</span><span class="n">ParameterExploring</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hill Climbing (HC)</span>
 
 <span class="sd">    HC is a heuristic-based policy search method that samples a population of policy parameters per iteration</span>
@@ -201,7 +201,7 @@
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -258,10 +258,10 @@
 
 
 <div class="viewcode-block" id="HCNormal"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.hc.HCNormal">[docs]</a><span class="k">class</span> <span class="nc">HCNormal</span><span class="p">(</span><span class="n">HC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Hill Climbing variant using an exploration strategy with normally distributed noise on the policy parameters&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hill Climbing variant using an exploration strategy with normally distributed noise on the policy parameters&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param expl_std_init: initial standard deviation for the exploration strategy</span>
@@ -301,10 +301,10 @@
 
 
 <div class="viewcode-block" id="HCHyper"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.hc.HCHyper">[docs]</a><span class="k">class</span> <span class="nc">HCHyper</span><span class="p">(</span><span class="n">HC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Hill Climbing variant using an exploration strategy that samples policy parameters from a hyper-sphere&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hill Climbing variant using an exploration strategy that samples policy parameters from a hyper-sphere&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param expl_r_init: initial radius of the hyper sphere for the exploration strategy</span>

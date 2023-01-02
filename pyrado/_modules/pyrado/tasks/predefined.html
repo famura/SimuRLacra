@@ -185,7 +185,7 @@
 
 
 <div class="viewcode-block" id="create_check_all_boundaries_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_check_all_boundaries_task">[docs]</a><span class="k">def</span> <span class="nf">create_check_all_boundaries_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">penalty</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FinalRewTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task that is checking if any of the state space bounds is violated.</span>
 <span class="sd">    This checks every limit and not just of a subspace of the state state as it could happen when using a `MaskedTask`.</span>
 
@@ -204,7 +204,7 @@
 
 
 <div class="viewcode-block" id="create_task_space_discrepancy_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_task_space_discrepancy_task">[docs]</a><span class="k">def</span> <span class="nf">create_task_space_discrepancy_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task which punishes the discrepancy between the actual and the commanded state of the observed body.</span>
 <span class="sd">    The observed body is specified in in the associated experiment configuration file in RcsPySim.</span>
 <span class="sd">    This task only looks at the X and Z coordinates.</span>
@@ -236,7 +236,7 @@
 
 
 <div class="viewcode-block" id="create_collision_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_collision_task">[docs]</a><span class="k">def</span> <span class="nf">create_collision_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task which punishes collision costs given a collision model with pairs of bodies.</span>
 <span class="sd">    This task only looks at the instantaneous collision cost.</span>
 
@@ -270,7 +270,7 @@
 
 
 <div class="viewcode-block" id="create_forcemin_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_forcemin_task">[docs]</a><span class="k">def</span> <span class="nf">create_forcemin_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Q</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task which punishes the amount of used force.</span>
 
 <span class="sd">    .. note::</span>
@@ -303,7 +303,7 @@
     <span class="n">des_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task for lifting an object.</span>
 
 <span class="sd">    .. note::</span>
@@ -339,7 +339,7 @@
     <span class="n">des_angle_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span>
     <span class="n">endless</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task for rotating an object.</span>
 
 <span class="sd">    .. note::</span>
@@ -368,7 +368,7 @@
 
 
 <div class="viewcode-block" id="create_home_pos_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_home_pos_task">[docs]</a><span class="k">def</span> <span class="nf">create_home_pos_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">state_des</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task for moving the robot to safe position.</span>
 
 <span class="sd">    .. note::</span>
@@ -398,7 +398,7 @@
 
 
 <div class="viewcode-block" id="create_goal_dist_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task that rewards minimizing the `GoalDistance` of dynamical system movements primitives (see RcsPySim).</span>
 
 <span class="sd">    .. note::</span>
@@ -432,7 +432,7 @@
 <div class="viewcode-block" id="create_goal_dist_distvel_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_distvel_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_distvel_task</span><span class="p">(</span>
     <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task that rewards minimizing the `GoalDistance` as well as its rate of change of dynamical system</span>
 <span class="sd">    movements primitives (see RcsPySim).</span>
 

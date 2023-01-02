@@ -174,7 +174,7 @@
 
 
 <div class="viewcode-block" id="select_cvar"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.cvar_sampler.select_cvar">[docs]</a><span class="k">def</span> <span class="nf">select_cvar</span><span class="p">(</span><span class="n">rollouts</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select a subset of rollouts so that their mean discounted return is the CVaR(eps) of the full rollout set.</span>
 
 <span class="sd">    :param rollouts: list of rollouts</span>
@@ -198,7 +198,7 @@
 
 
 <div class="viewcode-block" id="CVaRSampler"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.cvar_sampler.CVaRSampler">[docs]</a><span class="k">class</span> <span class="nc">CVaRSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">,</span> <span class="n">LoggerAware</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Samples rollouts to optimize the CVaR of the discounted return.</span>
 <span class="sd">    This is done by sampling more rollouts, and then only using the epsilon-qunatile of them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -206,7 +206,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_sampler</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param wrapped_sampler: the inner sampler used to sample the full data set</span>

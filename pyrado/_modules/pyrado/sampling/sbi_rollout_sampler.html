@@ -189,7 +189,7 @@
 
 
 <div class="viewcode-block" id="RolloutSamplerForSBI"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI">[docs]</a><span class="k">class</span> <span class="nc">RolloutSamplerForSBI</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper to do enable the sbi simulator instance to make rollouts from SimuRLacra environments as if the environment</span>
 <span class="sd">    was a callable that only needs the simulator parameters as inputs</span>
 
@@ -207,7 +207,7 @@
         <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">stop_on_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, buy in</span>
@@ -244,7 +244,7 @@
 
 <div class="viewcode-block" id="RolloutSamplerForSBI.get_dim_data"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI.get_dim_data">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_dim_data</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the dimension of the data which is extracted from the rollouts.</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -253,7 +253,7 @@
         <span class="k">return</span> <span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="o">+</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span></div>
 
     <span class="k">def</span> <span class="nf">_set_action_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollouts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if there is the `actions_applied` field in all the given rollouts. If not use the `actions` field.</span>
 
 <span class="sd">        :param rollouts: list of rollouts to inspect for the action field</span>
@@ -265,7 +265,7 @@
 
 
 <div class="viewcode-block" id="SimRolloutSamplerForSBI"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_rollout_sampler.SimRolloutSamplerForSBI">[docs]</a><span class="k">class</span> <span class="nc">SimRolloutSamplerForSBI</span><span class="p">(</span><span class="n">RolloutSamplerForSBI</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper to make SimuRLacra&#39;s simulation environments usable as simulators for the sbi package&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to make SimuRLacra&#39;s simulation environments usable as simulators for the sbi package&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -279,7 +279,7 @@
         <span class="n">rollouts_real</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_rec_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env: environment which the policy operates, which must not be a randomized environment since we want to</span>
@@ -324,7 +324,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_action_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rollouts_real</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run one rollout for every domain parameter set. The rollouts are done in segments, and after every segment the</span>
 <span class="sd">        simulation state is set to the current state in the target domain rollout.</span>
 
@@ -478,7 +478,7 @@
 
 
 <div class="viewcode-block" id="RealRolloutSamplerForSBI"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI">[docs]</a><span class="k">class</span> <span class="nc">RealRolloutSamplerForSBI</span><span class="p">(</span><span class="n">RolloutSamplerForSBI</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper to make SimuRLacra&#39;s real environments similar to the sbi simulator&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to make SimuRLacra&#39;s real environments similar to the sbi simulator&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -489,7 +489,7 @@
         <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">stop_on_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, i.e.</span>
@@ -512,7 +512,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">num_segments</span><span class="p">,</span> <span class="n">len_segments</span><span class="p">,</span> <span class="n">stop_on_done</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run one rollout in the target domain, and compute the features of the data used for sbi.</span>
 
 <span class="sd">        :param dp_values: ignored, just here for the interface compatibility</span>
@@ -553,7 +553,7 @@
 
 
 <div class="viewcode-block" id="RecRolloutSamplerForSBI"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI">[docs]</a><span class="k">class</span> <span class="nc">RecRolloutSamplerForSBI</span><span class="p">(</span><span class="n">RealRolloutSamplerForSBI</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper to yield pre-recorded rollouts similar to the sbi simulator&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to yield pre-recorded rollouts similar to the sbi simulator&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -563,7 +563,7 @@
         <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">rand_init_rollout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param rollouts_dir: directory where to find the of pre-recorded rollouts</span>
@@ -599,23 +599,23 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ring_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the buffer&#39;s index.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the buffer&#39;s index.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ring_idx</span>
 
     <span class="nd">@ring_idx</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">ring_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the buffer&#39;s index.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the buffer&#39;s index.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rollouts</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0 (int)&quot;</span><span class="p">,</span> <span class="n">l_constraint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_rollouts</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ring_idx</span> <span class="o">=</span> <span class="n">idx</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_rollouts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the number of stored rollouts.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of stored rollouts.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rollouts_rec</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Yield one rollout from the pre-recorded buffer of rollouts, and compute the features of the data used for sbi.</span>
 
 <span class="sd">        :param dp_values: ignored, just here for the interface compatibility</span>
@@ -656,7 +656,7 @@
     <span class="n">domain_param_value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">domain_param_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">ValuesView</span><span class="p">],</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Verify if the domain parameters in the rollout are actually the ones commanded.</span>
 
 <span class="sd">    :param rollouts: simulated rollouts or rollout segments</span>

@@ -177,10 +177,10 @@
 
 
 <div class="viewcode-block" id="SimPyEnv"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv">[docs]</a><span class="k">class</span> <span class="nc">SimPyEnv</span><span class="p">(</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for simulated environments implemented in pure Python&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for simulated environments implemented in pure Python&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param dt: simulation step size [s]</span>
@@ -260,7 +260,7 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_create_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create spaces based on the domain parameters.</span>
 <span class="sd">        Should set the attributes `_state_space`, `_act_space`, `_obs_space`, and `_init_space`.</span>
 
@@ -271,7 +271,7 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_step_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Implement this to apply the given action to the environment&#39;s current state.</span>
 
 <span class="sd">        :param act: action</span>
@@ -279,7 +279,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span> <span class="nf">_calc_constants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called to calculate the physics constants that depend on the domain parameters. Override in subclasses.</span>
 
 <span class="sd">        .. note::</span>
@@ -288,7 +288,7 @@
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_set_domain_param_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set all key value pairs of the given domain parameter dict to the state dict (i.e. make them an attribute).</span>
 
 <span class="sd">        :param domain_param: dict of domain parameters to save a private attributes</span>
@@ -338,7 +338,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_state_from_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Expand the init state parameter into the full state vector.</span>
 
 <span class="sd">        :param init_state: init state from init space</span>
@@ -396,13 +396,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_update_anim</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_init_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize animation. Called by first render call.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_update_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update animation. Called by each render call.</span>
 <span class="sd">        Skips certain number of simulation steps per frame to achieve 60 Hz output.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -416,7 +416,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_skip_frames</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fps</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_reset_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes trace. Called by reset() if needed. Calls reset of pandavis-class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visualization</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>

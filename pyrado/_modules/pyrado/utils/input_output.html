@@ -178,7 +178,7 @@
 
 
 <div class="viewcode-block" id="input_timeout"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.input_timeout">[docs]</a><span class="k">def</span> <span class="nf">input_timeout</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">t_timeout</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ask the user for an input and quit with a runtime error if no input was given</span>
 
 <span class="sd">    :param prompt: text to be printed before recording the input</span>
@@ -199,7 +199,7 @@
 
 
 <div class="viewcode-block" id="print_cbt"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.print_cbt">[docs]</a><span class="k">def</span> <span class="nf">print_cbt</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print a colored (and bright) message with a tag in the beginning.</span>
 
 <span class="sd">    :param msg: string to print</span>
@@ -235,7 +235,7 @@
 
 <div class="viewcode-block" id="print_cbt_once"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.print_cbt_once">[docs]</a><span class="nd">@run_once</span>
 <span class="k">def</span> <span class="nf">print_cbt_once</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapped version of `print_cbt` that only prints once.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapped version of `print_cbt` that only prints once.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">print_cbt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">bright</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span></div>
 
 
@@ -247,7 +247,7 @@
     <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Available options:&quot;</span><span class="p">,</span>
     <span class="n">footer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Please enter the number of the option to use.&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ask the user to select an item out of the given list.</span>
 
 <span class="sd">    :param items: items for the query</span>
@@ -297,7 +297,7 @@
 
 
 <div class="viewcode-block" id="insert_newlines"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.insert_newlines">[docs]</a><span class="k">def</span> <span class="nf">insert_newlines</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">every</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Inserts multiple line breaks.</span>
 
 <span class="sd">    :param string: input string to be broken into multiple lines</span>
@@ -308,7 +308,7 @@
 
 
 <div class="viewcode-block" id="ensure_math_mode"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.ensure_math_mode">[docs]</a><span class="k">def</span> <span class="nf">ensure_math_mode</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Naive way to ensure that a sting is compatible with LaTeX math mode for printing.</span>
 
 <span class="sd">    :param inp: input string</span>
@@ -341,7 +341,7 @@
 
 
 <div class="viewcode-block" id="color_validity"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.color_validity">[docs]</a><span class="k">def</span> <span class="nf">color_validity</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">valids</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Color the entries of an data array red or green depending on the if the entries are valid.</span>
 
 <span class="sd">    :param data: ndarray containing the data to print</span>
@@ -357,7 +357,7 @@
 
 <div class="viewcode-block" id="completion_context"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.completion_context">[docs]</a><span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <span class="k">def</span> <span class="nf">completion_context</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context manager that prints a message, executes the code, and then prints a symbol on success or failure (when an</span>
 <span class="sd">    exception is raised).</span>
 

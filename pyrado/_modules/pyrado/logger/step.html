@@ -180,14 +180,14 @@
 
 
 <div class="viewcode-block" id="StepLogger"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger">[docs]</a><span class="k">class</span> <span class="nc">StepLogger</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Step-based progress logger. This class collects progress values during a step. At the end, the `record_step`</span>
 <span class="sd">    function will pass the collected values to one or more StepLogPrinters.</span>
 <span class="sd">    The logger also validates that no values are added unexpectedly, which i.e. a csv printer would not support.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">print_intvl</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param print_intvl: interval size, by default the logger records and prints on every call, i.e. every step</span>
@@ -215,7 +215,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="StepLogger.add_value"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger.add_value">[docs]</a>    <span class="k">def</span> <span class="nf">add_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a column value to the current step.</span>
 
 <span class="sd">        :param key: data key</span>
@@ -265,7 +265,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_values_changed</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="StepLogger.record_step"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger.record_step">[docs]</a>    <span class="k">def</span> <span class="nf">record_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Record the currently stored values as step and print them at the end.</span>
 <span class="sd">        To properly support nesting, this method does nothing if called twice in a row without an add_value in between.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -291,7 +291,7 @@
 
     <span class="c1"># Prefix management</span>
 <div class="viewcode-block" id="StepLogger.push_prefix"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger.push_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">push_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pfx</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Push a string onto the key prefix stack.</span>
 
 <span class="sd">        :param pfx: prefix string</span>
@@ -300,13 +300,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_stack</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StepLogger.pop_prefix"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger.pop_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">pop_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove the last string from the key prefix stack.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the last string from the key prefix stack.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_stack</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StepLogger.prefix"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger.prefix">[docs]</a>    <span class="nd">@contextmanager</span>
     <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pfx</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Context manager to add a prefix to the key prefix stack during use.</span>
 
 <span class="sd">        :param pfx: prefix string</span>
@@ -317,7 +317,7 @@
 
 
 <div class="viewcode-block" id="create_csv_step_logger"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.create_csv_step_logger">[docs]</a><span class="k">def</span> <span class="nf">create_csv_step_logger</span><span class="p">(</span><span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;progress.csv&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a step-based logger which only safes to a csv-file.</span>
 
 <span class="sd">    :param save_dir: parent directory to save the results in (usually the algorithm&#39;s `save_dir`)</span>
@@ -332,11 +332,11 @@
 
 
 <div class="viewcode-block" id="StepLogPrinter"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogPrinter">[docs]</a><span class="k">class</span> <span class="nc">StepLogPrinter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for log printers. Formats progress values for a step.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for log printers. Formats progress values for a step.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="StepLogPrinter.print_values"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogPrinter.print_values">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">print_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ordered_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">first_step</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Print the values for a step.</span>
 
 <span class="sd">        :param values: named progress values</span>
@@ -346,7 +346,7 @@
 
 
 <div class="viewcode-block" id="ConsolePrinter"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.ConsolePrinter">[docs]</a><span class="k">class</span> <span class="nc">ConsolePrinter</span><span class="p">(</span><span class="n">StepLogPrinter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Prints step data to the console&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prints step data to the console&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ConsolePrinter.print_values"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.ConsolePrinter.print_values">[docs]</a>    <span class="k">def</span> <span class="nf">print_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ordered_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">first_step</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="c1"># One column with name, one column with value</span>
@@ -355,10 +355,10 @@
 
 
 <div class="viewcode-block" id="CSVPrinter"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.CSVPrinter">[docs]</a><span class="k">class</span> <span class="nc">CSVPrinter</span><span class="p">(</span><span class="n">StepLogPrinter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Logs step data to a CSV file&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Logs step data to a CSV file&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param file: csv file name</span>
@@ -410,10 +410,10 @@
 
 
 <div class="viewcode-block" id="TensorBoardPrinter"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.TensorBoardPrinter">[docs]</a><span class="k">class</span> <span class="nc">TensorBoardPrinter</span><span class="p">(</span><span class="n">StepLogPrinter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for writing tensorboard logs&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for writing tensorboard logs&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param dir: folder path name</span>
@@ -462,7 +462,7 @@
 
 
 <div class="viewcode-block" id="LoggerAware"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.LoggerAware">[docs]</a><span class="k">class</span> <span class="nc">LoggerAware</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base for objects holding a StepLogger.</span>
 <span class="sd">    Features automatic detection of child LoggerAware objects. Override to customize.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -473,7 +473,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get or create the step logger to use for this object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get or create the step logger to use for this object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># There is already a logger object, so we can return it</span>
             <span class="k">pass</span>
@@ -493,7 +493,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_create_default_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a step-based logger which safes to a csv-file and prints to the console.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a step-based logger which safes to a csv-file and prints to the console.&quot;&quot;&quot;</span>
         <span class="n">logger</span> <span class="o">=</span> <span class="n">StepLogger</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConsolePrinter</span><span class="p">())</span>
 

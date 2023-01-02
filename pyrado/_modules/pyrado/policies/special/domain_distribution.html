@@ -176,7 +176,7 @@
 
 
 <div class="viewcode-block" id="DomainDistrParamPolicy"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy">[docs]</a><span class="k">class</span> <span class="nc">DomainDistrParamPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A proxy to the Policy class in order to use the policy&#39;s parameters as domain distribution parameters&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A proxy to the Policy class in order to use the policy&#39;s parameters as domain distribution parameters&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ddp&quot;</span>
 
@@ -188,7 +188,7 @@
         <span class="n">scale_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param mapping: mapping from subsequent integers to domain distribution parameters, where the first string of</span>
@@ -226,14 +226,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the mapping from subsequent integers to domain distribution parameters, where the first string of the value</span>
 <span class="sd">        tuple is the name of the domain parameter and the second string is the name of the distribution parameter.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span>
 
 <div class="viewcode-block" id="DomainDistrParamPolicy.transform_to_ddp_space"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.transform_to_ddp_space">[docs]</a>    <span class="k">def</span> <span class="nf">transform_to_ddp_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the transformed domain distribution parameters. Where ever the mask is `True`, the corresponding policy</span>
 <span class="sd">        parameter is learned in sqrt space. Moreover, the policy parameters can be scaled.</span>
 

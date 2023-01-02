@@ -176,7 +176,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_or_create_grad</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the grad tensor for the given tensor, or create if missing.</span>
 
 <span class="sd">    :param t: input tensor</span>
@@ -190,12 +190,12 @@
 
 
 <div class="viewcode-block" id="Policy"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy">[docs]</a><span class="k">class</span> <span class="nc">Policy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for all policies in Pyrado&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all policies in Pyrado&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># unique identifier</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -220,17 +220,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the device (CPU or GPU) on which the policy is stored.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the device (CPU or GPU) on which the policy is stored.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">env_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the specification of environment the policy acts in.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the specification of environment the policy acts in.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">param_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the parameters of the policy as 1d array.</span>
 <span class="sd">        The values are copied, modifying the return value does not propagate to the actual policy parameters.</span>
 <span class="sd">        However, setting this variable will change the parameters.</span>
@@ -239,14 +239,14 @@
 
     <span class="nd">@param_values</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">param_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the policy parameters from an 1d array.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the policy parameters from an 1d array.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_values</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">param</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
         <span class="n">cp</span><span class="o">.</span><span class="n">vector_to_parameters</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">param_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the gradient of the parameters as 1d array.</span>
 <span class="sd">        The values are copied, modifying the return value does not propagate to the actual policy parameters.</span>
 <span class="sd">        However, setting this variable will change the gradient.</span>
@@ -255,21 +255,21 @@
 
     <span class="nd">@param_grad</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">param_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the policy parameter gradient from an 1d array.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the policy parameter gradient from an 1d array.&quot;&quot;&quot;</span>
         <span class="n">cp</span><span class="o">.</span><span class="n">vector_to_parameters</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="p">(</span><span class="n">_get_or_create_grad</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">()))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_param</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the number of policy parameters.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of policy parameters.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_recurrent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Bool to signalise it the policy has a recurrent architecture.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Bool to signalise it the policy has a recurrent architecture.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="Policy.init_hidden"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.init_hidden">[docs]</a>    <span class="k">def</span> <span class="nf">init_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provide initial values for the hidden parameters. This should usually be a zero tensor.</span>
 <span class="sd">        The default implementation will raise an error, to enforce override this function for recurrent policies.</span>
 
@@ -283,7 +283,7 @@
 
 <div class="viewcode-block" id="Policy.init_param"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.init_param">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the policy&#39;s parameters. By default the parameters are initialized randomly.</span>
 
 <span class="sd">        :param init_values: tensor of fixed initial policy parameter values</span>
@@ -292,7 +292,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="Policy.reset"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the policy&#39;s internal state. This should be called at the start of a rollout.</span>
 <span class="sd">        The default implementation does nothing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -300,7 +300,7 @@
 
 <div class="viewcode-block" id="Policy.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.forward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the action according to the policy and the observations (forward pass).</span>
 
 <span class="sd">        :param args: inputs, e.g. an observation from the environment or an observation and a hidden state</span>
@@ -310,7 +310,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="Policy.evaluate"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hidden_states&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Re-evaluate the given rollout and return a derivable action tensor.</span>
 <span class="sd">        The default implementation simply calls `forward()`.</span>
 
@@ -331,7 +331,7 @@
         <span class="k">return</span> <span class="n">res</span></div>
 
 <div class="viewcode-block" id="Policy.script"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.script">[docs]</a>    <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScriptModule</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a ScriptModule from this policy.</span>
 <span class="sd">        The returned module will always have the signature `action = tm(observation)`.</span>
 <span class="sd">        For recurrent networks, it returns a stateful module that keeps the hidden states internally.</span>
@@ -342,14 +342,14 @@
 
 
 <div class="viewcode-block" id="TracedPolicyWrapper"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.TracedPolicyWrapper">[docs]</a><span class="k">class</span> <span class="nc">TracedPolicyWrapper</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper for a traced policy. Mainly used to add `input_size` and `output_size` attributes.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper for a traced policy. Mainly used to add `input_size` and `output_size` attributes.&quot;&quot;&quot;</span>
 
     <span class="c1"># Attributes</span>
     <span class="n">input_size</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Policy</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param module: non-recurrent network to wrap, which must not be a script module</span>
@@ -369,7 +369,7 @@
 
 
 <div class="viewcode-block" id="TwoHeadedPolicy"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.TwoHeadedPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for policies with a shared body and two separate heads.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for policies with a shared body and two separate heads.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TwoHeadedPolicy.init_param"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.TwoHeadedPolicy.init_param">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

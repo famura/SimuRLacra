@@ -171,7 +171,7 @@
 
 
 <div class="viewcode-block" id="stack_tensor_list"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.tensor.stack_tensor_list">[docs]</a><span class="k">def</span> <span class="nf">stack_tensor_list</span><span class="p">(</span><span class="n">tensor_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convenience function for stacking a list of tensors</span>
 
 <span class="sd">    :param tensor_list: list of tensors to stack (along a new dim)</span>
@@ -184,7 +184,7 @@
 
 
 <div class="viewcode-block" id="stack_tensor_dict_list"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.tensor.stack_tensor_dict_list">[docs]</a><span class="k">def</span> <span class="nf">stack_tensor_dict_list</span><span class="p">(</span><span class="n">tensor_dict_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stack a list of dictionaries of {tensors or dict of tensors}.</span>
 
 <span class="sd">    :param tensor_dict_list: a list of dicts of {tensors or dict of tensors}.</span>
@@ -203,7 +203,7 @@
 
 
 <div class="viewcode-block" id="insert_tensor_col"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.tensor.insert_tensor_col">[docs]</a><span class="k">def</span> <span class="nf">insert_tensor_col</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Insert a column into a PyTorch tensor`.</span>
 
 <span class="sd">    :param x: original tensor</span>
@@ -233,7 +233,7 @@
 
 
 <div class="viewcode-block" id="deepcopy_or_clone"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.tensor.deepcopy_or_clone">[docs]</a><span class="k">def</span> <span class="nf">deepcopy_or_clone</span><span class="p">(</span><span class="n">copy_from</span><span class="p">:</span> <span class="n">CopyType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CopyType</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unfortunately, deepcopy() only works for leave tensors right now. Thus, we need to iterate throught the input and</span>
 <span class="sd">    clone the PyTorch tensors where possible.</span>
 

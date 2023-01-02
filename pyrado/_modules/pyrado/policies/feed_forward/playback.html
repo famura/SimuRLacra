@@ -173,7 +173,7 @@
 
 
 <div class="viewcode-block" id="PlaybackPolicy"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy">[docs]</a><span class="k">class</span> <span class="nc">PlaybackPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A policy wish simply replays a sequence of actions. If more actions are requested, the policy&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A policy wish simply replays a sequence of actions. If more actions are requested, the policy&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pb&quot;</span>
 
@@ -184,7 +184,7 @@
         <span class="n">no_reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -212,17 +212,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">curr_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the number of the current replay step (0 for the initial step).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of the current replay step (0 for the initial step).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">no_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns `True` if the automatic reset is skipped, i.e. the reset has to be controlled manually.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns `True` if the automatic reset is skipped, i.e. the reset has to be controlled manually.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_reset</span>
 
     <span class="nd">@curr_step</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">curr_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the number of the current replay step (0 for the initial step).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the number of the current replay step (0 for the initial step).&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curr_step</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">curr_step</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_act_rec_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_rec</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
                 <span class="n">given</span><span class="o">=</span><span class="n">curr_step</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0 (int)&quot;</span><span class="p">,</span> <span class="n">l_constraint</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_act_rec_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_rec</span><span class="p">])</span>
@@ -231,18 +231,18 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">curr_rec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the pointer to the current recording.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the pointer to the current recording.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rec</span>
 
     <span class="nd">@curr_rec</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">curr_rec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_rec</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the pointer to the current recording.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the pointer to the current recording.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curr_rec</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">curr_rec</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_act_rec_buffer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">curr_rec</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;-1 (int)&quot;</span><span class="p">,</span> <span class="n">l_constraint</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_act_rec_buffer</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rec</span> <span class="o">=</span> <span class="n">curr_rec</span>
 
 <div class="viewcode-block" id="PlaybackPolicy.reset_curr_rec"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.reset_curr_rec">[docs]</a>    <span class="k">def</span> <span class="nf">reset_curr_rec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset the pointer to the current recording.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the pointer to the current recording.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rec</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
 
 <div class="viewcode-block" id="PlaybackPolicy.reset"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

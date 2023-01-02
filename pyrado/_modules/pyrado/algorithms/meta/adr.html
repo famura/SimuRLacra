@@ -189,7 +189,7 @@
 
 
 <div class="viewcode-block" id="ADR"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.ADR">[docs]</a><span class="k">class</span> <span class="nc">ADR</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Active Domain Randomization (ADR)</span>
 
 <span class="sd">    .. seealso::</span>
@@ -216,7 +216,7 @@
         <span class="n">randomized_params</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -306,7 +306,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
 
 <div class="viewcode-block" id="ADR.compute_params"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.compute_params">[docs]</a>    <span class="k">def</span> <span class="nf">compute_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_instances</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the parameters.</span>
 
 <span class="sd">        :param sim_instances: Physics configurations rollout</span>
@@ -415,7 +415,7 @@
 
 
 <div class="viewcode-block" id="SVPGAdapter"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter">[docs]</a><span class="k">class</span> <span class="nc">SVPGAdapter</span><span class="p">(</span><span class="n">EnvWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper to encapsulate the domain parameter search as an RL task.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to encapsulate the domain parameter search as an RL task.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -430,7 +430,7 @@
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param wrapped_env: the environment to wrap</span>
@@ -524,7 +524,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Not parallelizable&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SVPGAdapter.eval_states"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.eval_states">[docs]</a>    <span class="k">def</span> <span class="nf">eval_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the states.</span>
 
 <span class="sd">        :param states: the states to evaluate</span>
@@ -554,7 +554,7 @@
 
 
 <div class="viewcode-block" id="RewardGenerator"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator">[docs]</a><span class="k">class</span> <span class="nc">RewardGenerator</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for generating the discriminator rewards in ADR. Generates a reward using a trained discriminator network.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for generating the discriminator rewards in ADR. Generates a reward using a trained discriminator network.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -567,7 +567,7 @@
         <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_spec: environment specification</span>
@@ -592,7 +592,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
 
 <div class="viewcode-block" id="RewardGenerator.get_reward"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator.get_reward">[docs]</a>    <span class="k">def</span> <span class="nf">get_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traj</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Compute the reward of a trajectory.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the reward of a trajectory.</span>
 <span class="sd">        Trajectories considered as not fixed yield a high reward.</span>
 
 <span class="sd">        :param traj: trajectory to evaluate</span>
@@ -631,7 +631,7 @@
 
 
 <div class="viewcode-block" id="preprocess_rollout"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.preprocess_rollout">[docs]</a><span class="k">def</span> <span class="nf">preprocess_rollout</span><span class="p">(</span><span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract observations and actions from a `StepSequence` and packs them into a PyTorch tensor.</span>
 
 <span class="sd">    :param rollout: a `StepSequence` instance containing a trajectory</span>

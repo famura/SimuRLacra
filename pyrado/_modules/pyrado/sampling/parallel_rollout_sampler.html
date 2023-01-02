@@ -187,18 +187,18 @@
 
 
 <span class="k">def</span> <span class="nf">_ps_init</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Store pickled (and thus copied) environment and policy.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store pickled (and thus copied) environment and policy.&quot;&quot;&quot;</span>
     <span class="n">G</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">G</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_ps_update_policy</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update policy state_dict.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update policy state_dict.&quot;&quot;&quot;</span>
     <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_ps_sample_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout and return step count if counting steps, rollout count (1) otherwise.</span>
 <span class="sd">    This function is used when a minimum number of steps was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -207,7 +207,7 @@
 
 
 <span class="k">def</span> <span class="nf">_ps_run_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout without specifying the initial state or the domain parameters.</span>
 <span class="sd">    This function is used when a minimum number of rollouts was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -215,7 +215,7 @@
 
 
 <span class="k">def</span> <span class="nf">_ps_run_one_init_state</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout with given init state.</span>
 <span class="sd">    This function is used when a minimum number of rollouts was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -232,7 +232,7 @@
 
 
 <span class="k">def</span> <span class="nf">_ps_run_one_domain_param</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout with given domain parameters.</span>
 <span class="sd">    This function is used when a minimum number of rollouts was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -251,7 +251,7 @@
 <span class="k">def</span> <span class="nf">_ps_run_one_reset_kwargs</span><span class="p">(</span>
     <span class="n">G</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]],</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout with given init state and domain parameters, passed as a tuple for simplicity at the other end.</span>
 <span class="sd">    This function is used when a minimum number of rollouts was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -278,7 +278,7 @@
     <span class="n">cnt_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one segments of a rollout with given init state (which originates from a target domain setup) and domain</span>
 <span class="sd">    parameters, passed as a tuple for simplicity at the other end.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -315,7 +315,7 @@
 
 
 <div class="viewcode-block" id="ParallelRolloutSampler"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler">[docs]</a><span class="k">class</span> <span class="nc">ParallelRolloutSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for sampling from multiple environments in parallel&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for sampling from multiple environments in parallel&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -328,7 +328,7 @@
         <span class="n">show_progress_bar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">NO_SEED</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env: environment to sample from</span>
@@ -365,7 +365,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_ps_init</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ParallelRolloutSampler.reinit"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.reinit">[docs]</a>    <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Env</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Re-initialize the sampler.</span>
 
 <span class="sd">        :param env: the environment which the policy operates</span>
@@ -386,7 +386,7 @@
         <span class="n">domain_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Do the sampling according to the previously given environment, policy, and number of steps/rollouts.</span>
 
 <span class="sd">        .. note::</span>

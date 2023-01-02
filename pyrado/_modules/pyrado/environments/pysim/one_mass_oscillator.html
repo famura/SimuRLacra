@@ -182,7 +182,7 @@
 
 
 <div class="viewcode-block" id="OneMassOscillatorSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim">[docs]</a><span class="k">class</span> <span class="nc">OneMassOscillatorSim</span><span class="p">(</span><span class="n">SimPyEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Model of a linear one-mass-oscillator (spring-mass-damper system) without gravity influence&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Model of a linear one-mass-oscillator (spring-mass-damper system) without gravity influence&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;omo&quot;</span>
 
@@ -258,7 +258,7 @@
 
 <div class="viewcode-block" id="OneMassOscillatorDyn"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDyn">[docs]</a><span class="k">class</span> <span class="nc">OneMassOscillatorDyn</span><span class="p">(</span><span class="n">Serializable</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param dt: simulation step size [s]</span>
@@ -279,7 +279,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        One step of the forward dynamics</span>
 
 <span class="sd">        :param state: current state</span>
@@ -298,7 +298,7 @@
 
 
 <div class="viewcode-block" id="OneMassOscillatorDomainParamEstimator"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator">[docs]</a><span class="k">class</span> <span class="nc">OneMassOscillatorDomainParamEstimator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class to estimate the domain parameters of the OneMassOscillator environment&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to estimate the domain parameters of the OneMassOscillator environment&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dp_init</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>

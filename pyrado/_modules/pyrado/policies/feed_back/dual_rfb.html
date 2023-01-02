@@ -171,7 +171,7 @@
 
 
 <div class="viewcode-block" id="DualRBFLinearPolicy"><a class="viewcode-back" href="../../../../policies.feed_back.html#pyrado.policies.feed_back.dual_rfb.DualRBFLinearPolicy">[docs]</a><span class="k">class</span> <span class="nc">DualRBFLinearPolicy</span><span class="p">(</span><span class="n">LinearPolicy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A linear policy with RBF features which are also used to get the derivative of the features. The use-case in mind</span>
 <span class="sd">    is a simple policy which generates the joint position and joint velocity commands for the internal PD-controller</span>
 <span class="sd">    of a robot (e.g. Barrett WAM). By re-using the RBF, we reduce the number of parameters, while we can at the same</span>
@@ -183,7 +183,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">rbf_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">dim_mask</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: specification of environment</span>
@@ -233,7 +233,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DualRBFLinearPolicy.forward"><a class="viewcode-back" href="../../../../policies.feed_back.html#pyrado.policies.feed_back.dual_rfb.DualRBFLinearPolicy.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the features at the given observation or use given feature values</span>
 
 <span class="sd">        :param obs: observations from the environment</span>

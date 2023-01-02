@@ -175,7 +175,7 @@
 
 
 <div class="viewcode-block" id="TwoHeadedRNNPolicyBase"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedRNNPolicyBase</span><span class="p">(</span><span class="n">TwoHeadedPolicy</span><span class="p">,</span> <span class="n">RecurrentPolicy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for recurrent policies, which are wrapping torch.nn.RNNBase, and have a common body and two heads that</span>
 <span class="sd">    have a separate last layer</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -197,7 +197,7 @@
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">recurrent_net_kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -372,7 +372,7 @@
         <span class="k">return</span> <span class="n">output_1</span><span class="p">,</span> <span class="n">output_2</span></div>
 
     <span class="k">def</span> <span class="nf">_unpack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unpack the flat hidden state vector into a form the actual network module can use.</span>
 <span class="sd">        Since hidden usually comes from some outer source, this method should validate it&#39;s shape.</span>
 <span class="sd">        The default implementation is defined by default_unpack_hidden.</span>
@@ -384,7 +384,7 @@
         <span class="k">return</span> <span class="n">default_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_pack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pack the hidden state returned by the network into an 1-dim state vector.</span>
 <span class="sd">        This should be the reverse operation of _unpack_hidden.</span>
 <span class="sd">        The default implementation is defined by default_pack_hidden.</span>
@@ -397,7 +397,7 @@
 
 
 <div class="viewcode-block" id="TwoHeadedRNNPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedRNNPolicy</span><span class="p">(</span><span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Two-headed policy backed by a multi-layer RNN&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Two-headed policy backed by a multi-layer RNN&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;thrnn&quot;</span>
 
@@ -417,7 +417,7 @@
         <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -448,7 +448,7 @@
 
 
 <div class="viewcode-block" id="TwoHeadedGRUPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedGRUPolicy</span><span class="p">(</span><span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Two-headed policy backed by a multi-layer GRU&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Two-headed policy backed by a multi-layer GRU&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;thgru&quot;</span>
 
@@ -456,7 +456,7 @@
 
 
 <div class="viewcode-block" id="TwoHeadedLSTMPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedLSTMPolicy</span><span class="p">(</span><span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Two-headed policy backed by a multi-layer LSTM&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Two-headed policy backed by a multi-layer LSTM&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;thlstm&quot;</span>
 

@@ -170,7 +170,7 @@
 
 
 <div class="viewcode-block" id="SamplerBase"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler.SamplerBase">[docs]</a><span class="k">class</span> <span class="nc">SamplerBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A sampler generates a list of rollouts in some unspecified way.</span>
 
 <span class="sd">    Since the sampling might occur in parallel, there is no way to reliably generate an exact amount of samples.</span>
@@ -185,7 +185,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param min_rollouts: minimum number of complete rollouts to sample</span>
@@ -196,7 +196,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_min_count</span><span class="p">(</span><span class="n">min_rollouts</span><span class="p">,</span> <span class="n">min_steps</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SamplerBase.set_min_count"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler.SamplerBase.set_min_count">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adapt the sampling boundaries.</span>
 
 <span class="sd">        :param min_rollouts: minimum number of complete rollouts to sample</span>
@@ -208,7 +208,7 @@
 
 <div class="viewcode-block" id="SamplerBase.reinit"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler.SamplerBase.reinit">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Env</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</span>
 
 <span class="sd">        Most samplers will be implemented in parallel, so if there are changes to the environment or the policy,</span>
@@ -227,7 +227,7 @@
 
 <div class="viewcode-block" id="SamplerBase.sample"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler.SamplerBase.sample">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a list of rollouts. This method works exactly as specified in the class description.</span>
 
 <span class="sd">        :return: sampled rollouts</span>

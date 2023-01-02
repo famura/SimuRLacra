@@ -176,7 +176,7 @@
 
 
 <div class="viewcode-block" id="ReturnStatistic"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic">[docs]</a><span class="k">class</span> <span class="nc">ReturnStatistic</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;All the different return statistics supported by `ReturnStatisticBasedStoppingCriterion`.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;All the different return statistics supported by `ReturnStatisticBasedStoppingCriterion`.&quot;&quot;&quot;</span>
 
     <span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="nb">max</span> <span class="o">=</span> <span class="mi">1</span>
@@ -186,7 +186,7 @@
 
 
 <div class="viewcode-block" id="RolloutBasedStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">RolloutBasedStoppingCriterion</span><span class="p">(</span><span class="n">StoppingCriterion</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract extension of the base `StoppingCriterion` class for criteria that are based on having access to rollouts.</span>
 
 <span class="sd">    .. note::</span>
@@ -194,7 +194,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RolloutBasedStoppingCriterion.is_met"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion.is_met">[docs]</a>    <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the check if of the</span>
 <span class="sd">        stopping criterion to `_is_met_with_sampler(..)`.</span>
 
@@ -215,7 +215,7 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_is_met_with_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks whether the stopping criterion is met.</span>
 
 <span class="sd">        .. note::</span>
@@ -229,13 +229,13 @@
 
 
 <div class="viewcode-block" id="ReturnStatisticBasedStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">ReturnStatisticBasedStoppingCriterion</span><span class="p">(</span><span class="n">RolloutBasedStoppingCriterion</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract extension of the base `RolloutBasedStoppingCriterion` class for criteria that are based on a specific</span>
 <span class="sd">    statistic of the returns of rollouts of the last iteration.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">median</span><span class="p">,</span> <span class="n">num_lookbacks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor.</span>
 
 <span class="sd">        :param return_statistic: statistic to compute; defaults to median</span>
@@ -248,7 +248,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_lookbacks</span> <span class="o">=</span> <span class="n">num_lookbacks</span>
 
     <span class="k">def</span> <span class="nf">_is_met_with_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the return statistic if enough iterations have passed and forwards the computed statistic to the</span>
 <span class="sd">        method `_is_met_with_return_statistic`.</span>
 
@@ -271,7 +271,7 @@
     <span class="k">def</span> <span class="nf">_is_met_with_return_statistic</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks whether the stopping criterion is met.</span>
 
 <span class="sd">        .. note::</span>
@@ -286,7 +286,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_compute_return_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">returns</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the desired statistic of the given list of returns according to the statistic requested in the</span>
 <span class="sd">        constructor.</span>
 
@@ -307,13 +307,13 @@
 
 
 <div class="viewcode-block" id="MinReturnStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.MinReturnStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">MinReturnStoppingCriterion</span><span class="p">(</span><span class="n">ReturnStatisticBasedStoppingCriterion</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Uses any statistic (defaulting to min) of the return of the latest rollout as a stopping criterion and stops if this</span>
 <span class="sd">    statistic exceeds a certain threshold.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">min</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor.</span>
 
 <span class="sd">        :param return_threshold: return threshold; if the return statistic reaches this threshold, the stopping</span>
@@ -332,14 +332,14 @@
     <span class="k">def</span> <span class="nf">_is_met_with_return_statistic</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns whether the return statistic is greater than or equal to the return threshold.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether the return statistic is greater than or equal to the return threshold.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">return_statistic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">return_statistic</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_threshold</span></div>
 
 
 <div class="viewcode-block" id="ConvergenceStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ConvergenceStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">ConvergenceStoppingCriterion</span><span class="p">(</span><span class="n">ReturnStatisticBasedStoppingCriterion</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks for convergence of the returns for a given statistic that can be specified in the constructor. This is done</span>
 <span class="sd">    by fitting a linear regression model to all the previous statistics (stored in a list) and performing a Wald test</span>
 <span class="sd">    with a t-distribution of the test statistic (with the null hypothesis that the slope is zero). The resulting</span>
@@ -370,7 +370,7 @@
         <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">median</span><span class="p">,</span>
         <span class="n">num_lookbacks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor.</span>
 
 <span class="sd">        :param convergence_probability_threshold: threshold of the p-value above which the algorithm is considered to be</span>
@@ -401,7 +401,7 @@
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2"> return converged, </span><span class="si">{</span><span class="s1">&#39;cumulative&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;moving&#39;</span><span class="si">}</span><span class="s2"> mode)&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2"> return converged, </span><span class="si">{</span><span class="s1">&#39;cumulative&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="kc">None</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;moving&#39;</span><span class="si">}</span><span class="s2"> mode)&quot;</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
@@ -410,7 +410,7 @@
     <span class="k">def</span> <span class="nf">_is_met_with_return_statistic</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">RolloutSavingWrapper</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns whether the convergence probability is greater than or equal to the threshold.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether the convergence probability is greater than or equal to the threshold.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">return_statistic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">convergence_prob</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
@@ -424,7 +424,7 @@
         <span class="k">return</span> <span class="n">convergence_prob</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convergence_probability_threshold</span>
 
     <span class="k">def</span> <span class="nf">_compute_convergence_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the convergence probability for the current data. By invoking `_get_relevant_return_statistic_subset`,</span>
 <span class="sd">        the two modes (moving and cumulative) are implemented. If not enough data is present, this method does not</span>
 <span class="sd">        return the probability, but `None`.</span>
@@ -443,7 +443,7 @@
         <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">linregress</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">statistic_subset</span><span class="p">)),</span> <span class="n">statistic_subset</span><span class="p">)</span><span class="o">.</span><span class="n">pvalue</span>
 
     <span class="k">def</span> <span class="nf">_get_relevant_return_statistic_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Extracts the relevant subset of the return statistic history, implementing the two modes described in the class</span>
 <span class="sd">        documentation: moving and cumulative.</span>
 

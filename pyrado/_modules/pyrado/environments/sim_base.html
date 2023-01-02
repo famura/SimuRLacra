@@ -172,7 +172,7 @@
 
 
 <div class="viewcode-block" id="SimEnv"><a class="viewcode-back" href="../../../environments.html#pyrado.environments.sim_base.SimEnv">[docs]</a><span class="k">class</span> <span class="nc">SimEnv</span><span class="p">(</span><span class="n">Env</span><span class="p">,</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class of all simulated environments in Pyrado.</span>
 <span class="sd">    Uses Serializable to facilitate proper serialization.</span>
 <span class="sd">    The domain parameters are automatically part of the serialized state.</span>
@@ -181,18 +181,18 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">init_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the initial state space.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the initial state space.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="nd">@init_space</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">init_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the initial state space.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the initial state space.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="SimEnv.get_nominal_domain_param"><a class="viewcode-back" href="../../../environments.html#pyrado.environments.sim_base.SimEnv.get_nominal_domain_param">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_nominal_domain_param</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the nominal a.k.a. default domain parameters.</span>
 
 <span class="sd">        .. note::</span>
@@ -202,7 +202,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">supported_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get an iterable of all supported domain parameters.</span>
 <span class="sd">        The default implementation takes the keys of `get_nominal_domain_param()`.</span>
 <span class="sd">        The domain parameters are automatically stored in attributes prefixed with &#39;_&#39;.</span>
@@ -212,7 +212,7 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the environment&#39;s domain parameters. If there are none, this method should return an emtpy dict.</span>
 <span class="sd">        The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation</span>
 <span class="sd">        (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,</span>
@@ -223,7 +223,7 @@
     <span class="nd">@domain_param</span><span class="o">.</span><span class="n">setter</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the environment&#39;s domain parameters. The changes are only applied at the next call of the reset function.</span>
 
 <span class="sd">        :param domain_param: new domain parameter set</span>
@@ -232,7 +232,7 @@
 
 <div class="viewcode-block" id="SimEnv.render"><a class="viewcode-back" href="../../../environments.html#pyrado.environments.sim_base.SimEnv.render">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">RenderMode</span><span class="p">,</span> <span class="n">render_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Visualize one time step of the simulation.</span>
 <span class="sd">        The base version prints to console when the state exceeds its boundaries.</span>
 
@@ -244,7 +244,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SimEnv.close"><a class="viewcode-back" href="../../../environments.html#pyrado.environments.sim_base.SimEnv.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;For compatibility to `RealEnv` with the wrappers which are subclasses of `Env`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;For compatibility to `RealEnv` with the wrappers which are subclasses of `Env`.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
     <span class="k">def</span> <span class="nf">_get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>

@@ -174,7 +174,7 @@
 
 
 <div class="viewcode-block" id="FinalRewMode"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.FinalRewMode">[docs]</a><span class="k">class</span> <span class="nc">FinalRewMode</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The specification of how the final state should be rewarded or punished&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The specification of how the final state should be rewarded or punished&quot;&quot;&quot;</span>
 
     <span class="n">state_dependent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">time_dependent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -183,7 +183,7 @@
     <span class="n">user_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get an information string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an information string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span>
             <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -202,7 +202,7 @@
 
 
 <div class="viewcode-block" id="FinalRewTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.FinalRewTask">[docs]</a><span class="k">class</span> <span class="nc">FinalRewTask</span><span class="p">(</span><span class="n">TaskWrapper</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper for tasks which yields a reward / cost on success / failure</span>
 
 <span class="sd">    :usage:</span>
@@ -212,7 +212,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">FinalRewMode</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e3</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param wrapped_task: task to wrap</span>
@@ -236,7 +236,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">yielded_final_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the flag that signals if this instance already yielded its final reward.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the flag that signals if this instance already yielded its final reward.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span>
 
 <div class="viewcode-block" id="FinalRewTask.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.FinalRewTask.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -244,7 +244,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="FinalRewTask.compute_final_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.FinalRewTask.compute_final_rew">[docs]</a>    <span class="k">def</span> <span class="nf">compute_final_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the reward / cost on task completion / fail of this task.</span>
 
 <span class="sd">        :param state: current state of the environment</span>
@@ -253,7 +253,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(),</span> <span class="n">off</span><span class="o">=</span><span class="p">()):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Helper function to avoid complex logical expressions.</span>
 
 <span class="sd">            :param on: all values that have to be true</span>
@@ -411,13 +411,13 @@
 
 
 <div class="viewcode-block" id="BestStateFinalRewTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.BestStateFinalRewTask">[docs]</a><span class="k">class</span> <span class="nc">BestStateFinalRewTask</span><span class="p">(</span><span class="n">TaskWrapper</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper for tasks which yields a reward / cost on success / failure based on the best reward / cost observed in the</span>
 <span class="sd">    current trajectory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param wrapped_task: task to wrap</span>
@@ -432,7 +432,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">yielded_final_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the flag that signals if this instance already yielded its final reward.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the flag that signals if this instance already yielded its final reward.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span>
 
 <div class="viewcode-block" id="BestStateFinalRewTask.step_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.BestStateFinalRewTask.step_rew">[docs]</a>    <span class="k">def</span> <span class="nf">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -447,7 +447,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="BestStateFinalRewTask.compute_final_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.BestStateFinalRewTask.compute_final_rew">[docs]</a>    <span class="k">def</span> <span class="nf">compute_final_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the reward / cost on task completion / fail of this task.</span>
 
 <span class="sd">        :param state: current state of the environment</span>

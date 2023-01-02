@@ -195,31 +195,31 @@
 
 
 <div class="viewcode-block" id="ParameterSample"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSample">[docs]</a><span class="k">class</span> <span class="nc">ParameterSample</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Stores policy parameters and associated rollouts.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stores policy parameters and associated rollouts.&quot;&quot;&quot;</span>
 
     <span class="n">params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span>
     <span class="n">rollouts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">mean_undiscounted_return</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the mean of the undiscounted returns over all rollouts.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the mean of the undiscounted returns over all rollouts.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rollouts</span><span class="p">])</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_rollouts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the number of rollouts.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of rollouts.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ParameterSamplingResult"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult">[docs]</a><span class="k">class</span> <span class="nc">ParameterSamplingResult</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ParameterSample</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Result of a parameter exploration sampling run.</span>
 <span class="sd">    On one hand, this is a list of ParameterSamples.</span>
 <span class="sd">    On the other hand, this allows to query combined tensors of parameters and mean returns.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ParameterSample</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param samples: list of parameter samples</span>
@@ -240,33 +240,33 @@
 
 <div class="viewcode-block" id="ParameterSamplingResult.parameters"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.parameters">[docs]</a>    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get all policy parameters as NxP matrix, where N is the number of samples and P is the policy param dim.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all policy parameters as NxP matrix, where N is the number of samples and P is the policy param dim.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">params</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="ParameterSamplingResult.mean_returns"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.mean_returns">[docs]</a>    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">mean_returns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get all parameter sample means return as a N-dim vector, where N is the number of samples.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all parameter sample means return as a N-dim vector, where N is the number of samples.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">mean_undiscounted_return</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="ParameterSamplingResult.rollouts"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.rollouts">[docs]</a>    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">rollouts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get all rollouts for all samples, i.e. a list of pop_size items, each a list of nom_rollouts rollouts.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all rollouts for all samples, i.e. a list of pop_size items, each a list of nom_rollouts rollouts.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">rollouts</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="ParameterSamplingResult.num_rollouts"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.num_rollouts">[docs]</a>    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">num_rollouts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the total number of rollouts for all samples.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the total number of rollouts for all samples.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">num_rollouts</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">]))</span></div></div>
 
 
 <span class="k">def</span> <span class="nf">_pes_init</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Store pickled (and thus copied) environment and policy.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store pickled (and thus copied) environment and policy.&quot;&quot;&quot;</span>
     <span class="n">G</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">G</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_pes_sample_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sample one rollout with the current setting.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample one rollout with the current setting.&quot;&quot;&quot;</span>
     <span class="n">num</span><span class="p">,</span> <span class="p">(</span><span class="n">pol_param</span><span class="p">,</span> <span class="n">dom_param</span><span class="p">,</span> <span class="n">init_state</span><span class="p">)</span> <span class="o">=</span> <span class="n">param</span>
     <span class="n">vector_to_parameters</span><span class="p">(</span><span class="n">pol_param</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
 
@@ -284,7 +284,7 @@
 
 
 <div class="viewcode-block" id="ParameterExplorationSampler"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler">[docs]</a><span class="k">class</span> <span class="nc">ParameterExplorationSampler</span><span class="p">(</span><span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parallel sampler for parameter exploration&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parallel sampler for parameter exploration&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -295,7 +295,7 @@
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env: environment to sample from</span>
@@ -347,11 +347,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_rollouts_per_param</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the number of rollouts per policy parameter set.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of rollouts per policy parameter set.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_init_states_per_domain</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_domains</span>
 
     <span class="k">def</span> <span class="nf">_sample_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Sample domain parameters from the cached domain randomization wrapper.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample domain parameters from the cached domain randomization wrapper.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dr_wrapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># There was no randomizer, thus do not set any domain parameters</span>
             <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_domains</span>
@@ -367,7 +367,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dr_wrapper</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_sample_one_init_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sample an init state for the given domain parameter set(s).</span>
 <span class="sd">        For some environments, the initial state space depends on the domain parameters, so we need to set them before</span>
 <span class="sd">        sampling it. We can just reset `self.env` here safely though, since it&#39;s not used for anything else.</span>
@@ -384,7 +384,7 @@
             <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="ParameterExplorationSampler.reinit"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.reinit">[docs]</a>    <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Env</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Re-initialize the sampler.</span>
 
 <span class="sd">        :param env: the environment which the policy operates</span>
@@ -400,7 +400,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_pes_init</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="ParameterExplorationSampler.sample"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_sets</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">init_states</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParameterSamplingResult</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sample rollouts for a given set of parameters.</span>
 
 <span class="sd">        .. note::</span>

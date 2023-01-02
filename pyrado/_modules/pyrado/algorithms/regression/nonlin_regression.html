@@ -178,7 +178,7 @@
 
 
 <div class="viewcode-block" id="NonlinRegression"><a class="viewcode-back" href="../../../../algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression">[docs]</a><span class="k">class</span> <span class="nc">NonlinRegression</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Train a policy using stochastic gradient descent to approximate the given data.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Train a policy using stochastic gradient descent to approximate the given data.&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;regr&quot;</span>  <span class="c1"># unique identifier</span>
 
@@ -200,7 +200,7 @@
         <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -281,7 +281,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_custom_stopping_criterion</span><span class="p">(</span><span class="n">algo</span><span class="p">:</span> <span class="s2">&quot;NonlinRegression&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Keep track of the best validation performance and check if it does not improve for a given number of iterations.</span>
 
 <span class="sd">        :return: `True` if the performance on the validation set did not improve for, i.e. network has converged</span>

@@ -177,7 +177,7 @@
 
 
 <div class="viewcode-block" id="NFPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy">[docs]</a><span class="k">class</span> <span class="nc">NFPolicy</span><span class="p">(</span><span class="n">PotentialBasedPolicy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Neural Fields (NF)</span>
 
 <span class="sd">    .. note::</span>
@@ -209,7 +209,7 @@
         <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -235,7 +235,7 @@
             <span class="n">conv_kernel_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">conv_kernel_size</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">print_cbt</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Increased the kernel size </span><span class="si">{</span><span class="n">conv_kernel_size</span><span class="si">}</span><span class="s2"> the next odd number (</span><span class="si">{</span><span class="n">conv_kernel_size</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">) &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Increased the kernel size </span><span class="si">{</span><span class="n">conv_kernel_size</span><span class="si">}</span><span class="s2"> the next odd number (</span><span class="si">{</span><span class="n">conv_kernel_size</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">) &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;in order to obtain shape-conserving padding.&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;y&quot;</span><span class="p">,</span>
             <span class="p">)</span>
@@ -290,7 +290,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NFPolicy.potentials_dot"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy.potentials_dot">[docs]</a>    <span class="k">def</span> <span class="nf">potentials_dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">potentials</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the derivative of the neurons&#39; potentials per time step.</span>
 <span class="sd">        $/tau /dot{u} = s + h - u + /kappa (h - u)^3,</span>
 <span class="sd">        /quad /text{with} s = s_{int} + s_{ext} = W*o + /int{w(u, v) f(u) dv}$</span>

@@ -172,7 +172,7 @@
 
 
 <div class="viewcode-block" id="RecurrentPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy">[docs]</a><span class="k">class</span> <span class="nc">RecurrentPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for recurrent policies.</span>
 <span class="sd">    The policy does not store the hidden state on it&#39;s own, so it requires two arguments: (observation, hidden) and</span>
 <span class="sd">    returns two values: (action, new_hidden).</span>
@@ -187,11 +187,11 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">hidden_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the number of hidden state variables.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of hidden state variables.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="RecurrentPolicy.init_hidden"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.init_hidden">[docs]</a>    <span class="k">def</span> <span class="nf">init_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provide initial values for the hidden parameters. This should usually be a zero tensor.</span>
 
 <span class="sd">        :param batch_size: number of states to track in parallel</span>
@@ -204,7 +204,7 @@
 
 <div class="viewcode-block" id="RecurrentPolicy.forward"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.forward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param obs: observation from the environment</span>
 
 <span class="sd">        :param hidden: the network&#39;s hidden state. If None, use init_hidden()</span>
@@ -214,7 +214,7 @@
 
 <div class="viewcode-block" id="RecurrentPolicy.evaluate"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.evaluate">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hidden_states&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Re-evaluate the given rollout and return a derivable action tensor.</span>
 <span class="sd">        This method makes sure that the gradient is propagated through the hidden state.</span>
 
@@ -226,7 +226,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="RecurrentPolicy.script"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.script">[docs]</a>    <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScriptModule</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a ScriptModule from this policy.</span>
 <span class="sd">        The returned module will always have the signature `action = tm(observation, hidden)`.</span>
 <span class="sd">        For recurrent networks, it returns a stateful module that keeps the hidden states internally.</span>
@@ -236,7 +236,7 @@
 
 
 <div class="viewcode-block" id="StatefulRecurrentNetwork"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork">[docs]</a><span class="k">class</span> <span class="nc">StatefulRecurrentNetwork</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A scripted wrapper for a recurrent neural network that stores the hidden state.</span>
 
 <span class="sd">    .. note::</span>
@@ -248,7 +248,7 @@
     <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">:</span> <span class="n">RecurrentPolicy</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param net: non-recurrent network to wrap</span>
@@ -281,7 +281,7 @@
 
 <div class="viewcode-block" id="StatefulRecurrentNetwork.reset"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.reset">[docs]</a>    <span class="nd">@export</span>
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset the policy&#39;s internal state.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the policy&#39;s internal state.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># in most cases all zeros</span></div>
 
 <div class="viewcode-block" id="StatefulRecurrentNetwork.forward"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
@@ -295,7 +295,7 @@
 
 
 <div class="viewcode-block" id="default_unpack_hidden"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.default_unpack_hidden">[docs]</a><span class="k">def</span> <span class="nf">default_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unpack the flat hidden state vector into the form expected by torch.nn.RNNBase subclasses.</span>
 
 <span class="sd">    :param hidden: packed hidden state</span>
@@ -328,7 +328,7 @@
 
 
 <div class="viewcode-block" id="default_pack_hidden"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.default_pack_hidden">[docs]</a><span class="k">def</span> <span class="nf">default_pack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pack the hidden state returned by torch.nn.RNNBase subclasses into an 1d state vector.</span>
 <span class="sd">    This is the reverse operation of default_unpack_hidden.</span>
 

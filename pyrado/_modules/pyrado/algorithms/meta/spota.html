@@ -189,7 +189,7 @@
 
 
 <div class="viewcode-block" id="SPOTA"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA">[docs]</a><span class="k">class</span> <span class="nc">SPOTA</span><span class="p">(</span><span class="n">InterruptableAlgorithm</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Simulation-based Policy Optimization with Probability Assessment (SPOTA)</span>
 
 <span class="sd">    .. note::</span>
@@ -231,7 +231,7 @@
         <span class="n">base_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -308,7 +308,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subroutine_cand</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Algorithm</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the candidate subroutine.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the candidate subroutine.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span>
 
     <span class="nd">@property</span>
@@ -320,7 +320,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">sample_count</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">sample_count</span>
 
     <span class="k">def</span> <span class="nf">_adapt_batch_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subroutine</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adapt the number of dynamics transitions (steps or rollouts) of the subroutines according to the number of</span>
 <span class="sd">        domains that is used in the current iteration of SPOTA.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -341,7 +341,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_custom_stopping_criterion</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the upper confidence bound on the optimality gap is smaller than the specified threshold.</span>
 
 <span class="sd">        .. note::</span>
@@ -379,7 +379,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 0</span></div>
 
     <span class="k">def</span> <span class="nf">_compute_candidate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nc</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Train and save one candidate solution to a pt-file</span>
 
 <span class="sd">        :param nc: number of domains used for training the candidate solution</span>
@@ -387,7 +387,7 @@
         <span class="c1"># Do a warm start if desired</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warmstart_cand</span><span class="p">,</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;cand&quot;</span><span class="p">,</span>
             <span class="n">policy_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cand_policy_param_init</span><span class="p">,</span>
             <span class="n">valuefcn_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cand_critic_param_init</span><span class="p">,</span>
@@ -424,7 +424,7 @@
         <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Learned an approx solution for SP_nc.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_compute_references</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nG</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Train and save nG reference solutions to pt-files</span>
 
 <span class="sd">        :param nr: number of domains used for training the reference solutions</span>
@@ -432,7 +432,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Loop to compute a distribution of optimality gaps via nG samples</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nG</span><span class="p">):</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2"> | Reference solution </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">nG</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2"> | Reference solution </span><span class="si">{</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">nG</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="c1"># Do a warm start if desired</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span>
@@ -475,7 +475,7 @@
             <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Learned an approx solution for SP_n</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_eval_cand_and_ref_one_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the candidate and the k-th reference solution (see outer loop) in the i-th domain using nJ rollouts.</span>
 
 <span class="sd">        :param i: index of the domain to evaluate in</span>
@@ -501,7 +501,7 @@
         <span class="k">return</span> <span class="n">cand_ret_avg</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nJ</span><span class="p">,</span> <span class="n">refs_ret_avg</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nJ</span>  <span class="c1"># average over nJ seeds</span>
 
     <span class="k">def</span> <span class="nf">_estimate_ucbog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Collect the returns with synchronized random seeds and estimate the pessimistic and optimistic bound.</span>
 
 <span class="sd">        :param nr: number of domains used for training the reference solutions</span>
@@ -513,7 +513,7 @@
 
         <span class="c1"># Loop over all reference solutions</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nG</span><span class="p">):</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estimating the UCBOG | Reference </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nG</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estimating the UCBOG | Reference </span><span class="si">{</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nG</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span>
             <span class="c1"># Load the domain parameters corresponding to the k-th reference solution</span>
             <span class="n">env_params_ref</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
                 <span class="s2">&quot;env_params.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ref_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -537,7 +537,7 @@
             <span class="p">)</span>
 
             <span class="c1"># Loop over all domain realizations of the reference solutions</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nr</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="n">nr</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Reference </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;domains&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nr</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="n">nr</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Reference </span><span class="si">{</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;domains&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
                 <span class="c1"># Evaluate solutions</span>
                 <span class="n">cand_rets</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">refs_rets</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eval_cand_and_ref_one_domain</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
@@ -557,7 +557,7 @@
 
         <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;diffs (optimistic - pessimistic bound):</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Gn_diffs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
         <span class="n">print_cbt</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="mi">100</span> <span class="o">*</span> <span class="n">ratio_neg_diffs</span><span class="si">}</span><span class="s2">% of the diffs would have been negative and were set to 0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ratio_neg_diffs</span><span class="si">}</span><span class="s2">% of the diffs would have been negative and were set to 0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">ratio_neg_diffs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -577,7 +577,7 @@
                 <span class="n">bias_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">studentized</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">studentized_ci</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m_bs: </span><span class="si">{</span><span class="n">m_bs</span><span class="si">}</span><span class="s2">, ci_bs: </span><span class="si">{</span><span class="n">ci_bs_lo</span><span class="p">,</span> <span class="n">ci_bs_up</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m_bs: </span><span class="si">{</span><span class="n">m_bs</span><span class="si">}</span><span class="s2">, ci_bs: </span><span class="si">{</span><span class="n">ci_bs_lo</span><span class="p">,</span><span class="w"> </span><span class="n">ci_bs_up</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">OG (point estimate): </span><span class="si">{</span><span class="n">Gn_est</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">UCBOG: </span><span class="si">{</span><span class="n">ci_bs_up</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">log_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Gn_est&quot;</span><span class="p">:</span> <span class="n">Gn_est</span><span class="p">,</span> <span class="s2">&quot;UCBOG&quot;</span><span class="p">:</span> <span class="n">ci_bs_up</span><span class="p">,</span> <span class="s2">&quot;ratio_neg_diffs&quot;</span><span class="p">:</span> <span class="n">ratio_neg_diffs</span><span class="p">}</span>
 
@@ -594,7 +594,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ucbog</span> <span class="o">=</span> <span class="n">ci_bs_up</span>
 
     <span class="k">def</span> <span class="nf">_handle_neg_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand_rets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">refs_rets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process negative optimality gap samples by Looking at the other Reference Solutions</span>
 
 <span class="sd">        :param cand_rets: array of the candidate&#39;s return values</span>
@@ -605,7 +605,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">refs_rets</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cand_rets</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]:</span>
             <span class="n">print_cbt</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Reference </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> is worse than the candidate on domain realization </span><span class="si">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># 1-based index</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Reference </span><span class="si">{</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> is worse than the candidate on domain realization </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># 1-based index</span>
                 <span class="s2">&quot;Trying to replace this reference at this realization with a different one&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;y&quot;</span><span class="p">,</span>
             <span class="p">)</span>

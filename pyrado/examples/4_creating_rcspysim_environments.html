@@ -149,76 +149,76 @@ directory, containing at least an Rcs graph file called <cite>gHelloMichael.xml<
 which can be found in <cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core</cite>. The subclass, let’s call it <cite>ECHelloMichael</cite>, only
 needs a .cpp file. It is highly recommended to check out the existing ExperimentConfig files for inspiration. Here is a
 basic template:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ExperimentConfig.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;action/THE_ACTION_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;action/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;initState/THE_INIT_SPACE_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;observation/THE_OBSERVATION_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;observation/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/PhysicsParameterManager.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/PPD_PARAMETER_TO_RANDOMIZE.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/ForceDisturber.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ExperimentConfig.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;action/THE_ACTION_MODEL_YOU_WANT.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;action/COULD_BE_MULTIPLE.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;initState/THE_INIT_SPACE_MODEL_YOU_WANT.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;observation/THE_OBSERVATION_MODEL_YOU_WANT.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;observation/COULD_BE_MULTIPLE.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/PhysicsParameterManager.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/PPD_PARAMETER_TO_RANDOMIZE.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/COULD_BE_MULTIPLE.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/ForceDisturber.h&quot;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Rcs_INCLUDES_YOU_NEED.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Rcs_INCLUDES_YOU_NEED.h&gt;</span>
 
 <span class="cp">#ifdef GRAPHICS_AVAILABLE</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;RcsViewer.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;RcsViewer.h&gt;</span>
 <span class="cp">#endif</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;OTHER_LIBS&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;OTHER_LIBS&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">Rcs</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Rcs</span>
+<span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">ECHelloMichael</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExperimentConfig</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ECHelloMichael</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExperimentConfig</span>
+<span class="p">{</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ActionModel</span><span class="o">*</span><span class="w"> </span><span class="n">createActionModel</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ActionModel</span><span class="o">*</span><span class="w"> </span><span class="n">createActionModel</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// TODO Create an action model.</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ObservationModel</span><span class="o">*</span><span class="w"> </span><span class="n">createObservationModel</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ObservationModel</span><span class="o">*</span><span class="w"> </span><span class="n">createObservationModel</span><span class="p">(){</span>
 <span class="w">    </span><span class="c1">// TODO Create an observation model.</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">populatePhysicsParameters</span><span class="p">(</span><span class="n">PhysicsParameterManager</span><span class="o">*</span><span class="w"> </span><span class="n">manager</span><span class="p">){</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">populatePhysicsParameters</span><span class="p">(</span><span class="n">PhysicsParameterManager</span><span class="o">*</span><span class="w"> </span><span class="n">manager</span><span class="p">){</span>
 <span class="w">    </span><span class="c1">// TODO (OPTIONAL) Add domain parameters for randomization.</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">InitStateSetter</span><span class="o">*</span><span class="w"> </span><span class="n">createInitStateSetter</span><span class="p">(){</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">InitStateSetter</span><span class="o">*</span><span class="w"> </span><span class="n">createInitStateSetter</span><span class="p">(){</span>
 <span class="w">    </span><span class="c1">// TODO Create an initial state space model.</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ForceDisturber</span><span class="o">*</span><span class="w"> </span><span class="n">createForceDisturber</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ForceDisturber</span><span class="o">*</span><span class="w"> </span><span class="n">createForceDisturber</span><span class="p">(){</span>
 <span class="w">    </span><span class="c1">// TODO (OPTIONAL) Create force a disturber that hinders your agent.</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">initViewer</span><span class="p">(</span><span class="n">Rcs</span><span class="o">::</span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span><span class="p">){</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">initViewer</span><span class="p">(</span><span class="n">Rcs</span><span class="o">::</span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span><span class="p">){</span>
 <span class="cp">#ifdef GRAPHICS_AVAILABLE</span>
 <span class="w">    </span><span class="c1">// TODO (OPTIONAL) Initialize the viewer.</span>
 <span class="cp">#endif</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"></span>
-<span class="w">    </span><span class="n">getHUDText</span><span class="p">(</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">linesOut</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">currentTime</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MatNd</span><span class="o">*</span><span class="w"> </span><span class="n">obs</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MatNd</span><span class="o">*</span><span class="w"> </span><span class="n">currentAction</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="n">PhysicsBase</span><span class="o">*</span><span class="w"> </span><span class="n">simulator</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="n">PhysicsParameterManager</span><span class="o">*</span><span class="w"> </span><span class="n">physicsManager</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="n">ForceDisturber</span><span class="o">*</span><span class="w"> </span><span class="n">forceDisturber</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span>
+<span class="w">    </span><span class="n">getHUDText</span><span class="p">(</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">linesOut</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">currentTime</span><span class="p">,</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MatNd</span><span class="o">*</span><span class="w"> </span><span class="n">obs</span><span class="p">,</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MatNd</span><span class="o">*</span><span class="w"> </span><span class="n">currentAction</span><span class="p">,</span>
+<span class="w">        </span><span class="n">PhysicsBase</span><span class="o">*</span><span class="w"> </span><span class="n">simulator</span><span class="p">,</span>
+<span class="w">        </span><span class="n">PhysicsParameterManager</span><span class="o">*</span><span class="w"> </span><span class="n">physicsManager</span><span class="p">,</span>
+<span class="w">        </span><span class="n">ForceDisturber</span><span class="o">*</span><span class="w"> </span><span class="n">forceDisturber</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// TODO (OPTIONAL) Set the text for the HUD of the viewer.</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
-<span class="k">static</span><span class="w"> </span><span class="n">ExperimentConfigRegistration</span><span class="o">&lt;</span><span class="n">ECHelloMichael</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RegHelloMichael</span><span class="p">(</span><span class="s">&quot;HelloMichael&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">static</span><span class="w"> </span><span class="n">ExperimentConfigRegistration</span><span class="o">&lt;</span><span class="n">ECHelloMichael</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RegHelloMichael</span><span class="p">(</span><span class="s">&quot;HelloMichael&quot;</span><span class="p">);</span>
 
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>An important part of every simulation is the initial state. Therefore, we create an initial state setter in
@@ -293,8 +293,8 @@ for every <cite>ExperimentConfig</cite>. Two examples are <cite>properties-&gt;g
 to pass a python dictionary.</p>
 <p><strong>Part 3: Run it</strong></p>
 <p>Now it is time to build RcsPySim</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate pyrado
-<span class="nb">cd</span> RcsPySim/build
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>pyrado
+<span class="nb">cd</span><span class="w"> </span>RcsPySim/build
 make
 </pre></div>
 </div>
@@ -341,14 +341,14 @@ and the overall time to 10s. Moreover, we are ignoring joint limits, and have no
 <p>You can also test your environment and policy from C++. This is however a bit more intrigued and still experimental.
 First, we need to create an experiment description xml-file. One possible case is that you ran an experiment, i.e.
 trained a policy. Next you can go to script’s folder, activate the anaconda environment, and run the script</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> PATH_TO/SimuRLacra/Pyrado/scripts/deployment
-conda activate pyrado
-python export_policy_cpp.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>PATH_TO/SimuRLacra/Pyrado/scripts/deployment
+conda<span class="w"> </span>activate<span class="w"> </span>pyrado
+python<span class="w"> </span>export_policy_cpp.py
 </pre></div>
 </div>
 <p>This will create an <cite>ex_&lt;CUSTOM&gt;_export.xml</cite> as well as an <cite>policy_export.pt</cite> file.
 If you want the your trained policy to be played back, you need to insert the line</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;policy</span> <span class="na">type=</span><span class="s">&quot;torch&quot;</span> <span class="na">file=</span><span class="s">&quot;policy_export.pt&quot;</span><span class="nt">/&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;policy</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;torch&quot;</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;policy_export.pt&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 </div>
 <p>into the experiment XML-file. However, this is optional. Actually, you don’t really need to run an experiment to use
@@ -360,8 +360,8 @@ ware are:</p>
 </div>
 <p>Next, you copy the <cite>ex_&lt;CUSTOM&gt;_export.xml</cite> file (and optionally the policy) to the <cite>RcsPySim/config/HelloMichael</cite>
 folder and run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> PATH_TO/SimuRLacra/RcsPySim/build
-bin/TestBot -dl <span class="m">2</span> -dir ../config/HelloMichael -f ex_&lt;CUSTOM&gt;_export.xml<span class="sb">`</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>PATH_TO/SimuRLacra/RcsPySim/build
+bin/TestBot<span class="w"> </span>-dl<span class="w"> </span><span class="m">2</span><span class="w"> </span>-dir<span class="w"> </span>../config/HelloMichael<span class="w"> </span>-f<span class="w"> </span>ex_&lt;CUSTOM&gt;_export.xml<span class="sb">`</span>
 </pre></div>
 </div>
 </section>

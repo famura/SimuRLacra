@@ -175,7 +175,7 @@
 
 
 <div class="viewcode-block" id="PolySplineTimePolicy"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.PolySplineTimePolicy">[docs]</a><span class="k">class</span> <span class="nc">PolySplineTimePolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A purely time-based policy, were the output is determined by a polynomial function satisfying given conditions&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A purely time-based policy, were the output is determined by a polynomial function satisfying given conditions&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pst&quot;</span>
 
@@ -192,7 +192,7 @@
         <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -275,7 +275,7 @@
 
     <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_compute_coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the coefficients of the polynomial spline, and set them into the internal linear layer for storing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Treat each action dimension separately</span>
@@ -291,7 +291,7 @@
 
     <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_compute_feats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the feature matrix depending on the time and the number of conditions.</span>
 
 <span class="sd">        :param t: time to evaluate at [s]</span>
@@ -369,7 +369,7 @@
 
 
 <div class="viewcode-block" id="TraceablePolySplineTimePolicy"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.TraceablePolySplineTimePolicy">[docs]</a><span class="k">class</span> <span class="nc">TraceablePolySplineTimePolicy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A scriptable version of `PolySplineTimePolicy`.</span>
 
 <span class="sd">    We could try to make `PolySplineTimePolicy` itself scriptable, but that won&#39;t work anyways due to `Policy` not</span>
@@ -402,7 +402,7 @@
         <span class="n">t_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">overtime_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hold&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        In contrast to PolySplineTimePolicy, this constructor needs to be called with learned / working values for</span>
 <span class="sd">        `cond_final` and `cond_init`.</span>
 
@@ -462,7 +462,7 @@
 
 <div class="viewcode-block" id="TraceablePolySplineTimePolicy.compute_coefficients"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.TraceablePolySplineTimePolicy.compute_coefficients">[docs]</a>    <span class="nd">@export</span>
     <span class="k">def</span> <span class="nf">compute_coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the coefficients of the polynomial spline, and set them into the internal linear layer for storing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Treat each action dimension separately</span>
@@ -478,7 +478,7 @@
 
 <div class="viewcode-block" id="TraceablePolySplineTimePolicy.compute_feats"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.TraceablePolySplineTimePolicy.compute_feats">[docs]</a>    <span class="nd">@export</span>
     <span class="k">def</span> <span class="nf">compute_feats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the feature matrix depending on the time and the number of conditions.</span>
 
 <span class="sd">        :param t: time to evaluate at [s]</span>
@@ -505,7 +505,7 @@
 
 <div class="viewcode-block" id="TraceablePolySplineTimePolicy.reset"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.TraceablePolySplineTimePolicy.reset">[docs]</a>    <span class="nd">@export</span>
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset the policy&#39;s internal state.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the policy&#39;s internal state.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t_curr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_init</span></div>
 
 <div class="viewcode-block" id="TraceablePolySplineTimePolicy.forward"><a class="viewcode-back" href="../../../../policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.TraceablePolySplineTimePolicy.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>

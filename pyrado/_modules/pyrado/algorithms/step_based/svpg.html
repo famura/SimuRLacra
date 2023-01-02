@@ -183,7 +183,7 @@
 
 
 <div class="viewcode-block" id="SVPG"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG">[docs]</a><span class="k">class</span> <span class="nc">SVPG</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stein Variational Policy Gradient (SVPG)</span>
 
 <span class="sd">    .. seealso::</span>
@@ -203,7 +203,7 @@
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -246,7 +246,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">iter_particles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Iterate particles by sequentially loading and yielding them.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate particles by sequentially loading and yielding them.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">load_particle</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optims</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -284,7 +284,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SVPG.kernel"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.kernel">[docs]</a>    <span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the RBF-kernel and the corresponding derivatives.</span>
 
 <span class="sd">        :param X: the tensor to compute the kernel from</span>
@@ -339,7 +339,7 @@
         <span class="k">return</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span></div>
 
 <div class="viewcode-block" id="SVPG.load_particle"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.load_particle">[docs]</a>    <span class="k">def</span> <span class="nf">load_particle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a specific particle&#39;s state into `self.particle`.</span>
 
 <span class="sd">        :param idx: index of the particle to load</span>
@@ -349,7 +349,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span> <span class="o">=</span> <span class="n">idx</span></div>
 
 <div class="viewcode-block" id="SVPG.store_particle"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.store_particle">[docs]</a>    <span class="k">def</span> <span class="nf">store_particle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Safe the current particle&#39;s state.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Safe the current particle&#39;s state.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">particle_states</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">particle_policy_states</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span></div></div>
 
@@ -358,10 +358,10 @@
 
 
 <div class="viewcode-block" id="SVPGBuilder"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPGBuilder">[docs]</a><span class="k">class</span> <span class="nc">SVPGBuilder</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Helper class to build an SVPG algorithm instance&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper class to build an SVPG algorithm instance&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span> <span class="n">hparam</span><span class="p">:</span> <span class="n">SVPGHyperparams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -379,10 +379,10 @@
 
 
 <div class="viewcode-block" id="OptimizerHook"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook">[docs]</a><span class="k">class</span> <span class="nc">OptimizerHook</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;This class mocks the optimizer interface partially to intercept the gradient updates of svpg.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class mocks the optimizer interface partially to intercept the gradient updates of svpg.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">particle</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param particle: blueprint algorithm in which the optimizer is replaced by the mocked one</span>
@@ -392,11 +392,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">particle</span> <span class="o">=</span> <span class="n">particle</span>
 
 <div class="viewcode-block" id="OptimizerHook.real_step"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.real_step">[docs]</a>    <span class="k">def</span> <span class="nf">real_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Call the original optimizer with given args and kwargs.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the original optimizer with given args and kwargs.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="OptimizerHook.iter_steps"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.iter_steps">[docs]</a>    <span class="k">def</span> <span class="nf">iter_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate the steps in the buffer queue.</span>
 
 <span class="sd">        :yield: the next step in the queue</span>
@@ -404,7 +404,7 @@
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span></div>
 
 <div class="viewcode-block" id="OptimizerHook.empty"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.empty">[docs]</a>    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the buffer is empty.</span>
 
 <span class="sd">        :return: buffer is empty</span>
@@ -415,7 +415,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span></div>
 
 <div class="viewcode-block" id="OptimizerHook.step"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.OptimizerHook.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Store the args of the mocked call in the queue.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store the args of the mocked call in the queue.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="p">(</span>
                 <span class="n">args</span><span class="p">,</span>

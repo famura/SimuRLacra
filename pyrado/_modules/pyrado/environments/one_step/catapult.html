@@ -174,7 +174,7 @@
 
 
 <div class="viewcode-block" id="CatapultSim"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim">[docs]</a><span class="k">class</span> <span class="nc">CatapultSim</span><span class="p">(</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    In this special environment, the action is equal to the policy parameter. Therefore, it makes only sense to</span>
 <span class="sd">    use it in combination with a linear policy that has only one constant feature.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -182,7 +182,7 @@
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cata&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">example_config</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param max_steps: maximum number of simulation steps</span>
@@ -347,7 +347,7 @@
 
 
 <div class="viewcode-block" id="CatapultExample"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.catapult.CatapultExample">[docs]</a><span class="k">class</span> <span class="nc">CatapultExample</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    For calculating the quantities of the &#39;illustrative example&#39; in [1]</span>
 
 <span class="sd">    .. seealso::</span>
@@ -356,14 +356,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">g_M</span><span class="p">,</span> <span class="n">k_M</span><span class="p">,</span> <span class="n">x_M</span><span class="p">,</span> <span class="n">g_V</span><span class="p">,</span> <span class="n">k_V</span><span class="p">,</span> <span class="n">x_V</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="c1"># Store parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">g_M</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_M</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_M</span> <span class="o">=</span> <span class="n">g_M</span><span class="p">,</span> <span class="n">k_M</span><span class="p">,</span> <span class="n">x_M</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">g_V</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_V</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_V</span> <span class="o">=</span> <span class="n">g_V</span><span class="p">,</span> <span class="n">k_V</span><span class="p">,</span> <span class="n">x_V</span>
 
 <div class="viewcode-block" id="CatapultExample.opt_policy_param"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.catapult.CatapultExample.opt_policy_param">[docs]</a>    <span class="k">def</span> <span class="nf">opt_policy_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_M</span><span class="p">,</span> <span class="n">n_V</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the optimal policy parameter.</span>
 
 <span class="sd">        :param n_M: number of Mars samples</span>
@@ -379,7 +379,7 @@
         <span class="k">return</span> <span class="n">th_opt</span></div>
 
 <div class="viewcode-block" id="CatapultExample.opt_est_expec_return"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.catapult.CatapultExample.opt_est_expec_return">[docs]</a>    <span class="k">def</span> <span class="nf">opt_est_expec_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_M</span><span class="p">,</span> <span class="n">n_V</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the optimal objective function value.</span>
 
 <span class="sd">        :param n_M: number of Mars samples</span>
@@ -400,7 +400,7 @@
         <span class="k">return</span> <span class="n">Jhat_n_opt</span></div>
 
 <div class="viewcode-block" id="CatapultExample.est_expec_return"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.catapult.CatapultExample.est_expec_return">[docs]</a>    <span class="k">def</span> <span class="nf">est_expec_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">n_M</span><span class="p">,</span> <span class="n">n_V</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the optimal objective function value.</span>
 
 <span class="sd">        :param th: policy parameter</span>

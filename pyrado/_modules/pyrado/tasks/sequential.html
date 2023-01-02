@@ -175,12 +175,12 @@
 
 
 <div class="viewcode-block" id="SequentialTasks"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.sequential.SequentialTasks">[docs]</a><span class="k">class</span> <span class="nc">SequentialTasks</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Task class for a sequence of tasks a.k.a. goals&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task class for a sequence of tasks a.k.a. goals&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Task</span><span class="p">],</span> <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">hold_rew_when_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param tasks: sequence of tasks a.k.a. goals, the order matters</span>
@@ -210,52 +210,52 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Task</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get the list of tasks.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the list of tasks.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">idx_curr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the index of the currently active task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the index of the currently active task.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span>
 
     <span class="nd">@idx_curr</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">idx_curr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the index of the currently active task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the index of the currently active task.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span> <span class="o">=</span> <span class="n">idx</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">state_des</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the desired state the current task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the desired state the current task.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">state_des</span>
 
     <span class="nd">@state_des</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">state_des</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_des</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the desired state the current task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the desired state the current task.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_des</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">state_des</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">state_des</span> <span class="o">=</span> <span class="n">state_des</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">space_des</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the desired space the current task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the desired space the current task.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">space_des</span>
 
     <span class="nd">@space_des</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">space_des</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space_des</span><span class="p">:</span> <span class="n">Space</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the desired space the current task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the desired space the current task.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space_des</span><span class="p">,</span> <span class="n">Space</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">space_des</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Space</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">space_des</span> <span class="o">=</span> <span class="n">space_des</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rew_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RewFcn</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the reward function of the current task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the reward function of the current task.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">rew_fcn</span>
 
 <div class="viewcode-block" id="SequentialTasks.step_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.sequential.SequentialTasks.step_rew">[docs]</a>    <span class="k">def</span> <span class="nf">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the step reward from the current task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the step reward from the current task.&quot;&quot;&quot;</span>
         <span class="n">step_rew</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hold_rew_when_done</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
@@ -274,7 +274,7 @@
         <span class="k">return</span> <span class="n">step_rew</span> <span class="o">+</span> <span class="n">final_rew</span></div>
 
 <div class="viewcode-block" id="SequentialTasks.compute_final_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.sequential.SequentialTasks.compute_final_rew">[docs]</a>    <span class="k">def</span> <span class="nf">compute_final_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the reward / cost on task completion / fail of this task.</span>
 <span class="sd">        Since this task holds multiple sub-tasks, the final reward / cost is computed for them, too.</span>
 
@@ -292,7 +292,7 @@
         <span class="k">return</span> <span class="n">sum_final_rew</span></div>
 
 <div class="viewcode-block" id="SequentialTasks.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.sequential.SequentialTasks.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset all tasks.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset all tasks.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">idx_curr</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
             <span class="n">s</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -310,7 +310,7 @@
     <span class="k">def</span> <span class="nf">_is_curr_task_done</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the current task is done. If so, move to the next one and return the final reward of this task.</span>
 
 <span class="sd">        :param state: current state</span>
@@ -357,7 +357,7 @@
         <span class="k">return</span> <span class="n">task_final_rew</span>
 
 <div class="viewcode-block" id="SequentialTasks.has_succeeded"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.sequential.SequentialTasks.has_succeeded">[docs]</a>    <span class="k">def</span> <span class="nf">has_succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if this tasks is done. The SequentialTasks is successful if all sub-tasks are successful.</span>
 
 <span class="sd">        :param state: environments current state</span>

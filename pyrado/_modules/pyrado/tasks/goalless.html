@@ -170,10 +170,10 @@
 
 
 <div class="viewcode-block" id="GoallessTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.goalless.GoallessTask">[docs]</a><span class="k">class</span> <span class="nc">GoallessTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Task which has no desired state or desired space, this runs endlessly&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task which has no desired state or desired space, this runs endlessly&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_spec: environment specification</span>
@@ -197,7 +197,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_rew_fcn</span> <span class="o">=</span> <span class="n">rew_fcn</span>
 
 <div class="viewcode-block" id="GoallessTask.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.goalless.GoallessTask.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the task.</span>
 
 <span class="sd">        :param env_spec: environment specification</span>
@@ -218,10 +218,10 @@
 
 
 <div class="viewcode-block" id="OptimProxyTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.goalless.OptimProxyTask">[docs]</a><span class="k">class</span> <span class="nc">OptimProxyTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Task for wrapping classical optimization problems a.k.a. (nonlinear) programming into Pyrado&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task for wrapping classical optimization problems a.k.a. (nonlinear) programming into Pyrado&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">StateBasedRewFcn</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_spec: environment specification</span>

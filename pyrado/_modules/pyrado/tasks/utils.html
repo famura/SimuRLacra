@@ -165,12 +165,12 @@
 
 
 <div class="viewcode-block" id="never_succeeded"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.utils.never_succeeded">[docs]</a><span class="k">def</span> <span class="nf">never_succeeded</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;The task is never marked successful, i.e. runs until the environments state or time is out of bounds.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The task is never marked successful, i.e. runs until the environments state or time is out of bounds.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="proximity_succeeded"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.utils.proximity_succeeded">[docs]</a><span class="k">def</span> <span class="nf">proximity_succeeded</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">thold_dist</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dims</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The task is done successfully if the L2-norm of the selected dimensions of the state is smaller than some threshold.</span>
 
 <span class="sd">    :param err: error in state, i.e. difference between desired and current state</span>

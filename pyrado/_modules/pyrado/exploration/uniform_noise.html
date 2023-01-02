@@ -171,7 +171,7 @@
 
 
 <div class="viewcode-block" id="UniformNoise"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.uniform_noise.UniformNoise">[docs]</a><span class="k">class</span> <span class="nc">UniformNoise</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Module for learnable additive uniform noise&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module for learnable additive uniform noise&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -182,7 +182,7 @@
         <span class="n">train_mean</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">learnable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU</span>
@@ -247,17 +247,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the device (CPU or GPU) on which the policy is stored.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the device (CPU or GPU) on which the policy is stored.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">halfspan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the untransformed standard deviation vector given the log-transformed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the untransformed standard deviation vector given the log-transformed.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_halfspan</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">halfspan_min</span><span class="p">)</span>
 
     <span class="nd">@halfspan</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">halfspan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">halfspan</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the log-transformed half interval vector given the untransformed.</span>
 <span class="sd">        This is useful if the `halfspan` should be a parameter for the optimizer, since the optimizer could set invalid</span>
 <span class="sd">        values for the half interval span.</span>
@@ -265,13 +265,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log_halfspan</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">halfspan</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">halfspan_min</span><span class="p">))</span>
 
 <div class="viewcode-block" id="UniformNoise.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.uniform_noise.UniformNoise.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset all parameters of the exploration strategy.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset all parameters of the exploration strategy.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_halfspan</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_halfspan_init</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="UniformNoise.adapt"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.uniform_noise.UniformNoise.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">halfspan</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adapt the mean and the half interval span of the noise on the action or parameters.</span>
 <span class="sd">        Use `None` to leave one of the parameters at their current value.</span>
 
@@ -293,7 +293,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">halfspan</span> <span class="o">=</span> <span class="n">halfspan</span></div>
 
 <div class="viewcode-block" id="UniformNoise.forward"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.uniform_noise.UniformNoise.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Uniform</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the noise distribution for a specific noise-free value.</span>
 
 <span class="sd">        :param value: value to evaluate the distribution around</span>
@@ -303,7 +303,7 @@
         <span class="k">return</span> <span class="n">Uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">mean</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">halfspan</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">mean</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">halfspan</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="UniformNoise.get_entropy"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.uniform_noise.UniformNoise.get_entropy">[docs]</a>    <span class="k">def</span> <span class="nf">get_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the exploration distribution&#39;s entropy.</span>
 <span class="sd">        The entropy of a uniform distribution is independent of the mean.</span>
 

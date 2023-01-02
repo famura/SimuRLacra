@@ -171,14 +171,14 @@
 
 
 <div class="viewcode-block" id="DesSpaceTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.desired_space.DesSpaceTask">[docs]</a><span class="k">class</span> <span class="nc">DesSpaceTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Task class for moving to a (fixed) desired state space.</span>
 <span class="sd">    This task is designed with the idea in mind that it is only important if the state is in the desired (sub)space.</span>
 <span class="sd">    If the state is in the desired space, the `done` flag is raised. Until then, the step reward is returned.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">space_des</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span> <span class="o">=</span> <span class="n">ZeroPerStepRewFcn</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_spec: environment specification of a simulated or real environment</span>
@@ -225,7 +225,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_rew_fcn</span> <span class="o">=</span> <span class="n">rew_fcn</span>
 
 <div class="viewcode-block" id="DesSpaceTask.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.desired_space.DesSpaceTask.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">space_des</span><span class="p">:</span> <span class="n">Space</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the task.</span>
 
 <span class="sd">        :param env_spec: environment specification</span>

@@ -182,10 +182,10 @@
 
 
 <div class="viewcode-block" id="DomainRandomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer">[docs]</a><span class="k">class</span> <span class="nc">DomainRandomizer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for executing the domain randomization&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for executing the domain randomization&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n">DomainParam</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param domain_params: list or tuple of `DomainParam` instances</span>
@@ -196,7 +196,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># list of domain param samples which are a dict with a key and one values</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create a string that yields a table-like result for print.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a string that yields a table-like result for print.&quot;&quot;&quot;</span>
         <span class="c1"># Collect all keys a.k.a. headers</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">dps</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_params</span><span class="p">)</span>
@@ -234,7 +234,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DomainRandomizer.add_domain_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params">[docs]</a>    <span class="k">def</span> <span class="nf">add_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n">DomainParam</span><span class="p">,</span> <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add an arbitrary number of domain parameters with their distributions to the randomizer.</span>
 
 <span class="sd">        :param domain_params: list or tuple of `DomainParam` instances</span>
@@ -256,7 +256,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">domain_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">value</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="DomainRandomizer.randomize"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.randomize">[docs]</a>    <span class="k">def</span> <span class="nf">randomize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Draw random parameters from the associated distributions.</span>
 <span class="sd">        Internally stores a dict with parameter names as dict-keys and the new parameters in list form as dict values.</span>
 
@@ -292,7 +292,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DomainRandomizer.get_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the values in the data frame of the perturbed parameters.</span>
 
 <span class="sd">        :param num_samples: number of samples to be extracted from the randomizer</span>
@@ -364,7 +364,7 @@
 <div class="viewcode-block" id="DomainRandomizer.adapt_one_distr_param"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.adapt_one_distr_param">[docs]</a>    <span class="k">def</span> <span class="nf">adapt_one_distr_param</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">domain_param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the randomizer&#39;s domain parameter distribution for one domain parameter.</span>
 
 <span class="sd">        :param domain_param_name: name of the domain parameter which&#39;s distribution parameter should be updated</span>
@@ -385,7 +385,7 @@
                     <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DomainRandomizer.rescale_distr_param"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.rescale_distr_param">[docs]</a>    <span class="k">def</span> <span class="nf">rescale_distr_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Rescale a parameter for all distributions.</span>
 
 <span class="sd">        :param param: name of the parameter to change (e.g. std, or cov)</span>

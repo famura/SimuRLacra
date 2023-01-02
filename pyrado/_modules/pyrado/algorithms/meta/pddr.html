@@ -184,7 +184,7 @@
 
 
 <div class="viewcode-block" id="PDDR"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR">[docs]</a><span class="k">class</span> <span class="nc">PDDR</span><span class="p">(</span><span class="n">InterruptableAlgorithm</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Policy Distillation with Domain Randomization (PDDR)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Policy Distillation with Domain Randomization (PDDR)&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pddr&quot;</span>
 
@@ -207,7 +207,7 @@
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -322,7 +322,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span>
 
 <div class="viewcode-block" id="PDDR.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs a single iteration of the algorithm. This includes collecting the data, updating the parameters, and</span>
 <span class="sd">        adding the metrics of interest to the logger. Does not update the `curr_iter` attribute.</span>
 
@@ -358,7 +358,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rollouts</span><span class="o">=</span><span class="n">ros</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PDDR.sample"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Samples observations from several samplers.</span>
 
 <span class="sd">        :return: list of rollouts per sampler, list of all returns, list of all rollout lengths</span>
@@ -375,7 +375,7 @@
         <span class="k">return</span> <span class="n">ros</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rets</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_lengths</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PDDR.update"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update the policy&#39;s (and value functions&#39;) parameters based on the collected rollout data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the policy&#39;s (and value functions&#39;) parameters based on the collected rollout data.&quot;&quot;&quot;</span>
         <span class="n">obss</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">):</span>
@@ -422,7 +422,7 @@
         <span class="k">return</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span></div>
 
     <span class="k">def</span> <span class="nf">_train_teacher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wrapper for use of multiprocessing: Trains one teacher.</span>
 
 <span class="sd">        :param idx: index of the teacher to be trained</span>
@@ -432,7 +432,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">algos</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PDDR.set_random_envs"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.set_random_envs">[docs]</a>    <span class="k">def</span> <span class="nf">set_random_envs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates random environments of the given type.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates random environments of the given type.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
 
@@ -442,14 +442,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">teacher_envs</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
 <div class="viewcode-block" id="PDDR.train_teachers"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.train_teachers">[docs]</a>    <span class="k">def</span> <span class="nf">train_teachers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Trains all teachers.</span>
 
 <span class="sd">        :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new high-score)</span>
 <span class="sd">        :param seed: seed value for the random number generators, pass `None` for no seeding</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">):</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training teacher </span><span class="si">{</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="si">}</span><span class="s2">... &quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training teacher </span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="si">}</span><span class="s2">... &quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_train_teacher</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">policy</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">algos</span><span class="p">]</span>
@@ -457,18 +457,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher_critics</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">critic</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">algos</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="PDDR.load_teachers"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.load_teachers">[docs]</a>    <span class="k">def</span> <span class="nf">load_teachers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Recursively load all teachers that can be found in the current experiment&#39;s directory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursively load all teachers that can be found in the current experiment&#39;s directory.&quot;&quot;&quot;</span>
         <span class="c1"># Get the experiment&#39;s directory to load from</span>
         <span class="n">ex_dir</span> <span class="o">=</span> <span class="n">ask_for_experiment</span><span class="p">(</span><span class="n">max_display</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">env_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env_real</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">perma</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_teacher_experiment</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;You have loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span><span class="p">)</span><span class="si">}</span><span class="s2"> teachers - load at least </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span><span class="p">)</span><span class="si">}</span><span class="s2"> more!&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;You have loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span><span class="p">)</span><span class="si">}</span><span class="s2"> teachers - load at least </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span><span class="p">)</span><span class="si">}</span><span class="s2"> more!&quot;</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">load_teachers</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="PDDR.load_teacher_experiment"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.load_teacher_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">load_teacher_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load teachers from PDDRTeachers experiment.</span>
 
 <span class="sd">        :param exp: the teacher&#39;s experiment object</span>
@@ -477,7 +477,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">unpack_teachers</span><span class="p">(</span><span class="n">extra</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PDDR.unpack_teachers"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.unpack_teachers">[docs]</a>    <span class="k">def</span> <span class="nf">unpack_teachers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unpack teachers from PDDRTeachers experiment.</span>
 
 <span class="sd">        :param extra: dict with teacher data</span>
@@ -489,7 +489,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher_ex_dirs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">extra</span><span class="p">[</span><span class="s2">&quot;teacher_ex_dirs&quot;</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="PDDR.prune_teachers"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.prune_teachers">[docs]</a>    <span class="k">def</span> <span class="nf">prune_teachers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Prune teachers to only use the first num_teachers of them.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prune teachers to only use the first num_teachers of them.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher_envs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher_envs</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher_expl_strats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher_expl_strats</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">]</span>

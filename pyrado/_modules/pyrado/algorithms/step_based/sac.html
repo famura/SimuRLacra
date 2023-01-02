@@ -186,7 +186,7 @@
 
 
 <div class="viewcode-block" id="SAC"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC">[docs]</a><span class="k">class</span> <span class="nc">SAC</span><span class="p">(</span><span class="n">ValueBased</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Soft Actor-Critic (SAC) variant with stochastic policy and two Q-functions and two Q-targets (no V-function)</span>
 
 <span class="sd">    .. seealso::</span>
@@ -235,7 +235,7 @@
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_trained_policy_for_refill</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -357,11 +357,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ent_coeff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the detached entropy coefficient.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the detached entropy coefficient.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_ent_coeff</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
 
 <div class="viewcode-block" id="SAC.update"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update the policy&#39;s and Q-functions&#39; parameters on transitions sampled from the replay memory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the policy&#39;s and Q-functions&#39; parameters on transitions sampled from the replay memory.&quot;&quot;&quot;</span>
         <span class="c1"># Containers for logging</span>
         <span class="n">expl_strat_stds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
         <span class="n">qfcn_1_losses</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
@@ -495,7 +495,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span><span class="n">warmstart</span><span class="p">,</span> <span class="n">suffix</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">t1pi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target1_param_init&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">t2pi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target2_param_init&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>

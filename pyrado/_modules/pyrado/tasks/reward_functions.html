@@ -171,11 +171,11 @@
 
 
 <div class="viewcode-block" id="RewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.RewFcn">[docs]</a><span class="k">class</span> <span class="nc">RewFcn</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for all reward functions&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all reward functions&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the (step) reward.</span>
 
 <span class="sd">        :param s: state or state errors (depends on the type of reward function, i.e. subclass)</span>
@@ -186,7 +186,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="RewFcn.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.RewFcn.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset internal members. This function is called from the `Task.reset()` function.</span>
 <span class="sd">        The default implementation does nothing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -194,10 +194,10 @@
 
 
 <div class="viewcode-block" id="CompoundRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.CompoundRewFcn">[docs]</a><span class="k">class</span> <span class="nc">CompoundRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Combine multiple reward functions&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine multiple reward functions&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rew_fcns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constuctor</span>
 
 <span class="sd">        :param rew_fcns: sequence, e.g. list or tuple, of reward functions to combine</span>
@@ -217,46 +217,46 @@
 
 
 <div class="viewcode-block" id="ZeroPerStepRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.ZeroPerStepRewFcn">[docs]</a><span class="k">class</span> <span class="nc">ZeroPerStepRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function that yields 0 reward every time step.</span>
 <span class="sd">    A positive or negative final reward can be specified on the Task-level.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">err_a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">0.0</span></div>
 
 
 <div class="viewcode-block" id="PlusOnePerStepRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.PlusOnePerStepRewFcn">[docs]</a><span class="k">class</span> <span class="nc">PlusOnePerStepRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function that yields +1 reward every time step.</span>
 <span class="sd">    A positive or negative final reward can be specified on the Task-level.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">err_a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">1.0</span></div>
 
 
 <div class="viewcode-block" id="MinusOnePerStepRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.MinusOnePerStepRewFcn">[docs]</a><span class="k">class</span> <span class="nc">MinusOnePerStepRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function that yields -1 reward every time step.</span>
 <span class="sd">    A positive or negative final reward can be specified on the Task-level.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">err_a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span></div>
 
 
 <div class="viewcode-block" id="CosOfOneEleRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.CosOfOneEleRewFcn">[docs]</a><span class="k">class</span> <span class="nc">CosOfOneEleRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function that takes the cosine of one element of the state, given by an index.</span>
 <span class="sd">    Maximum reward of +1 at state[idx] = +/- state_des[idx], minimum reward of -1 at state[idx] = 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param idx: index of the element (angle) of interest</span>
@@ -268,7 +268,7 @@
 
 
 <div class="viewcode-block" id="SSCosOfOneEleRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.SSCosOfOneEleRewFcn">[docs]</a><span class="k">class</span> <span class="nc">SSCosOfOneEleRewFcn</span><span class="p">(</span><span class="n">CosOfOneEleRewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function that takes the shifted and scaled cosine of one element of the state, given by an index.</span>
 <span class="sd">    Maximum reward of +1 at state[idx] = +/- state_des[idx], minimum reward of 0 at state[idx] = 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -281,10 +281,10 @@
 
 
 <div class="viewcode-block" id="AbsErrRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.AbsErrRewFcn">[docs]</a><span class="k">class</span> <span class="nc">AbsErrRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reward function that returns the negative weighted sum of the absolute errors.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reward function that returns the negative weighted sum of the absolute errors.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param q: weight vector for the state errors</span>
@@ -309,10 +309,10 @@
 
 
 <div class="viewcode-block" id="QuadrErrRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.QuadrErrRewFcn">[docs]</a><span class="k">class</span> <span class="nc">QuadrErrRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the weighted sum of squared errors.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the weighted sum of squared errors.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param Q: weight matrix for the state errors (positive semi-definite)</span>
@@ -335,7 +335,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span>
 
     <span class="k">def</span> <span class="nf">_weighted_quadr_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">err_a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the weighted quadratic cost given state and action error.</span>
 
 <span class="sd">        :param err_s: vector of state errors</span>
@@ -357,10 +357,10 @@
 
 
 <div class="viewcode-block" id="ExpQuadrErrRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.ExpQuadrErrRewFcn">[docs]</a><span class="k">class</span> <span class="nc">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">QuadrErrRewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the weighted sum of squared errors&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the weighted sum of squared errors&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param Q: weight matrix for the state errors (positive semi-definite)</span>
@@ -379,12 +379,12 @@
 
 
 <div class="viewcode-block" id="ScaledExpQuadrErrRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.ScaledExpQuadrErrRewFcn">[docs]</a><span class="k">class</span> <span class="nc">ScaledExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">QuadrErrRewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the scaled weighted sum of squared errors&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the scaled weighted sum of squared errors&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">R</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">state_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">act_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">min_rew</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        .. note::</span>
@@ -432,7 +432,7 @@
 
 
 <div class="viewcode-block" id="UnderActuatedSwingUpRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.UnderActuatedSwingUpRewFcn">[docs]</a><span class="k">class</span> <span class="nc">UnderActuatedSwingUpRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function for the swing-up task on the Cart-Pole system similar to [1].</span>
 
 <span class="sd">    .. seealso::</span>
@@ -450,7 +450,7 @@
         <span class="n">idx_x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">idx_th</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param c_pole: scaling parameter for the pole angle cost</span>
@@ -475,13 +475,13 @@
 
 
 <div class="viewcode-block" id="StateBasedRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.StateBasedRewFcn">[docs]</a><span class="k">class</span> <span class="nc">StateBasedRewFcn</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function which directly operates on the state a.k.a. solution. This class is supposed to be used for wrapping</span>
 <span class="sd">    classical optimization problems into Pyrado, thus it is negative of the loss function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span> <span class="n">flip_sign</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param fcn: function for evaluating the state a.k.a. solution</span>
@@ -494,7 +494,7 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the (step) reward.</span>
 
 <span class="sd">        :param state: state</span>
@@ -504,7 +504,7 @@
 
 
 <div class="viewcode-block" id="ForwardVelocityRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcn">[docs]</a><span class="k">class</span> <span class="nc">ForwardVelocityRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function for the `HalfCheetahSim` and `SwimmerSim` environment, encouraging to run forward</span>
 
 <span class="sd">    .. note::</span>
@@ -517,7 +517,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">idx_fwd</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fwd_rew_weight</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ctrl_cost_weight</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        .. note::</span>
@@ -549,7 +549,7 @@
 
 
 <div class="viewcode-block" id="ForwardVelocityRewFcnAnt"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt">[docs]</a><span class="k">class</span> <span class="nc">ForwardVelocityRewFcnAnt</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function for the `AntSim` environment, encouraging to run forward</span>
 
 <span class="sd">    .. note::</span>
@@ -570,7 +570,7 @@
         <span class="n">terminate_when_unhealthy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">healthy_z_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        .. note::</span>
@@ -631,7 +631,7 @@
 
 
 <div class="viewcode-block" id="ForwardVelocityRewFcnHumanoid"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid">[docs]</a><span class="k">class</span> <span class="nc">ForwardVelocityRewFcnHumanoid</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reward function for the `HumanoidSim` environment, encouraging to run forward</span>
 
 <span class="sd">    .. note::</span>
@@ -653,7 +653,7 @@
         <span class="n">healthy_z_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
         <span class="n">contact_cost_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        .. note::</span>
@@ -712,10 +712,10 @@
 
 
 <div class="viewcode-block" id="QCartPoleSwingUpRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.QCartPoleSwingUpRewFcn">[docs]</a><span class="k">class</span> <span class="nc">QCartPoleSwingUpRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Custom reward function for QCartPoleSwingUpSim.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom reward function for QCartPoleSwingUpSim.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param factor: weighting factor of rotation error to position error</span>

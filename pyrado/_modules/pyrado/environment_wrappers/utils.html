@@ -172,7 +172,7 @@
 
 
 <div class="viewcode-block" id="all_envs"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.all_envs">[docs]</a><span class="k">def</span> <span class="nf">all_envs</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Iterates over the environment chain.</span>
 
 <span class="sd">    :param env: outermost environment of the chain</span>
@@ -185,7 +185,7 @@
 
 
 <div class="viewcode-block" id="typed_env"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.typed_env">[docs]</a><span class="k">def</span> <span class="nf">typed_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">tp</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Locate the first element in the chain that is an instance of the given type. Returns `None` if not found.</span>
 
 <span class="sd">    :param env: outermost environment of the chain</span>
@@ -199,7 +199,7 @@
 
 
 <div class="viewcode-block" id="attr_env"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.attr_env">[docs]</a><span class="k">def</span> <span class="nf">attr_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Locate the first element in the chain that has an attribute of the given name.  Returns `None` if not found.</span>
 
 <span class="sd">    :param env: outermost environment of the chain</span>
@@ -213,7 +213,7 @@
 
 
 <div class="viewcode-block" id="attr_env_get"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.attr_env_get">[docs]</a><span class="k">def</span> <span class="nf">attr_env_get</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Locate the first element in the chain that has an attribute of the given name and return the value of the attribute.</span>
 <span class="sd">    Returns `None` if not found.</span>
 
@@ -231,7 +231,7 @@
 
 
 <div class="viewcode-block" id="inner_env"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.inner_env">[docs]</a><span class="k">def</span> <span class="nf">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the innermost (a.k.a. non-wrapper) environment.</span>
 
 <span class="sd">    :param env: outermost environment of the chain</span>
@@ -243,7 +243,7 @@
 
 
 <span class="k">def</span> <span class="nf">_replace_wrapped_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">new_wrapped</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a copy of the given environment with `wrapped_env` replaced by `new_wrapped`.</span>
 
 <span class="sd">    :param env: environment to be re-wrapped</span>
@@ -256,7 +256,7 @@
 
 
 <span class="k">def</span> <span class="nf">_recurse_envstack_update</span><span class="p">(</span><span class="n">head_env</span><span class="p">,</span> <span class="n">op</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Goes from the outer most environment to the inner most environment and performs an operation on each of them.</span>
 
 <span class="sd">    :param head_env: outer most environment</span>
@@ -283,7 +283,7 @@
 
 
 <div class="viewcode-block" id="remove_env"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.remove_env">[docs]</a><span class="k">def</span> <span class="nf">remove_env</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">key_type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove an `EnvWrapper` of the given type from the environment chain and return the modified chain.</span>
 <span class="sd">    The original stack is unmodified, but untouched parts will be shared.</span>
 <span class="sd">    If the key is not found, nothing will be done and the original chain is returned.</span>
@@ -302,7 +302,7 @@
 
 
 <div class="viewcode-block" id="insert_env_before"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.utils.insert_env_before">[docs]</a><span class="k">def</span> <span class="nf">insert_env_before</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">key_type</span><span class="p">,</span> <span class="n">insert_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add an EnvWrapper of the given type right before key_type to the environment chain and return the modified chain.</span>
 <span class="sd">    The original stack is unmodified, but untouched parts will be shared. If the key is not found,</span>
 <span class="sd">    nothing will be done and the original chain is returned.</span>

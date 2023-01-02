@@ -174,7 +174,7 @@
 
 
 <div class="viewcode-block" id="RNNPolicyBase"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase">[docs]</a><span class="k">class</span> <span class="nc">RNNPolicyBase</span><span class="p">(</span><span class="n">RecurrentPolicy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for recurrent policies wrapping torch.nn.RNNBase subclasses&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for recurrent policies wrapping torch.nn.RNNBase subclasses&quot;&quot;&quot;</span>
 
     <span class="c1"># Type of recurrent network. Is None in base class to force inheritance.</span>
     <span class="n">recurrent_network_type</span> <span class="o">=</span> <span class="kc">None</span>
@@ -190,7 +190,7 @@
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">recurrent_net_kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -349,7 +349,7 @@
         <span class="k">return</span> <span class="n">act</span></div>
 
     <span class="k">def</span> <span class="nf">_unpack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unpack the flat hidden state vector into a form the actual network module can use.</span>
 <span class="sd">        Since hidden usually comes from some outer source, this method should validate it&#39;s shape.</span>
 <span class="sd">        The default implementation is defined by `default_unpack_hidden`.</span>
@@ -361,7 +361,7 @@
         <span class="k">return</span> <span class="n">default_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_pack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pack the hidden state returned by the network into an 1-dim state vector.</span>
 <span class="sd">        This should be the reverse operation of `_unpack_hidden`.</span>
 <span class="sd">        The default implementation is defined by `default_pack_hidden`.</span>
@@ -374,7 +374,7 @@
 
 
 <div class="viewcode-block" id="RNNPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicy">[docs]</a><span class="k">class</span> <span class="nc">RNNPolicy</span><span class="p">(</span><span class="n">RNNPolicyBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Policy backed by a multi-layer RNN&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Policy backed by a multi-layer RNN&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rnn&quot;</span>
 
@@ -391,7 +391,7 @@
         <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
@@ -416,7 +416,7 @@
 
 
 <div class="viewcode-block" id="GRUPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.rnn.GRUPolicy">[docs]</a><span class="k">class</span> <span class="nc">GRUPolicy</span><span class="p">(</span><span class="n">RNNPolicyBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Policy backed by a multi-layer GRU&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Policy backed by a multi-layer GRU&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gru&quot;</span>
 
@@ -424,7 +424,7 @@
 
 
 <div class="viewcode-block" id="LSTMPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.rnn.LSTMPolicy">[docs]</a><span class="k">class</span> <span class="nc">LSTMPolicy</span><span class="p">(</span><span class="n">RNNPolicyBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Policy backed by a multi-layer LSTM&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Policy backed by a multi-layer LSTM&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lstm&quot;</span>
 

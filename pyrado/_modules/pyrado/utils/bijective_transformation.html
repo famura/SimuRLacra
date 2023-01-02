@@ -171,7 +171,7 @@
 
 
 <div class="viewcode-block" id="BijectiveTransformation"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.BijectiveTransformation">[docs]</a><span class="k">class</span> <span class="nc">BijectiveTransformation</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for bijective transformations to be used for e.g. transforming the domain parameter space of an env.</span>
 
 <span class="sd">    These transformations are useful for avoiding infeasible values such as negative masses. The reasoning behind this</span>
@@ -181,7 +181,7 @@
 
 <div class="viewcode-block" id="BijectiveTransformation.forward"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.BijectiveTransformation.forward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Map a value from the space to the transformed space.</span>
 
 <span class="sd">        :param value: value in the original space</span>
@@ -191,7 +191,7 @@
 
 <div class="viewcode-block" id="BijectiveTransformation.inverse"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.BijectiveTransformation.inverse">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Map a value from the transformed space to the actual space.</span>
 
 <span class="sd">        :param value: value in the transformed space</span>
@@ -201,7 +201,7 @@
 
 <div class="viewcode-block" id="BijectiveTransformation.ensures_non_negativity"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.BijectiveTransformation.ensures_non_negativity">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">ensures_non_negativity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whether this transformations ensures non-negativity, i.e., whether :py:meth:`.inverse` only returns non-negative</span>
 <span class="sd">        values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -209,7 +209,7 @@
 
 
 <div class="viewcode-block" id="LogTransformation"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.LogTransformation">[docs]</a><span class="k">class</span> <span class="nc">LogTransformation</span><span class="p">(</span><span class="n">BijectiveTransformation</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transformation to make the values look like they are in log-space.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transformation to make the values look like they are in log-space.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="LogTransformation.forward"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.LogTransformation.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -234,7 +234,7 @@
 
 
 <div class="viewcode-block" id="SqrtTransformation"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.SqrtTransformation">[docs]</a><span class="k">class</span> <span class="nc">SqrtTransformation</span><span class="p">(</span><span class="n">BijectiveTransformation</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transformation to make the values look like they are in sqrt-space. This is not actually bijective!&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transformation to make the values look like they are in sqrt-space. This is not actually bijective!&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SqrtTransformation.forward"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.SqrtTransformation.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -259,7 +259,7 @@
 
 
 <div class="viewcode-block" id="IdentityTransformation"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.IdentityTransformation">[docs]</a><span class="k">class</span> <span class="nc">IdentityTransformation</span><span class="p">(</span><span class="n">BijectiveTransformation</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transformation that does nothing.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transformation that does nothing.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="IdentityTransformation.forward"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.bijective_transformation.IdentityTransformation.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">value</span></div>

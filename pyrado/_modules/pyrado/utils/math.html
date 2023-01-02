@@ -174,10 +174,10 @@
 
 
 <div class="viewcode-block" id="UnitCubeProjector"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.UnitCubeProjector">[docs]</a><span class="k">class</span> <span class="nc">UnitCubeProjector</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Project to a unit qube $[0, 1]^d$ and back using explicit bounds&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Project to a unit qube $[0, 1]^d$ and back using explicit bounds&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bound_lo</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">bound_up</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param bound_lo: lower bound</span>
@@ -196,7 +196,7 @@
     <span class="k">def</span> <span class="nf">_convert_bounds</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the bounds into the right type</span>
 
 <span class="sd">        :param data: data that is later used for projecting</span>
@@ -211,7 +211,7 @@
         <span class="k">return</span> <span class="n">bound_up</span><span class="p">,</span> <span class="n">bound_lo</span>
 
 <div class="viewcode-block" id="UnitCubeProjector.project_to"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.UnitCubeProjector.project_to">[docs]</a>    <span class="k">def</span> <span class="nf">project_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Normalize every dimension individually using the stored explicit bounds and the L_1 norm.</span>
 
 <span class="sd">        :param data: input to project to the unit space</span>
@@ -228,7 +228,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">data</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">)</span> <span class="o">/</span> <span class="n">span</span></div>
 
 <div class="viewcode-block" id="UnitCubeProjector.project_back"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.UnitCubeProjector.project_back">[docs]</a>    <span class="k">def</span> <span class="nf">project_back</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Revert the previous normalization using the stored explicit bounds</span>
 
 <span class="sd">        :param data: input from the uni space</span>
@@ -245,7 +245,7 @@
 
 
 <div class="viewcode-block" id="cov"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.cov">[docs]</a><span class="k">def</span> <span class="nf">cov</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">data_along_rows</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the covariance matrix given data.</span>
 
 <span class="sd">    .. note::</span>
@@ -272,7 +272,7 @@
 
 
 <div class="viewcode-block" id="explained_var"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.explained_var">[docs]</a><span class="k">def</span> <span class="nf">explained_var</span><span class="p">(</span><span class="n">y_mdl</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">y_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate proportion of the variance &quot;explained&quot; by the model (see coefficient of determination R^2)</span>
 <span class="sd">    .. note:: R^2 = 0.49 implies that 49% of the variability of the dependent variable has been accounted for.</span>
 
@@ -295,7 +295,7 @@
 
 
 <div class="viewcode-block" id="logmeanexp"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.logmeanexp">[docs]</a><span class="k">def</span> <span class="nf">logmeanexp</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Numerically stable way to compute $\log \left( \frac{1}{N} \sum_{i=1}^N \exp(x) \right)$</span>
 
 <span class="sd">    :param x: input tensor</span>
@@ -311,7 +311,7 @@
 
 
 <div class="viewcode-block" id="cosine_similarity"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.cosine_similarity">[docs]</a><span class="k">def</span> <span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the cosine similarity between two tensors $D_\text{cos}(x,y) = \frac{x^T y}{|x| \cdot |y|}$.</span>
 
 <span class="sd">    :param x: input tensor</span>
@@ -331,7 +331,7 @@
 <div class="viewcode-block" id="rmse"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.rmse">[docs]</a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the root mean squared error between two inputs.</span>
 
 <span class="sd">    :param x: input data, e.g. output of a neural network</span>
@@ -351,7 +351,7 @@
 
 
 <div class="viewcode-block" id="clamp_symm"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.clamp_symm">[docs]</a><span class="k">def</span> <span class="nf">clamp_symm</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">up_lo</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Symmetrically clip the entries of a tensor by the entries of a tensor with only positive entries.</span>
 <span class="sd">    One use case of this function is if you want to clip the parameter update by a ratio of the old parameters.</span>
 
@@ -363,7 +363,7 @@
 
 
 <div class="viewcode-block" id="soft_update"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.soft_update">[docs]</a><span class="k">def</span> <span class="nf">soft_update</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.995</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Moving average update, a.k.a. Polyak update.</span>
 
 <span class="sd">    :param target: PyTroch tensor with the next / target values</span>
@@ -377,7 +377,7 @@
 
 
 <div class="viewcode-block" id="soft_update_"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.soft_update_">[docs]</a><span class="k">def</span> <span class="nf">soft_update_</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.995</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Moving average update, a.k.a. Polyak update.</span>
 <span class="sd">    Modifies the input argument `target`.</span>
 
@@ -395,7 +395,7 @@
 <div class="viewcode-block" id="numerical_differentiation_coeffs"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.numerical_differentiation_coeffs">[docs]</a><span class="k">def</span> <span class="nf">numerical_differentiation_coeffs</span><span class="p">(</span>
     <span class="n">stencils</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the coefficients for discrete time numerical differentiation. These can later be convolved with the signal.</span>
 
 <span class="sd">    .. seealso::</span>

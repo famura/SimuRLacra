@@ -173,7 +173,7 @@
 
 
 <div class="viewcode-block" id="IUDR"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.iudr.IUDR">[docs]</a><span class="k">class</span> <span class="nc">IUDR</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Incremental Uniform Domain Randomization (IUDR).</span>
 
 <span class="sd">    This is an ablation of SPDR in the sense that the optimization is omitted and the contextual distribution is naively</span>
@@ -190,7 +190,7 @@
         <span class="n">performance_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">param_adjustment_portion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env: environment wrapped in a `DomainRandWrapper`</span>
@@ -239,7 +239,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
 
 <div class="viewcode-block" id="IUDR.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.iudr.IUDR.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform a step of IUDR. This includes training the subroutine and updating the context distribution accordingly.</span>
 <span class="sd">        For a description of the parameters see `pyrado.algorithms.base.Algorithm.step`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

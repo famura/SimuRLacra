@@ -218,7 +218,7 @@
 
 
 <div class="viewcode-block" id="plot_observations_actions_rewards"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_observations_actions_rewards">[docs]</a><span class="k">def</span> <span class="nf">plot_observations_actions_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all observation, action, and reward trajectories of the given rollout.</span>
 
 <span class="sd">    :param ro: input rollout</span>
@@ -264,7 +264,7 @@
 
 
 <div class="viewcode-block" id="plot_observations"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_observations">[docs]</a><span class="k">def</span> <span class="nf">plot_observations</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">idcs_sel</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all observation trajectories of the given rollout.</span>
 
 <span class="sd">    :param ro: input rollout</span>
@@ -313,7 +313,7 @@
 
 
 <div class="viewcode-block" id="plot_states"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_states">[docs]</a><span class="k">def</span> <span class="nf">plot_states</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">idcs_sel</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all state trajectories of the given rollout.</span>
 
 <span class="sd">    :param ro: input rollout</span>
@@ -362,7 +362,7 @@
 
 
 <div class="viewcode-block" id="plot_features"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_features">[docs]</a><span class="k">def</span> <span class="nf">plot_features</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all features given the policy and the observation trajectories.</span>
 
 <span class="sd">    :param policy: linear policy used during the rollout</span>
@@ -404,14 +404,14 @@
                     <span class="k">if</span> <span class="n">j</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">num_cols</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dim_feat</span><span class="p">):</span>
                         <span class="c1"># Omit the last observation for simplicity</span>
                         <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">feat_vals</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">num_cols</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">num_cols</span><span class="p">])</span>
-                        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\phi_</span><span class="se">{{</span><span class="si">{</span><span class="n">j</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">num_cols</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span><span class="p">)</span>
+                        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\phi_</span><span class="se">{{</span><span class="si">{</span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="n">num_cols</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="c1"># We might create more subplots than there are observations</span>
                         <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="plot_actions"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_actions">[docs]</a><span class="k">def</span> <span class="nf">plot_actions</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all action trajectories of the given rollout.</span>
 
 <span class="sd">    :param ro: input rollout</span>
@@ -462,7 +462,7 @@
 
 
 <div class="viewcode-block" id="plot_rewards"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_rewards">[docs]</a><span class="k">def</span> <span class="nf">plot_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the reward trajectories of the given rollout.</span>
 
 <span class="sd">    :param ro: input rollout</span>
@@ -479,7 +479,7 @@
 
 
 <div class="viewcode-block" id="plot_potentials"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_potentials">[docs]</a><span class="k">def</span> <span class="nf">plot_potentials</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;joint&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the trajectories specific to a potential-based policy.</span>
 
 <span class="sd">    :param ro: input rollout</span>
@@ -556,7 +556,7 @@
     <span class="n">obs_idcs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">act_idcs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot one statistic of interest (e.g. mean) across a list of rollouts.</span>
 
 <span class="sd">    :param rollouts: list of rollouts, they can be of unequal length but are assumed to be from the same type of env</span>
@@ -605,7 +605,7 @@
     <span class="n">idcs_act</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">show_applied_actions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the mean and standard deviation across a selection of rollouts.</span>
 
 <span class="sd">    :param rollouts: list of rollouts, they can be of unequal length but are assumed to be from the same type of env</span>
@@ -717,7 +717,7 @@
     <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">file_format</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;pgf&quot;</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the different rollouts in separate figures and the different state dimensions along the columns.</span>
 
 <span class="sd">    :param plot_type: type of plot, pass &quot;samples&quot; to plot the rollouts of the most likely domain parameters as</span>

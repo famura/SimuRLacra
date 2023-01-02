@@ -174,7 +174,7 @@
 
 
 <div class="viewcode-block" id="LinearPolicy"><a class="viewcode-back" href="../../../../policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy">[docs]</a><span class="k">class</span> <span class="nc">LinearPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A linear policy defined by the inner product of nonlinear features of the observations with the policy parameters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -183,7 +183,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">feats</span><span class="p">:</span> <span class="n">FeatureStack</span><span class="p">,</span> <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: specification of environment</span>
@@ -208,7 +208,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeatureStack</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the (nonlinear) feature transformations.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the (nonlinear) feature transformations.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feats</span>
 
 <div class="viewcode-block" id="LinearPolicy.init_param"><a class="viewcode-back" href="../../../../policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -219,7 +219,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="n">init_values</span>  <span class="c1"># ignore the IntelliJ warning</span></div>
 
 <div class="viewcode-block" id="LinearPolicy.eval_feats"><a class="viewcode-back" href="../../../../policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy.eval_feats">[docs]</a>    <span class="k">def</span> <span class="nf">eval_feats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the features for the given observations.</span>
 
 <span class="sd">        :param obs: observation from the environment</span>
@@ -228,7 +228,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feats</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LinearPolicy.forward"><a class="viewcode-back" href="../../../../policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the features at the given observation or use given feature values</span>
 
 <span class="sd">        :param obs: observations from the environment</span>

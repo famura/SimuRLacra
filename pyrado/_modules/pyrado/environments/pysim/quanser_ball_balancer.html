@@ -182,7 +182,7 @@
 
 
 <div class="viewcode-block" id="QBallBalancerSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim">[docs]</a><span class="k">class</span> <span class="nc">QBallBalancerSim</span><span class="p">(</span><span class="n">SimPyEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Environment in which a ball rolls on an actuated plate. The ball is randomly initialized on the plate and is to be</span>
 <span class="sd">    stabilized on the center of the plate. The problem formulation treats this setup as 2 independent ball-on-beam</span>
 <span class="sd">    problems. The plate is actuated via 2 servo motors that lift the plate.</span>
@@ -204,7 +204,7 @@
         <span class="n">simple_dynamics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">load_experimental_tholds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param dt: simulation step size [s]</span>
@@ -271,7 +271,7 @@
 
 <div class="viewcode-block" id="QBallBalancerSim.get_voltage_tholds"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim.get_voltage_tholds">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_voltage_tholds</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">load_experiments</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;If available, the voltage thresholds computed from measurements, else use default values.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If available, the voltage thresholds computed from measurements, else use default values.&quot;&quot;&quot;</span>
         <span class="c1"># Hard-coded default thresholds</span>
         <span class="n">tholds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">voltage_thold_x_pos</span><span class="o">=</span><span class="mf">0.28</span><span class="p">,</span> <span class="n">voltage_thold_x_neg</span><span class="o">=-</span><span class="mf">0.10</span><span class="p">,</span> <span class="n">voltage_thold_y_pos</span><span class="o">=</span><span class="mf">0.28</span><span class="p">,</span> <span class="n">voltage_thold_y_neg</span><span class="o">=-</span><span class="mf">0.074</span>
@@ -411,7 +411,7 @@
         <span class="n">th_x_ddot</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A_m</span> <span class="o">*</span> <span class="n">act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">B_eq_v</span> <span class="o">*</span> <span class="n">th_x_dot</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_eq</span>
         <span class="n">th_y_ddot</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A_m</span> <span class="o">*</span> <span class="n">act</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">B_eq_v</span> <span class="o">*</span> <span class="n">th_y_dot</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_eq</span>
 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        THIS IS TIME INTENSIVE</span>
 <span class="sd">        if not self._simple_dynamics:</span>
 <span class="sd">            # Get the plate angles from inverse kinematics</span>
@@ -473,12 +473,12 @@
 
 
 <div class="viewcode-block" id="QBallBalancerKin"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin">[docs]</a><span class="k">class</span> <span class="nc">QBallBalancerKin</span><span class="p">(</span><span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates and visualizes the kinematics from the servo shaft angles (th_x, th_x) to the plate angles (a, b).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qbb</span><span class="p">,</span> <span class="n">num_opt_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">()):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param qbb: QBallBalancerSim object</span>
@@ -508,7 +508,7 @@
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line3</span><span class="p">,)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">th</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the inverse kinematics of the Quanser 2 DoF Ball-Balancer for one DoF</span>
 
 <span class="sd">        :param th: angle of the servo (x or y axis)</span>
@@ -536,7 +536,7 @@
 
 <div class="viewcode-block" id="QBallBalancerKin.rod_tip"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.rod_tip">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">rod_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">th</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get Cartesian coordinates of the rod tip for one servo.</span>
 
 <span class="sd">        :param th: current value of the respective servo shaft angle</span>
@@ -556,7 +556,7 @@
         <span class="k">return</span> <span class="n">tip</span></div>
 
     <span class="k">def</span> <span class="nf">_loss_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tip</span><span class="p">,</span> <span class="n">th</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Cost function for the optimization problem, which only consists of 2 constraints that should be fulfilled.</span>
 
 <span class="sd">        :param tip:</span>
@@ -570,7 +570,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">rod_len</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_palte</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">l</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 
 <div class="viewcode-block" id="QBallBalancerKin.plate_ang"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.plate_ang">[docs]</a>    <span class="k">def</span> <span class="nf">plate_ang</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute plate angle (alpha or beta) from the rod tip position which has been calculated from servo shaft angle</span>
 <span class="sd">        (th_x or th_y) before.</span>
 <span class="sd">        :return tip: 2D position of the rod tip in the sagittal plane (from the optimizer)</span>
@@ -579,7 +579,7 @@
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QBallBalancerKin.render"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">tip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Visualize using pyplot</span>
 
 <span class="sd">        :param th: angle of the servo</span>

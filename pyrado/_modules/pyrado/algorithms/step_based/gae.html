@@ -183,7 +183,7 @@
 
 
 <div class="viewcode-block" id="GAE"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE">[docs]</a><span class="k">class</span> <span class="nc">GAE</span><span class="p">(</span><span class="n">LoggerAware</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    General Advantage Estimation (GAE)</span>
 
 <span class="sd">    .. seealso::</span>
@@ -205,7 +205,7 @@
         <span class="n">lr_scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param vfcn: value function, which can be a `FNN` or a `Policy`</span>
@@ -255,12 +255,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">vfcn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">Policy</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get the value function approximator.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the value function approximator.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vfcn</span>
 
     <span class="nd">@vfcn</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">vfcn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vfcn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">Policy</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Set the value function approximator.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the value function approximator.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">Policy</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">vfcn</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">Policy</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vfcn</span> <span class="o">=</span> <span class="n">vfcn</span>
@@ -272,7 +272,7 @@
 <div class="viewcode-block" id="GAE.gae"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.gae">[docs]</a>    <span class="k">def</span> <span class="nf">gae</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">concat_ros</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">v_pred</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the generalized advantage estimation as described in [1].</span>
 
 <span class="sd">        :param concat_ros: concatenated rollouts (sequence of steps from potentially different rollouts)</span>
@@ -311,7 +311,7 @@
 <div class="viewcode-block" id="GAE.tdlamda_returns"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.tdlamda_returns">[docs]</a>    <span class="k">def</span> <span class="nf">tdlamda_returns</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">v_pred</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">adv</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">concat_ros</span><span class="p">:</span> <span class="n">StepSequence</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the TD($\lambda$) returns based on the predictions of the network (introduces a bias).</span>
 
 <span class="sd">        :param v_pred: state-value predictions if already computed, pass `None` to compute form given rollouts</span>
@@ -333,7 +333,7 @@
             <span class="k">return</span> <span class="n">v_pred</span> <span class="o">+</span> <span class="n">adv</span>  <span class="c1"># Q = V + A</span></div>
 
 <div class="viewcode-block" id="GAE.values"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concat_ros</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the states&#39; values for all observations.</span>
 
 <span class="sd">        :param concat_ros: concatenated rollouts</span>
@@ -347,7 +347,7 @@
         <span class="k">return</span> <span class="n">v_pred</span></div>
 
 <div class="viewcode-block" id="GAE.update"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollouts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="n">use_empirical_returns</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adapt the parameters of the advantage function estimator, minimizing the MSE loss for the given samples.</span>
 
 <span class="sd">        :param rollouts: batch of rollouts</span>
@@ -424,7 +424,7 @@
         <span class="k">return</span> <span class="n">adv</span></div>
 
 <div class="viewcode-block" id="GAE.reset"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the advantage estimator to it&#39;s initial state.</span>
 <span class="sd">        The default implementation resets the learning rate scheduler if there is one.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

@@ -179,7 +179,7 @@
 
 
 <div class="viewcode-block" id="EnvSpec"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.EnvSpec">[docs]</a><span class="k">class</span> <span class="nc">EnvSpec</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The specification of an environment&#39;s input and output space&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The specification of an environment&#39;s input and output space&quot;&quot;&quot;</span>
 
     <span class="n">obs_space</span><span class="p">:</span> <span class="n">Space</span>
     <span class="n">act_space</span><span class="p">:</span> <span class="n">Space</span>
@@ -187,7 +187,7 @@
 
 
 <div class="viewcode-block" id="RenderMode"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.RenderMode">[docs]</a><span class="k">class</span> <span class="nc">RenderMode</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The specification of a render mode, do not print or render anything by default&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The specification of a render mode, do not print or render anything by default&quot;&quot;&quot;</span>
 
     <span class="n">text</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">video</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -195,20 +195,20 @@
 
 
 <div class="viewcode-block" id="TimeSeriesDataPair"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.TimeSeriesDataPair">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesDataPair</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pair of an input sequence and an associated target value for training time series prediction.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pair of an input sequence and an associated target value for training time series prediction.&quot;&quot;&quot;</span>
 
     <span class="n">inp_seq</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span>
     <span class="n">targ</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span></div>
 
 
 <div class="viewcode-block" id="DSSpec"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.DSSpec">[docs]</a><span class="k">class</span> <span class="nc">DSSpec</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The specification of a dynamical system implemented in `RcsPySim` and used in combination with ADN</span>
 <span class="sd">    We are directly subclassing dict beacuse `PropertySource` in `RcsPySim` extracts information from dicts.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">goal</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param function: name of the dynamics function, e.g. `linear`, `msd`, or `msd_nlin`</span>
@@ -220,7 +220,7 @@
 
 
 <div class="viewcode-block" id="MSDDSSpec"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.MSDDSSpec">[docs]</a><span class="k">class</span> <span class="nc">MSDDSSpec</span><span class="p">(</span><span class="n">DSSpec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The specification of a second order dynamical system i.e. a linear or nonlinear mass spring damper system</span>
 <span class="sd">    implemented in `RcsPySim`.</span>
 <span class="sd">    Example:</span>
@@ -235,7 +235,7 @@
         <span class="n">damping</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">mass</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param function: name of the dynamics function, e.g. `msd`, or `msd_nlin`</span>
@@ -253,7 +253,7 @@
 
 
 <div class="viewcode-block" id="LinDSSpec"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.LinDSSpec">[docs]</a><span class="k">class</span> <span class="nc">LinDSSpec</span><span class="p">(</span><span class="n">DSSpec</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The specification of a linear first order dynamical system implemented in `RcsPySim`.</span>
 <span class="sd">    The dynamics are defined as $\dot{x} = A (x_{des} - x_{curr})$ with the error dynamics matrix $A$.</span>
 <span class="sd">    Example:</span>
@@ -263,7 +263,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">goal</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">errorDynamics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param function: name of the dynamics function, e.g. `msd`, or `msd_nlin`</span>
@@ -277,7 +277,7 @@
 
 
 <div class="viewcode-block" id="repeat_interleave"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.repeat_interleave">[docs]</a><span class="k">def</span> <span class="nf">repeat_interleave</span><span class="p">(</span><span class="n">sequence</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">],</span> <span class="n">num_reps</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Repeat every element of the input sequence, but keep the order of the elements.</span>
 
 <span class="sd">    :param sequence: input list or tuple</span>
@@ -293,7 +293,7 @@
 
 
 <div class="viewcode-block" id="merge_dicts"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.merge_dicts">[docs]</a><span class="k">def</span> <span class="nf">merge_dicts</span><span class="p">(</span><span class="n">dicts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Marge a list of dicts in to one dict.</span>
 <span class="sd">    The resulting dict can have different value types, but the dicts later in the list override earlier ones.</span>
 
@@ -313,7 +313,7 @@
 
 
 <div class="viewcode-block" id="merge_dicts_same_dtype"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.merge_dicts_same_dtype">[docs]</a><span class="k">def</span> <span class="nf">merge_dicts_same_dtype</span><span class="p">(</span><span class="n">dicts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Marge a list of dicts in to one dict.</span>
 <span class="sd">    The resulting dict has only one value type for all entries, but the dicts do not override each other.</span>
 
@@ -335,7 +335,7 @@
 
 
 <div class="viewcode-block" id="update_matching_keys_recursively"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.update_matching_keys_recursively">[docs]</a><span class="k">def</span> <span class="nf">update_matching_keys_recursively</span><span class="p">(</span><span class="n">base_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">update_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Update a dictionary inplace with several levels of sub dictionaries with the matching entries of another dictionary.</span>
 
 <span class="sd">    :param base_dict: dictionary to update</span>
@@ -369,7 +369,7 @@
 
 
 <span class="k">def</span> <span class="nf">_to_float</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a ndarray to a list of floats or to only one float.</span>
 <span class="sd">    Convert a list of numerical values to a list of floats to only one float.</span>
 <span class="sd">    Convert a scalar to a float.</span>
@@ -398,7 +398,7 @@
 
 
 <div class="viewcode-block" id="dict_arraylike_to_float"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.dict_arraylike_to_float">[docs]</a><span class="k">def</span> <span class="nf">dict_arraylike_to_float</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert every scalar array-like entry the provided dict to to a float.</span>
 <span class="sd">    This function is useful when the metrics (e.g., calculated with numpy) should be saved in a YAML-file.</span>
 
@@ -411,7 +411,7 @@
 
 
 <div class="viewcode-block" id="fill_list_of_arrays"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.fill_list_of_arrays">[docs]</a><span class="k">def</span> <span class="nf">fill_list_of_arrays</span><span class="p">(</span><span class="n">loa</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">des_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fill_ele</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fill a list of arrays with potential unequal length (first axis) will provided elements.</span>
 
 <span class="sd">    :param loa: list of ndarrays</span>
@@ -441,7 +441,7 @@
 <div class="viewcode-block" id="dict_path_access"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.dict_path_access">[docs]</a><span class="k">def</span> <span class="nf">dict_path_access</span><span class="p">(</span>
     <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">default_for_last_layer_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gets a dict entry using a jq-like naming system. To get the entry `foo` from the topmost</span>
 <span class="sd">    dictionary, use the path `foo`. To access an entry `baz` in a dictionary that is stored in the</span>
 <span class="sd">    top dictionary under the key `bar`, use the path `bar.baz`.</span>

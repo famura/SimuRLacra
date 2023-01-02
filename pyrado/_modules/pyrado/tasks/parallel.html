@@ -173,7 +173,7 @@
 
 
 <div class="viewcode-block" id="ParallelTasks"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.parallel.ParallelTasks">[docs]</a><span class="k">class</span> <span class="nc">ParallelTasks</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Task class for a set of tasks a.k.a. goals which can be achieved in any order or parallel&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task class for a set of tasks a.k.a. goals which can be achieved in any order or parallel&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -183,7 +183,7 @@
         <span class="n">easily_satisfied</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param tasks: sequence of tasks a.k.a. goals, the order matters</span>
@@ -217,17 +217,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Task</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get the list of tasks.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the list of tasks.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">state_des</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a list of all desired states.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of all desired states.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">state_des</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="s2">&quot;state_des&quot;</span><span class="p">)]</span>
 
     <span class="nd">@state_des</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">state_des</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states_des</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Set all desired states from a list of desired states.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set all desired states from a list of desired states.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">states_des</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="c1"># Explicitly require to use a list or tuple to avoid setting just one desired state</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">states_des</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">])</span>
@@ -241,12 +241,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">space_des</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a list of all desired spaces.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of all desired spaces.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">space_des</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="s2">&quot;space_des&quot;</span><span class="p">)]</span>
 
     <span class="nd">@space_des</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">space_des</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spaces_des</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set all desired spaces from a list of desired spaces.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set all desired spaces from a list of desired spaces.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spaces_des</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="c1"># Explicitly require to use a list or tuple to avoid setting just one desired space</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">spaces_des</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">])</span>
@@ -260,11 +260,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rew_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a list of all reward functions.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of all reward functions.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">rew_fcn</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ParallelTasks.step_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.parallel.ParallelTasks.step_rew">[docs]</a>    <span class="k">def</span> <span class="nf">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the step reward accumulated from every non-done task.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the step reward accumulated from every non-done task.&quot;&quot;&quot;</span>
         <span class="n">step_rew</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">succeeded_tasks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">failed_tasks</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
@@ -282,7 +282,7 @@
         <span class="k">return</span> <span class="n">step_rew</span> <span class="o">+</span> <span class="n">final_rew</span></div>
 
 <div class="viewcode-block" id="ParallelTasks.compute_final_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.parallel.ParallelTasks.compute_final_rew">[docs]</a>    <span class="k">def</span> <span class="nf">compute_final_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the reward / cost on task completion / fail of this task.</span>
 <span class="sd">        Since this task holds multiple sub-tasks, the final reward / cost is computed for them, too.</span>
 
@@ -300,7 +300,7 @@
         <span class="k">return</span> <span class="n">sum_final_rew</span></div>
 
 <div class="viewcode-block" id="ParallelTasks.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.parallel.ParallelTasks.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset all tasks.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset all tasks.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
             <span class="n">task</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -315,7 +315,7 @@
     <span class="k">def</span> <span class="nf">_is_any_task_done</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if any of the tasks is done. If so, return the final reward of this task.</span>
 
 <span class="sd">        :param state: current state</span>
@@ -352,7 +352,7 @@
         <span class="k">return</span> <span class="n">task_final_rew</span>
 
 <div class="viewcode-block" id="ParallelTasks.has_succeeded"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.parallel.ParallelTasks.has_succeeded">[docs]</a>    <span class="k">def</span> <span class="nf">has_succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if this tasks is done. The ParallelTasks is successful if all sub-tasks are successful.</span>
 
 <span class="sd">        :param state: environments current state</span>
@@ -370,7 +370,7 @@
         <span class="k">return</span> <span class="n">successful</span></div>
 
 <div class="viewcode-block" id="ParallelTasks.has_failed"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.parallel.ParallelTasks.has_failed">[docs]</a>    <span class="k">def</span> <span class="nf">has_failed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Check if this task has failed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if this task has failed.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_failures</span><span class="p">:</span>
             <span class="c1"># The ParallelTasks fail if all of them fail</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">failed_tasks</span><span class="p">)</span>

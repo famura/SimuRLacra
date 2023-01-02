@@ -176,7 +176,7 @@
 
 
 <div class="viewcode-block" id="QQubeSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSim">[docs]</a><span class="k">class</span> <span class="nc">QQubeSim</span><span class="p">(</span><span class="n">SimPyEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base Environment for the Quanser Qube swing-up and stabilization task&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Environment for the Quanser Qube swing-up and stabilization task&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
@@ -222,7 +222,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">mass_pend_pole</span> <span class="o">*</span> <span class="n">length_pend_pole</span> <span class="o">*</span> <span class="n">gravity_const</span>
 
     <span class="k">def</span> <span class="nf">_dyn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute $\dot{x} = f(x, u, t)$.</span>
 
 <span class="sd">        :param t: time (if the dynamics explicitly depend on the time)</span>
@@ -292,7 +292,7 @@
 
 
 <div class="viewcode-block" id="QQubeSwingUpSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSwingUpSim">[docs]</a><span class="k">class</span> <span class="nc">QQubeSwingUpSim</span><span class="p">(</span><span class="n">QQubeSim</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Environment which models Quanser&#39;s Furuta pendulum called Quanser Qube.</span>
 <span class="sd">    The goal is to swing up the pendulum and stabilize at the upright position (alpha = +-pi).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -324,7 +324,7 @@
 
 
 <div class="viewcode-block" id="QQubeStabSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeStabSim">[docs]</a><span class="k">class</span> <span class="nc">QQubeStabSim</span><span class="p">(</span><span class="n">QQubeSim</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Environment which models Quanser&#39;s Furuta pendulum called Quanser Qube.</span>
 <span class="sd">    The goal is to stabilize the pendulum at the upright position (alpha = +-pi).</span>
 

@@ -169,10 +169,10 @@
 
 
 <div class="viewcode-block" id="QSocket"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket">[docs]</a><span class="k">class</span> <span class="nc">QSocket</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Handles the communication with Quarc (TCP/IP connection)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles the communication with Quarc (TCP/IP connection)&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">x_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">u_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9095</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Prepare socket for communication.</span>
 
 <span class="sd">        :param ip: IP address of the Windows PC</span>
@@ -188,7 +188,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_soc</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="QSocket.snd_rcv"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket.snd_rcv">[docs]</a>    <span class="k">def</span> <span class="nf">snd_rcv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Send u and receive x.</span>
 
 <span class="sd">        :param u: control vector</span>
@@ -209,12 +209,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_soc</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="QSocket.is_open"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket.is_open">[docs]</a>    <span class="k">def</span> <span class="nf">is_open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return True is the socket connection os open and False if not.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True is the socket connection os open and False if not.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">False</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_soc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span></div></div>
 
 
 <div class="viewcode-block" id="VelocityFilter"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.quanser_common.VelocityFilter">[docs]</a><span class="k">class</span> <span class="nc">VelocityFilter</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Discrete velocity filter derived from a continuous one</span>
 
 <span class="sd">    .. note::</span>
@@ -224,7 +224,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">x_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">den</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.002</span><span class="p">,</span> <span class="n">x_init</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize discrete filter coefficients.</span>
 
 <span class="sd">        :param x_len: number of measured state variables to receive</span>
@@ -242,7 +242,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">set_initial_state</span><span class="p">(</span><span class="n">x_init</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VelocityFilter.set_initial_state"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.quanser_common.VelocityFilter.set_initial_state">[docs]</a>    <span class="k">def</span> <span class="nf">set_initial_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method can be used to set the initial state of the velocity filter. This is useful when the initial</span>
 <span class="sd">        (position) observation has been retrieved and it is non-zero.</span>
 <span class="sd">        Otherwise the filter would assume a very high velocity.</span>
@@ -257,7 +257,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">zi</span><span class="p">,</span> <span class="n">x_init</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply the filter.</span>
 
 <span class="sd">        :param x: observed position signal</span>

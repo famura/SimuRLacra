@@ -173,10 +173,10 @@
 
 
 <div class="viewcode-block" id="DesStateTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.desired_state.DesStateTask">[docs]</a><span class="k">class</span> <span class="nc">DesStateTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Task class for moving to a desired state. Operates on the error in state and action.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task class for moving to a desired state. Operates on the error in state and action.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">success_fcn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_spec: environment specification of a simulated or real environment</span>
@@ -223,7 +223,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_rew_fcn</span> <span class="o">=</span> <span class="n">rew_fcn</span>
 
 <div class="viewcode-block" id="DesStateTask.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.desired_state.DesStateTask.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the task.</span>
 
 <span class="sd">        :param env_spec: environment specification</span>
@@ -249,7 +249,7 @@
 
 
 <div class="viewcode-block" id="RadiallySymmDesStateTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.desired_state.RadiallySymmDesStateTask">[docs]</a><span class="k">class</span> <span class="nc">RadiallySymmDesStateTask</span><span class="p">(</span><span class="n">DesStateTask</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Task class for moving to a desired state. Operates on the error in state and action.</span>
 <span class="sd">    In contrast to DesStateTask, a subset of the state is radially symmetric, e.g. and angular position.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -263,7 +263,7 @@
         <span class="n">modulation</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
         <span class="n">success_fcn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_spec: environment specification of a simulated or real environment</span>

@@ -183,7 +183,7 @@
 
 
 <div class="viewcode-block" id="DQL"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL">[docs]</a><span class="k">class</span> <span class="nc">DQL</span><span class="p">(</span><span class="n">ValueBased</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Deep Q-Learning (without bells and whistles)</span>
 
 <span class="sd">    .. seealso::</span>
@@ -217,7 +217,7 @@
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_trained_policy_for_refill</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -305,7 +305,7 @@
 
 <div class="viewcode-block" id="DQL.loss_fcn"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.loss_fcn">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">loss_fcn</span><span class="p">(</span><span class="n">q_vals</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">expected_q_vals</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The Huber loss function on the one-step TD error $\delta = Q(s,a) - (r + \gamma \max_a Q(s^\prime, a))$.</span>
 
 <span class="sd">        :param q_vals: state-action values $Q(s,a)$, from policy network</span>
@@ -315,7 +315,7 @@
         <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">smooth_l1_loss</span><span class="p">(</span><span class="n">q_vals</span><span class="p">,</span> <span class="n">expected_q_vals</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DQL.update"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update the policy&#39;s and qfcn_targ Q-function&#39;s parameters on transitions sampled from the replay memory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the policy&#39;s and qfcn_targ Q-function&#39;s parameters on transitions sampled from the replay memory.&quot;&quot;&quot;</span>
         <span class="n">losses</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
         <span class="n">policy_grad_norm</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
 
@@ -384,7 +384,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span><span class="n">warmstart</span><span class="p">,</span> <span class="n">suffix</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">tpi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_param_init&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 

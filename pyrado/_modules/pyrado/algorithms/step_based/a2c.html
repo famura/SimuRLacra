@@ -185,7 +185,7 @@
 
 
 <div class="viewcode-block" id="A2C"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.a2c.A2C">[docs]</a><span class="k">class</span> <span class="nc">A2C</span><span class="p">(</span><span class="n">ActorCritic</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Advantage Actor Critic (A2C)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Advantage Actor Critic (A2C)&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;a2c&quot;</span>
 
@@ -209,7 +209,7 @@
         <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -262,7 +262,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="p">,</span> <span class="o">**</span><span class="n">lr_scheduler_hparam</span><span class="p">)</span>
 
 <div class="viewcode-block" id="A2C.loss_fcn"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.a2c.A2C.loss_fcn">[docs]</a>    <span class="k">def</span> <span class="nf">loss_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_probs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">adv</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">v_pred</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">v_targ</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A2C loss function</span>
 
 <span class="sd">        :param log_probs: logarithm of the probabilities of the taken actions</span>

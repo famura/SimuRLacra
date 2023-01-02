@@ -178,7 +178,7 @@
 
 
 <div class="viewcode-block" id="LabeledMarkers"><a class="viewcode-back" href="../../../../environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.LabeledMarkers">[docs]</a><span class="k">class</span> <span class="nc">LabeledMarkers</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper class for keeping track of markers.</span>
 <span class="sd">    This code is based on work from Pascal Klink.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -250,7 +250,7 @@
 
 
 <div class="viewcode-block" id="NatNetClient"><a class="viewcode-back" href="../../../../environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient">[docs]</a><span class="k">class</span> <span class="nc">NatNetClient</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Client for communicating with OptiTrack.</span>
 <span class="sd">    This code is based on work from Boris Belousov and Pascal Klink.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -262,7 +262,7 @@
         <span class="n">gateway_ip</span><span class="o">=</span><span class="s2">&quot;192.168.2.1&quot;</span><span class="p">,</span>
         <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param ver: version as tuple</span>
 <span class="sd">        :param server_ip: IP address of the NatNet server, where Motive is running</span>
 <span class="sd">        :param gateway_ip: IP address of the gateway. Set to None to read out this IP from socket (which was not</span>
@@ -820,7 +820,7 @@
         <span class="n">socket</span><span class="o">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="NatNetClient.run"><a class="viewcode-back" href="../../../../environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Start the data and command threads. The attached callback functions (listener) should now retrieve data.</span>
 
 <span class="sd">        :param daemon: If set to True, the data and command thread are closed as soon as the main thread has finished.</span>
@@ -856,7 +856,7 @@
         <span class="n">dataThread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="NatNetClient.stop"><a class="viewcode-back" href="../../../../environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Stops receiving data from socket&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stops receiving data from socket&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 </pre></div>
 
