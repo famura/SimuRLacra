@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>barrett_wam &mdash; Pyrado 0.7.1 documentation</title>
@@ -30,14 +30,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -171,7 +175,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">barrett_wam</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/environments.barrett_wam.rst.txt" rel="nofollow"> View page source</a>
@@ -221,7 +225,7 @@ This code is based on work from Pascal Klink.</p>
 <p>Client for communicating with OptiTrack.
 This code is based on work from Boris Belousov and Pascal Klink.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ver</strong> – version as tuple</p></li>
 <li><p><strong>server_ip</strong> – IP address of the NatNet server, where Motive is running</p></li>
@@ -291,7 +295,7 @@ working in our tests)</p></li>
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">daemon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/barrett_wam/natnet_client.html#NatNetClient.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.barrett_wam.natnet_client.NatNetClient.run" title="Permalink to this definition"></a></dt>
 <dd><p>Start the data and command threads. The attached callback functions (listener) should now retrieve data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>daemon</strong> – If set to True, the data and command thread are closed as soon as the main thread has finished.
 Otherwise, the threads remain open and the program has to be shut down manually.</p>
 </dd>
@@ -345,7 +349,7 @@ This code is based on work from Pascal Klink.</p>
 This code is based on work from Pascal Klink.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>names</strong> – list of rigid body names, e.g. [“cup”, “ball”]</p></li>
 <li><p><strong>rotation</strong> – <cite>Rotation</cite> instance of scipy.spatial.transform</p></li>
@@ -358,10 +362,10 @@ This code is based on work from Pascal Klink.</p>
 <span class="sig-name descname"><span class="pre">get_current_estimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/environments/barrett_wam/trackers.html#RigidBodyTracker.get_current_estimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.barrett_wam.trackers.RigidBodyTracker.get_current_estimate" title="Permalink to this definition"></a></dt>
 <dd><p>Get position and rotation estimate for the given body names.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>names</strong> – list of rigid body names</p>
 </dd>
-<dt class="field-even">Return copied_ts</dt>
+<dt class="field-even">Return copied_ts<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of tuples containing the current estimate for each body in names, or tuple if there
 would only be one element in the list</p>
 </dd>

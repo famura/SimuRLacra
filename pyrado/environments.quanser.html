@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>quanser &mdash; Pyrado 0.7.1 documentation</title>
@@ -30,14 +30,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -192,7 +196,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">quanser</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/environments.quanser.rst.txt" rel="nofollow"> View page source</a>
@@ -214,7 +218,7 @@
 <p>Base class of all real-world Quanser environments in Pyrado</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ip</strong> – IP address of the platform</p></li>
 <li><p><strong>rcv_dim</strong> – number of dimensions of the sensor i.e. measurement signal (received from Simulink server)</p></li>
@@ -248,7 +252,7 @@
 <span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">RenderMode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">RenderMode(text=True,</span> <span class="pre">video=False,</span> <span class="pre">render=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/base.html#QuanserReal.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.render" title="Permalink to this definition"></a></dt>
 <dd><p>Visualize one time step.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
 <li><p><strong>render_step</strong> – interval for rendering</p></li>
@@ -263,7 +267,7 @@
 <dd><p>Reset the environment.
 The base version (re-)opens the socket and resets the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
 <li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
@@ -288,19 +292,19 @@ When a terminal condition is met, the reset function is called.</p>
 <p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>current observation of the environment</p>
 </dd>
-<dt class="field-odd">Return reward</dt>
+<dt class="field-odd">Return reward<span class="colon">:</span></dt>
 <dd class="field-odd"><p>reward depending on the selected reward function</p>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates whether the episode has ended</p>
 </dd>
-<dt class="field-odd">Return env_info</dt>
+<dt class="field-odd">Return env_info<span class="colon">:</span></dt>
 <dd class="field-odd"><p>contains diagnostic information about the environment</p>
 </dd>
 </dl>
@@ -324,7 +328,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Class for the real Quanser Ball-Balancer</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – sampling frequency on the [Hz]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of steps executed on the device [-]</p></li>
@@ -344,7 +348,7 @@ When a terminal condition is met, the reset function is called.</p>
 <dd><p>Reset the environment.
 The base version (re-)opens the socket and resets the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
 <li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
@@ -365,7 +369,7 @@ The base version (re-)opens the socket and resets the task.</p>
 <p>Base class for the real Quanser Cart-Pole</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – time step size on the Quanser device [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of steps executed on the device</p></li>
@@ -388,10 +392,10 @@ The base version (re-)opens the socket and resets the task.</p>
 <p>This method should be overwritten if the environment has a distinct observation space.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>observation perceived to the agent</p>
 </dd>
 </dl>
@@ -412,7 +416,7 @@ The base version (re-)opens the socket and resets the task.</p>
 <p>Stabilization task on the real Quanser Cart-Pole</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – time step size on the Quanser device [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of steps executed on the device</p></li>
@@ -432,7 +436,7 @@ The base version (re-)opens the socket and resets the task.</p>
 <dd><p>Reset the environment.
 The base version (re-)opens the socket and resets the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
 <li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
@@ -450,7 +454,7 @@ The base version (re-)opens the socket and resets the task.</p>
 <p>Swing-up task on the real Quanser Cart-Pole</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – time step size on the Quanser device [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of steps executed on the device</p></li>
@@ -470,7 +474,7 @@ The base version (re-)opens the socket and resets the task.</p>
 <dd><p>Reset the environment.
 The base version (re-)opens the socket and resets the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
 <li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
@@ -491,7 +495,7 @@ The base version (re-)opens the socket and resets the task.</p>
 <p>Handles the communication with Quarc (TCP/IP connection)</p>
 <p>Prepare socket for communication.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ip</strong> – IP address of the Windows PC</p></li>
 <li><p><strong>x_len</strong> – number of measured state variables to receive</p></li>
@@ -521,10 +525,10 @@ The base version (re-)opens the socket and resets the task.</p>
 <span class="sig-name descname"><span class="pre">snd_rcv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#QSocket.snd_rcv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.QSocket.snd_rcv" title="Permalink to this definition"></a></dt>
 <dd><p>Send u and receive x.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>u</strong> – control vector</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>x: vector of measured states</p>
 </dd>
 </dl>
@@ -543,7 +547,7 @@ The base version (re-)opens the socket and resets the task.</p>
 </div>
 <p>Initialize discrete filter coefficients.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x_len</strong> – number of measured state variables to receive</p></li>
 <li><p><strong>num</strong> – continuous-time filter numerator (continuous time)</p></li>
@@ -574,7 +578,7 @@ Otherwise the filter would assume a very high velocity.
 <p>Class for the real Quanser Qube a.k.a. Furuta pendulum</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – sampling frequency on the Quanser device [Hz]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of steps executed on the device [-]</p></li>
@@ -603,10 +607,10 @@ Otherwise the filter would assume a very high velocity.
 <p>This method should be overwritten if the environment has a distinct observation space.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>observation perceived to the agent</p>
 </dd>
 </dl>
@@ -618,7 +622,7 @@ Otherwise the filter would assume a very high velocity.
 <dd><p>Reset the environment.
 The base version (re-)opens the socket and resets the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
 <li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>

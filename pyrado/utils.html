@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>utils &mdash; Pyrado 0.7.1 documentation</title>
@@ -30,14 +30,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -386,7 +390,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">utils</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
@@ -443,7 +447,7 @@
 <p>Implementation of an exponentially decaying average estimator</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>alpha</strong> – decay factor</p>
 </dd>
 </dl>
@@ -462,7 +466,7 @@
 <p>Implementation of an estimator that computes the average for a memorized buffer</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>capacity</strong> – memory size</p>
 </dd>
 </dl>
@@ -502,10 +506,10 @@ values.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/bijective_transformation.html#BijectiveTransformation.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.bijective_transformation.BijectiveTransformation.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Map a value from the space to the transformed space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value in the original space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value in the transformed space</p>
 </dd>
 </dl>
@@ -516,10 +520,10 @@ values.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/bijective_transformation.html#BijectiveTransformation.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.bijective_transformation.BijectiveTransformation.inverse" title="Permalink to this definition"></a></dt>
 <dd><p>Map a value from the transformed space to the actual space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value in the transformed space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value in the original space</p>
 </dd>
 </dl>
@@ -544,10 +548,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/bijective_transformation.html#IdentityTransformation.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.bijective_transformation.IdentityTransformation.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Map a value from the space to the transformed space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value in the original space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value in the transformed space</p>
 </dd>
 </dl>
@@ -558,10 +562,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/bijective_transformation.html#IdentityTransformation.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.bijective_transformation.IdentityTransformation.inverse" title="Permalink to this definition"></a></dt>
 <dd><p>Map a value from the transformed space to the actual space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value in the transformed space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value in the original space</p>
 </dd>
 </dl>
@@ -586,10 +590,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/bijective_transformation.html#LogTransformation.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.bijective_transformation.LogTransformation.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Map a value from the space to the transformed space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value in the original space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value in the transformed space</p>
 </dd>
 </dl>
@@ -600,10 +604,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/bijective_transformation.html#LogTransformation.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.bijective_transformation.LogTransformation.inverse" title="Permalink to this definition"></a></dt>
 <dd><p>Map a value from the transformed space to the actual space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value in the transformed space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value in the original space</p>
 </dd>
 </dl>
@@ -628,10 +632,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/bijective_transformation.html#SqrtTransformation.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.bijective_transformation.SqrtTransformation.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Map a value from the space to the transformed space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value in the original space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value in the transformed space</p>
 </dd>
 </dl>
@@ -642,10 +646,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/bijective_transformation.html#SqrtTransformation.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.bijective_transformation.SqrtTransformation.inverse" title="Permalink to this definition"></a></dt>
 <dd><p>Map a value from the transformed space to the actual space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value in the transformed space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value in the original space</p>
 </dd>
 </dl>
@@ -661,10 +665,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">check_all_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_equal" title="Permalink to this definition"></a></dt>
 <dd><p>Check if all elements of an iterable are equal.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool saying if all elements are equal</p>
 </dd>
 </dl>
@@ -675,10 +679,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">check_all_lengths_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_lengths_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_lengths_equal" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the length of all elements of an iterable are equal.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool saying if all elements are equal</p>
 </dd>
 </dl>
@@ -689,10 +693,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">check_all_shapes_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_shapes_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_shapes_equal" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the shape of all elements of an iterable are equal.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool saying if all elements are equal</p>
 </dd>
 </dl>
@@ -703,10 +707,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">check_all_types_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_types_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_types_equal" title="Permalink to this definition"></a></dt>
 <dd><p>Check if all elements of an iterable are if the same type.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool saying if all elements are of equal type</p>
 </dd>
 </dl>
@@ -717,10 +721,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">is_iterable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/utils/checks.html#is_iterable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.checks.is_iterable" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the input is iterable by trying to create an iterator from the input.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obj</strong> – any object</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if input is iterable, else <cite>False</cite></p>
 </dd>
 </dl>
@@ -731,10 +735,10 @@ values.</p>
 <span class="sig-name descname"><span class="pre">is_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/utils/checks.html#is_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.checks.is_iterator" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the input is an iterator by trying to call <cite>next()</cite> on it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obj</strong> – any object</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if input is an iterator, else <cite>False</cite></p>
 </dd>
 </dl>
@@ -750,10 +754,10 @@ values.</p>
 implement the sequence protocol but do not inherit from <cite>collections.Sequence</cite></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obj</strong> – any object</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if input is iterable, else <cite>False</cite></p>
 </dd>
 </dl>
@@ -770,7 +774,7 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <p>A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bound_lo</strong> – lower bound for the transformed data</p></li>
 <li><p><strong>bound_up</strong> – upper bound for the transformed data</p></li>
@@ -782,10 +786,10 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <span class="sig-name descname"><span class="pre">scale_back</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#MinMaxScaler.scale_back"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.MinMaxScaler.scale_back" title="Permalink to this definition"></a></dt>
 <dd><p>Rescale the input data back to its original value range</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> – input ndarray or Tensor scaled to be in <span class="math notranslate nohighlight">\([a, b]\)</span></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>unscaled ndarray or Tensor</p>
 </dd>
 </dl>
@@ -796,10 +800,10 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <span class="sig-name descname"><span class="pre">scale_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#MinMaxScaler.scale_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.MinMaxScaler.scale_to" title="Permalink to this definition"></a></dt>
 <dd><p>Transform the input data to be in <span class="math notranslate nohighlight">\([a, b]\)</span>, where <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are defined during construction.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> – unscaled input ndarray or Tensor</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>ndarray or Tensor scaled to be in <span class="math notranslate nohighlight">\([a, b]\)</span></p>
 </dd>
 </dl>
@@ -845,13 +849,13 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <span class="sig-name descname"><span class="pre">standardize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#Standardizer.standardize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.Standardizer.standardize" title="Permalink to this definition"></a></dt>
 <dd><p>Standardize the input data to make it <span class="math notranslate nohighlight">\(~ N(0, 1)\)</span> and store the input’s mean and standard deviation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – input ndarray or Tensor</p></li>
 <li><p><strong>eps</strong> – factor for numerical stability</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>standardized ndarray or Tensor</p>
 </dd>
 </dl>
@@ -862,10 +866,10 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <span class="sig-name descname"><span class="pre">unstandardize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#Standardizer.unstandardize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.Standardizer.unstandardize" title="Permalink to this definition"></a></dt>
 <dd><p>Revert the previous standardization of the input data to make it <span class="math notranslate nohighlight">\(~ N(\mu, \sigma)\)</span>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> – input ndarray or Tensor</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>un-standardized ndarray or Tensor</p>
 </dd>
 </dl>
@@ -878,10 +882,10 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <span class="sig-name descname"><span class="pre">correct_atleast_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#correct_atleast_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.correct_atleast_2d" title="Permalink to this definition"></a></dt>
 <dd><p>Compensate for numpy’s or PyTorch’s <cite>atleast_2d()</cite> in case the input was 1-dimensional.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>x</strong> – input</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>potentially transposed input</p>
 </dd>
 </dl>
@@ -893,7 +897,7 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 <dd><p>Normalize a numpy array or a PyTroch Tensor without changing the input.
 Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of sum to 1.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input to normalize</p></li>
 <li><p><strong>axis</strong> – axis of the array to normalize along</p></li>
@@ -901,7 +905,7 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <li><p><strong>eps</strong> – lower bound on the norm, to avoid division by zero</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>normalized array</p>
 </dd>
 </dl>
@@ -912,14 +916,14 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <span class="sig-name descname"><span class="pre">scale_min_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound_lo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound_up</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#scale_min_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.scale_min_max" title="Permalink to this definition"></a></dt>
 <dd><p>Transform the input data to to be in <span class="math notranslate nohighlight">\([a, b]\)</span>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – unscaled input ndarray or Tensor</p></li>
 <li><p><strong>bound_lo</strong> – lower bound for the transformed data</p></li>
 <li><p><strong>bound_up</strong> – upper bound for the transformed data</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>ndarray or Tensor scaled to be in <span class="math notranslate nohighlight">\([a, b]\)</span></p>
 </dd>
 </dl>
@@ -930,13 +934,13 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <span class="sig-name descname"><span class="pre">standardize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#standardize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_processing.standardize" title="Permalink to this definition"></a></dt>
 <dd><p>Standardize the input data to make it <span class="math notranslate nohighlight">\(~ N(0, 1)\)</span>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – input ndarray or Tensor</p></li>
 <li><p><strong>eps</strong> – factor for numerical stability</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>standardized ndarray or Tensor</p>
 </dd>
 </dl>
@@ -952,7 +956,7 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <p>Class for storing time series data sets</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – complete raw data set, where the samples are along the first dimension</p></li>
 <li><p><strong>window_size</strong> – length of the sequences fed to the policy for predicting the next value</p></li>
@@ -968,13 +972,13 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cut_to_window_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_sets.html#TimeSeriesDataSet.cut_to_window_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size" title="Permalink to this definition"></a></dt>
 <dd><p>Cut off samples such that all training sequences have length <cite>window_size</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – input data set with samples along the first dimension</p></li>
 <li><p><strong>ws</strong> – input window length as used for learning</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>data of proper length</p>
 </dd>
 </dl>
@@ -1018,13 +1022,13 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <dd><p>Create input sequences with associated target values from data. The targets are the next data point after an input
 sequence of given length.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – data to be split into inputs and targets</p></li>
 <li><p><strong>len_seq</strong> – length of the input sequences</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of tuples with inout and target data pairs</p>
 </dd>
 </dl>
@@ -1036,13 +1040,13 @@ sequence of given length.</p>
 <dd><p>Create  input sequences with associated target values from data using <cite>create_sequences()</cite>, and shuffle the order
 of the sequences afterwards.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – data to be split into inputs and targets</p></li>
 <li><p><strong>len_seq</strong> – length of the input sequences</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of randomly ordered tuples with inout and target data pairs</p>
 </dd>
 </dl>
@@ -1059,7 +1063,7 @@ of the sequences afterwards.</p>
 We are directly subclassing dict beacuse <cite>PropertySource</cite> in <cite>RcsPySim</cite> extracts information from dicts.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>function</strong> – name of the dynamics function, e.g. <cite>linear</cite>, <cite>msd</cite>, or <cite>msd_nlin</cite></p></li>
 <li><p><strong>goal</strong> – desired state, e.g. a task space position or velocity</p></li>
@@ -1105,7 +1109,7 @@ Example:
 LinDSSpec(function=’lin’, goal=np.array([-1., 2.]), errorDynamics=np.eye(2))</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>function</strong> – name of the dynamics function, e.g. <cite>msd</cite>, or <cite>msd_nlin</cite></p></li>
 <li><p><strong>goal</strong> – desired state, e.g. a task space position or velocity</p></li>
@@ -1125,7 +1129,7 @@ Example:
 MSDDSSpec(function=’msd_nlin’, goal=np.array([-1., 2.]), attractorStiffness=50., damping=10., mass=1.)</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>function</strong> – name of the dynamics function, e.g. <cite>msd</cite>, or <cite>msd_nlin</cite></p></li>
 <li><p><strong>goal</strong> – desired state, e.g. a task space position or velocity</p></li>
@@ -1189,10 +1193,10 @@ MSDDSSpec(function=’msd_nlin’, goal=np.array([-1., 2.]), attractorStiffness=
 <dd><p>Convert every scalar array-like entry the provided dict to to a float.
 This function is useful when the metrics (e.g., calculated with numpy) should be saved in a YAML-file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>d</strong> – input dict with 1-element arrays</p>
 </dd>
-<dt class="field-even">Return d</dt>
+<dt class="field-even">Return d<span class="colon">:</span></dt>
 <dd class="field-even"><p>output dict with float entries where conversion was possible</p>
 </dd>
 </dl>
@@ -1205,7 +1209,7 @@ This function is useful when the metrics (e.g., calculated with numpy) should be
 dictionary, use the path <cite>foo</cite>. To access an entry <cite>baz</cite> in a dictionary that is stored in the
 top dictionary under the key <cite>bar</cite>, use the path <cite>bar.baz</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d</strong> – the dictionary</p></li>
 <li><p><strong>path</strong> – the path</p></li>
@@ -1218,7 +1222,7 @@ found, an error is raised; if <cite>False</cite>, also return the
 default value of non-existent dictionaries along the path</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the entry, if found; if any part of the path except for the last does not exist, and
 <cite>default_for_last_layer_only</cite> is <cite>True</cite>, an error is raised; in all other cases, the
 default value is returned</p>
@@ -1231,14 +1235,14 @@ default value is returned</p>
 <span class="sig-name descname"><span class="pre">fill_list_of_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loa</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">des_len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_ele</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#fill_list_of_arrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_types.fill_list_of_arrays" title="Permalink to this definition"></a></dt>
 <dd><p>Fill a list of arrays with potential unequal length (first axis) will provided elements.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>loa</strong> – list of ndarrays</p></li>
 <li><p><strong>des_len</strong> – desired length of the resulting arrays</p></li>
 <li><p><strong>fill_ele</strong> – element to fill the arrays with</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of ndarrays with equal length</p>
 </dd>
 </dl>
@@ -1250,10 +1254,10 @@ default value is returned</p>
 <dd><p>Marge a list of dicts in to one dict.
 The resulting dict can have different value types, but the dicts later in the list override earlier ones.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dicts</strong> – input dicts</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>merged dict</p>
 </dd>
 </dl>
@@ -1265,13 +1269,13 @@ The resulting dict can have different value types, but the dicts later in the li
 <dd><p>Marge a list of dicts in to one dict.
 The resulting dict has only one value type for all entries, but the dicts do not override each other.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dicts</strong> – input dicts</p></li>
 <li><p><strong>dtype</strong> – data type for constructing the default dict</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>merged dict</p>
 </dd>
 </dl>
@@ -1282,13 +1286,13 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <span class="sig-name descname"><span class="pre">repeat_interleave</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_reps</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#repeat_interleave"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_types.repeat_interleave" title="Permalink to this definition"></a></dt>
 <dd><p>Repeat every element of the input sequence, but keep the order of the elements.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sequence</strong> – input list or tuple</p></li>
 <li><p><strong>num_reps</strong> – number of repetitions</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list or tuple with repeated elements</p>
 </dd>
 </dl>
@@ -1299,13 +1303,13 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <span class="sig-name descname"><span class="pre">update_matching_keys_recursively</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#update_matching_keys_recursively"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.data_types.update_matching_keys_recursively" title="Permalink to this definition"></a></dt>
 <dd><p>Update a dictionary inplace with several levels of sub dictionaries with the matching entries of another dictionary.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>base_dict</strong> – dictionary to update</p></li>
 <li><p><strong>update_dict</strong> – dictionary used for the update</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>updated base_dict</p>
 </dd>
 </dl>
@@ -1324,13 +1328,13 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retrieve_var_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#BaseErr.retrieve_var_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.exceptions.BaseErr.retrieve_var_name" title="Permalink to this definition"></a></dt>
 <dd><p>Get the name of the given variable by searching through the locals and globals.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>var</strong> – variable to look for</p></li>
 <li><p><strong>stack_level</strong> – number of frames to go up. 1 is the caller, 2 (default) is the caller’s caller.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>name of the first matching variable</p>
 </dd>
 </dl>
@@ -1345,7 +1349,7 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <p>Class for exceptions raised asking for a keys in an object that does not exist</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>keys</strong> – key(s) that caused the error</p></li>
 <li><p><strong>container</strong> – object that should have the key</p></li>
@@ -1362,7 +1366,7 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <p>Class for exceptions raised by passing wrong paths to folders or files</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>given</strong> – input which caused the error</p></li>
 <li><p><strong>msg</strong> – offers possibility to override the error message</p></li>
@@ -1378,7 +1382,7 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <p>Class for exceptions raised by passing wrong values</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>given</strong> – input which caused the error</p></li>
 <li><p><strong>expected_match</strong> – object which’s shape is the one the input should have</p></li>
@@ -1401,7 +1405,7 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <p>Class for exceptions raised by passing wrong data types</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>given</strong> – input which caused the error</p></li>
 <li><p><strong>given_name</strong> – explicitly pass the name of the variable for the error message</p></li>
@@ -1419,7 +1423,7 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <p>Class for exceptions raised by passing wrong values</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>given</strong> – input which caused the error</p></li>
 <li><p><strong>given_name</strong> – explicitly pass the name of the variable for the error message</p></li>
@@ -1443,7 +1447,7 @@ The resulting dict has only one value type for all entries, but the dicts do not
 <dd><p>Convenience function to export the policy using PyTorch’s scripting or tracing, and the experiment’s XML
 configuration if the environment from RcsPySim.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save in</p></li>
 <li><p><strong>policy</strong> – (trained) policy</p></li>
@@ -1463,10 +1467,10 @@ This requires the experiment’s XML configuration to be exported beforehand.</p
 <dd><p>Get the matching function. This method is a workaround / utility tool to intended to work with optuna. Since we can
 not pass functions directly, we pass a sting.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> – name of the function</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the function</p>
 </dd>
 </dl>
@@ -1479,13 +1483,13 @@ not pass functions directly, we pass a sting.</p>
 This helper function first tries to read the hyper-parameters yaml-file in the experiment’s directory to infer
 why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ex_dir</strong> – experiment’s parent directory</p></li>
 <li><p><strong>args</strong> – arguments from the argument parser, pass <cite>None</cite> to fall back to the values from the default argparser</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -1496,14 +1500,14 @@ why entities should be loaded. If no file was found, we fall back to some heuris
 <span class="sig-name descname"><span class="pre">load_rollouts_from_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rollout'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_exts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('pt',</span> <span class="pre">'pkl')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_rollouts_from_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.experiments.load_rollouts_from_dir" title="Permalink to this definition"></a></dt>
 <dd><p>Crawl through the given directory, sort the files, and load all rollouts, i.e. all files that include the key.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ex_dir</strong> – directory, e.g. and experiment folder</p></li>
 <li><p><strong>key</strong> – word or part of a word that needs to the in the name of a file for it to be loaded</p></li>
 <li><p><strong>file_exts</strong> – file extensions to be considered for loading</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of loaded rollouts, and list of file names without extension</p>
 </dd>
 </dl>
@@ -1515,10 +1519,10 @@ why entities should be loaded. If no file was found, we fall back to some heuris
 <dd><p>Custom function to read a CSV file. Turns white paces into underscores for accessing the columns as exposed
 properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> – path to the CSV file</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Pandas <cite>DataFrame</cite> with replaced chars in columns</p>
 </dd>
 </dl>
@@ -1532,14 +1536,14 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 <span class="sig-name descname"><span class="pre">noisy_nonlin_fcn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/functions.html#noisy_nonlin_fcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.functions.noisy_nonlin_fcn" title="Permalink to this definition"></a></dt>
 <dd><p>A 1-dim function (sinus superposed with polynomial), representing the black box function in Bayesian optimization</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – function argument</p></li>
 <li><p><strong>noise_std</strong> – scale of the additive noise sampled from a standard normal distribution</p></li>
 <li><p><strong>f</strong> – frequency of the sinus wave [Hz]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>function value</p>
 </dd>
 </dl>
@@ -1551,10 +1555,10 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 <dd><p>The Rosenbrock function
 (consistent with <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html">https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html</a>)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>x</strong> – multi-dim column vector, or array thereof</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value of the Rosenbrock function at the input point, or array thereof</p>
 </dd>
 </dl>
@@ -1567,7 +1571,7 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 which is also randomly sampled given a range of time intervals. This procedure is repeated until the sequence is
 long enough, i.e. <cite>dt * t_end</cite> samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – time step size</p></li>
 <li><p><strong>t_end</strong> – final time</p></li>
@@ -1575,7 +1579,7 @@ long enough, i.e. <cite>dt * t_end</cite> samples.</p>
 <li><p><strong>val_space</strong> – 1-dim <cite>BoxSpace</cite> determining the range of values that can be sampled</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>array of time steps together with the associated array of values</p>
 </dd>
 </dl>
@@ -1589,13 +1593,13 @@ long enough, i.e. <cite>dt * t_end</cite> samples.</p>
 <span class="sig-name descname"><span class="pre">color_validity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#color_validity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.input_output.color_validity" title="Permalink to this definition"></a></dt>
 <dd><p>Color the entries of an data array red or green depending on the if the entries are valid.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – ndarray containing the data to print</p></li>
 <li><p><strong>valids</strong> – ndarray containing boolian integer values deciding gor the color (1 –&gt; green, 0 –&gt; red)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of stings</p>
 </dd>
 </dl>
@@ -1607,7 +1611,7 @@ long enough, i.e. <cite>dt * t_end</cite> samples.</p>
 <dd><p>Context manager that prints a message, executes the code, and then prints a symbol on success or failure (when an
 exception is raised).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg</strong> – message to print at the beginning, e.g. ‘Calibrating’</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments forwarded to <cite>print_cbt()</cite></p></li>
@@ -1621,10 +1625,10 @@ exception is raised).</p>
 <span class="sig-name descname"><span class="pre">ensure_math_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">inp:</span> <span class="pre">[&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">typing.Sequence[str]]</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;]</span></span></span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_math_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_math_mode" title="Permalink to this definition"></a></dt>
 <dd><p>Naive way to ensure that a sting is compatible with LaTeX math mode for printing.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>inp</strong> – input string</p>
 </dd>
-<dt class="field-even">Return s</dt>
+<dt class="field-even">Return s<span class="colon">:</span></dt>
 <dd class="field-even"><p>sting in math mode</p>
 </dd>
 </dl>
@@ -1635,14 +1639,14 @@ exception is raised).</p>
 <span class="sig-name descname"><span class="pre">input_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_timeout:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'int'&gt;]</span> <span class="pre">=</span> <span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#input_timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.input_output.input_timeout" title="Permalink to this definition"></a></dt>
 <dd><p>Ask the user for an input and quit with a runtime error if no input was given</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>prompt</strong> – text to be printed before recording the input</p></li>
 <li><p><strong>t_timeout</strong> – time limit to enter an input</p></li>
 <li><p><strong>default</strong> – default output that is returned if the timeout was raised, pass <cite>None</cite> for no default</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>return the input as a string captured by the system</p>
 </dd>
 </dl>
@@ -1653,13 +1657,13 @@ exception is raised).</p>
 <span class="sig-name descname"><span class="pre">insert_newlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">every</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#insert_newlines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.input_output.insert_newlines" title="Permalink to this definition"></a></dt>
 <dd><p>Inserts multiple line breaks.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>string</strong> – input string to be broken into multiple lines</p></li>
 <li><p><strong>every</strong> – gap in number of characters between every line break</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the input sting with line breaks</p>
 </dd>
 </dl>
@@ -1670,7 +1674,7 @@ exception is raised).</p>
 <span class="sig-name descname"><span class="pre">print_cbt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bright</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#print_cbt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.input_output.print_cbt" title="Permalink to this definition"></a></dt>
 <dd><p>Print a colored (and bright) message with a tag in the beginning.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg</strong> – string to print</p></li>
 <li><p><strong>color</strong> – color to print in, default <cite>‘’</cite> is the IDE’s/system’s default</p></li>
@@ -1693,7 +1697,7 @@ exception is raised).</p>
 <span class="sig-name descname"><span class="pre">select_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">items:</span> <span class="pre">~typing.Sequence,</span> <span class="pre">max_display:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">10,</span> <span class="pre">fallback:</span> <span class="pre">~typing.Optional[~typing.Callable[[],</span> <span class="pre">~pyrado.utils.input_output.T]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">item_formatter:</span> <span class="pre">~typing.Callable[[~pyrado.utils.input_output.T],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">header:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'Available</span> <span class="pre">options:',</span> <span class="pre">footer:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'Please</span> <span class="pre">enter</span> <span class="pre">the</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">option</span> <span class="pre">to</span> <span class="pre">use.'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#select_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.input_output.select_query" title="Permalink to this definition"></a></dt>
 <dd><p>Ask the user to select an item out of the given list.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>items</strong> – items for the query</p></li>
 <li><p><strong>max_display</strong> – maximum number of items</p></li>
@@ -1704,7 +1708,7 @@ exception is raised).</p>
 <li><p><strong>footer</strong> – string to print above the query</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>interactive query for selecting an experiment</p>
 </dd>
 </dl>
@@ -1720,7 +1724,7 @@ exception is raised).</p>
 <p>Project to a unit qube <span class="math notranslate nohighlight">\([0, 1]^d\)</span> and back using explicit bounds</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bound_lo</strong> – lower bound</p></li>
 <li><p><strong>bound_up</strong> – upper bound</p></li>
@@ -1732,10 +1736,10 @@ exception is raised).</p>
 <span class="sig-name descname"><span class="pre">project_back</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector.project_back"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector.project_back" title="Permalink to this definition"></a></dt>
 <dd><p>Revert the previous normalization using the stored explicit bounds</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> – input from the uni space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>element of the original space</p>
 </dd>
 </dl>
@@ -1746,10 +1750,10 @@ exception is raised).</p>
 <span class="sig-name descname"><span class="pre">project_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector.project_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector.project_to" title="Permalink to this definition"></a></dt>
 <dd><p>Normalize every dimension individually using the stored explicit bounds and the L_1 norm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> – input to project to the unit space</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>element of the unit cube</p>
 </dd>
 </dl>
@@ -1763,13 +1767,13 @@ exception is raised).</p>
 <dd><p>Symmetrically clip the entries of a tensor by the entries of a tensor with only positive entries.
 One use case of this function is if you want to clip the parameter update by a ratio of the old parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inp</strong> – input tensor</p></li>
 <li><p><strong>up_lo</strong> – upper and (negative of the) lower bound for each entry</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>clipped tensor</p>
 </dd>
 </dl>
@@ -1780,13 +1784,13 @@ One use case of this function is if you want to clip the parameter update by a r
 <span class="sig-name descname"><span class="pre">cosine_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/utils/math.html#cosine_similarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.math.cosine_similarity" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the cosine similarity between two tensors $D_text{cos}(x,y) = frac{x^T y}{<a href="#id1"><span class="problematic" id="id2">|x|</span></a> cdot <a href="#id3"><span class="problematic" id="id4">|y|</span></a>}$.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input tensor</p></li>
 <li><p><strong>y</strong> – input tensor</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>cosine similarity value</p>
 </dd>
 </dl>
@@ -1801,13 +1805,13 @@ One use case of this function is if you want to clip the parameter update by a r
 <p>Only real valued matrices are supported</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – matrix containing multiple observations of multiple variables</p></li>
 <li><p><strong>data_along_rows</strong> – if <cite>True</cite> the variables are stacked along the columns, else they are along the rows</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>covariance matrix given the data</p>
 </dd>
 </dl>
@@ -1819,13 +1823,13 @@ One use case of this function is if you want to clip the parameter update by a r
 <dd><p>Calculate proportion of the variance “explained” by the model (see coefficient of determination R^2)
 .. note:: R^2 = 0.49 implies that 49% of the variability of the dependent variable has been accounted for.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>y_mdl</strong> – predictions from the model</p></li>
 <li><p><strong>y_obs</strong> – observed data (ground truth)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>proportion of the explained variance (i.e. R^2 value)</p>
 </dd>
 </dl>
@@ -1836,13 +1840,13 @@ One use case of this function is if you want to clip the parameter update by a r
 <span class="sig-name descname"><span class="pre">logmeanexp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/math.html#logmeanexp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.math.logmeanexp" title="Permalink to this definition"></a></dt>
 <dd><p>Numerically stable way to compute <span class="math notranslate nohighlight">\(\log \left( \frac{1}{N} \sum_{i=1}^N \exp(x) \right)\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input tensor</p></li>
 <li><p><strong>dim</strong> – dimension to compute the logmeanexp` along</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>natural logarithm of the mean of the exponentiated values</p>
 </dd>
 </dl>
@@ -1857,7 +1861,7 @@ One use case of this function is if you want to clip the parameter update by a r
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Finite_difference_coefficient">https://en.wikipedia.org/wiki/Finite_difference_coefficient</a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stencils</strong> – stencil points <span class="math notranslate nohighlight">\(s\)</span>, negative means in the past, e.g. [-1, 0, 1] for a central difference or
 [-3, -1, 0] for a backward difference without equally space stencil points</p></li>
@@ -1865,7 +1869,7 @@ One use case of this function is if you want to clip the parameter update by a r
 <li><p><strong>step_size</strong> – step size <span class="math notranslate nohighlight">\(h\)</span></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>coefficients for computing the derivative of order <cite>order</cite> and the <span class="math notranslate nohighlight">\(O(h^{N-d})\)</span></p>
 </dd>
 </dl>
@@ -1876,14 +1880,14 @@ One use case of this function is if you want to clip the parameter update by a r
 <span class="sig-name descname"><span class="pre">rmse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/utils/math.html#rmse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.math.rmse" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the root mean squared error between two inputs.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input data, e.g. output of a neural network</p></li>
 <li><p><strong>y</strong> – input data, e.g. target values for the output</p></li>
 <li><p><strong>dim</strong> – dimension to compute the RMSE along</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -1894,7 +1898,7 @@ One use case of this function is if you want to clip the parameter update by a r
 <span class="sig-name descname"><span class="pre">soft_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.995</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/math.html#soft_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.math.soft_update" title="Permalink to this definition"></a></dt>
 <dd><p>Moving average update, a.k.a. Polyak update.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> – PyTroch tensor with the next / target values</p></li>
 <li><p><strong>source</strong> – PyTroch module with the current / source values</p></li>
@@ -1910,7 +1914,7 @@ One use case of this function is if you want to clip the parameter update by a r
 <dd><p>Moving average update, a.k.a. Polyak update.
 Modifies the input argument <cite>target</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> – PyTroch module with parameters to be updated</p></li>
 <li><p><strong>source</strong> – PyTroch module with parameters to update to</p></li>
@@ -1932,7 +1936,7 @@ nonlinearity. If a list of nonlinearities is provided, every dimension will be p
 The scaling and the bias are learnable parameters.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>in_features</strong> – size of each input sample</p></li>
 <li><p><strong>nonlin</strong> – nonlinearity</p></li>
@@ -2058,7 +2062,7 @@ registered hooks while the latter silently ignores them.</p>
 <p>Layer which scales (strictly positive) the input using a learnable scaling factor</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>in_features</strong> – size of each input sample</p></li>
 <li><p><strong>init_weight</strong> – initial scaling factor</p></li>
@@ -2102,7 +2106,7 @@ registered hooks while the latter silently ignores them.</p>
 <p>Layer which scales the output of the input using a learnable scaling factor</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>in_features</strong> – size of each input sample</p></li>
 <li><p><strong>init_weight</strong> – initial scaling factor</p></li>
@@ -2157,10 +2161,10 @@ registered hooks while the latter silently ignores them.</p>
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/optimizers.html#GSS.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.optimizers.GSS.step" title="Permalink to this definition"></a></dt>
 <dd><p>Performs a single optimization step.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>closure</strong> – a closure that reevaluates the model and returns the loss</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>accumulated loss for all parameter groups after the parameter update</p>
 </dd>
 </dl>
@@ -2176,13 +2180,13 @@ registered hooks while the latter silently ignores them.</p>
 <span class="sig-name descname"><span class="pre">filter_los_by_lok</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/pyrado/utils/ordering.html#filter_los_by_lok"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.ordering.filter_los_by_lok" title="Permalink to this definition"></a></dt>
 <dd><p>Filter a list of strings by a list of keys strings.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>strs</strong> – list of strings to filter</p></li>
 <li><p><strong>keys</strong> – keys-strings to filter by</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list with unique elements of the input list which contain at least one of the keys</p>
 </dd>
 </dl>
@@ -2193,10 +2197,10 @@ registered hooks while the latter silently ignores them.</p>
 <span class="sig-name descname"><span class="pre">get_immediate_subdirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/ordering.html#get_immediate_subdirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.ordering.get_immediate_subdirs" title="Permalink to this definition"></a></dt>
 <dd><p>Get all 1st level subdirectories of a specified directory (i.e. a path).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parent_dir</strong> – directory in which to look for subdirectories</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of names of all 1st level subdirectories</p>
 </dd>
 </dl>
@@ -2211,10 +2215,10 @@ registered hooks while the latter silently ignores them.</p>
 <p><a class="reference external" href="https://stackoverflow.com/questions/4836710/is-there-a-built-in-function-for-string-natural-sort">https://stackoverflow.com/questions/4836710/is-there-a-built-in-function-for-string-natural-sort</a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>lst</strong> – input list</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>alpha-numerically sorted list</p>
 </dd>
 </dl>
@@ -2225,10 +2229,10 @@ registered hooks while the latter silently ignores them.</p>
 <span class="sig-name descname"><span class="pre">remove_none_from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/ordering.html#remove_none_from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.ordering.remove_none_from_list" title="Permalink to this definition"></a></dt>
 <dd><p>Create a new list from the given one without <cite>None</cite> entries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>lst</strong> – list to remove the <cite>None</cite> entries from</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list without <cite>None</cite> entries from</p>
 </dd>
 </dl>
@@ -2257,7 +2261,7 @@ When the property is first accessed, the function is called to compute the value
 <span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/saving_loading.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.saving_loading.load" title="Permalink to this definition"></a></dt>
 <dd><p>Load an object object using a prefix or suffix, depending on the meta information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> – name of the object for loading including the file extension, e.g. ‘policy.pt’ for PyTorch modules
 like a Pyrado <cite>Policy</cite> instance</p></li>
@@ -2281,7 +2285,7 @@ module’s <cite>state_dict</cite></p></li>
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_state_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/saving_loading.html#save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.saving_loading.save" title="Permalink to this definition"></a></dt>
 <dd><p>Save an object object using a prefix or suffix, depending on the meta information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obj</strong> – PyTorch or pickled object to save</p></li>
 <li><p><strong>name</strong> – name of the object for loading including the file extension, e.g. ‘policy.pt’ for PyTorch modules
@@ -2309,7 +2313,7 @@ PyTorch modules (file_ext = ‘pt’) are saved.</p></li>
 <span class="sig-name descname"><span class="pre">create_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">Embedding</span></a></span></span><a class="reference internal" href="_modules/pyrado/utils/sbi.html#create_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.sbi.create_embedding" title="Permalink to this definition"></a></dt>
 <dd><p>Create an embedding to use with sbi.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> – identifier of the embedding</p></li>
 <li><p><strong>env_spec</strong> – environment specification</p></li>
@@ -2317,7 +2321,7 @@ PyTorch modules (file_ext = ‘pt’) are saved.</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments forwarded to the embedding’s constructor</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>embedding instance</p>
 </dd>
 </dl>
@@ -2332,10 +2336,10 @@ PyTorch modules (file_ext = ‘pt’) are saved.</p></li>
 <dd><p>Unfortunately, deepcopy() only works for leave tensors right now. Thus, we need to iterate throught the input and
 clone the PyTorch tensors where possible.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>copy_from</strong> – list or dict to copy</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>copy of the input where every tensor was cloned, and every other data type was deepcopied</p>
 </dd>
 </dl>
@@ -2346,14 +2350,14 @@ clone the PyTorch tensors where possible.</p>
 <span class="sig-name descname"><span class="pre">insert_tensor_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/utils/tensor.html#insert_tensor_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.tensor.insert_tensor_col" title="Permalink to this definition"></a></dt>
 <dd><p>Insert a column into a PyTorch tensor`.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – original tensor</p></li>
 <li><p><strong>idx</strong> – column index where to insert the column</p></li>
 <li><p><strong>col</strong> – tensor to insert</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>tensor with new column at index idx</p>
 </dd>
 </dl>
@@ -2364,10 +2368,10 @@ clone the PyTorch tensors where possible.</p>
 <span class="sig-name descname"><span class="pre">stack_tensor_dict_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor_dict_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/utils/tensor.html#stack_tensor_dict_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.tensor.stack_tensor_dict_list" title="Permalink to this definition"></a></dt>
 <dd><p>Stack a list of dictionaries of {tensors or dict of tensors}.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>tensor_dict_list</strong> – a list of dicts of {tensors or dict of tensors}.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a dict of {stacked tensors or dict of stacked tensors}</p>
 </dd>
 </dl>
@@ -2378,10 +2382,10 @@ clone the PyTorch tensors where possible.</p>
 <span class="sig-name descname"><span class="pre">stack_tensor_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/utils/tensor.html#stack_tensor_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.tensor.stack_tensor_list" title="Permalink to this definition"></a></dt>
 <dd><p>Convenience function for stacking a list of tensors</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>tensor_list</strong> – list of tensors to stack (along a new dim)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>tensor of at least 1-dim</p>
 </dd>
 </dl>
@@ -2395,10 +2399,10 @@ clone the PyTorch tensors where possible.</p>
 <span class="sig-name descname"><span class="pre">get_class_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyrado/utils.html#get_class_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.get_class_name" title="Permalink to this definition"></a></dt>
 <dd><p>Get an arbitrary objects name.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obj</strong> – any object</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>name of the class of the given object</p>
 </dd>
 </dl>
@@ -2409,10 +2413,10 @@ clone the PyTorch tensors where possible.</p>
 <span class="sig-name descname"><span class="pre">run_once</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils.html#run_once"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.run_once" title="Permalink to this definition"></a></dt>
 <dd><p>Wrapper to ensure that a function is only called once.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fcn</strong> – function that should only be called once</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>wrapped function</p>
 </dd>
 </dl>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>episodic &mdash; Pyrado 0.7.1 documentation</title>
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -224,7 +228,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">episodic</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/algorithms.episodic.rst.txt" rel="nofollow"> View page source</a>
@@ -255,7 +259,7 @@ Annals OR, 2005
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -293,7 +297,7 @@ else a diagonal covariance is used</p></li>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/cem.html#CEM.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.cem.CEM.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the policy from the given samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
 <li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
@@ -317,7 +321,7 @@ and evaluates them on multiple rollouts. If one of the new parameters is better 
 If the exploration parameters grow too large, they are reset.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -342,7 +346,7 @@ If the exploration parameters grow too large, they are reset.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HC.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HC.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the policy from the given samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
 <li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
@@ -365,7 +369,7 @@ If the exploration parameters grow too large, they are reset.</p>
 <p>Hill Climbing variant using an exploration strategy that samples policy parameters from a hyper-sphere</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>expl_r_init</strong> – initial radius of the hyper sphere for the exploration strategy</p></li>
 <li><p><strong>args</strong> – forwarded the superclass constructor</p></li>
@@ -387,7 +391,7 @@ If the exploration parameters grow too large, they are reset.</p>
 <p>Hill Climbing variant using an exploration strategy with normally distributed noise on the policy parameters</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>expl_std_init</strong> – initial standard deviation for the exploration strategy</p></li>
 <li><p><strong>args</strong> – forwarded the superclass constructor</p></li>
@@ -418,7 +422,7 @@ JMLR, 2014</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -443,14 +447,14 @@ JMLR, 2014</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_utilities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_mean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/nes.html#NES.compute_utilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.nes.NES.compute_utilities" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the utilities as described in section 3.1 of [1] (a.k.a. Hansen ranking with uniform baseline)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pop_size</strong> – number of solutions in the population</p></li>
 <li><p><strong>eta_mean</strong> – step size factor for the mean</p></li>
 <li><p><strong>eta_std</strong> – step size factor for the standard deviation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>utility coefficient for the mean, and utility coefficient for the standard deviation</p>
 </dd>
 </dl>
@@ -466,7 +470,7 @@ JMLR, 2014</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/nes.html#NES.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.nes.NES.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the policy from the given samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
 <li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
@@ -487,7 +491,7 @@ JMLR, 2014</p>
 <p>Base for all algorithms that explore directly in the policy parameter space</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -521,7 +525,7 @@ with the number of policy parameters</p></li>
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -539,7 +543,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -552,7 +556,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -567,7 +571,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the policy from the given samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
 <li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
@@ -593,7 +597,7 @@ Policy Gradients”, Neural Networks, 2010</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -622,7 +626,7 @@ Policy Gradients”, Neural Networks, 2010</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/pepg.html#PEPG.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.pepg.PEPG.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the policy from the given samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
 <li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
@@ -639,13 +643,13 @@ Policy Gradients”, Neural Networks, 2010</p>
 <dd><p>Transform a 1-dim ndarray with arbitrary scalar values to an array with equally spaced rank values.
 This is a nonlinear transform.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> – input array</p></li>
 <li><p><strong>centered</strong> – if the transform should by centered around zero</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>transformed array</p>
 </dd>
 </dl>
@@ -671,7 +675,7 @@ The original implementation is tailored to movement primitives like DMPs.</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -701,7 +705,7 @@ The original implementation is tailored to movement primitives like DMPs.</p>
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -712,7 +716,7 @@ Be sure to call this function if you override it.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/power.html#PoWER.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.power.PoWER.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the policy from the given samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
 <li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
@@ -752,7 +756,7 @@ Be sure to call this function if you override it.</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -782,13 +786,13 @@ optimizer from scipy (recommended)</p></li>
 <span class="sig-name descname"><span class="pre">dual_evaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.dual_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.dual_evaluation" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the REPS dual function value for policy evaluation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
 <li><p><strong>rets</strong> – return values per policy sample after averaging over multiple rollouts using the same policy</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>dual loss value</p>
 </dd>
 </dl>
@@ -799,14 +803,14 @@ optimizer from scipy (recommended)</p></li>
 <span class="sig-name descname"><span class="pre">dual_improvement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.dual_improvement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.dual_improvement" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the REPS dual function value for policy improvement.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
 <li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
 <li><p><strong>w</strong> – weights of the policy parameter samples</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>dual loss value</p>
 </dd>
 </dl>
@@ -824,7 +828,7 @@ optimizer from scipy (recommended)</p></li>
 <dd><p>Minimize the given dual function. This function can be called for the dual evaluation loss or the dual
 improvement loss.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>loss_fcn</strong> – function to minimize, different for <cite>wml()</cite> and <cite>wmap()</cite></p></li>
 <li><p><strong>rets</strong> – return values per policy sample after averaging over multiple rollouts using the same policy</p></li>
@@ -845,7 +849,7 @@ improvement loss.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the policy from the given samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
 <li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
@@ -860,10 +864,10 @@ improvement loss.</p>
 <dd><p>Compute the wights which are used to weights thy policy samples by their return.
 As stated in [2, sec 4.1], we could calculate weights using any rank preserving transformation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rets</strong> – return values per policy sample after averaging over multiple rollouts using the same policy</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>weights of the policy parameter samples</p>
 </dd>
 </dl>
@@ -874,7 +878,7 @@ As stated in [2, sec 4.1], we could calculate weights using any rank preserving 
 <span class="sig-name descname"><span class="pre">wmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.wmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.wmap" title="Permalink to this definition"></a></dt>
 <dd><p>Weighted maximum a-posteriori likelihood update of the policy’s mean and the exploration strategy’s covariance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
 <li><p><strong>w</strong> – weights of the policy parameter samples</p></li>
@@ -888,7 +892,7 @@ As stated in [2, sec 4.1], we could calculate weights using any rank preserving 
 <span class="sig-name descname"><span class="pre">wml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.wml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.wml" title="Permalink to this definition"></a></dt>
 <dd><p>Weighted maximum likelihood update of the policy’s mean and the exploration strategy’s covariance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
 <li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
@@ -914,7 +918,7 @@ As stated in [2, sec 4.1], we could calculate weights using any rank preserving 
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>subrtn</strong> – wrapped algorithm to fit the domain parameter distribution</p></li>
 <li><p><strong>behavior_policy</strong> – lower level policy used to generate the rollouts</p></li>
@@ -940,13 +944,13 @@ As stated in [2, sec 4.1], we could calculate weights using any rank preserving 
 <dd><p>Compute the discrepancy between two time sequences of observations given metric.
 Be sure to align and truncate the rollouts beforehand.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollout_real</strong> – (concatenated) real-world rollout containing the observations</p></li>
 <li><p><strong>rollout_sim</strong> – (concatenated) simulated rollout containing the observations</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>discrepancy cost summed over the observation dimensions</p>
 </dd>
 </dl>
@@ -964,14 +968,14 @@ Be sure to align and truncate the rollouts beforehand.</p>
 are scaled with their range, e.g. to compare a deviation over different kinds of observations like position and
 annular velocity. Thus, infinite bounds are not feasible.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bound_lo</strong> – lower bound of the observation space</p></li>
 <li><p><strong>bound_up</strong> – upper bound of the observation space</p></li>
 <li><p><strong>labels</strong> – label for each dimension of the observation space to override</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>clipped lower and upper bound</p>
 </dd>
 </dl>
@@ -984,7 +988,7 @@ annular velocity. Thus, infinite bounds are not feasible.</p>
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -996,7 +1000,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -1009,7 +1013,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -1032,7 +1036,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 observation sequence. When truncating, we compare every of the M real rollouts to every of the N simulated
 rollouts, thus replicate the real rollout N times and the simulated rollouts M times.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollouts_real</strong> – M real-world rollouts of different length if <cite>replicate = True</cite>, else K real-world
 rollouts of different length</p></li>
@@ -1042,7 +1046,7 @@ rollouts of different length</p></li>
 <cite>rollouts_sim</cite>, in this case the number of rollouts and the initial states have to match</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>MxN real-world rollouts and MxN simulated rollouts of equal length if <cite>replicate = True</cite>, else
 K real-world rollouts and K simulated rollouts of equal length</p>
 </dd>
@@ -1059,7 +1063,7 @@ K real-world rollouts and K simulated rollouts of equal length</p>
 the L2 norm. The reason for this is that longer time series would be punished otherwise.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>err</strong> – error signal with time steps along the first dimension</p></li>
 <li><p><strong>w_abs</strong> – weight for the mean absolute errors</p></li>
@@ -1067,7 +1071,7 @@ the L2 norm. The reason for this is that longer time series would be punished ot
 <li><p><strong>obs_dim_weight</strong> – (diagonal) weight matrix for the different observation dimensions</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>weighted linear combination of the error’s MAE and MSE, averaged over time</p>
 </dd>
 </dl>

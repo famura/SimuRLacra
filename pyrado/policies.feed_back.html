@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>feed_back &mdash; Pyrado 0.7.1 documentation</title>
@@ -30,14 +30,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -180,7 +184,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">feed_back</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/policies.feed_back.rst.txt" rel="nofollow"> View page source</a>
@@ -205,7 +209,7 @@ of a robot (e.g. Barrett WAM). By re-using the RBF, we reduce the number of para
 time get the velocity information from the features, i.e. the derivative of the normalized Gaussians.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – specification of environment</p></li>
 <li><p><strong>rbf_hparam</strong> – hyper-parameters for the RBF-features, see <cite>RBFFeat</cite></p></li>
@@ -222,10 +226,10 @@ RBF features. Masking out RBFs makes sense if you want to obtain a smooth starti
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/dual_rfb.html#DualRBFLinearPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.dual_rfb.DualRBFLinearPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluate the features at the given observation or use given feature values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obs</strong> – observations from the environment</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>actions</p>
 </dd>
 </dl>
@@ -248,7 +252,7 @@ RBF features. Masking out RBFs makes sense if you want to obtain a smooth starti
 <p>State-action value (Q-value) feed-forward neural network policy for discrete actions</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>net</strong> – module that approximates the Q-values given the observations and possible (discrete) actions.
@@ -264,13 +268,13 @@ Make sure to create this object with the correct input and output sizes by using
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#DiscreteActQValPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -293,7 +297,7 @@ Make sure to create this object with the correct input and output sizes by using
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#DiscreteActQValPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -313,10 +317,10 @@ Make sure to create this object with the correct input and output sizes by using
 <dd><p>Compute the state-action values for the given observations and the actions that maximize the estimated Q-Values.
 Since we operate on a discrete action space, we can construct a table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obs</strong> – current observations</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Q-values for state-action combinations where the argmax actions, dimension equals flat action space dimension</p>
 </dd>
 </dl>
@@ -331,7 +335,7 @@ Since we operate on a discrete action space, we can construct a table.</p>
 <p>Feed-forward neural network</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_size</strong> – number of inputs</p></li>
 <li><p><strong>output_size</strong> – number of outputs</p></li>
@@ -369,7 +373,7 @@ registered hooks while the latter silently ignores them.</p>
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#FNN.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.FNN.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the network’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>init_values</strong> – Tensor of fixed initial network parameter values</p>
 </dd>
 </dl>
@@ -396,7 +400,7 @@ The values are copied, modifying the return value does not propagate to the actu
 <p>Feed-forward neural network policy</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>hidden_sizes</strong> – sizes of hidden layer outputs. Every entry creates one hidden layer.</p></li>
@@ -413,13 +417,13 @@ The values are copied, modifying the return value does not propagate to the actu
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#FNNPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.FNNPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -430,7 +434,7 @@ The values are copied, modifying the return value does not propagate to the actu
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/feed_back/fnn.html#FNNPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.fnn.FNNPolicy.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -456,7 +460,7 @@ The values are copied, modifying the return value does not propagate to the actu
 <p>A linear policy defined by the inner product of nonlinear features of the observations with the policy parameters</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – specification of environment</p></li>
 <li><p><strong>feats</strong> – list of feature functions</p></li>
@@ -470,10 +474,10 @@ The values are copied, modifying the return value does not propagate to the actu
 <span class="sig-name descname"><span class="pre">eval_feats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/linear.html#LinearPolicy.eval_feats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.linear.LinearPolicy.eval_feats" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluate the features for the given observations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
 </dd>
-<dt class="field-even">Return feats_val</dt>
+<dt class="field-even">Return feats_val<span class="colon">:</span></dt>
 <dd class="field-even"><p>the features’ values</p>
 </dd>
 </dl>
@@ -490,10 +494,10 @@ The values are copied, modifying the return value does not propagate to the actu
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/linear.html#LinearPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.linear.LinearPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluate the features at the given observation or use given feature values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obs</strong> – observations from the environment</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>actions</p>
 </dd>
 </dl>
@@ -504,7 +508,7 @@ The values are copied, modifying the return value does not propagate to the actu
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/feed_back/linear.html#LinearPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.linear.LinearPolicy.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -530,7 +534,7 @@ The values are copied, modifying the return value does not propagate to the actu
 <p>Policy architecture which has a common body and two heads that have a separate last layer</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>shared_hidden_sizes</strong> – sizes of shared hidden layer outputs. Every entry creates one shared hidden layer.</p></li>
@@ -550,13 +554,13 @@ The values are copied, modifying the return value does not propagate to the actu
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/policies/feed_back/two_headed_fnn.html#TwoHeadedFNNPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -567,7 +571,7 @@ The values are copied, modifying the return value does not propagate to the actu
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/feed_back/two_headed_fnn.html#TwoHeadedFNNPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>

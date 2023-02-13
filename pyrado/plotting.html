@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>plotting &mdash; Pyrado 0.7.1 documentation</title>
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -187,7 +191,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">plotting</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/plotting.rst.txt" rel="nofollow"> View page source</a>
@@ -217,7 +221,7 @@ The plot is neither shown nor saved.</p>
 <cite>constrained_layout=True</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>plot_type</strong> – tye of categorical plot, pass box or violin</p></li>
 <li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
@@ -233,7 +237,7 @@ The plot is neither shown nor saved.</p>
 <li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to seaborn’s <cite>boxplot()</cite> or <cite>violinplot()</cite> function</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>handle to the resulting figure</p>
 </dd>
 </dl>
@@ -258,7 +262,7 @@ The plot is neither shown nor saved.</p>
 </div></blockquote>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>plot_type</strong> – tye of 1-dim plot: <cite>mean_std</cite>, <cite>min_mean_max</cite>, or <cite>ci_on_mean</cite></p></li>
 <li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
@@ -276,7 +280,7 @@ The plot is neither shown nor saved.</p>
 <li><p><strong>legend_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>legend()</cite> function, e.g. <cite>loc=’best’</cite></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>handle to the resulting figure</p>
 </dd>
 </dl>
@@ -298,7 +302,7 @@ The plot is neither shown nor saved.</p>
 </div></blockquote>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>plot_type</strong> – tye of 1-dim plot: <cite>mean_std</cite>, <cite>min_mean_max</cite>, or <cite>ci_on_mean</cite></p></li>
 <li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
@@ -318,7 +322,7 @@ The plot is neither shown nor saved.</p>
 <li><p><strong>legend_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>legend()</cite> function, e.g. <cite>loc=’best’</cite></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>handle to the resulting figure</p>
 </dd>
 </dl>
@@ -329,7 +333,7 @@ The plot is neither shown nor saved.</p>
 <span class="sig-name descname"><span class="pre">draw_dts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dts_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dts_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dts_remainder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_top_lim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/curve.html#draw_dts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.curve.draw_dts" title="Permalink to this definition"></a></dt>
 <dd><p>Create a figure and draw the time intervals <span class="math notranslate nohighlight">\(\Delta_t\)</span> of various parts of one time step.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dts_policy</strong> – time it took to compute the policy’s action</p></li>
 <li><p><strong>dts_step</strong> – time it took to perform the</p></li>
@@ -361,7 +365,7 @@ the axis ticks. It is assumed that the data is equally spaced.</p>
 <cite>constrained_layout=True</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – 2D pandas DataFrame</p></li>
 <li><p><strong>ax_hm</strong> – axis to draw the heat map onto, if <cite>None</cite> a new figure is created</p></li>
@@ -388,7 +392,7 @@ This can be overwritten <cite>xtick_label_prec</cite> and <cite>ytick_label_prec
 <li><p><strong>num_major_ticks_cb</strong> – number of major axis ticks for the color bar, set <cite>None</cite> for default behavior</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>handles to the heat map and the color bar figures (<cite>None</cite> if not existent)</p>
 </dd>
 </dl>
@@ -406,7 +410,7 @@ It also ensures that if you close a figure, it does not reappear on the next upd
 If all figures are closed, the update loop is stopped.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path</strong> – name of file to load updates from</p></li>
 <li><p><strong>data_loader</strong> – called to load the file contents into some internal representation like a pandas <cite>DataFrame</cite></p></li>
@@ -421,7 +425,7 @@ If all figures are closed, the update loop is stopped.</p>
 <dd><p>Decorator to define a figure update function.
 Every marked function will be called when the file changes to visualize the updated data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Usage</dt>
+<dt class="field-odd">Usage<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@lfm</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="s1">&#39;A figure&#39;</span><span class="p">)</span>
@@ -431,10 +435,10 @@ Every marked function will be called when the file changes to visualize the upda
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>title</strong> – figure title</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>decorator for the plotting function</p>
 </dd>
 </dl>
@@ -461,7 +465,7 @@ Every marked function will be called when the file changes to visualize the upda
 <cite>constrained_layout=True</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>policy</strong> – policy to visualize</p></li>
 <li><p><strong>env_spec</strong> – environment specification</p></li>
@@ -474,7 +478,7 @@ Every marked function will be called when the file changes to visualize the upda
 <li><p><strong>y_label</strong> – label for the y axis</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>handles to figures</p>
 </dd>
 </dl>
@@ -488,7 +492,7 @@ Every marked function will be called when the file changes to visualize the upda
 <span class="sig-name descname"><span class="pre">plot_actions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_actions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_actions" title="Permalink to this definition"></a></dt>
 <dd><p>Plot all action trajectories of the given rollout.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ro</strong> – input rollout</p></li>
 <li><p><strong>env</strong> – environment (used for getting the clipped action values)</p></li>
@@ -502,7 +506,7 @@ Every marked function will be called when the file changes to visualize the upda
 <span class="sig-name descname"><span class="pre">plot_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_features" title="Permalink to this definition"></a></dt>
 <dd><p>Plot all features given the policy and the observation trajectories.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>policy</strong> – linear policy used during the rollout</p></li>
 <li><p><strong>ro</strong> – input rollout</p></li>
@@ -516,7 +520,7 @@ Every marked function will be called when the file changes to visualize the upda
 <span class="sig-name descname"><span class="pre">plot_mean_std_across_rollouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_applied_actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_mean_std_across_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_mean_std_across_rollouts" title="Permalink to this definition"></a></dt>
 <dd><p>Plot the mean and standard deviation across a selection of rollouts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollouts</strong> – list of rollouts, they can be of unequal length but are assumed to be from the same type of env</p></li>
 <li><p><strong>idcs_obs</strong> – indices of the observations to process and plot, pass <cite>None</cite> to select all</p></li>
@@ -532,7 +536,7 @@ Every marked function will be called when the file changes to visualize the upda
 <span class="sig-name descname"><span class="pre">plot_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_sel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_observations" title="Permalink to this definition"></a></dt>
 <dd><p>Plot all observation trajectories of the given rollout.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ro</strong> – input rollout</p></li>
 <li><p><strong>idcs_sel</strong> – indices of the selected selected observations, if <cite>None</cite> plot all</p></li>
@@ -546,7 +550,7 @@ Every marked function will be called when the file changes to visualize the upda
 <span class="sig-name descname"><span class="pre">plot_observations_actions_rewards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_observations_actions_rewards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_observations_actions_rewards" title="Permalink to this definition"></a></dt>
 <dd><p>Plot all observation, action, and reward trajectories of the given rollout.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ro</strong> – input rollout</p>
 </dd>
 </dl>
@@ -557,7 +561,7 @@ Every marked function will be called when the file changes to visualize the upda
 <span class="sig-name descname"><span class="pre">plot_potentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'joint'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_potentials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_potentials" title="Permalink to this definition"></a></dt>
 <dd><p>Plot the trajectories specific to a potential-based policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ro</strong> – input rollout</p></li>
 <li><p><strong>layout</strong> – group jointly (default), or create a separate sub-figure for each plot</p></li>
@@ -571,7 +575,7 @@ Every marked function will be called when the file changes to visualize the upda
 <span class="sig-name descname"><span class="pre">plot_rewards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_rewards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_rewards" title="Permalink to this definition"></a></dt>
 <dd><p>Plot the reward trajectories of the given rollout.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ro</strong> – input rollout</p>
 </dd>
 </dl>
@@ -582,7 +586,7 @@ Every marked function will be called when the file changes to visualize the upda
 <span class="sig-name descname"><span class="pre">plot_rollouts_segment_wise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments_ground_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments_multiple_envs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments_nominal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rec_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_round</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'states'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Colormap</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">PathLike</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('pdf',</span> <span class="pre">'pgf',</span> <span class="pre">'png')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_rollouts_segment_wise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_rollouts_segment_wise" title="Permalink to this definition"></a></dt>
 <dd><p>Plot the different rollouts in separate figures and the different state dimensions along the columns.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>plot_type</strong> – type of plot, pass “samples” to plot the rollouts of the most likely domain parameters as
 individual lines, or pass “confidence” to plot the most likely one, and the mean <span class="math notranslate nohighlight">\(\pm\)</span> 1 std</p></li>
@@ -603,7 +607,7 @@ instances, e.g. samples from a posterior coming from <cite>NDPR</cite></p></li>
 <li><p><strong>file_format</strong> – select the file format to store the plots</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of handles to the created figures</p>
 </dd>
 </dl>
@@ -614,7 +618,7 @@ instances, e.g. samples from a posterior coming from <cite>NDPR</cite></p></li>
 <span class="sig-name descname"><span class="pre">plot_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">idcs_sel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_states" title="Permalink to this definition"></a></dt>
 <dd><p>Plot all state trajectories of the given rollout.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ro</strong> – input rollout</p></li>
 <li><p><strong>idcs_sel</strong> – indices of the selected selected states, if <cite>None</cite> plot all</p></li>
@@ -628,7 +632,7 @@ instances, e.g. samples from a posterior coming from <cite>NDPR</cite></p></li>
 <span class="sig-name descname"><span class="pre">plot_statistic_across_rollouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_fcn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_fcn_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_idcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_idcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_statistic_across_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_statistic_across_rollouts" title="Permalink to this definition"></a></dt>
 <dd><p>Plot one statistic of interest (e.g. mean) across a list of rollouts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollouts</strong> – list of rollouts, they can be of unequal length but are assumed to be from the same type of env</p></li>
 <li><p><strong>stat_fcn</strong> – function to calculate the statistic of interest (e.g. np.mean)</p></li>
@@ -653,7 +657,7 @@ instances, e.g. samples from a posterior coming from <cite>NDPR</cite></p></li>
 <cite>constrained_layout=True</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – x-axis 1-dim grid for constructing the 2-dim mesh grid</p></li>
 <li><p><strong>y</strong> – y-axis 1-dim grid for constructing the 2-dim mesh grid</p></li>
@@ -667,7 +671,7 @@ instances, e.g. samples from a posterior coming from <cite>NDPR</cite></p></li>
 <li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>plot_surface()</cite> function</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>handle to figure</p>
 </dd>
 </dl>
@@ -721,7 +725,7 @@ surprises; therefore the default is <code class="docutils literal notranslate"><
 <span class="sig-name descname"><span class="pre">draw_sep_cbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax_cb:</span> <span class="pre">~typing.Optional[~matplotlib.axes._axes.Axes]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar_label:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar_orientation:</span> <span class="pre">~typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_size:</span> <span class="pre">~typing.Optional[tuple]</span> <span class="pre">=</span> <span class="pre">(8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap:</span> <span class="pre">~typing.Optional[~matplotlib.colors.Colormap]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm:</span> <span class="pre">~typing.Optional[~matplotlib.colors.Normalize]</span> <span class="pre">=</span> <span class="pre">&lt;matplotlib.colors.Normalize</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_major_ticks_cb:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#draw_sep_cbar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.draw_sep_cbar" title="Permalink to this definition"></a></dt>
 <dd><p>Add a separate figure with a color bar.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax_cb</strong> – axis to draw the color bar onto, if <cite>None</cite> a new figure is created</p></li>
 <li><p><strong>cbar_label</strong> – label for the color bar, if <cite>None</cite> no label is printed</p></li>
@@ -732,7 +736,7 @@ surprises; therefore the default is <code class="docutils literal notranslate"><
 <li><p><strong>num_major_ticks_cb</strong> – number of major axis ticks for the color bar, set <cite>None</cite> for default behavior</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>handle color bar figure</p>
 </dd>
 </dl>
@@ -747,10 +751,10 @@ surprises; therefore the default is <code class="docutils literal notranslate"><
 <p><a class="reference external" href="https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-35.php">https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-35.php</a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n</strong> – given number <span class="math notranslate nohighlight">\(n\)</span></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>largest prime number <span class="math notranslate nohighlight">\(p\)</span> such that <span class="math notranslate nohighlight">\(p \cdot x = n\)</span></p>
 </dd>
 </dl>
@@ -761,10 +765,10 @@ surprises; therefore the default is <code class="docutils literal notranslate"><
 <span class="sig-name descname"><span class="pre">most_square_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#most_square_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.most_square_product" title="Permalink to this definition"></a></dt>
 <dd><p>Heuristic to get two square-like integers that when multiplied yield the input</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n</strong> – given number <span class="math notranslate nohighlight">\(n\)</span></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>lower and higher integer</p>
 </dd>
 </dl>
@@ -775,13 +779,13 @@ surprises; therefore the default is <code class="docutils literal notranslate"><
 <span class="sig-name descname"><span class="pre">num_rows_cols_from_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/plotting/utils.html#num_rows_cols_from_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.plotting.utils.num_rows_cols_from_length" title="Permalink to this definition"></a></dt>
 <dd><p>Use a heuristic to get the number of rows and columns for a plotting grid, given the total number of plots to draw.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n</strong> – total number of plots to draw</p></li>
 <li><p><strong>transposed</strong> – change number of rows and number of columns</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>number of rows and columns</p>
 </dd>
 </dl>
@@ -807,7 +811,7 @@ surprises; therefore the default is <code class="docutils literal notranslate"><
 <a class="reference external" href="https://stackoverflow.com/questions/11367736/matplotlib-consistent-font-using-latex">https://stackoverflow.com/questions/11367736/matplotlib-consistent-font-using-latex</a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>style_name</strong> – str containing the matplotlib style name, or ‘default’ for the Pyrado default style</p>
 </dd>
 </dl>

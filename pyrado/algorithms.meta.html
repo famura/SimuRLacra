@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>meta &mdash; Pyrado 0.7.1 documentation</title>
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -285,7 +289,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">meta</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/algorithms.meta.rst.txt" rel="nofollow"> View page source</a>
@@ -311,7 +315,7 @@
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment to train in</p></li>
@@ -341,13 +345,13 @@
 <span class="sig-name descname"><span class="pre">compute_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_instances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#ADR.compute_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.ADR.compute_params" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sim_instances</strong> – Physics configurations rollout</p></li>
 <li><p><strong>t</strong> – time step to chose</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>parameters at the time</p>
 </dd>
 </dl>
@@ -375,7 +379,7 @@
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -388,7 +392,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -407,7 +411,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>Class for generating the discriminator rewards in ADR. Generates a reward using a trained discriminator network.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>batch_size</strong> – batch size for each update step</p></li>
@@ -423,13 +427,13 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Compute the reward of a trajectory.
 Trajectories considered as not fixed yield a high reward.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>traj</strong> – trajectory to evaluate</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a score</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>to.Tensor</p>
 </dd>
 </dl>
@@ -449,7 +453,7 @@ Trajectories considered as not fixed yield a high reward.</p>
 <p>Wrapper to encapsulate the domain parameter search as an RL task.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wrapped_env</strong> – the environment to wrap</p></li>
 <li><p><strong>parameters</strong> – which physics parameters should be randomized</p></li>
@@ -478,10 +482,10 @@ Trajectories considered as not fixed yield a high reward.</p>
 <span class="sig-name descname"><span class="pre">eval_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.eval_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.eval_states" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluate the states.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>states</strong> – the states to evaluate</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>respective rewards and according trajectories</p>
 </dd>
 </dl>
@@ -513,13 +517,13 @@ Trajectories considered as not fixed yield a high reward.</p>
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – set explicit initial state if not None</p></li>
 <li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
@@ -530,10 +534,10 @@ Trajectories considered as not fixed yield a high reward.</p>
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.step" title="Permalink to this definition"></a></dt>
 <dd><p>Perform one time step of the simulation. When a terminal condition is met, the reset function is called.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
 </dd>
-<dt class="field-even">Return tuple of obs, reward, done, and info</dt>
+<dt class="field-even">Return tuple of obs, reward, done, and info<span class="colon">:</span></dt>
 <dd class="field-even"><p>obs : current observation of the environment
 reward: reward depending on the selected reward function
 done: indicates whether the episode has ended
@@ -549,10 +553,10 @@ env_info: contains diagnostic information about the environment</p>
 <span class="sig-name descname"><span class="pre">preprocess_rollout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#preprocess_rollout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.preprocess_rollout" title="Permalink to this definition"></a></dt>
 <dd><p>Extract observations and actions from a <cite>StepSequence</cite> and packs them into a PyTorch tensor.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rollout</strong> – a <cite>StepSequence</cite> instance containing a trajectory</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a PyTorch tensor` containing the trajectory</p>
 </dd>
 </dl>
@@ -573,7 +577,7 @@ Active Construction of Physically-Plausible Perturbations”, IROS, 2017</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment in which the agent should be trained</p></li>
@@ -601,7 +605,7 @@ Active Construction of Physically-Plausible Perturbations”, IROS, 2017</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -614,7 +618,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -628,7 +632,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.arpl.ARPL.wrap_env">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wrap_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dyn_eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dyn_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">halfspan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proc_eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proc_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">torch_observation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/arpl.html#ARPL.wrap_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.arpl.ARPL.wrap_env" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – the environment in which the agent should be trained</p></li>
 <li><p><strong>policy</strong> – policy to be updated</p></li>
@@ -672,7 +676,7 @@ Model Ensembles”, ICLR, 2017</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – same environment as the subroutine runs in. Only used for checking and saving the randomizer.</p></li>
 <li><p><strong>subrtn</strong> – algorithm which performs the policy / value-function optimization</p></li>
@@ -687,10 +691,10 @@ Model Ensembles”, ICLR, 2017</p>
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/epopt.html#EPOpt.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.epopt.EPOpt.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -708,7 +712,7 @@ Model Ensembles”, ICLR, 2017</p>
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -726,7 +730,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -739,7 +743,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -769,7 +773,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 updated in fixed steps, disregarding the performance information.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – environment wrapped in a <cite>DomainRandWrapper</cite></p></li>
 <li><p><strong>subroutine</strong> – algorithm which performs the policy/value-function optimization; note that this algorithm
@@ -795,7 +799,7 @@ parameter distributions; defaults to <cite>90%</cite></p></li>
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -813,7 +817,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -842,7 +846,7 @@ For a description of the parameters see <cite>pyrado.algorithms.base.Algorithm.s
 <p>Policy Distillation with Domain Randomization (PDDR)</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -876,10 +880,10 @@ one is used</p></li>
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/pddr.html#PDDR.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.pddr.PDDR.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -890,7 +894,7 @@ one is used</p></li>
 <span class="sig-name descname"><span class="pre">load_teacher_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="logger.html#pyrado.logger.experiment.Experiment" title="pyrado.logger.experiment.Experiment"><span class="pre">Experiment</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/pddr.html#PDDR.load_teacher_experiment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.pddr.PDDR.load_teacher_experiment" title="Permalink to this definition"></a></dt>
 <dd><p>Load teachers from PDDRTeachers experiment.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>exp</strong> – the teacher’s experiment object</p>
 </dd>
 </dl>
@@ -918,7 +922,7 @@ one is used</p></li>
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/pddr.html#PDDR.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.pddr.PDDR.sample" title="Permalink to this definition"></a></dt>
 <dd><p>Samples observations from several samplers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of rollouts per sampler, list of all returns, list of all rollout lengths</p>
 </dd>
 </dl>
@@ -930,7 +934,7 @@ one is used</p></li>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -949,7 +953,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Performs a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -964,7 +968,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">train_teachers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/pddr.html#PDDR.train_teachers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.pddr.PDDR.train_teachers" title="Permalink to this definition"></a></dt>
 <dd><p>Trains all teachers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new high-score)</p></li>
 <li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p></li>
@@ -978,7 +982,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">unpack_teachers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/pddr.html#PDDR.unpack_teachers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.pddr.PDDR.unpack_teachers" title="Permalink to this definition"></a></dt>
 <dd><p>Unpack teachers from PDDRTeachers experiment.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>extra</strong> – dict with teacher data</p>
 </dd>
 </dl>
@@ -1020,7 +1024,7 @@ Loop: Adapting Simulation Randomization with Real World Experience”, ICRA, 202
 initialize every of the policies with a pre-trained policy parameters use <cite>policy_param_init</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env_sim</strong> – randomized simulation environment a.k.a. source domain</p></li>
@@ -1048,7 +1052,7 @@ This behavior can also be overruled by passing <cite>init_policy_params</cite> (
 <dd><p>Evaluate a policy on the target system (real-world platform).
 This method is static to facilitate evaluation of specific policies in hindsight.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in, if <cite>None</cite> nothing is saved</p></li>
 <li><p><strong>env</strong> – environment for evaluation, in the sim-2-sim case this is another simulation instance</p></li>
@@ -1059,7 +1063,7 @@ This method is static to facilitate evaluation of specific policies in hindsight
 <li><p><strong>seed</strong> – seed value for the random number generators, only used when evaluating in simulation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>rollouts</p>
 </dd>
 </dl>
@@ -1070,7 +1074,7 @@ This method is static to facilitate evaluation of specific policies in hindsight
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eval_ddp_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts_real</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_sim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper"><span class="pre">MetaDomainRandWrapper</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_distr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL" title="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL"><span class="pre">SysIdViaEpisodicRL</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><span class="pre">Algorithm</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/simopt.html#SimOpt.eval_ddp_policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.simopt.SimOpt.eval_ddp_policy" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluate the policy that fits the domain parameter distribution to the observed rollouts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollouts_real</strong> – recorded real-world rollouts</p></li>
 <li><p><strong>env_sim</strong> – randomized simulation environment a.k.a. source domain</p></li>
@@ -1079,7 +1083,7 @@ This method is static to facilitate evaluation of specific policies in hindsight
 <li><p><strong>subrtn_policy</strong> – algorithm which performs the optimization of the behavioral policy (and value-function)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>average system identification loss</p>
 </dd>
 </dl>
@@ -1095,10 +1099,10 @@ This method is static to facilitate evaluation of specific policies in hindsight
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/simopt.html#SimOpt.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.simopt.SimOpt.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -1121,7 +1125,7 @@ This method is static to facilitate evaluation of specific policies in hindsight
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -1134,7 +1138,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -1162,13 +1166,13 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Train and evaluate the policy that parametrizes domain randomizer, such that the loss given by the instance of
 <cite>SysIdViaEpisodicRL</cite> is minimized.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollouts_real</strong> – recorded real-world rollouts</p></li>
 <li><p><strong>prefix</strong> – set a prefix to the saved file name, use “” for no prefix</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>average system identification loss</p>
 </dd>
 </dl>
@@ -1179,14 +1183,14 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">train_policy_sim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnt_rep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/simopt.html#SimOpt.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim" title="Permalink to this definition"></a></dt>
 <dd><p>Train a policy in simulation for given hyper-parameters from the domain randomizer.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cand</strong> – hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</p></li>
 <li><p><strong>prefix</strong> – set a prefix to the saved file name, use “” for no prefix</p></li>
 <li><p><strong>cnt_rep</strong> – current repetition count, coming from the wrapper function</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>estimated return of the trained policy in the target domain</p>
 </dd>
 </dl>
@@ -1206,7 +1210,7 @@ It is used to get a SciPy optimizer-ready version of the parameters of a distrib
 i.e. a vector that can be used as the target variable.</p>
 <p>Constructor.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mean</strong> – mean of the distribution; shape <cite>(k,)</cite></p></li>
 <li><p><strong>cov_chol</strong> – Cholesky decomposition of the covariance matrix; must be lower triangular; shape <cite>(k, k)</cite>
@@ -1244,7 +1248,7 @@ if it is the actual matrix or shape <cite>(k * (k + 1) / 2,)</cite> if it is rav
 <dd><p>Creates an instance of this class from the given stacked numpy array as generated e.g. by
 <cite>MultivariateNormalWrapper.get_stacked(self)</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> – dimensionality <cite>k</cite> of the random variable</p></li>
 <li><p><strong>stacked</strong> – array containing the mean and standard deviations of shape <cite>(k + k * (k + 1) / 2,)</cite>, where the
@@ -1252,7 +1256,7 @@ first <cite>k</cite> entries are the mean and the last <cite>k * (k + 1) / 2</ci
 entries of the Cholesky decomposition of the covariance matrix</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <cite>MultivariateNormalWrapper</cite> with the given mean/cov.</p>
 </dd>
 </dl>
@@ -1263,7 +1267,7 @@ entries of the Cholesky decomposition of the covariance matrix</p></li>
 <span class="sig-name descname"><span class="pre">get_stacked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/spdr.html#MultivariateNormalWrapper.get_stacked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.spdr.MultivariateNormalWrapper.get_stacked" title="Permalink to this definition"></a></dt>
 <dd><p>Get the numpy representations of the mean and transformed covariance stacked on top of each other.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>stacked mean and transformed covariance; shape <cite>(k + k * (k + 1) / 2,)</cite></p>
 </dd>
 </dl>
@@ -1296,7 +1300,7 @@ entries of the Cholesky decomposition of the covariance matrix</p></li>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – environment wrapped in a DomainRandWrapper</p></li>
 <li><p><strong>subroutine</strong> – algorithm which performs the policy/value-function optimization, which
@@ -1320,10 +1324,10 @@ training attempt of the subroutine should be reattempted</p></li>
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/spdr.html#SPDR.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.spdr.SPDR.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -1341,7 +1345,7 @@ training attempt of the subroutine should be reattempted</p></li>
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -1359,7 +1363,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -1409,7 +1413,7 @@ The candidate and the reference policies must have the same architecture!</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -1447,10 +1451,10 @@ Each of these iterations includes multiple iterations of the subroutine.</p></li
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/spota.html#SPOTA.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.spota.SPOTA.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -1479,7 +1483,7 @@ Each of these iterations includes multiple iterations of the subroutine.</p></li
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -1492,7 +1496,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -1521,7 +1525,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>This algorithm barely wraps another algorithm. The main purpose is to check if the domain randomizer is set up.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – same environment as the subroutine runs in. Only used for checking and saving the randomizer.</p></li>
 <li><p><strong>subrtn</strong> – algorithm which performs the policy / value-function optimization</p></li>
@@ -1533,10 +1537,10 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/udr.html#UDR.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.udr.UDR.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -1554,7 +1558,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -1572,7 +1576,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -1585,7 +1589,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,

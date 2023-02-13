@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>exploration &mdash; Pyrado 0.7.1 documentation</title>
@@ -30,14 +30,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -242,7 +246,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">exploration</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/exploration.rst.txt" rel="nofollow"> View page source</a>
@@ -264,7 +268,7 @@
 <p>Module for learnable additive Gaussian noise with a diagonal covariance matrix</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>noise_dim</strong> – number of dimension</p></li>
 <li><p><strong>std_init</strong> – initial standard deviation for the exploration noise</p></li>
@@ -281,7 +285,7 @@
 <dd><p>Adapt the mean and the variance of the noise on the action or parameters.
 Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mean</strong> – exploration strategy’s new mean</p></li>
 <li><p><strong>std</strong> – exploration strategy’s new standard deviation</p></li>
@@ -301,10 +305,10 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Normal</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#DiagNormalNoise.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.DiagNormalNoise.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Return the noise distribution for a specific noise-free value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value to evaluate the distribution around</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>noise distribution</p>
 </dd>
 </dl>
@@ -316,7 +320,7 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dd><p>Get the exploration distribution’s entropy.
 The entropy of a normal distribution is independent of the mean.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>entropy value</p>
 </dd>
 </dl>
@@ -348,7 +352,7 @@ The entropy of a normal distribution is independent of the mean.</p>
 <p>Module for learnable additive Gaussian noise with a full covariance matrix</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>noise_dim</strong> – number of dimension</p></li>
 <li><p><strong>std_init</strong> – initial standard deviation for the exploration noise</p></li>
@@ -365,7 +369,7 @@ The entropy of a normal distribution is independent of the mean.</p>
 <dd><p>Adapt the mean and the variance of the noise on the action or parameters.
 Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mean</strong> – exploration strategy’s new mean</p></li>
 <li><p><strong>cov</strong> – exploration strategy’s new standard deviation</p></li>
@@ -385,10 +389,10 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MultivariateNormal</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#FullNormalNoise.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.FullNormalNoise.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Return the noise distribution for a specific noise-free value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value to evaluate the distribution around</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>noise distribution</p>
 </dd>
 </dl>
@@ -400,7 +404,7 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dd><p>Get the exploration distribution’s entropy.
 The entropy of a normal distribution is independent of the mean.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>entropy value</p>
 </dd>
 </dl>
@@ -435,7 +439,7 @@ The entropy of a normal distribution is independent of the mean.</p>
 <p>Exploration strategy which selects discrete actions epsilon-greedily</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>policy</strong> – wrapped policy</p></li>
 <li><p><strong>eps</strong> – parameter determining the greediness, can be optimized or scheduled</p></li>
@@ -449,10 +453,10 @@ The entropy of a normal distribution is independent of the mean.</p>
 <span class="sig-name descname"><span class="pre">action_dist_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Distribution</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#EpsGreedyExplStrat.action_dist_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.action_dist_at" title="Permalink to this definition"></a></dt>
 <dd><p>Return the action distribution for the given output from the wrapped policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>policy_output</strong> – output from the wrapped policy, i.e. the noise-free action values</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action distribution</p>
 </dd>
 </dl>
@@ -469,13 +473,13 @@ The entropy of a normal distribution is independent of the mean.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*extra)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'tuple'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#EpsGreedyExplStrat.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -501,7 +505,7 @@ The entropy of a normal distribution is independent of the mean.</p>
 <p>Exploration strategy which adds Gaussian noise to the continuous policy actions</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>policy</strong> – wrapped policy</p></li>
 <li><p><strong>std_init</strong> – initial standard deviation for the exploration noise</p></li>
@@ -516,10 +520,10 @@ The entropy of a normal distribution is independent of the mean.</p>
 <span class="sig-name descname"><span class="pre">action_dist_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Distribution</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#NormalActNoiseExplStrat.action_dist_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.action_dist_at" title="Permalink to this definition"></a></dt>
 <dd><p>Return the action distribution for the given output from the wrapped policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>policy_output</strong> – output from the wrapped policy, i.e. the noise-free action values</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action distribution</p>
 </dd>
 </dl>
@@ -565,7 +569,7 @@ Due to the tanh transformation, it returns action values within [-1,1].</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>policy</strong> – wrapped policy</p>
 </dd>
 </dl>
@@ -575,13 +579,13 @@ Due to the tanh transformation, it returns action values within [-1,1].</p>
 <dd><p>Return the action distribution for the given output from the wrapped policy.
 This method is made for two-headed policies, e.g. used with SAC.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>policy_out_1</strong> – first head’s output from the wrapped policy, noise-free action values</p></li>
 <li><p><strong>policy_out_2</strong> – second head’s output from the wrapped policy, state-dependent log std values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action distribution at the mean given by <cite>policy_out_1</cite></p>
 </dd>
 </dl>
@@ -595,13 +599,13 @@ Use this method to get gradient data on the action distribution.
 This version is tailored to the two-headed policy architecture used for SAC, since it requires a two-headed
 policy, where the first head returns the mean action and the second head returns the state-dependent std.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollout</strong> – complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>actions with gradient data</p>
 </dd>
 </dl>
@@ -612,13 +616,13 @@ policy, where the first head returns the mean action and the second head returns
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[(&lt;class</span> <span class="pre">'torch.Tensor'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;),</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;)]</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -659,7 +663,7 @@ policy, where the first head returns the mean action and the second head returns
 <p>Explore by sampling actions from a distribution.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>policy</strong> – wrapped policy</p>
 </dd>
 </dl>
@@ -668,10 +672,10 @@ policy, where the first head returns the mean action and the second head returns
 <span class="sig-name descname"><span class="pre">action_dist_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Distribution</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.action_dist_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.action_dist_at" title="Permalink to this definition"></a></dt>
 <dd><p>Return the action distribution for the given output from the wrapped policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>policy_output</strong> – output from the wrapped policy, i.e. the noise-free action values</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action distribution</p>
 </dd>
 </dl>
@@ -683,13 +687,13 @@ policy, where the first head returns the mean action and the second head returns
 <dd><p>Re-evaluate the given rollout using the policy wrapped by this exploration strategy.
 Use this method to get gradient data on the action distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollout</strong> – complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>actions with gradient data</p>
 </dd>
 </dl>
@@ -700,13 +704,13 @@ Use this method to get gradient data on the action distribution.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*extra)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'tuple'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -718,10 +722,10 @@ Use this method to get gradient data on the action distribution.</p>
 <dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.
 The default implementation will raise an error, to enforce override this function for recurrent policies.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
 </dd>
 </dl>
@@ -732,7 +736,7 @@ The default implementation will raise an error, to enforce override this functio
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -763,7 +767,7 @@ The default implementation does nothing.</p>
 <p>Exploration strategy which adds uniform noise to the continuous policy actions</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>policy</strong> – wrapped policy</p></li>
 <li><p><strong>halfspan_init</strong> – initial value of the half interval for the exploration noise</p></li>
@@ -778,10 +782,10 @@ The default implementation does nothing.</p>
 <span class="sig-name descname"><span class="pre">action_dist_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Distribution</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#UniformActNoiseExplStrat.action_dist_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.action_dist_at" title="Permalink to this definition"></a></dt>
 <dd><p>Return the action distribution for the given output from the wrapped policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>policy_output</strong> – output from the wrapped policy, i.e. the noise-free action values</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action distribution</p>
 </dd>
 </dl>
@@ -820,7 +824,7 @@ The default implementation does nothing.</p>
 <p>Sampling parameters from a normal distribution</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_dim</strong> – number of policy parameters</p></li>
 <li><p><strong>expl_r_init</strong> – initial radius of the hyper-sphere</p></li>
@@ -850,10 +854,10 @@ The default implementation does nothing.</p>
 <span class="sig-name descname"><span class="pre">sample_param_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_params.html#HyperSphereParamNoise.sample_param_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_params.HyperSphereParamNoise.sample_param_set" title="Permalink to this definition"></a></dt>
 <dd><p>Sample one set of policy parameters from the current distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>nominal_params</strong> – parameter set (1-dim tensor) to sample around</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>sampled parameter set (1-dim tensor)</p>
 </dd>
 </dl>
@@ -868,7 +872,7 @@ The default implementation does nothing.</p>
 <p>Sampling parameters from a normal distribution</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_dim</strong> – number of policy parameters</p></li>
 <li><p><strong>full_cov</strong> – use a full covariance matrix or a diagonal covariance matrix (independent random variables)</p></li>
@@ -910,10 +914,10 @@ The default implementation does nothing.</p>
 <span class="sig-name descname"><span class="pre">sample_param_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_params.html#NormalParamNoise.sample_param_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_params.NormalParamNoise.sample_param_set" title="Permalink to this definition"></a></dt>
 <dd><p>Sample one set of policy parameters from the current distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>nominal_params</strong> – parameter set (1-dim tensor) to sample around</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>sampled parameter set (1-dim tensor)</p>
 </dd>
 </dl>
@@ -924,14 +928,14 @@ The default implementation does nothing.</p>
 <span class="sig-name descname"><span class="pre">sample_param_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_params.html#NormalParamNoise.sample_param_sets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_params.NormalParamNoise.sample_param_sets" title="Permalink to this definition"></a></dt>
 <dd><p>Sample multiple sets of policy parameters from the current distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nominal_params</strong> – parameter set (1-dim tensor) to sample around</p></li>
 <li><p><strong>num_samples</strong> – number of parameter sets</p></li>
 <li><p><strong>include_nominal_params</strong> – <cite>True</cite> to include the nominal parameter values as first parameter set</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>policy parameter sets as NxP or (N+1)xP tensor where N is the number samples and P is the number of
 policy parameters</p>
 </dd>
@@ -952,7 +956,7 @@ policy parameters</p>
 <p>Exploration strategy which samples policy parameters from a distribution</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>param_dim</strong> – number of policy parameters</p>
 </dd>
 </dl>
@@ -961,10 +965,10 @@ policy parameters</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sample_param_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_params.html#StochasticParamExplStrat.sample_param_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_params.StochasticParamExplStrat.sample_param_set" title="Permalink to this definition"></a></dt>
 <dd><p>Sample one set of policy parameters from the current distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>nominal_params</strong> – parameter set (1-dim tensor) to sample around</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>sampled parameter set (1-dim tensor)</p>
 </dd>
 </dl>
@@ -975,14 +979,14 @@ policy parameters</p>
 <span class="sig-name descname"><span class="pre">sample_param_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_params.html#StochasticParamExplStrat.sample_param_sets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_params.StochasticParamExplStrat.sample_param_sets" title="Permalink to this definition"></a></dt>
 <dd><p>Sample multiple sets of policy parameters from the current distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nominal_params</strong> – parameter set (1-dim tensor) to sample around</p></li>
 <li><p><strong>num_samples</strong> – number of parameter sets</p></li>
 <li><p><strong>include_nominal_params</strong> – <cite>True</cite> to include the nominal parameter values as first parameter set</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>policy parameter sets as NxP or (N+1)xP tensor where N is the number samples and P is the number of
 policy parameters</p>
 </dd>
@@ -1000,7 +1004,7 @@ The function <cite>sample_param_sets</cite> will always return an even number of
 ps[:len(ps)//2] == -ps[len(ps)//2:]</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>wrapped</strong> – exploration strategy to wrap around</p>
 </dd>
 </dl>
@@ -1009,10 +1013,10 @@ ps[:len(ps)//2] == -ps[len(ps)//2:]</p>
 <span class="sig-name descname"><span class="pre">sample_param_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_params.html#SymmParamExplStrat.sample_param_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_params.SymmParamExplStrat.sample_param_set" title="Permalink to this definition"></a></dt>
 <dd><p>Sample one set of policy parameters from the current distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>nominal_params</strong> – parameter set (1-dim tensor) to sample around</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>sampled parameter set (1-dim tensor)</p>
 </dd>
 </dl>
@@ -1023,14 +1027,14 @@ ps[:len(ps)//2] == -ps[len(ps)//2:]</p>
 <span class="sig-name descname"><span class="pre">sample_param_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_nominal_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_params.html#SymmParamExplStrat.sample_param_sets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.stochastic_params.SymmParamExplStrat.sample_param_sets" title="Permalink to this definition"></a></dt>
 <dd><p>Sample multiple sets of policy parameters from the current distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nominal_params</strong> – parameter set (1-dim tensor) to sample around</p></li>
 <li><p><strong>num_samples</strong> – number of parameter sets</p></li>
 <li><p><strong>include_nominal_params</strong> – <cite>True</cite> to include the nominal parameter values as first parameter set</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>policy parameter sets as NxP or (N+1)xP tensor where N is the number samples and P is the number of
 policy parameters</p>
 </dd>
@@ -1049,7 +1053,7 @@ policy parameters</p>
 <p>Module for learnable additive uniform noise</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>use_cuda</strong> – <cite>True</cite> to move the module to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
 <li><p><strong>noise_dim</strong> – number of dimension</p></li>
@@ -1066,7 +1070,7 @@ policy parameters</p>
 <dd><p>Adapt the mean and the half interval span of the noise on the action or parameters.
 Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mean</strong> – exploration strategy’s new mean</p></li>
 <li><p><strong>halfspan</strong> – exploration strategy’s new half interval span</p></li>
@@ -1086,10 +1090,10 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Uniform</span></span></span><a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Return the noise distribution for a specific noise-free value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – value to evaluate the distribution around</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>noise distribution</p>
 </dd>
 </dl>
@@ -1101,7 +1105,7 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dd><p>Get the exploration distribution’s entropy.
 The entropy of a uniform distribution is independent of the mean.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>entropy value</p>
 </dd>
 </dl>

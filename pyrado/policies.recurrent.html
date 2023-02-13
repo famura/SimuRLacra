@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>recurrent &mdash; Pyrado 0.7.1 documentation</title>
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -251,7 +255,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">recurrent</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/policies.recurrent.rst.txt" rel="nofollow"> View page source</a>
@@ -283,7 +287,7 @@ on Hierarchical Dynamical Systems”, IROS, 2012</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>activation_nonlin</strong> – nonlinearity for output layer, highly suggested functions:
@@ -321,13 +325,13 @@ strings are acceptable.</p>
 <dt class="sig sig-object py" id="pyrado.policies.recurrent.adn.ADNPolicy.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#ADNPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obs</strong> – observation from the environment</p></li>
 <li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action to be taken and new hidden state</p>
 </dd>
 </dl>
@@ -338,7 +342,7 @@ strings are acceptable.</p>
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#ADNPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -358,13 +362,13 @@ strings are acceptable.</p>
 <dd><p>Compute the derivative of the neurons’ potentials per time step.
 <span class="math notranslate nohighlight">\(/tau /dot{u} = f(u, s, h)\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>potentials</strong> – current potential values</p></li>
 <li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>time derivative of the potentials</p>
 </dd>
 </dl>
@@ -382,7 +386,7 @@ strings are acceptable.</p>
 <p>Intended to be used with sigmoid activation function, e.g. for the position tasks in RcsPySim.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
 <li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
@@ -405,7 +409,7 @@ strings are acceptable.</p>
 <p>Intended to be used with sigmoid activation function, e.g. for the position tasks in RcsPySim.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
 <li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
@@ -427,7 +431,7 @@ strings are acceptable.</p>
 <p>Intended to be used with tanh activation function, e.g. for the velocity tasks in RcsPySim.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
 <li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
@@ -451,7 +455,7 @@ strings are acceptable.</p>
 <p>Intended to be used with tanh activation function, e.g. for the velocity tasks in RcsPySim.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
 <li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
@@ -469,7 +473,7 @@ strings are acceptable.</p>
 <dd><p>Basic proportional dynamics with additional cubic decay</p>
 <p><span class="math notranslate nohighlight">\(\tau \dot{p} = s + h - p + \kappa (h - p)^3\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
 <li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
@@ -487,7 +491,7 @@ strings are acceptable.</p>
 <dd><p>Basic proportional dynamics</p>
 <p><span class="math notranslate nohighlight">\(\tau \dot{p} = s - p\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – potential, higher values lead to higher activations</p></li>
 <li><p><strong>s</strong> – stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)</p></li>
@@ -513,7 +517,7 @@ The hidden tensor is an 1-dim vector of state variables with unspecified meaning
 it should be a 2-dim array, where the first dimension is the batch size matching that of the observations.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>use_cuda</strong> – <cite>True</cite> to move the policy to the GPU, <cite>False</cite> (default) to use the CPU</p></li>
@@ -526,14 +530,14 @@ it should be a 2-dim array, where the first dimension is the batch size matching
 <dd><p>Re-evaluate the given rollout and return a derivable action tensor.
 This method makes sure that the gradient is propagated through the hidden state.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollout</strong> – complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
 Change this string for value functions.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>actions with gradient data</p>
 </dd>
 </dl>
@@ -543,13 +547,13 @@ Change this string for value functions.</p></li>
 <dt class="sig sig-object py" id="pyrado.policies.recurrent.base.RecurrentPolicy.forward">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obs</strong> – observation from the environment</p></li>
 <li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action to be taken and new hidden state</p>
 </dd>
 </dl>
@@ -566,10 +570,10 @@ Change this string for value functions.</p></li>
 <span class="sig-name descname"><span class="pre">init_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy.init_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.init_hidden" title="Permalink to this definition"></a></dt>
 <dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
 </dd>
 </dl>
@@ -608,7 +612,7 @@ Such modules have a <cite>reset()</cite> method to reset the hidden states.</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>net</strong> – non-recurrent network to wrap</p>
 </dd>
 </dl>
@@ -654,7 +658,7 @@ registered hooks while the latter silently ignores them.</p>
 <dd><p>Pack the hidden state returned by torch.nn.RNNBase subclasses into an 1d state vector.
 This is the reverse operation of default_unpack_hidden.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hidden</strong> – unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size</p></li>
 <li><p><strong>num_recurrent_layers</strong> – number of recurrent layers</p></li>
@@ -662,7 +666,7 @@ This is the reverse operation of default_unpack_hidden.</p>
 <li><p><strong>batch_size</strong> – if not none, the result should be 2d, and the first dimension represents parts of a data batch</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>packed hidden state.</p>
 </dd>
 </dl>
@@ -673,7 +677,7 @@ This is the reverse operation of default_unpack_hidden.</p>
 <span class="sig-name descname"><span class="pre">default_unpack_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_recurrent_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#default_unpack_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.default_unpack_hidden" title="Permalink to this definition"></a></dt>
 <dd><p>Unpack the flat hidden state vector into the form expected by torch.nn.RNNBase subclasses.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hidden</strong> – packed hidden state</p></li>
 <li><p><strong>num_recurrent_layers</strong> – number of recurrent layers</p></li>
@@ -681,7 +685,7 @@ This is the reverse operation of default_unpack_hidden.</p>
 <li><p><strong>batch_size</strong> – if not none, hidden is 2d, and the first dimension represents parts of a data batch</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size.</p>
 </dd>
 </dl>
@@ -707,7 +711,7 @@ Biological Cybernetics, 1977</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>hidden_size</strong> – number of neurons with potential</p></li>
@@ -730,13 +734,13 @@ Biological Cybernetics, 1977</p>
 <dt class="sig sig-object py" id="pyrado.policies.recurrent.neural_fields.NFPolicy.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/neural_fields.html#NFPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.neural_fields.NFPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obs</strong> – observation from the environment</p></li>
 <li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action to be taken and new hidden state</p>
 </dd>
 </dl>
@@ -747,7 +751,7 @@ Biological Cybernetics, 1977</p>
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/neural_fields.html#NFPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.neural_fields.NFPolicy.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -768,13 +772,13 @@ Biological Cybernetics, 1977</p>
 <span class="math notranslate nohighlight">\(/tau /dot{u} = s + h - u + /kappa (h - u)^3,
 /quad /text{with} s = s_{int} + s_{ext} = W*o + /int{w(u, v) f(u) dv}\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>potentials</strong> – current potential values</p></li>
 <li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>time derivative of the potentials</p>
 </dd>
 </dl>
@@ -792,7 +796,7 @@ Biological Cybernetics, 1977</p>
 <p>Base class for policies that work with potential-based neutral networks</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>obs_layer</strong> – specify a custom PyTorch Module, by default (<cite>None</cite>) a linear layer with biases is used</p></li>
@@ -814,14 +818,14 @@ to the flat number of actions (in order to be compatible with ADNPolicy)</p></li
 <dd><p>Re-evaluate the given rollout and return a derivable action tensor.
 This method makes sure that the gradient is propagated through the hidden state.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollout</strong> – complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
 Change this string for value functions.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>actions with gradient data</p>
 </dd>
 </dl>
@@ -840,13 +844,13 @@ strings are acceptable.</p>
 <dt class="sig sig-object py" id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.forward">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obs</strong> – observation from the environment</p></li>
 <li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action to be taken and new hidden state</p>
 </dd>
 </dl>
@@ -863,10 +867,10 @@ strings are acceptable.</p>
 <span class="sig-name descname"><span class="pre">init_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.init_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_hidden" title="Permalink to this definition"></a></dt>
 <dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
 </dd>
 </dl>
@@ -877,7 +881,7 @@ strings are acceptable.</p>
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -902,13 +906,13 @@ strings are acceptable.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">potentials_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">potentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stimuli</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.potentials_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.potentials_dot" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the derivative of the neurons’ potentials per time step.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>potentials</strong> – current potential values</p></li>
 <li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>time derivative of the potentials</p>
 </dd>
 </dl>
@@ -946,7 +950,7 @@ This is used for recording during a rollout.</p>
 <p>Policy backed by a multi-layer GRU</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
@@ -979,7 +983,7 @@ This is used for recording during a rollout.</p>
 <p>Policy backed by a multi-layer LSTM</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
@@ -1018,7 +1022,7 @@ This is used for recording during a rollout.</p>
 <p>Policy backed by a multi-layer RNN</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
@@ -1051,7 +1055,7 @@ This is used for recording during a rollout.</p>
 <p>Base class for recurrent policies wrapping torch.nn.RNNBase subclasses</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>hidden_size</strong> – size of the hidden layers (all equal)</p></li>
@@ -1070,14 +1074,14 @@ This is used for recording during a rollout.</p>
 <dd><p>Re-evaluate the given rollout and return a derivable action tensor.
 This method makes sure that the gradient is propagated through the hidden state.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollout</strong> – complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
 Change this string for value functions.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>actions with gradient data</p>
 </dd>
 </dl>
@@ -1087,13 +1091,13 @@ Change this string for value functions.</p></li>
 <dt class="sig sig-object py" id="pyrado.policies.recurrent.rnn.RNNPolicyBase.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden:</span> <span class="pre">~typing.Optional[~torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#RNNPolicyBase.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase.forward" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obs</strong> – observation from the environment</p></li>
 <li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action to be taken and new hidden state</p>
 </dd>
 </dl>
@@ -1110,7 +1114,7 @@ Change this string for value functions.</p></li>
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/rnn.html#RNNPolicyBase.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.rnn.RNNPolicyBase.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -1141,7 +1145,7 @@ Change this string for value functions.</p></li>
 <p>Two-headed policy backed by a multi-layer GRU</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>shared_hidden_size</strong> – size of the hidden layers (all equal)</p></li>
@@ -1176,7 +1180,7 @@ Change this string for value functions.</p></li>
 <p>Two-headed policy backed by a multi-layer LSTM</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>shared_hidden_size</strong> – size of the hidden layers (all equal)</p></li>
@@ -1217,7 +1221,7 @@ Change this string for value functions.</p></li>
 <p>Two-headed policy backed by a multi-layer RNN</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>shared_hidden_size</strong> – size of the hidden layers (all equal)</p></li>
@@ -1254,7 +1258,7 @@ Change this string for value functions.</p></li>
 have a separate last layer</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spec</strong> – environment specification</p></li>
 <li><p><strong>shared_hidden_size</strong> – size of the hidden layers (all equal)</p></li>
@@ -1275,14 +1279,14 @@ have a separate last layer</p>
 <dd><p>Re-evaluate the given rollout and return a derivable action tensor.
 The default implementation simply calls <cite>forward()</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollout</strong> – complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
 Defaults to ‘hidden_states’. Change for value functions.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>actions with gradient data</p>
 </dd>
 </dl>
@@ -1292,13 +1296,13 @@ Defaults to ‘hidden_states’. Change for value functions.</p></li>
 <dt class="sig sig-object py" id="pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedRNNPolicyBase.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.forward" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obs</strong> – observation from the environment</p></li>
 <li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action to be taken and new hidden state</p>
 </dd>
 </dl>
@@ -1315,7 +1319,7 @@ Defaults to ‘hidden_states’. Change for value functions.</p></li>
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/recurrent/two_headed_rnn.html#TwoHeadedRNNPolicyBase.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>

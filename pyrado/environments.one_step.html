@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>one_step &mdash; Pyrado 0.7.1 documentation</title>
@@ -28,14 +28,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -121,7 +125,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">one_step</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/environments.one_step.rst.txt" rel="nofollow"> View page source</a>
@@ -154,14 +158,14 @@
 <span class="sig-name descname"><span class="pre">est_expec_return</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">th</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_V</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultExample.est_expec_return"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultExample.est_expec_return" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the optimal objective function value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>th</strong> – policy parameter</p></li>
 <li><p><strong>n_M</strong> – number of Mars samples</p></li>
 <li><p><strong>n_V</strong> – number of Venus samples</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>value of the estimated expected return</p>
 </dd>
 </dl>
@@ -172,13 +176,13 @@
 <span class="sig-name descname"><span class="pre">opt_est_expec_return</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_V</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultExample.opt_est_expec_return"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultExample.opt_est_expec_return" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the optimal objective function value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_M</strong> – number of Mars samples</p></li>
 <li><p><strong>n_V</strong> – number of Venus samples</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>optimal value of the estimated expected return</p>
 </dd>
 </dl>
@@ -189,13 +193,13 @@
 <span class="sig-name descname"><span class="pre">opt_policy_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_V</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultExample.opt_policy_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultExample.opt_policy_param" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the optimal policy parameter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_M</strong> – number of Mars samples</p></li>
 <li><p><strong>n_V</strong> – number of Venus samples</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>optimal policy parameter</p>
 </dd>
 </dl>
@@ -211,7 +215,7 @@
 use it in combination with a linear policy that has only one constant feature.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
 <li><p><strong>example_config</strong> – configuration for the ‘illustrative example’ in the journal</p></li>
@@ -266,7 +270,7 @@ but there might also be additional parameters that depend on the domain paramete
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
 <li><p><strong>render_step</strong> – interval for rendering</p></li>
@@ -280,13 +284,13 @@ The base version prints to console when the state exceeds its boundaries.</p>
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/catapult.html#CatapultSim.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
 <li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
@@ -308,19 +312,19 @@ When a terminal condition is met, the reset function is called.</p>
 <p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>current observation of the environment</p>
 </dd>
-<dt class="field-odd">Return reward</dt>
+<dt class="field-odd">Return reward<span class="colon">:</span></dt>
 <dd class="field-odd"><p>reward depending on the selected reward function</p>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates whether the episode has ended</p>
 </dd>
-<dt class="field-odd">Return env_info</dt>
+<dt class="field-odd">Return env_info<span class="colon">:</span></dt>
 <dd class="field-odd"><p>contains diagnostic information about the environment</p>
 </dd>
 </dl>
@@ -391,7 +395,7 @@ but there might also be additional parameters that depend on the domain paramete
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
 <li><p><strong>render_step</strong> – interval for rendering</p></li>
@@ -405,13 +409,13 @@ The base version prints to console when the state exceeds its boundaries.</p>
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/one_step/rosenbrock.html#RosenSim.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
 <li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
@@ -433,19 +437,19 @@ When a terminal condition is met, the reset function is called.</p>
 <p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>current observation of the environment</p>
 </dd>
-<dt class="field-odd">Return reward</dt>
+<dt class="field-odd">Return reward<span class="colon">:</span></dt>
 <dd class="field-odd"><p>reward depending on the selected reward function</p>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates whether the episode has ended</p>
 </dd>
-<dt class="field-odd">Return env_info</dt>
+<dt class="field-odd">Return env_info<span class="colon">:</span></dt>
 <dd class="field-odd"><p>contains diagnostic information about the environment</p>
 </dd>
 </dl>
@@ -542,7 +546,7 @@ the exact posterior probability</p>
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
 <li><p><strong>render_step</strong> – interval for rendering</p></li>
@@ -574,19 +578,19 @@ When a terminal condition is met, the reset function is called.</p>
 <p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>current observation of the environment</p>
 </dd>
-<dt class="field-odd">Return reward</dt>
+<dt class="field-odd">Return reward<span class="colon">:</span></dt>
 <dd class="field-odd"><p>reward depending on the selected reward function</p>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates whether the episode has ended</p>
 </dd>
-<dt class="field-odd">Return env_info</dt>
+<dt class="field-odd">Return env_info<span class="colon">:</span></dt>
 <dd class="field-odd"><p>contains diagnostic information about the environment</p>
 </dd>
 </dl>

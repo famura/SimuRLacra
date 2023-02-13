@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tasks &mdash; Pyrado 0.7.1 documentation</title>
@@ -30,14 +30,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -359,7 +363,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">tasks</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/tasks.rst.txt" rel="nofollow"> View page source</a>
@@ -390,13 +394,13 @@ The task also checks if the environment is done. Every environment should have e
 <p>This function should only be overwritten by tasks that manipulate the final reward.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>final reward</p>
 </dd>
 </dl>
@@ -414,13 +418,13 @@ The task also checks if the environment is done. Every environment should have e
 <dd><p>Get the final reward, e.g. bonus for success or a malus for failure.
 This function loops through all tasks (unfolding the wrappers) and calls their <cite>compute_final_rew</cite> method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state forwarded to <cite>compute_final_rew</cite></p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode forwarded to <cite>compute_final_rew</cite></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>summed final reward</p>
 </dd>
 </dl>
@@ -432,10 +436,10 @@ This function loops through all tasks (unfolding the wrappers) and calls their <
 <dd><p>Check the environment if the agent failed.
 The default implementation checks if the state is out of bounds.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if failed</p>
 </dd>
 </dl>
@@ -446,10 +450,10 @@ The default implementation checks if the state is out of bounds.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/base.html#Task.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.base.Task.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -464,13 +468,13 @@ The default implementation checks if the state is out of bounds.</p>
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>done flag</p>
 </dd>
 </dl>
@@ -483,7 +487,7 @@ The default implementation checks if the state is out of bounds.</p>
 Since the environment specification may change at every reset of the environment, we have to reset the task.
 This might also include resetting the members of the reward function if there are any.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
 </dd>
 </dl>
@@ -518,14 +522,14 @@ Only override this if the task has a desired state.</p>
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -540,7 +544,7 @@ Only override this if the task has a desired state.</p>
 <p>Base for all task wrappers. Delegates all environment methods to the wrapped environment.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>wrapped_task</strong> – task to wrap</p>
 </dd>
 </dl>
@@ -556,10 +560,10 @@ Only override this if the task has a desired state.</p>
 <dd><p>Check the environment if the agent failed.
 The default implementation checks if the state is out of bounds.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if failed</p>
 </dd>
 </dl>
@@ -570,10 +574,10 @@ The default implementation checks if the state is out of bounds.</p>
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/base.html#TaskWrapper.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -588,13 +592,13 @@ The default implementation checks if the state is out of bounds.</p>
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>done flag</p>
 </dd>
 </dl>
@@ -607,7 +611,7 @@ The default implementation checks if the state is out of bounds.</p>
 Since the environment specification may change at every reset of the environment, we have to reset the task.
 This might also include resetting the members of the reward function if there are any.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
 </dd>
 </dl>
@@ -642,14 +646,14 @@ Only override this if the task has a desired state.</p>
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -667,10 +671,10 @@ Only override this if the task has a desired state.</p>
 <span class="sig-name descname"><span class="pre">all_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/base.html#all_tasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.base.all_tasks" title="Permalink to this definition"></a></dt>
 <dd><p>Iterates over the task chain.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>task</strong> – outermost task of the chain</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>an iterable over the whole chain from outermost to innermost</p>
 </dd>
 </dl>
@@ -687,7 +691,7 @@ Only override this if the task has a desired state.</p>
 This class is intended to be wrapped by <cite>FinalRewTask</cite>.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Usage</dt>
+<dt class="field-odd">Usage<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span>
@@ -697,7 +701,7 @@ This class is intended to be wrapped by <cite>FinalRewTask</cite>.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification of a simulated or real environment</p></li>
 <li><p><strong>condition_fcn</strong> – function to determine if the task was solved, by default (<cite>None</cite>) this task runs endlessly</p></li>
@@ -718,10 +722,10 @@ if <cite>False</cite> the <cite>condition_fcn</cite> returns <cite>True</cite> f
 <dd><p>Check the environment if the agent failed.
 The default implementation checks if the state is out of bounds.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if failed</p>
 </dd>
 </dl>
@@ -732,10 +736,10 @@ The default implementation checks if the state is out of bounds.</p>
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/condition_only.html#ConditionOnlyTask.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -746,7 +750,7 @@ The default implementation checks if the state is out of bounds.</p>
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_fcn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_success_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/condition_only.html#ConditionOnlyTask.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>condition_fcn</strong> – function to determine if the task was solved, by default (<cite>None</cite>) this task runs endlessly</p></li>
@@ -772,14 +776,14 @@ if <cite>False</cite> the <cite>condition_fcn</cite> returns <cite>True</cite> f
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -799,7 +803,7 @@ This task is designed with the idea in mind that it is only important if the sta
 If the state is in the desired space, the <cite>done</cite> flag is raised. Until then, the step reward is returned.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification of a simulated or real environment</p></li>
 <li><p><strong>space_des</strong> – desired state a.k.a. goal state</p></li>
@@ -818,10 +822,10 @@ If the state is in the desired space, the <cite>done</cite> flag is raised. Unti
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/desired_space.html#DesSpaceTask.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -832,7 +836,7 @@ If the state is in the desired space, the <cite>done</cite> flag is raised. Unti
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_des</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/desired_space.html#DesSpaceTask.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>space_des</strong> – new desired state a.k.a. goal state</p></li>
@@ -864,14 +868,14 @@ Only override this if the task has a desired state.</p>
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -889,7 +893,7 @@ Only override this if the task has a desired state.</p>
 <p>Task class for moving to a desired state. Operates on the error in state and action.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification of a simulated or real environment</p></li>
 <li><p><strong>state_des</strong> – desired state a.k.a. goal state</p></li>
@@ -909,10 +913,10 @@ Only override this if the task has a desired state.</p>
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/desired_state.html#DesStateTask.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -923,7 +927,7 @@ Only override this if the task has a desired state.</p>
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_des</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/desired_state.html#DesStateTask.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>state_des</strong> – new desired state a.k.a. goal state</p></li>
@@ -955,14 +959,14 @@ Only override this if the task has a desired state.</p>
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -978,7 +982,7 @@ Only override this if the task has a desired state.</p>
 In contrast to DesStateTask, a subset of the state is radially symmetric, e.g. and angular position.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification of a simulated or real environment</p></li>
 <li><p><strong>state_des</strong> – desired state a.k.a. goal state</p></li>
@@ -998,14 +1002,14 @@ In contrast to DesStateTask, a subset of the state is radially symmetric, e.g. a
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -1024,7 +1028,7 @@ In contrast to DesStateTask, a subset of the state is radially symmetric, e.g. a
 old angle plus/minus a given angle delta, the new angle becomes the old one and the flipping continues.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification of a simulated or real environment</p></li>
 <li><p><strong>des_angle_delta</strong> – desired angle that counts as a flip</p></li>
@@ -1045,10 +1049,10 @@ old angle plus/minus a given angle delta, the new angle becomes the old one and 
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/endless_flipping.html#FlippingTask.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.endless_flipping.FlippingTask.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -1059,7 +1063,7 @@ old angle plus/minus a given angle delta, the new angle becomes the old one and 
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/endless_flipping.html#FlippingTask.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.endless_flipping.FlippingTask.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments forwarded to the reward function, e.g. the initial state</p></li>
@@ -1083,14 +1087,14 @@ old angle plus/minus a given angle delta, the new angle becomes the old one and 
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -1109,7 +1113,7 @@ old angle plus/minus a given angle delta, the new angle becomes the old one and 
 current trajectory.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wrapped_task</strong> – task to wrap</p></li>
 <li><p><strong>factor</strong> – value to scale the final reward</p></li>
@@ -1121,13 +1125,13 @@ current trajectory.</p>
 <span class="sig-name descname"><span class="pre">compute_final_rew</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remaining_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#BestStateFinalRewTask.compute_final_rew"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.final_reward.BestStateFinalRewTask.compute_final_rew" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the reward / cost on task completion / fail of this task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state of the environment</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>final reward of this task</p>
 </dd>
 </dl>
@@ -1140,7 +1144,7 @@ current trajectory.</p>
 Since the environment specification may change at every reset of the environment, we have to reset the task.
 This might also include resetting the members of the reward function if there are any.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
 </dd>
 </dl>
@@ -1155,14 +1159,14 @@ This might also include resetting the members of the reward function if there ar
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -1220,7 +1224,7 @@ This might also include resetting the members of the reward function if there ar
 <dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.TaskWrapper" title="pyrado.tasks.base.TaskWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskWrapper</span></code></a></p>
 <p>Wrapper for tasks which yields a reward / cost on success / failure</p>
 <dl class="field-list simple">
-<dt class="field-odd">Usage</dt>
+<dt class="field-odd">Usage<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span><span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">success_fcn</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(),</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1e3</span><span class="p">)</span>
@@ -1228,7 +1232,7 @@ This might also include resetting the members of the reward function if there ar
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wrapped_task</strong> – task to wrap</p></li>
 <li><p><strong>mode</strong> – mode for calculating the final reward</p></li>
@@ -1242,13 +1246,13 @@ The <cite>factor</cite> is ignored if <cite>mode.time_dependent</cite> is <cite>
 <span class="sig-name descname"><span class="pre">compute_final_rew</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remaining_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#FinalRewTask.compute_final_rew"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewTask.compute_final_rew" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the reward / cost on task completion / fail of this task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state of the environment</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>final reward of this task</p>
 </dd>
 </dl>
@@ -1261,7 +1265,7 @@ The <cite>factor</cite> is ignored if <cite>mode.time_dependent</cite> is <cite>
 Since the environment specification may change at every reset of the environment, we have to reset the task.
 This might also include resetting the members of the reward function if there are any.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
 </dd>
 </dl>
@@ -1285,7 +1289,7 @@ This might also include resetting the members of the reward function if there ar
 <p>Task which has no desired state or desired space, this runs endlessly</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>rew_fcn</strong> – reward function, an instance of a subclass of RewFcn</p></li>
@@ -1303,10 +1307,10 @@ This might also include resetting the members of the reward function if there ar
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/goalless.html#GoallessTask.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.goalless.GoallessTask.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -1317,7 +1321,7 @@ This might also include resetting the members of the reward function if there ar
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">EnvSpec</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/goalless.html#GoallessTask.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.goalless.GoallessTask.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the task.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments forwarded to the reward function, e.g. the initial state</p></li>
@@ -1341,14 +1345,14 @@ This might also include resetting the members of the reward function if there ar
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -1363,7 +1367,7 @@ This might also include resetting the members of the reward function if there ar
 <p>Task for wrapping classical optimization problems a.k.a. (nonlinear) programming into Pyrado</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>rew_fcn</strong> – state-based reward function that maps the state to an scalar value</p></li>
@@ -1381,10 +1385,10 @@ This might also include resetting the members of the reward function if there ar
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/goalless.html#OptimProxyTask.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.goalless.OptimProxyTask.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -1397,7 +1401,7 @@ This might also include resetting the members of the reward function if there ar
 Since the environment specification may change at every reset of the environment, we have to reset the task.
 This might also include resetting the members of the reward function if there are any.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
 </dd>
 </dl>
@@ -1418,14 +1422,14 @@ This might also include resetting the members of the reward function if there ar
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -1443,7 +1447,7 @@ This might also include resetting the members of the reward function if there ar
 <p>Task using only a subset of state and actions</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>wrapped_task</strong> – task for the selected part of the state-action space</p></li>
@@ -1464,13 +1468,13 @@ This might also include resetting the members of the reward function if there ar
 <dd><p>Get the final reward, e.g. bonus for success or a malus for failure.
 This function loops through all tasks (unfolding the wrappers) and calls their <cite>compute_final_rew</cite> method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state forwarded to <cite>compute_final_rew</cite></p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode forwarded to <cite>compute_final_rew</cite></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>summed final reward</p>
 </dd>
 </dl>
@@ -1482,10 +1486,10 @@ This function loops through all tasks (unfolding the wrappers) and calls their <
 <dd><p>Check the environment if the agent failed.
 The default implementation checks if the state is out of bounds.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if failed</p>
 </dd>
 </dl>
@@ -1496,10 +1500,10 @@ The default implementation checks if the state is out of bounds.</p>
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/masked.html#MaskedTask.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check the environment if the agent succeeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -1514,13 +1518,13 @@ The default implementation checks if the state is out of bounds.</p>
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>done flag</p>
 </dd>
 </dl>
@@ -1533,7 +1537,7 @@ The default implementation checks if the state is out of bounds.</p>
 Since the environment specification may change at every reset of the environment, we have to reset the task.
 This might also include resetting the members of the reward function if there are any.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
 </dd>
 </dl>
@@ -1561,14 +1565,14 @@ Only override this if the task has a desired state.</p>
 <p>It is strongly recommended to call this method every environment step.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state</p></li>
 <li><p><strong>act</strong> – current action</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return rew</dt>
+<dt class="field-even">Return rew<span class="colon">:</span></dt>
 <dd class="field-even"><p>current reward</p>
 </dd>
 </dl>
@@ -1591,7 +1595,7 @@ Only override this if the task has a desired state.</p>
 <p>Task class for a set of tasks a.k.a. goals which can be achieved in any order or parallel</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tasks</strong> – sequence of tasks a.k.a. goals, the order matters</p></li>
 <li><p><strong>hold_rew_when_done</strong> – if <cite>True</cite> reward values for done tasks will be stored and added every step</p></li>
@@ -1618,13 +1622,13 @@ Since this task holds multiple sub-tasks, the final reward / cost is computed fo
 immediate sub-tasks.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state of the environment</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>final reward of all sub-tasks</p>
 </dd>
 </dl>
@@ -1647,10 +1651,10 @@ immediate sub-tasks.</p>
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/parallel.html#ParallelTasks.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check if this tasks is done. The ParallelTasks is successful if all sub-tasks are successful.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -1707,13 +1711,13 @@ This checks every limit and not just of a subspace of the state state as it coul
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>penalty</strong> – scalar cost (positive values) for violating the bounds</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1729,13 +1733,13 @@ This task only looks at the instantaneous collision cost.</p>
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>factor</strong> – cost / reward function scaling factor</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1750,7 +1754,7 @@ This task only looks at the instantaneous collision cost.</p>
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>obs_labels</strong> – labels for selection, e.g. [‘Box_A’]. This needs to match the observations’ names in RcsPySim</p></li>
@@ -1759,7 +1763,7 @@ This task only looks at the instantaneous collision cost.</p>
 flip is desired</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1774,7 +1778,7 @@ flip is desired</p></li>
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>obs_labels</strong> – labels for selection, e.g. [‘WristLoadCellLBR_R_Fy’]. This needs to match the observations’
@@ -1782,7 +1786,7 @@ names in RcsPySim</p></li>
 <li><p><strong>Q</strong> – weight matrix of dim NxN with N=num_forces for the quadratic force costs</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1798,7 +1802,7 @@ movements primitives (see RcsPySim).</p>
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>ds_label</strong> – label of the dynamical system (see RcsPySim)</p></li>
@@ -1806,7 +1810,7 @@ movements primitives (see RcsPySim).</p>
 <li><p><strong>succ_thold</strong> – once the object of interest is closer than this threshold, the task is considered successfully</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1821,7 +1825,7 @@ movements primitives (see RcsPySim).</p>
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>ds_label</strong> – label of the dynamical system (see RcsPySim)</p></li>
@@ -1829,7 +1833,7 @@ movements primitives (see RcsPySim).</p>
 <li><p><strong>succ_thold</strong> – once the object of interest is closer than this threshold, the task is considered successfully</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1844,7 +1848,7 @@ movements primitives (see RcsPySim).</p>
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>obs_labels</strong> – labels for selection, e.g. [‘PowerGrasp_R_Y’, ‘PowerGrasp_R_Z’]. This needs to match the
@@ -1852,7 +1856,7 @@ observations’ names in RcsPySim</p></li>
 <li><p><strong>state_des</strong> – desired state (depends of the coordinate system). If reached, the task is over.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1867,7 +1871,7 @@ observations’ names in RcsPySim</p></li>
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>obs_labels</strong> – labels for selection, e.g. [‘Box_Z’]. This needs to match the observations’ names in RcsPySim</p></li>
@@ -1875,7 +1879,7 @@ observations’ names in RcsPySim</p></li>
 <li><p><strong>succ_thold</strong> – once the object of interest is closer than this threshold, the task is considered successfully</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1892,13 +1896,13 @@ This task only looks at the X and Z coordinates.</p>
 <p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>rew_fcn</strong> – reward function</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>masked task that only considers a subspace of all observations</p>
 </dd>
 </dl>
@@ -1914,7 +1918,7 @@ This task only looks at the X and Z coordinates.</p>
 <p>Reward function that returns the negative weighted sum of the absolute errors.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q</strong> – weight vector for the state errors</p></li>
 <li><p><strong>r</strong> – weight vector for the action errors</p></li>
@@ -1930,7 +1934,7 @@ This task only looks at the X and Z coordinates.</p>
 <p>Combine multiple reward functions</p>
 <p>Constuctor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rew_fcns</strong> – sequence, e.g. list or tuple, of reward functions to combine</p>
 </dd>
 </dl>
@@ -1951,7 +1955,7 @@ The default implementation does nothing.</p>
 Maximum reward of +1 at state[idx] = +/- state_des[idx], minimum reward of -1 at state[idx] = 0.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>idx</strong> – index of the element (angle) of interest</p>
 </dd>
 </dl>
@@ -1964,7 +1968,7 @@ Maximum reward of +1 at state[idx] = +/- state_des[idx], minimum reward of -1 at
 <p>Reward function that returns the exp of the weighted sum of squared errors</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Q</strong> – weight matrix for the state errors (positive semi-definite)</p></li>
 <li><p><strong>R</strong> – weight matrix for the action errors (positive definite)</p></li>
@@ -1995,7 +1999,7 @@ the simulator.</p>
 unknown at construction time of the task, i.e. this reward function.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>idx_fwd</strong> – index of the state dimension that marks the forward direction</p></li>
@@ -2034,7 +2038,7 @@ the simulator.</p>
 unknown at construction time of the task, i.e. this reward function.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>idx_fwd</strong> – index of the state dimension that marks the forward direction</p></li>
@@ -2088,7 +2092,7 @@ the simulator.</p>
 unknown at construction time of the task, i.e. this reward function.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>idx_fwd</strong> – index of the state dimension that marks the forward direction</p></li>
@@ -2139,7 +2143,7 @@ A positive or negative final reward can be specified on the Task-level.</p>
 <p>Custom reward function for QCartPoleSwingUpSim.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>factor</strong> – weighting factor of rotation error to position error</p>
 </dd>
 </dl>
@@ -2152,7 +2156,7 @@ A positive or negative final reward can be specified on the Task-level.</p>
 <p>Reward function that returns the exp of the weighted sum of squared errors.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Q</strong> – weight matrix for the state errors (positive semi-definite)</p></li>
 <li><p><strong>R</strong> – weight matrix for the action errors (positive definite)</p></li>
@@ -2183,7 +2187,7 @@ The default implementation does nothing.</p>
 Maximum reward of +1 at state[idx] = +/- state_des[idx], minimum reward of 0 at state[idx] = 0.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>idx</strong> – index of the element (angle) of interest</p>
 </dd>
 </dl>
@@ -2202,7 +2206,7 @@ have to re-init the reward function after every randomization of the env, since 
 change when randomizing the domain parameters.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Q</strong> – weight matrix for the state errors (positive semi-definite)</p></li>
 <li><p><strong>R</strong> – weight matrix for the action errors (positive definite)</p></li>
@@ -2229,7 +2233,7 @@ The default implementation does nothing.</p>
 classical optimization problems into Pyrado, thus it is negative of the loss function.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fcn</strong> – function for evaluating the state a.k.a. solution</p></li>
 <li><p><strong>flip_sign</strong> – return negative of fcn, useful to turn minimization problems into maximization problems</p></li>
@@ -2252,7 +2256,7 @@ classical optimization problems into Pyrado, thus it is negative of the loss fun
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>c_pole</strong> – scaling parameter for the pole angle cost</p></li>
 <li><p><strong>c_cart</strong> – scaling parameter for the cart position cost</p></li>
@@ -2284,7 +2288,7 @@ A positive or negative final reward can be specified on the Task-level.</p>
 <p>Task class for a sequence of tasks a.k.a. goals</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tasks</strong> – sequence of tasks a.k.a. goals, the order matters</p></li>
 <li><p><strong>start_idx</strong> – index of the task to start with, by default with the first one in the list</p></li>
@@ -2308,13 +2312,13 @@ Since this task holds multiple sub-tasks, the final reward / cost is computed fo
 immediate sub-tasks.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> – current state of the environment</p></li>
 <li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>final reward of all sub-tasks</p>
 </dd>
 </dl>
@@ -2331,10 +2335,10 @@ immediate sub-tasks.</p>
 <span class="sig-name descname"><span class="pre">has_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/sequential.html#SequentialTasks.has_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.has_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Check if this tasks is done. The SequentialTasks is successful if all sub-tasks are successful.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – environments current state</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if succeeded</p>
 </dd>
 </dl>
@@ -2398,14 +2402,14 @@ immediate sub-tasks.</p>
 <span class="sig-name descname"><span class="pre">proximity_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">err</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thold_dist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/tasks/utils.html#proximity_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.utils.proximity_succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>The task is done successfully if the L2-norm of the selected dimensions of the state is smaller than some threshold.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>err</strong> – error in state, i.e. difference between desired and current state</p></li>
 <li><p><strong>thold_dist</strong> – threshold for being solved</p></li>
 <li><p><strong>dims</strong> – selected dimensions, i.e. indices, for the state, by default all dimensions are selected</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>True</cite> if successful</p>
 </dd>
 </dl>

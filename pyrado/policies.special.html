@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>special &mdash; Pyrado 0.7.1 documentation</title>
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -186,7 +190,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">special</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/policies.special.rst.txt" rel="nofollow"> View page source</a>
@@ -208,7 +212,7 @@
 <p>A proxy to the Policy class in order to use the policy’s parameters as domain distribution parameters</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mapping</strong> – mapping from subsequent integers to domain distribution parameters, where the first string of
 the value tuple is the name of the domain parameter (e.g. mass, length) and the second string is
@@ -229,13 +233,13 @@ The advantage of this is to make the parameter-based exploration easier.</p></li
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/domain_distribution.html#DomainDistrParamPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -246,7 +250,7 @@ The advantage of this is to make the parameter-based exploration easier.</p></li
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/domain_distribution.html#DomainDistrParamPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -273,10 +277,10 @@ tuple is the name of the domain parameter and the second string is the name of t
 <dd><p>Get the transformed domain distribution parameters. Where ever the mask is <cite>True</cite>, the corresponding policy
 parameter is learned in sqrt space. Moreover, the policy parameters can be scaled.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>params</strong> – policy parameters (can be the sqrt of the actual domain distribution parameter value)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>policy parameters transformed according to the mask</p>
 </dd>
 </dl>
@@ -299,7 +303,7 @@ The only but significant difference of this controller to the other PD controlle
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>state_des</strong> – tensor of desired x and y ball position [m]</p></li>
@@ -314,10 +318,10 @@ The only but significant difference of this controller to the other PD controlle
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QBallBalancerPDCtrl.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QBallBalancerPDCtrl.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the controller output.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
 </dd>
-<dt class="field-even">Return act</dt>
+<dt class="field-even">Return act<span class="colon">:</span></dt>
 <dd class="field-even"><p>controller output [V]</p>
 </dd>
 </dl>
@@ -328,7 +332,7 @@ The only but significant difference of this controller to the other PD controlle
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QBallBalancerPDCtrl.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QBallBalancerPDCtrl.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize controller parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kp</strong> – 2x2 tensor of constant controller feedback coefficients for error [V/m]</p></li>
 <li><p><strong>kd</strong> – 2x2 tensor of constant controller feedback coefficients for error time derivative [Vs/m]</p></li>
@@ -358,7 +362,7 @@ The only but significant difference of this controller to the other PD controlle
 <p>Controller for going to one of the joint limits (part of the calibration routine)</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – initial state of the system</p></li>
 <li><p><strong>positive</strong> – direction switch</p></li>
@@ -374,7 +378,7 @@ The only but significant difference of this controller to the other PD controlle
 <p>Swing-up and balancing controller for the Quanser Cart-Pole</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>long</strong> – flag for long or short pole</p></li>
@@ -392,10 +396,10 @@ The only but significant difference of this controller to the other PD controlle
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QCartPoleSwingUpAndBalanceCtrl.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the controller output.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
 </dd>
-<dt class="field-even">Return act</dt>
+<dt class="field-even">Return act<span class="colon">:</span></dt>
 <dd class="field-even"><p>controller output [V]</p>
 </dd>
 </dl>
@@ -406,7 +410,7 @@ The only but significant difference of this controller to the other PD controlle
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QCartPoleSwingUpAndBalanceCtrl.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -444,7 +448,7 @@ The only but significant difference of this controller to the other PD controlle
 <p>Energy-based controller used to swing the Furuta pendulum up</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>ref_energy</strong> – reference energy level [J]</p></li>
@@ -474,10 +478,10 @@ kwargs passed to <cite>reset()</cite>. If <cite>False</cite> they are ignored.</
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeEnergyCtrl.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeEnergyCtrl.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Control step of energy-based controller which is used in the swing-up controller</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obs</strong> – observations pre-processed in the <cite>forward</cite> method of <cite>QQubeSwingUpAndBalanceCtrl</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>action</p>
 </dd>
 </dl>
@@ -488,7 +492,7 @@ kwargs passed to <cite>reset()</cite>. If <cite>False</cite> they are ignored.</
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeEnergyCtrl.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeEnergyCtrl.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -517,7 +521,7 @@ kwargs passed to <cite>reset()</cite>. If <cite>False</cite> they are ignored.</
 <p>Controller for going to one of the joint limits (part of the calibration routine)</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>positive</strong> – direction switch</p>
 </dd>
 </dl>
@@ -532,7 +536,7 @@ Drives Qube to <span class="math notranslate nohighlight">\(x_{des} = [\theta_{d
 Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &lt; tol\)</span>.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>pd_gains</strong> – controller gains, the default values stabilize the pendulum at the center hanging down</p></li>
@@ -548,13 +552,13 @@ Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubePDCtrl.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubePDCtrl.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -565,7 +569,7 @@ Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubePDCtrl.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubePDCtrl.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -592,7 +596,7 @@ Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
 <li><p><strong>ref_energy</strong> – reference energy level</p></li>
@@ -616,13 +620,13 @@ vertical axis, i.e. prevent bouncing against the mechanical boundaries.</p></li>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeSwingUpAndBalanceCtrl.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 <li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
@@ -633,7 +637,7 @@ vertical axis, i.e. prevent bouncing against the mechanical boundaries.</p></li>
 <span class="sig-name descname"><span class="pre">init_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeSwingUpAndBalanceCtrl.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.init_param" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
 <li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
@@ -652,10 +656,10 @@ vertical axis, i.e. prevent bouncing against the mechanical boundaries.</p></li>
 <span class="sig-name descname"><span class="pre">pd_enabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cos_al:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;]</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeSwingUpAndBalanceCtrl.pd_enabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.pd_enabled" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the PD-controller should be enabled based oin a predefined threshold on the alpha angle.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cos_al</strong> – cosine of the pendulum pole angle</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool if condition is met</p>
 </dd>
 </dl>
@@ -680,7 +684,7 @@ Used in the experiments of [1].</p>
 <p>[1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, “TITLE”, VENUE, YEAR</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – mini golf simulation environment</p>
 </dd>
 </dl>
@@ -698,14 +702,14 @@ Used in the experiments of [1].</p>
 <p>[1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, “TITLE”, VENUE, YEAR</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – pendulum simulation environment</p></li>
 <li><p><strong>num_rollouts</strong> – number of rollouts to store in the policy’s buffer</p></li>
 <li><p><strong>f_sin</strong> – frequency of the sinus [Hz]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>policy with recorded action time series</p>
 </dd>
 </dl>
@@ -717,13 +721,13 @@ Used in the experiments of [1].</p>
 <dd><p>A sin-based excitation function for the 7-DoF WAM, describing desired a desired joint angle offset and its velocity
 at every point in time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>t</strong> – time</p></li>
 <li><p><strong>flip_sign</strong> – if <cite>True</cite>, flip the sign</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>joint angle positions and velocities</p>
 </dd>
 </dl>

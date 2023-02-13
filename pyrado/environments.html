@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>environments &mdash; Pyrado 0.7.1 documentation</title>
@@ -30,14 +30,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -163,7 +167,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">environments</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/environments.rst.txt" rel="nofollow"> View page source</a>
@@ -187,7 +191,7 @@
 <p>Base class of all environments in Pyrado. Uses Serializable to facilitate proper serialization.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – integration step size in seconds, default value is used for for one-step environments</p></li>
 <li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
@@ -223,10 +227,10 @@
 <span class="sig-name descname"><span class="pre">limit_act</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/base.html#Env.limit_act"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.base.Env.limit_act" title="Permalink to this definition"></a></dt>
 <dd><p>Clip the actions according to the environment’s action space. Note, this also affects the exploration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – unbounded action</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bounded action</p>
 </dd>
 </dl>
@@ -242,7 +246,7 @@
 <cite>float(‘Inf’)</cite> should be used, since it is the only value larger then any int.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>maximum number of time steps before the environment terminates</p>
 </dd>
 </dl>
@@ -268,10 +272,10 @@
 <p>This method should be overwritten if the environment has a distinct observation space.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>observation perceived to the agent</p>
 </dd>
 </dl>
@@ -282,7 +286,7 @@
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">RenderMode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/base.html#Env.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.base.Env.render" title="Permalink to this definition"></a></dt>
 <dd><p>Visualize one time step.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
 <li><p><strong>render_step</strong> – interval for rendering</p></li>
@@ -296,13 +300,13 @@
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/base.html#Env.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.base.Env.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
 <li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
@@ -330,19 +334,19 @@ When a terminal condition is met, the reset function is called.</p>
 <p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>current observation of the environment</p>
 </dd>
-<dt class="field-odd">Return reward</dt>
+<dt class="field-odd">Return reward<span class="colon">:</span></dt>
 <dd class="field-odd"><p>reward depending on the selected reward function</p>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates whether the episode has ended</p>
 </dd>
-<dt class="field-odd">Return env_info</dt>
+<dt class="field-odd">Return env_info<span class="colon">:</span></dt>
 <dd class="field-odd"><p>contains diagnostic information about the environment</p>
 </dd>
 </dl>
@@ -371,7 +375,7 @@ checking environments’ types.</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – integration step size in seconds, default value is used for for one-step environments</p></li>
 <li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
@@ -392,7 +396,7 @@ Uses Serializable to facilitate proper serialization.
 The domain parameters are automatically part of the serialized state.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – integration step size in seconds, default value is used for for one-step environments</p></li>
 <li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
@@ -436,7 +440,7 @@ but there might also be additional parameters that depend on the domain paramete
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
 <li><p><strong>render_step</strong> – interval for rendering</p></li>

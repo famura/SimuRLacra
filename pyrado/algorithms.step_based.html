@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>step_based &mdash; Pyrado 0.7.1 documentation</title>
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -244,7 +248,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">step_based</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/algorithms.step_based.rst.txt" rel="nofollow"> View page source</a>
@@ -266,7 +270,7 @@
 <p>Advantage Actor Critic (A2C)</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -294,7 +298,7 @@ By default, the learning rate is constant.</p></li>
 <span class="sig-name descname"><span class="pre">loss_fcn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_probs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_targ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/a2c.html#A2C.loss_fcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.a2c.A2C.loss_fcn" title="Permalink to this definition"></a></dt>
 <dd><p>A2C loss function</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>log_probs</strong> – logarithm of the probabilities of the taken actions</p></li>
 <li><p><strong>adv</strong> – advantage values</p></li>
@@ -302,7 +306,7 @@ By default, the learning rate is constant.</p></li>
 <li><p><strong>v_targ</strong> – target value function values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>combined loss value</p>
 </dd>
 </dl>
@@ -318,7 +322,7 @@ By default, the learning rate is constant.</p></li>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/a2c.html#A2C.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.a2c.A2C.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the actor and critic parameters from the given batch of rollouts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rollouts</strong> – batch of rollouts</p>
 </dd>
 </dl>
@@ -336,7 +340,7 @@ By default, the learning rate is constant.</p></li>
 <p>Base class of all actor critic algorithms</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
 <li><p><strong>actor</strong> – policy taking the actions in the environment</p></li>
@@ -365,7 +369,7 @@ By default, the learning rate is constant.</p></li>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
 Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>warmstart</strong> – if <cite>True</cite>, the algorithm starts learning with a non-random initialization. This can either
 be the a fixed parameter vector, or the loaded results of the previous iteration.</p></li>
@@ -382,10 +386,10 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/actor_critic.html#ActorCritic.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -398,7 +402,7 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -416,7 +420,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -429,7 +433,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -444,7 +448,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/actor_critic.html#ActorCritic.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the actor and critic parameters from the given batch of rollouts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rollouts</strong> – batch of rollouts</p>
 </dd>
 </dl>
@@ -466,7 +470,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -503,7 +507,7 @@ replay buffer after resets</p></li>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
 Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>warmstart</strong> – if <cite>True</cite>, the algorithm starts learning with a non-random initialization. This can either
 be the a fixed parameter vector, or the loaded results of the previous iteration.</p></li>
@@ -520,10 +524,10 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -534,13 +538,13 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loss_fcn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_q_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.loss_fcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.loss_fcn" title="Permalink to this definition"></a></dt>
 <dd><p>The Huber loss function on the one-step TD error <span class="math notranslate nohighlight">\(\delta = Q(s,a) - (r + \gamma \max_a Q(s^\prime, a))\)</span>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q_vals</strong> – state-action values <span class="math notranslate nohighlight">\(Q(s,a)\)</span>, from policy network</p></li>
 <li><p><strong>expected_q_vals</strong> – expected state-action values <span class="math notranslate nohighlight">\(r + \gamma \max_a Q(s^\prime, a)\)</span>, from target network</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>loss value</p>
 </dd>
 </dl>
@@ -558,7 +562,7 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -576,7 +580,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -606,7 +610,7 @@ Generalized Advantage Estimation’, ICLR 2016</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vfcn</strong> – value function, which can be a <cite>FNN</cite> or a <cite>Policy</cite></p></li>
 <li><p><strong>gamma</strong> – temporal discount factor</p></li>
@@ -629,14 +633,14 @@ By default, the learning rate is constant.</p></li>
 <span class="sig-name descname"><span class="pre">gae</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concat_ros</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_grad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/gae.html#GAE.gae"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.gae" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the generalized advantage estimation as described in [1].</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>concat_ros</strong> – concatenated rollouts (sequence of steps from potentially different rollouts)</p></li>
 <li><p><strong>v_pred</strong> – state-value predictions if already computed, else pass None</p></li>
 <li><p><strong>requires_grad</strong> – is the gradient required</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return adv</dt>
+<dt class="field-even">Return adv<span class="colon">:</span></dt>
 <dd class="field-even"><p>tensor of advantages</p>
 </dd>
 </dl>
@@ -654,14 +658,14 @@ The default implementation resets the learning rate scheduler if there is one.</
 <span class="sig-name descname"><span class="pre">tdlamda_returns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concat_ros</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/gae.html#GAE.tdlamda_returns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.tdlamda_returns" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the TD(<span class="math notranslate nohighlight">\(\lambda\)</span>) returns based on the predictions of the network (introduces a bias).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>v_pred</strong> – state-value predictions if already computed, pass <cite>None</cite> to compute form given rollouts</p></li>
 <li><p><strong>adv</strong> – advantages if already computed, pass <cite>None</cite> to compute form given rollouts</p></li>
 <li><p><strong>concat_ros</strong> – rollouts to compute predicted values and advantages from if they are not provided</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>exponentially weighted returns based on the value function estimator</p>
 </dd>
 </dl>
@@ -672,13 +676,13 @@ The default implementation resets the learning rate scheduler if there is one.</
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_empirical_returns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/gae.html#GAE.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.update" title="Permalink to this definition"></a></dt>
 <dd><p>Adapt the parameters of the advantage function estimator, minimizing the MSE loss for the given samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rollouts</strong> – batch of rollouts</p></li>
 <li><p><strong>use_empirical_returns</strong> – use the return from the rollout (True) or the ones from the V-fcn (False)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return adv</dt>
+<dt class="field-even">Return adv<span class="colon">:</span></dt>
 <dd class="field-even"><p>tensor of advantages after V-function updates</p>
 </dd>
 </dl>
@@ -689,10 +693,10 @@ The default implementation resets the learning rate scheduler if there is one.</
 <span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concat_ros</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/gae.html#GAE.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.values" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the states’ values for all observations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>concat_ros</strong> – concatenated rollouts</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>states’ values</p>
 </dd>
 </dl>
@@ -724,7 +728,7 @@ The default implementation resets the learning rate scheduler if there is one.</
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -763,14 +767,14 @@ schedules the maximum learning rate.</p>
 <span class="sig-name descname"><span class="pre">loss_fcn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_probs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_probs_old</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/ppo.html#PPO.loss_fcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO.loss_fcn" title="Permalink to this definition"></a></dt>
 <dd><p>PPO loss function</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>log_probs</strong> – logarithm of the probabilities of the taken actions using the updated policy</p></li>
 <li><p><strong>log_probs_old</strong> – logarithm of the probabilities of the taken actions using the old policy</p></li>
 <li><p><strong>adv</strong> – advantage values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>loss value</p>
 </dd>
 </dl>
@@ -786,7 +790,7 @@ schedules the maximum learning rate.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/ppo.html#PPO.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the actor and critic parameters from the given batch of rollouts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rollouts</strong> – batch of rollouts</p>
 </dd>
 </dl>
@@ -815,7 +819,7 @@ PPO2 differs from PPO by also clipping the value function and standardizing the 
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -856,7 +860,7 @@ schedules the maximum learning rate.</p>
 <span class="sig-name descname"><span class="pre">loss_fcn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_probs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_probs_old</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_pred_old</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_targ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/ppo.html#PPO2.loss_fcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO2.loss_fcn" title="Permalink to this definition"></a></dt>
 <dd><p>PPO2 loss function</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>log_probs</strong> – logarithm of the probabilities of the taken actions using the updated policy</p></li>
 <li><p><strong>log_probs_old</strong> – logarithm of the probabilities of the taken actions using the old policy</p></li>
@@ -866,7 +870,7 @@ schedules the maximum learning rate.</p>
 <li><p><strong>v_targ</strong> – target value function values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>combined loss value</p>
 </dd>
 </dl>
@@ -882,7 +886,7 @@ schedules the maximum learning rate.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/ppo.html#PPO2.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO2.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update the actor and critic parameters from the given batch of rollouts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rollouts</strong> – batch of rollouts</p>
 </dd>
 </dl>
@@ -917,7 +921,7 @@ implementation out there. Here we follow the one from [3].</p>
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -969,7 +973,7 @@ replay buffer after resets</p></li>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
 Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>warmstart</strong> – if <cite>True</cite>, the algorithm starts learning with a non-random initialization. This can either
 be the a fixed parameter vector, or the loaded results of the previous iteration.</p></li>
@@ -986,10 +990,10 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/sac.html#SAC.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -1007,7 +1011,7 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -1025,7 +1029,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -1050,7 +1054,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>This class mocks the optimizer interface partially to intercept the gradient updates of svpg.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>particle</strong> – blueprint algorithm in which the optimizer is replaced by the mocked one</p>
 </dd>
 </dl>
@@ -1059,7 +1063,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#OptimizerHook.empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.OptimizerHook.empty" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the buffer is empty.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>buffer is empty</p>
 </dd>
 </dl>
@@ -1070,7 +1074,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">iter_steps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#OptimizerHook.iter_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.OptimizerHook.iter_steps" title="Permalink to this definition"></a></dt>
 <dd><p>Generate the steps in the buffer queue.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Yield</dt>
+<dt class="field-odd">Yield<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the next step in the queue</p>
 </dd>
 </dl>
@@ -1111,7 +1115,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -1135,10 +1139,10 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.kernel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.kernel" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the RBF-kernel and the corresponding derivatives.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>X</strong> – the tensor to compute the kernel from</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the kernel and its derivatives</p>
 </dd>
 </dl>
@@ -1149,7 +1153,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">load_particle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.load_particle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.load_particle" title="Permalink to this definition"></a></dt>
 <dd><p>Load a specific particle’s state into <cite>self.particle</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>idx</strong> – index of the particle to load</p>
 </dd>
 </dl>
@@ -1160,10 +1164,10 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -1180,7 +1184,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -1193,7 +1197,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -1218,7 +1222,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>Helper class to build an SVPG algorithm instance</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -1238,7 +1242,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <p>Base class of all value-based algorithms</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>env</strong> – the environment which the policy operates</p></li>
@@ -1282,7 +1286,7 @@ replay buffer after resets</p></li>
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -1294,7 +1298,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -1307,7 +1311,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,

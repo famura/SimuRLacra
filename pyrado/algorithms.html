@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>algorithms &mdash; Pyrado 0.7.1 documentation</title>
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -190,7 +194,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">algorithms</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/algorithms.rst.txt" rel="nofollow"> View page source</a>
@@ -215,7 +219,7 @@
 Algorithms specify the way how the policy is updated as well as the exploration strategy used to acquire samples.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in</p></li>
 <li><p><strong>max_iter</strong> – maximum number of iterations (i.e. policy updates) that this algorithm runs</p></li>
@@ -235,13 +239,13 @@ algorithm is run as a subroutine</p></li>
 <p>The gradient clipping has to be applied between loss.backward() and optimizer.step()</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>module</strong> – Module containing parameters</p></li>
 <li><p><strong>max_grad_norm</strong> – maximum L2 norm for the gradient</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>total norm of the parameters (viewed as a single vector)</p>
 </dd>
 </dl>
@@ -265,7 +269,7 @@ algorithm is run as a subroutine</p></li>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
 Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>warmstart</strong> – if <cite>True</cite>, the algorithm starts learning with a non-random initialization. This can either
 be the a fixed parameter vector, or the loaded results of the previous iteration.</p></li>
@@ -287,10 +291,10 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.load_snapshot" title="Permalink to this definition"></a></dt>
 <dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
@@ -302,7 +306,7 @@ be the a fixed parameter vector, or the loaded results of the previous iteration
 <dd><p>Make a snapshot of the training progress.
 This method is called from the subclasses and delegates to the custom method <cite>save_snapshot()</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>curr_avg_ret</strong> – current average return used for the snapshot_mode ‘best’ to trigger <cite>save_snapshot()</cite></p></li>
@@ -337,7 +341,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -373,7 +377,7 @@ Be sure to call this function if you override it.</p>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
 contains a dict of information about the current iteration of the meta-algorithm</p>
 </dd>
@@ -386,7 +390,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
 <li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
@@ -415,7 +419,7 @@ algorithm, initializing the latter would require the former and vice versa. This
 dependency.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>True</cite> if the stopping criterion is met, see also <cite>StoppingCriterion.is_met(algo)</cite></p>
 </dd>
 </dl>
@@ -426,7 +430,7 @@ dependency.</p>
 <span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.train" title="Permalink to this definition"></a></dt>
 <dd><p>Train one/multiple policy/policies in a given environment.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new high-score)</p></li>
 <li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p></li>
@@ -453,7 +457,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 and counts until (including) <cite>num_checkpoints</cite>, and is then reset to zero.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>num_checkpoints</strong> – total number of checkpoints</p></li>
 <li><p><strong>init_checkpoint</strong> – initial value of the cyclic counter, defaults to 0, use negative values can to mark
@@ -477,7 +481,7 @@ constructor, it is automatically reset to zero.
 This method also saves the algorithm instance using <cite>save_snapshot()</cite>, otherwise increasing the checkpoint
 counter can have no effect.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_info</strong> – information forwarded to <cite>save_snapshot()</cite></p>
 </dd>
 </dl>
@@ -490,7 +494,7 @@ counter can have no effect.</p>
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
 </dd>
 </dl>
@@ -501,7 +505,7 @@ Be sure to call this function if you override it.</p>
 <span class="sig-name descname"><span class="pre">reset_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm.reset_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.reset_checkpoint" title="Permalink to this definition"></a></dt>
 <dd><p>Explicitly reset the cyclic counter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>curr</strong> – value to set the counter to, defaults to 0</p>
 </dd>
 </dl>
@@ -547,7 +551,7 @@ entropy: entropy of the action distribution</p>
 <p>Base class for storing step transitions</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>capacity</strong> – number of steps a.k.a. transitions in the memory</p>
 </dd>
 </dl>
@@ -556,7 +560,7 @@ entropy: entropy of the action distribution</p>
 <span class="sig-name descname"><span class="pre">avg_reward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ReplayMemory.avg_reward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.avg_reward" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the average reward for all steps stored in the replay memory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>average reward</p>
 </dd>
 </dl>
@@ -579,7 +583,7 @@ entropy: entropy of the action distribution</p>
 <span class="sig-name descname"><span class="pre">push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ros</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ReplayMemory.push"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.push" title="Permalink to this definition"></a></dt>
 <dd><p>Save a sequence of steps and drop of steps if the capacity is exceeded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ros</strong> – list of rollouts or one concatenated rollout</p></li>
 <li><p><strong>truncate_last</strong> – remove the last step from each rollout, forwarded to <cite>StepSequence.concat</cite></p></li>
@@ -598,10 +602,10 @@ entropy: entropy of the action distribution</p>
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#ReplayMemory.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.ReplayMemory.sample" title="Permalink to this definition"></a></dt>
 <dd><p>Sample randomly from the replay memory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>batch_size</strong> – number of samples</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple of transition steps and associated next steps</p>
 </dd>
 </dl>
@@ -616,7 +620,7 @@ entropy: entropy of the action distribution</p>
 <p>A wrapper for <cite>SamplerBase</cite> objects where calls to <cite>SamplerBase.sample()</cite> are intercepted and the results stored
 in this wrapper before they are returned to the caller.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Usage</dt>
+<dt class="field-odd">Usage<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ros</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
@@ -658,13 +662,13 @@ for the given rollout using the given exploration strategy.</p>
 <p>Requires the exploration strategy to have a (most likely custom) <cite>evaluate()</cite> method.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>steps</strong> – recorded rollout data</p></li>
 <li><p><strong>expl_strat</strong> – exploration strategy used to generate the data</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>collected action statistics, see <cite>ActionStatistics</cite></p>
 </dd>
 </dl>
@@ -676,7 +680,7 @@ for the given rollout using the given exploration strategy.</p>
 <dd><p>Get the gradient of a function operating on PyTorch tensors, by casting the input <cite>x_np</cite> as well as the
 resulting gradient to PyTorch.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x_np</strong> – input vector <span class="math notranslate nohighlight">\(x\)</span></p></li>
 <li><p><strong>fcn_to</strong> – function <span class="math notranslate nohighlight">\(f(x, \cdot)\)</span></p></li>
@@ -684,7 +688,7 @@ resulting gradient to PyTorch.</p>
 <li><p><strong>kwargs_to</strong> – other keyword arguments to the function</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="math notranslate nohighlight">\(\nabla_x f(x, \cdot)\)</span></p>
 </dd>
 </dl>
@@ -695,14 +699,14 @@ resulting gradient to PyTorch.</p>
 <span class="sig-name descname"><span class="pre">num_iter_from_rollouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ros:</span> <span class="pre">[typing.Sequence[pyrado.sampling.step_sequence.StepSequence],</span> <span class="pre">None],</span> <span class="pre">concat_ros:</span> <span class="pre">[&lt;class</span> <span class="pre">'pyrado.sampling.step_sequence.StepSequence'&gt;,</span> <span class="pre">None],</span> <span class="pre">batch_size:</span> <span class="pre">int</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#num_iter_from_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.num_iter_from_rollouts" title="Permalink to this definition"></a></dt>
 <dd><p>Get the number of iterations from the given rollout data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ros</strong> – multiple rollouts</p></li>
 <li><p><strong>concat_ros</strong> – concatenated rollouts</p></li>
 <li><p><strong>batch_size</strong> – number of samples per batch</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>number of iterations (e.g. used for the progress bar)</p>
 </dd>
 </dl>
@@ -718,13 +722,13 @@ resulting gradient to PyTorch.</p>
 depending on the number of already done repetition.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>thold</strong> – threshold</p></li>
 <li><p><strong>max_rep</strong> – maximum number of repetitions of the wrapped function, set to <cite>None</cite> to run the loop relentlessly</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>wrapped function</p>
 </dd>
 </dl>

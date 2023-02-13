@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pysim &mdash; Pyrado 0.7.1 documentation</title>
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Pyrado
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pyrado
           </a>
               <div class="version">
                 0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -294,7 +298,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">pysim</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/environments.pysim.rst.txt" rel="nofollow"> View page source</a>
@@ -316,7 +320,7 @@
 <p>Ball-on-beam simulation environment with discrete actions</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – forwarded to BallOnBeamSim’s constructor</p></li>
 <li><p><strong>kwargs</strong> – forwarded to BallOnBeamSim’s constructor</p></li>
@@ -338,7 +342,7 @@
 stabilized on the center of the beam. In this setup, the agent can control the torque applied to the beam.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -373,7 +377,7 @@ stabilized on the center of the beam. In this setup, the agent can control the t
 <p>Base class for simulated environments implemented in pure Python</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -414,7 +418,7 @@ but there might also be additional parameters that depend on the domain paramete
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
 <li><p><strong>render_step</strong> – interval for rendering</p></li>
@@ -428,13 +432,13 @@ The base version prints to console when the state exceeds its boundaries.</p>
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/base.html#SimPyEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
 <li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
@@ -456,19 +460,19 @@ When a terminal condition is met, the reset function is called.</p>
 <p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>current observation of the environment</p>
 </dd>
-<dt class="field-odd">Return reward</dt>
+<dt class="field-odd">Return reward<span class="colon">:</span></dt>
 <dd class="field-odd"><p>reward depending on the selected reward function</p>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates whether the episode has ended</p>
 </dd>
-<dt class="field-odd">Return env_info</dt>
+<dt class="field-odd">Return env_info<span class="colon">:</span></dt>
 <dd class="field-odd"><p>contains diagnostic information about the environment</p>
 </dd>
 </dl>
@@ -498,7 +502,7 @@ Do not instantiate this yourself but rather use <cite>gym.make()</cite> like thi
 <p>Initialize the environment. You are not supposed to call this function directly, but use
 <cite>gym.make(“SimuRLacraSimEnv-v0”, env=sim_env)</cite> where <cite>sim_env</cite> is your Pyrado environment.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – Pyrado environment to wrap</p>
 </dd>
 </dl>
@@ -519,10 +523,10 @@ garbage collected or when the program exits.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">conv_space_from_pyrado</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Space</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.conv_space_from_pyrado"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.conv_space_from_pyrado" title="Permalink to this definition"></a></dt>
 <dd><p>Convert a Pyrado space to a gym space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>space</strong> – Pyrado space to convert</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>OpenAI gym space</p>
 </dd>
 </dl>
@@ -554,7 +558,7 @@ rgb_array: return an numpy.ndarray with shape (x, y, 3), representing RGB values
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mode</strong> – the mode to render with (currently ignored until other modes besides human are implemented)</p>
 </dd>
 </dl>
@@ -571,7 +575,7 @@ environment’s state are sampled independently between multiple calls to <cite>
 of <cite>reset()</cite> yields an environment suitable for a new episode, independent of previous episodes.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the initial observation</p>
 </dd>
 </dl>
@@ -582,7 +586,7 @@ of <cite>reset()</cite> yields an environment suitable for a new episode, indepe
 <span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/gym_wrapper.html#OpenAIGymWrapper.seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.gym_wrapper.OpenAIGymWrapper.seed" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the seed for this environment’s random number generator(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of seeds used in this environment’s random number generators. The first value in the list
 should be the “main” seed, or the value which a reproducer should pass to <cite>seed</cite>. Often, the main
 seed equals the provided <cite>seed</cite>, but this won’t be true if <cite>seed=None</cite>, for example.</p>
@@ -596,10 +600,10 @@ seed equals the provided <cite>seed</cite>, but this won’t be true if <cite>se
 <dd><p>Run one time step of the environment’s dynamics. When the end of episode is reached, you are responsible for
 calling <cite>reset()</cite> to reset this environment’s state.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action provided by the agent</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>observation: agent’s current observation of the environment
 reward: reward returned by the environment
 done: whether the episode has ended, in which case further <cite>step()</cite> calls will return undefined results
@@ -651,7 +655,7 @@ registered hooks while the latter silently ignores them.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dt</strong> – simulation step size [s]</p>
 </dd>
 </dl>
@@ -664,7 +668,7 @@ registered hooks while the latter silently ignores them.</p>
 <p>Model of a linear one-mass-oscillator (spring-mass-damper system) without gravity influence</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -704,7 +708,7 @@ registered hooks while the latter silently ignores them.</p>
 See <a class="reference external" href="https://github.com/openai/gym/tree/master/gym/envs/classic_control">https://github.com/openai/gym/tree/master/gym/envs/classic_control</a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env_name</strong> – name of the OpenAI Gym environment, e.g. ‘MountainCar-v0’, ‘CartPole-v1’, ‘Acrobot-v1’,
 ‘MountainCarContinuous-v0’,’Pendulum-v0’</p>
 </dd>
@@ -763,7 +767,7 @@ but there might also be additional parameters that depend on the domain paramete
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
 <li><p><strong>render_step</strong> – interval for rendering</p></li>
@@ -777,13 +781,13 @@ The base version prints to console when the state exceeds its boundaries.</p>
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/openai_classical_control.html#GymEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
 <li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
@@ -805,19 +809,19 @@ When a terminal condition is met, the reset function is called.</p>
 <p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>current observation of the environment</p>
 </dd>
-<dt class="field-odd">Return reward</dt>
+<dt class="field-odd">Return reward<span class="colon">:</span></dt>
 <dd class="field-odd"><p>reward depending on the selected reward function</p>
 </dd>
-<dt class="field-even">Return done</dt>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates whether the episode has ended</p>
 </dd>
-<dt class="field-odd">Return env_info</dt>
+<dt class="field-odd">Return env_info<span class="colon">:</span></dt>
 <dd class="field-odd"><p>contains diagnostic information about the environment</p>
 </dd>
 </dl>
@@ -841,7 +845,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Visualisation for the BallOnBeamSim class using panda3d</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
 </dd>
 </dl>
@@ -851,10 +855,10 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#BallOnBeamVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.BallOnBeamVis.update" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the visualization with every call.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
 </dd>
-<dt class="field-even">Return Task.cont</dt>
+<dt class="field-even">Return Task.cont<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates that task should be called again next frame.</p>
 </dd>
 </dl>
@@ -869,7 +873,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Visualisation for the OneMassOscillatorSim class using panda3d</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
 </dd>
 </dl>
@@ -878,10 +882,10 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#OneMassOscillatorVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.OneMassOscillatorVis.update" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the visualization with every call.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
 </dd>
-<dt class="field-even">Return Task.cont</dt>
+<dt class="field-even">Return Task.cont<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates that task should be called again next frame.</p>
 </dd>
 </dl>
@@ -896,7 +900,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Base class for all visualizations with panda3d</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rendering</strong> – boolean indicating whether to use RenderPipeline or default Panda3d as visualization-module.</p>
 </dd>
 </dl>
@@ -905,7 +909,7 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">draw_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PandaVis.draw_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PandaVis.draw_trace" title="Permalink to this definition"></a></dt>
 <dd><p>Draws a line from the last point to the current point</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>point</strong> – Current position of pen. Needs 3 value vector.</p>
 </dd>
 </dl>
@@ -922,10 +926,10 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PandaVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PandaVis.update" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the visualization with every call.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
 </dd>
-<dt class="field-even">Return Task.cont</dt>
+<dt class="field-even">Return Task.cont<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates that task should be called again next frame.</p>
 </dd>
 </dl>
@@ -940,7 +944,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Visualisation for the PendulumSim class using panda3d</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
 </dd>
 </dl>
@@ -949,10 +953,10 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PendulumVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PendulumVis.update" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the visualization with every call.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
 </dd>
-<dt class="field-even">Return Task.cont</dt>
+<dt class="field-even">Return Task.cont<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates that task should be called again next frame.</p>
 </dd>
 </dl>
@@ -967,7 +971,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Visualisation for the QBallBalancerSim class using panda3d</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
 </dd>
 </dl>
@@ -976,10 +980,10 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QBallBalancerVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QBallBalancerVis.update" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the visualization with every call.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
 </dd>
-<dt class="field-even">Return Task.cont</dt>
+<dt class="field-even">Return Task.cont<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates that task should be called again next frame.</p>
 </dd>
 </dl>
@@ -994,7 +998,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Visualisation for the QCartPoleSim class using panda3d</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
 </dd>
 </dl>
@@ -1003,10 +1007,10 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QCartPoleVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QCartPoleVis.update" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the visualization with every call.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
 </dd>
-<dt class="field-even">Return Task.cont</dt>
+<dt class="field-even">Return Task.cont<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates that task should be called again next frame.</p>
 </dd>
 </dl>
@@ -1021,7 +1025,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Visualisation for the QQubeSim class using panda3d</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – environment to visualize</p>
 </dd>
 </dl>
@@ -1030,10 +1034,10 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QQubeVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QQubeVis.update" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the visualization with every call.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
 </dd>
-<dt class="field-even">Return Task.cont</dt>
+<dt class="field-even">Return Task.cont<span class="colon">:</span></dt>
 <dd class="field-even"><p>indicates that task should be called again next frame.</p>
 </dd>
 </dl>
@@ -1051,7 +1055,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Under-actuated inverted pendulum environment similar to the one from OpenAI Gym</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -1084,10 +1088,10 @@ When a terminal condition is met, the reset function is called.</p>
 <p>This method should be overwritten if the environment has a distinct observation space.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>observation perceived to the agent</p>
 </dd>
 </dl>
@@ -1105,7 +1109,7 @@ When a terminal condition is met, the reset function is called.</p>
 <p>Calculates and visualizes the kinematics from the servo shaft angles (th_x, th_x) to the plate angles (a, b).</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>qbb</strong> – QBallBalancerSim object</p></li>
 <li><p><strong>num_opt_iter</strong> – number of optimizer iterations for the IK</p></li>
@@ -1126,7 +1130,7 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">th</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tip</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerKin.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.render" title="Permalink to this definition"></a></dt>
 <dd><p>Visualize using pyplot</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>th</strong> – angle of the servo</p></li>
 <li><p><strong>tip</strong> – 2D position of the rod tip in the sagittal plane (from the optimizer)</p></li>
@@ -1140,10 +1144,10 @@ When a terminal condition is met, the reset function is called.</p>
 <span class="sig-name descname"><span class="pre">rod_tip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">th</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerKin.rod_tip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.rod_tip" title="Permalink to this definition"></a></dt>
 <dd><p>Get Cartesian coordinates of the rod tip for one servo.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>th</strong> – current value of the respective servo shaft angle</p>
 </dd>
-<dt class="field-even">Return tip</dt>
+<dt class="field-even">Return tip<span class="colon">:</span></dt>
 <dd class="field-even"><p>2D position of the rod tip in the sagittal plane</p>
 </dd>
 </dl>
@@ -1167,7 +1171,7 @@ As a result, the angles alpha and beta are w.r.t. to the inertial frame, i.e. th
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -1208,13 +1212,13 @@ As a result, the angles alpha and beta are w.r.t. to the inertial frame, i.e. th
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerSim.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
 <li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
@@ -1232,7 +1236,7 @@ As a result, the angles alpha and beta are w.r.t. to the inertial frame, i.e. th
 <p>Base Environment for the Quanser Cart-Pole swing-up and stabilization task</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -1264,10 +1268,10 @@ can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span>. On
 <p>This method should be overwritten if the environment has a distinct observation space.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>observation perceived to the agent</p>
 </dd>
 </dl>
@@ -1278,13 +1282,13 @@ can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span>. On
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_cartpole.html#QCartPoleSim.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
 <li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return obs</dt>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
 <dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
@@ -1300,7 +1304,7 @@ can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span>. On
 a rail. The pole can rotate around an axis perpendicular to direction in which the cart moves.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -1326,7 +1330,7 @@ which includes friction</p></li>
 moving a cart on a rail. The pole can rotate around an axis perpendicular to direction in which the cart moves.</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -1356,7 +1360,7 @@ can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span></p>
 <p>Base Environment for the Quanser Qube swing-up and stabilization task</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -1383,10 +1387,10 @@ can be in <span class="math notranslate nohighlight">\([-\pi, +\pi]\)</span></p>
 <p>This method should be overwritten if the environment has a distinct observation space.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>observation perceived to the agent</p>
 </dd>
 </dl>
@@ -1406,7 +1410,7 @@ The goal is to stabilize the pendulum at the upright position (alpha = +-pi).</p
 </div>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
@@ -1429,7 +1433,7 @@ The goal is to stabilize the pendulum at the upright position (alpha = +-pi).</p
 The goal is to swing up the pendulum and stabilize at the upright position (alpha = +-pi).</p>
 <p>Constructor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> – simulation step size [s]</p></li>
 <li><p><strong>max_steps</strong> – maximum number of simulation steps</p></li>
