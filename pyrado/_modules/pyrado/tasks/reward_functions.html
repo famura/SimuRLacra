@@ -491,7 +491,7 @@
 <span class="sd">        :param fcn: function for evaluating the state a.k.a. solution</span>
 <span class="sd">        :param flip_sign: return negative of fcn, useful to turn minimization problems into maximization problems</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span><span class="n">fcn</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">fcn</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">flip_sign</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fcn</span> <span class="o">=</span> <span class="n">fcn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_flip_sign</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">flip_sign</span><span class="p">)</span>
