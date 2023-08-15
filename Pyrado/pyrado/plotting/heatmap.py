@@ -34,7 +34,6 @@ import pandas as pd
 from matplotlib import colors
 from matplotlib import pyplot as plt
 from matplotlib import ticker
-from pandas.core.indexes.numeric import NumericIndex
 
 import pyrado
 from pyrado.plotting.utils import draw_sep_cbar
@@ -191,10 +190,6 @@ def draw_heatmap(
     :return: handles to the heat map and the color bar figures (`None` if not existent)
     """
     if isinstance(data, pd.DataFrame):
-        if not isinstance(data.index, NumericIndex):
-            raise pyrado.TypeErr(given=data.index, expected_type=NumericIndex)
-        if not isinstance(data.columns, NumericIndex):
-            raise pyrado.TypeErr(given=data.columns, expected_type=NumericIndex)
         # Extract the data
         x = data.columns
         y = data.index
