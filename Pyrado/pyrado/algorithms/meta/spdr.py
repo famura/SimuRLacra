@@ -297,6 +297,7 @@ class SPDR(Algorithm):
         target_cov_chol = self._spl_parameter.target_cov_chol.double()
 
         # Add these keys to the logger as dummy values.
+        self.logger.add_value("sprl number of particles", 0)
         self.logger.add_value("spdr constraint kl", 0.0)
         self.logger.add_value("spdr constraint performance", 0.0)
         self.logger.add_value("spdr objective", 0.0)
@@ -343,6 +344,8 @@ class SPDR(Algorithm):
             ],
             requires_grad=True,
         ).T
+
+        self.logger.add_value("sprl number of particles", contexts.shape[0])
 
         contexts_old_log_prob = previous_distribution.distribution.log_prob(contexts.double())
         # kl_divergence = to.distributions.kl_divergence(previous_distribution.distribution, target_distribution.distribution)
@@ -438,28 +441,33 @@ class SPDR(Algorithm):
         x0 = previous_distribution.get_stacked()
 
         print("Performing SPDR update.")
-        # noinspection PyTypeChecker
-        result = minimize(
-            objective_fn,
-            x0,
-            method="trust-constr",
-            jac=True,
-            constraints=constraints,
-            options={"gtol": 1e-4, "xtol": 1e-6},
-            # bounds=bounds,
-        )
-        new_x = result.x
-        if not result.success:
-            # If optimization process was not a success
-            old_f = objective_fn(previous_distribution.get_stacked())[0]
-            constraints_satisfied = all((const.lb <= const.fun(result.x) <= const.ub for const in constraints))
+        try:
+            # noinspection PyTypeChecker
+            result = minimize(
+                objective_fn,
+                x0,
+                method="trust-constr",
+                jac=True,
+                constraints=constraints,
+                options={"gtol": 1e-4, "xtol": 1e-6},
+                # bounds=bounds,
+            )
+            new_x = result.x
+            if not result.success:
+                # If optimization process was not a success
+                old_f = objective_fn(previous_distribution.get_stacked())[0]
+                constraints_satisfied = all((const.lb <= const.fun(result.x) <= const.ub for const in constraints))
 
-            # std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
-            std_ok = True
+                # std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
+                std_ok = True
 
-            if not (constraints_satisfied and std_ok and result.fun < old_f):
-                print(f"Update unsuccessful, keeping old values spl parameters.")
-                new_x = x0
+                update_successful = constraints_satisfied and std_ok and result.fun < old_f
+                if not update_successful:
+                    print(f"Update unsuccessful, keeping old SPDR parameters.")
+                    new_x = x0
+        except ValueError as e:
+            print(f"Update failed with error, keeping old SPDR parameters.", e)
+            new_x = x0
 
         self._adapt_parameters(dim, new_x)
         self.logger.add_value("spdr constraint kl", kl_constraint_fn(new_x).item())
