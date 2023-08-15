@@ -348,7 +348,6 @@ class SPDR(Algorithm):
         self.logger.add_value("sprl number of particles", contexts.shape[0])
 
         contexts_old_log_prob = previous_distribution.distribution.log_prob(contexts.double())
-        # kl_divergence = to.distributions.kl_divergence(previous_distribution.distribution, target_distribution.distribution)
 
         values = to.tensor([ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts])
 
@@ -377,7 +376,6 @@ class SPDR(Algorithm):
                 lb=-np.inf,
                 ub=self._kl_constraints_ub,
                 jac=kl_constraint_fn_prime,
-                # keep_feasible=True,
             )
         )
 
@@ -400,30 +398,8 @@ class SPDR(Algorithm):
                 lb=self._performance_lower_bound,
                 ub=np.inf,
                 jac=performance_constraint_fn_prime,
-                # keep_feasible=True,
             )
         )
-
-        # # Clip the bounds of the new variance either if the applied covariance transformation does not ensure
-        # # non-negativity or when the KL threshold has been crossed.
-        # bounds = None
-        # x0, _, x0_cov_indices = previous_distribution.get_stacked()
-        # if self._cov_transformation.ensures_non_negativity():
-        #     lower_bound = -np.inf * np.ones_like(x0)
-        #     lower_bound_is_inf = True
-        # else:
-        #     lower_bound = np.zeros_like(x0)
-        #     lower_bound_is_inf = False
-        # if self._kl_threshold != -np.inf and (self._kl_threshold < kl_divergence):
-        #     if x0_cov_indices is not None and self._var_lower_bound is not None:
-        #         # Further clip the x values if a standard deviation lower bound was set.
-        #         lower_bound[dim:] = self._var_lower_bound
-        #         lower_bound_is_inf = False
-        # if not lower_bound_is_inf:
-        #     # Only set the bounds if the lower bound is not negative infinity. Makes it easier for the optimizer.
-        #     upper_bound = np.ones_like(x0) * np.inf
-        #     bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
-        #     x0 = np.clip(x0, bounds.lb, bounds.ub)
 
         # We now optimize based on the kl-divergence between target and context distribution by minimizing it
         def objective_fn(x):
