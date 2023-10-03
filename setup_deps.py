@@ -111,10 +111,11 @@ dependency_dir = osp.join(project_dir, "thirdParty")
 resources_dir = osp.join(dependency_dir, "resources")
 
 # Global cmake prefix path
-cmake_prefix_path = [
+cmake_prefix_path = []
+conda_prefix = os.getenv("CONDA_PREFIX")
+if conda_prefix:
     # Anaconda env root directory
-    os.environ["CONDA_PREFIX"]
-]
+    cmake_prefix_path.append(conda_prefix)
 
 # Required packages
 required_packages = [
