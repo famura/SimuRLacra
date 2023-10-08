@@ -192,7 +192,6 @@ class DQL(ValueBased):
             file=sys.stdout,
             leave=False,
         ):
-
             # Sample steps and the associated next step from the replay memory
             steps, next_steps = self._memory.sample(self.batch_size)
             steps.torch(data_type=to.get_default_dtype())
