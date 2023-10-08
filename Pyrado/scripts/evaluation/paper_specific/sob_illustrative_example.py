@@ -139,7 +139,6 @@ if __name__ == "__main__":
     b_Jhat_n_hist = np.empty((num_samples, num_iter))
 
     for s in range(num_samples):
-
         for n in range(1, num_iter + 1):
             n_V = np.random.binomial(n, psi)  # perform n Bernoulli trials
             n_M = n - n_V

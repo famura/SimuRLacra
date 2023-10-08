@@ -102,7 +102,6 @@ class LQR(Algorithm):
         self._sampler = sampler
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-
         if isinstance(inner_env(self._env), BallOnPlate5DSim):
             ctrl_gains = to.tensor(
                 [

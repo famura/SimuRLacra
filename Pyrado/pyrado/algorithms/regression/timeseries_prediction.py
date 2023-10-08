@@ -104,7 +104,6 @@ class TSPred(Algorithm):
             self._lr_scheduler = lr_scheduler(self.optim, **lr_scheduler_hparam)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-
         # Feed one epoch of the training set to the policy
         if self.windowed:
             # Predict

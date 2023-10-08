@@ -138,7 +138,6 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
 
 
 if __name__ == "__main__":
-
     # Parse command line arguments
     args = get_argparser().parse_args()
 
