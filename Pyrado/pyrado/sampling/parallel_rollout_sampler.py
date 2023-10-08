@@ -276,7 +276,6 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
             disable=(not self.show_progress_bar),
             unit="steps" if self.min_steps is not None else "rollouts",
         ) as pb:
-
             if self.min_steps is None:
                 if init_states is None and domain_params is None:
                     # Simply run min_rollouts times

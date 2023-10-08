@@ -431,7 +431,6 @@ class RewardGenerator:
         logger: StepLogger = None,
         device: str = "cuda" if to.cuda.is_available() else "cpu",
     ):
-
         """
         Constructor
 
@@ -472,7 +471,6 @@ class RewardGenerator:
     def train(
         self, reference_trajectory: StepSequence, randomized_trajectory: StepSequence, num_epoch: int
     ) -> to.Tensor:
-
         reference_batch_generator = reference_trajectory.iterate_rollouts()
         random_batch_generator = randomized_trajectory.iterate_rollouts()
 

@@ -239,7 +239,6 @@ class GAE(LoggerAware, nn.Module):
 
         # Iterate over all gathered samples num_epoch times
         for e in range(self.num_epoch):
-
             for batch in tqdm(
                 concat_ros.split_shuffled_batches(
                     self.batch_size, complete_rollouts=isinstance(self.vfcn, RecurrentPolicy)

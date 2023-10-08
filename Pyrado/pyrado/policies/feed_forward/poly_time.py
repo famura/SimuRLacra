@@ -251,9 +251,7 @@ class TraceablePolySplineTimePolicy(nn.Module):
     t_init: float
     t_curr: float
     overtime_behavior: str
-    act_space_shape: Tuple[
-        int,
-    ]
+    act_space_shape: Tuple[int,]
     act_space_flat_dim: int
 
     def __init__(
