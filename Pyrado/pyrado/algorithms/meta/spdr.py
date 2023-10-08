@@ -28,7 +28,7 @@
 
 import os.path
 from csv import DictWriter
-from typing import Iterator, Optional, Tuple, List, Callable
+from typing import Callable, Iterator, List, Optional, Tuple
 
 import numpy as np
 import torch as to
@@ -316,15 +316,21 @@ class SPDR(Algorithm):
             self._train_subroutine_and_evaluate_perf
         )(snapshot_mode, meta_info, reset_policy)
 
-        previous_distribution = MultivariateNormalWrapper(self._spl_parameter.context_mean.double(), self._spl_parameter.context_cov_chol.double())
-        target_distribution = MultivariateNormalWrapper(self._spl_parameter.target_mean.double(), self._spl_parameter.target_cov_chol.double())
+        previous_distribution = MultivariateNormalWrapper(
+            self._spl_parameter.context_mean.double(), self._spl_parameter.context_cov_chol.double()
+        )
+        target_distribution = MultivariateNormalWrapper(
+            self._spl_parameter.target_mean.double(), self._spl_parameter.target_cov_chol.double()
+        )
 
         proposal_rollouts = self._sample_proposal_rollouts()
         contexts, contexts_old_log_prob, values = self._extract_particles(proposal_rollouts, previous_distribution)
 
         # Define the SPRL optimization problem
         kl_constraint = self._make_kl_constraint(previous_distribution, self._kl_constraints_ub)
-        performance_constraint = self._make_performance_constraint(contexts, contexts_old_log_prob, values, self._performance_lower_bound)
+        performance_constraint = self._make_performance_constraint(
+            contexts, contexts_old_log_prob, values, self._performance_lower_bound
+        )
         constraints = [kl_constraint, performance_constraint]
         objective_fn = self._make_objective_fn(target_distribution)
         x0 = previous_distribution.get_stacked()
@@ -392,7 +398,9 @@ class SPDR(Algorithm):
 
         return env, policy, extra
 
-    def _make_objective_fn(self, target_distribution: MultivariateNormalWrapper) -> Callable[[np.ndarray], Tuple[float, np.ndarray]]:
+    def _make_objective_fn(
+        self, target_distribution: MultivariateNormalWrapper
+    ) -> Callable[[np.ndarray], Tuple[float, np.ndarray]]:
         def objective_fn(x):
             """Tries to find the minimum kl divergence between the current and the update distribution, which
             still satisfies the minimum update constraint and the performance constraint."""
@@ -407,17 +415,23 @@ class SPDR(Algorithm):
 
         return objective_fn
 
-    def _make_kl_constraint(self, previous_distribution: MultivariateNormalWrapper, kl_constraint_ub: float) -> NonlinearConstraint:
+    def _make_kl_constraint(
+        self, previous_distribution: MultivariateNormalWrapper, kl_constraint_ub: float
+    ) -> NonlinearConstraint:
         def kl_constraint_fn(x):
             """Compute the constraint for the KL-divergence between current and proposed distribution."""
             distribution = MultivariateNormalWrapper.from_stacked(self.dim, x)
-            kl_divergence = to.distributions.kl_divergence(previous_distribution.distribution, distribution.distribution)
+            kl_divergence = to.distributions.kl_divergence(
+                previous_distribution.distribution, distribution.distribution
+            )
             return kl_divergence.detach().numpy().item()
 
         def kl_constraint_fn_prime(x):
             """Compute the derivative for the KL-constraint (used for scipy optimizer)."""
             distribution = MultivariateNormalWrapper.from_stacked(self.dim, x)
-            kl_divergence = to.distributions.kl_divergence(previous_distribution.distribution, distribution.distribution)
+            kl_divergence = to.distributions.kl_divergence(
+                previous_distribution.distribution, distribution.distribution
+            )
             grads = to.autograd.grad(kl_divergence, list(distribution.parameters()))
             return np.concatenate([g.detach().numpy() for g in grads])
 
@@ -428,7 +442,9 @@ class SPDR(Algorithm):
             jac=kl_constraint_fn_prime,
         )
 
-    def _make_performance_constraint(self, contexts: to.Tensor, contexts_old_log_prob: to.Tensor, values: to.Tensor, performance_lower_bound: float) -> NonlinearConstraint:
+    def _make_performance_constraint(
+        self, contexts: to.Tensor, contexts_old_log_prob: to.Tensor, values: to.Tensor, performance_lower_bound: float
+    ) -> NonlinearConstraint:
         def performance_constraint_fn(x):
             """Compute the constraint for the expected performance under the proposed distribution."""
             distribution = MultivariateNormalWrapper.from_stacked(self.dim, x)
@@ -470,7 +486,9 @@ class SPDR(Algorithm):
     def _sample_proposal_rollouts(self) -> List[List[StepSequence]]:
         return self.subrtn_sampler.rollouts
 
-    def _extract_particles(self, rollouts_all: List[List[StepSequence]], distribution: MultivariateNormalWrapper) -> Tuple[to.Tensor, to.Tensor, to.Tensor]:
+    def _extract_particles(
+        self, rollouts_all: List[List[StepSequence]], distribution: MultivariateNormalWrapper
+    ) -> Tuple[to.Tensor, to.Tensor, to.Tensor]:
         def get_domain_param_value(ro: StepSequence, param_name: str) -> np.ndarray:
             domain_param_dict = ro.rollout_info["domain_param"]
             untransformed_param_name = param_name + DomainParamTransform.UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX
@@ -491,7 +509,9 @@ class SPDR(Algorithm):
         return contexts, contexts_log_prob, values
 
     # noinspection PyMethodMayBeStatic
-    def _compute_expected_performance(self, distribution: MultivariateNormalWrapper, context: to.Tensor, old_log_prop: to.Tensor, values: to.Tensor) -> to.Tensor:
+    def _compute_expected_performance(
+        self, distribution: MultivariateNormalWrapper, context: to.Tensor, old_log_prop: to.Tensor, values: to.Tensor
+    ) -> to.Tensor:
         """Calculate the expected performance after an update step."""
         context_ratio = to.exp(distribution.distribution.log_prob(context) - old_log_prop)
         return to.mean(context_ratio * values)

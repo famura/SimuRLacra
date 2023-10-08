@@ -44,11 +44,11 @@ class DomainParam:
     """Class to store and manage (probably multiple) domain parameter a.k.a. physics parameter a.k.a. simulator parameter"""
 
     def __init__(
-            self,
-            name: Union[str, List[str]],
-            clip_lo: Optional[Union[int, float]] = -pyrado.inf,
-            clip_up: Optional[Union[int, float]] = pyrado.inf,
-            roundint: bool = False,
+        self,
+        name: Union[str, List[str]],
+        clip_lo: Optional[Union[int, float]] = -pyrado.inf,
+        clip_up: Optional[Union[int, float]] = pyrado.inf,
+        roundint: bool = False,
     ):
         """
         Constructor, also see the constructor of DomainRandomizer.
@@ -97,7 +97,7 @@ class DomainParam:
         if domain_distr_param not in self.get_field_names():
             raise pyrado.KeyErr(
                 msg=f"The domain parameter {self.name} does not have a domain distribution parameter "
-                    f"called {domain_distr_param}!"
+                f"called {domain_distr_param}!"
             )
         setattr(self, domain_distr_param, domain_distr_param_value)
 
@@ -314,14 +314,14 @@ class BernoulliDomainParam(DomainParam):
 
 class SelfPacedDomainParam(DomainParam):
     def __init__(
-            self,
-            name: List[str],
-            target_mean: to.Tensor,
-            target_cov_flat: to.Tensor,
-            init_mean: to.Tensor,
-            init_cov_flat: to.Tensor,
-            clip_lo: float,
-            clip_up: float,
+        self,
+        name: List[str],
+        target_mean: to.Tensor,
+        target_cov_flat: to.Tensor,
+        init_mean: to.Tensor,
+        init_cov_flat: to.Tensor,
+        clip_lo: float,
+        clip_up: float,
     ):
         """
         Constructor
@@ -362,12 +362,12 @@ class SelfPacedDomainParam(DomainParam):
 
     @staticmethod
     def make_broadening(
-            name: List[str],
-            mean: List[float],
-            init_cov_portion: float = 0.001,
-            target_cov_portion: float = 0.1,
-            clip_lo: float = -pyrado.inf,
-            clip_up: float = pyrado.inf,
+        name: List[str],
+        mean: List[float],
+        init_cov_portion: float = 0.001,
+        target_cov_portion: float = 0.1,
+        clip_lo: float = -pyrado.inf,
+        clip_up: float = pyrado.inf,
     ) -> "SelfPacedDomainParam":
         """
         Creates a self-paced domain parameter having the same initial and target mean, but a larger variance on the
@@ -394,7 +394,7 @@ class SelfPacedDomainParam(DomainParam):
         )
 
     @staticmethod
-    def from_domain_randomizer(domain_randomizer, *, target_cov_factor=1., init_cov_factor=1 / 100):
+    def from_domain_randomizer(domain_randomizer, *, target_cov_factor=1.0, init_cov_factor=1 / 100):
         """
         Creates a self-paced domain parameter having the same initial and target mean and target variance given by the domain randomizer's variance (scaled by `target_cov_factor`). The initial variance is also given by the domain randomizer's variance (scaled by `init_cov_factor`).
 
@@ -403,15 +403,31 @@ class SelfPacedDomainParam(DomainParam):
         :param init_cov_factor: scaling of the randomizer's variance to get the init variance; defaults to `1/100`
         :return: the self-paced domain parameter
         """
-        name, target_mean, target_cov_flat, init_mean, init_cov_flat, = [], [], [], [], []
+        (
+            name,
+            target_mean,
+            target_cov_flat,
+            init_mean,
+            init_cov_flat,
+        ) = (
+            [],
+            [],
+            [],
+            [],
+            [],
+        )
         for domain_param in domain_randomizer.domain_params:
             if not isinstance(domain_param, NormalDomainParam):
-                raise pyrado.TypeErr(given=domain_param, expected_type=NormalDomainParam, msg="each domain_param must be a NormalDomainParam")
+                raise pyrado.TypeErr(
+                    given=domain_param,
+                    expected_type=NormalDomainParam,
+                    msg="each domain_param must be a NormalDomainParam",
+                )
             name.append(domain_param.name)
             target_mean.append(domain_param.mean)
-            target_cov_flat.append(target_cov_factor * domain_param.std ** 2)
+            target_cov_flat.append(target_cov_factor * domain_param.std**2)
             init_mean.append(domain_param.mean)
-            init_cov_flat.append(init_cov_factor * domain_param.std ** 2)
+            init_cov_flat.append(init_cov_factor * domain_param.std**2)
         return SelfPacedDomainParam(
             name=name,
             target_mean=to.tensor(target_mean),
@@ -443,7 +459,7 @@ class SelfPacedDomainParam(DomainParam):
         return self.context_cov_chol @ self.context_cov_chol.T
 
     def info(self) -> dict:
-        ""
+        """"""
         return {
             "name": self.name,
             "target_mean": self.target_mean,
