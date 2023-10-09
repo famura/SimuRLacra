@@ -315,7 +315,6 @@
 
         <span class="c1"># Iterations over the whole data set</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_epoch</span><span class="p">):</span>
-
             <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
                 <span class="n">concat_ros</span><span class="o">.</span><span class="n">split_shuffled_batches</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">complete_rollouts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">),</span>
                 <span class="n">total</span><span class="o">=</span><span class="n">num_iter_from_rollouts</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">concat_ros</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">),</span>
@@ -551,7 +550,6 @@
 
         <span class="c1"># Iterations over the whole data set</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_epoch</span><span class="p">):</span>
-
             <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
                 <span class="n">concat_ros</span><span class="o">.</span><span class="n">split_shuffled_batches</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
