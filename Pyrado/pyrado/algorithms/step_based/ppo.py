@@ -176,7 +176,6 @@ class PPO(ActorCritic):
 
         # Iterations over the whole data set
         for e in range(self.num_epoch):
-
             for batch in tqdm(
                 concat_ros.split_shuffled_batches(self.batch_size, complete_rollouts=self._policy.is_recurrent),
                 total=num_iter_from_rollouts(None, concat_ros, self.batch_size),
@@ -412,7 +411,6 @@ class PPO2(ActorCritic):
 
         # Iterations over the whole data set
         for e in range(self.num_epoch):
-
             for batch in tqdm(
                 concat_ros.split_shuffled_batches(
                     self.batch_size,

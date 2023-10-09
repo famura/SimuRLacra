@@ -75,7 +75,6 @@ class PlanarInsertSim(RcsSim, Serializable):
     """
 
     def __init__(self, task_args: dict, collision_config: dict = None, max_dist_force: float = None, **kwargs):
-
         """
         Constructor
 

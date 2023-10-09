@@ -12,7 +12,7 @@ jobs:
       - name: Run black
         uses: psf/black@stable
         with:
-          args: "--check Pyrado setup_deps.py RcsPySim/setup.py"
+          src: "Pyrado setup_deps.py RcsPySim/setup.py"
   isort:
     name: Checking Import Order with isort
     runs-on: ubuntu-latest
