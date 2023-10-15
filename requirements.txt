@@ -28,3 +28,4 @@ sphinx_rtd_theme
 tabulate
 tensorboard
 tqdm
+mujoco
