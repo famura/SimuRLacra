@@ -459,7 +459,6 @@ class SelfPacedDomainParam(DomainParam):
         return self.context_cov_chol @ self.context_cov_chol.T
 
     def info(self) -> dict:
-        """"""
         return {
             "name": self.name,
             "target_mean": self.target_mean,
