@@ -41,7 +41,6 @@ import zipfile
 from urllib.request import urlretrieve
 
 
-
 # Get the project's root directory
 project_dir = osp.dirname(osp.abspath(__file__))
 
@@ -547,7 +546,6 @@ def setup_render_pipeline():
     sp.check_call([sys.executable, "setup.py"], cwd=osp.join(project_dir, "thirdParty", "RenderPipeline"))
 
 
-
 def setup_pytorch_based():
     # Locally build PyTorch>=1.7.0 requires dataclasses (does not harm when using pytorch from pip)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "dataclasses"])
@@ -683,10 +681,7 @@ def setup_wo_rcs_w_pytorch():
         if not args.headless:
             setup_render_pipeline()
     setup_pytorch_based()
-    print(
-        "\nPyTorch, WAM meshes, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are "
-        "set up!\n"
-    )
+    print("\nPyTorch, WAM meshes, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are " "set up!\n")
 
 
 def setup_w_rcs_wo_pytorch():

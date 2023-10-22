@@ -29,6 +29,7 @@
 import os.path as osp
 from typing import Optional
 
+import mujoco
 import numpy as np
 from init_args_serializer import Serializable
 
@@ -141,11 +142,11 @@ class HopperSim(MujocoSimEnv, Serializable):
         return GoallessTask(self.spec, rew_fcn)
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
-        self.sim.data.ctrl[:] = act
-        self.sim.step()
+        self.data.ctrl[:] = act
+        mujoco.mj_step(self.model, self.data)
 
-        pos = self.sim.data.qpos.copy()
-        vel = self.sim.data.qvel.copy()
+        pos = self.data.qpos.copy()
+        vel = self.data.qvel.copy()
         self.state = np.concatenate([pos, vel])
 
         return dict()

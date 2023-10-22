@@ -31,10 +31,10 @@ from copy import deepcopy
 from math import floor
 from typing import Optional
 
-import mujoco_py
+import mujoco
+import mujoco.viewer
 import numpy as np
 from init_args_serializer import Serializable
-from mujoco_py.generated.const import RND_FOG
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
@@ -87,7 +87,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
                 xml_model_temp = file_raw.read()
             xml_model_temp = self._adapt_model_file(xml_model_temp, self.domain_param)
             # Create a dummy model to extract the solver's time step size
-            model_tmp = mujoco_py.load_model_from_xml(xml_model_temp)
+            model_tmp = mujoco.MjModel.from_xml_path(xml_model_temp)
             frame_skip = dt / model_tmp.opt.timestep
             if frame_skip.is_integer():
                 self.frame_skip = int(frame_skip)
@@ -112,8 +112,8 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         super().__init__(dt=self.model.opt.timestep * self.frame_skip, max_steps=max_steps)
 
         # Memorize the initial states of the model from the xml (for fixed init space or later reset)
-        self.init_qpos = self.sim.data.qpos.copy()
-        self.init_qvel = self.sim.data.qvel.copy()
+        self.init_qpos = self.data.qpos.copy()
+        self.init_qvel = self.data.qvel.copy()
 
         # Initialize space (to be overwritten in constructor of subclasses)
         self._init_space = None
@@ -177,13 +177,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Update MuJoCo model
         self._create_mujoco_model()
 
-        if self.viewer is not None:
-            # If the viewer already exists and we reset the domain parameters, we must also recreate the viewer since
-            # it references to the simulation object which get's reconstructed during _create_mujoco_model()
-            import glfw
-
-            glfw.destroy_window(self.viewer.window)
-            self.viewer = None
+        self.viewer = None
 
         # Update task
         self._task = self._create_task(self.task_args)
@@ -202,7 +196,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         :return: adapted model file where the placeholders are filled with numerical values
         """
         # The mesh dir is not resolved when later passed as a string, thus we do it manually
-        xml_model = xml_model.replace(f"[ASSETS_DIR]", pyrado.MUJOCO_ASSETS_DIR)
+        xml_model = xml_model.replace("[ASSETS_DIR]", pyrado.MUJOCO_ASSETS_DIR)
 
         # Replace all occurrences of the domain parameter placeholder with its value
         for key, value in domain_param.items():
@@ -230,14 +224,14 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         xml_model = self._adapt_model_file(xml_model, self.domain_param)
 
         # Create MuJoCo model from parsed XML file
-        self.model = mujoco_py.load_model_from_xml(xml_model)
-        self.sim = mujoco_py.MjSim(self.model, nsubsteps=self.frame_skip)
+        self.model = mujoco.MjModel.from_xml_string(xml_model)
+        self.data = mujoco.MjData(self.model)
 
     def configure_viewer(self):
         """Configure the camera when the viewer is initialized. You need to set `self.camera_config` before."""
         # Render a fog around the scene by default
         if self.camera_config.pop("render_fog", True):
-            self.viewer.scn.flags[RND_FOG] = 1
+            self.viewer.scn.flags[mujoco.mjtRndFlag.mjRND_FOG] = 1
 
         # Parse all other options
         for key, value in self.camera_config.items():
@@ -274,8 +268,8 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         self._task.reset(env_spec=self.spec, init_state=init_state.copy())
 
         # Reset MuJoCo simulation model (only reset the joint configuration)
-        self.sim.reset()
-        old_state = self.sim.get_state()
+        mujoco.mj_resetData(self.model, self.data)
+        old_state = self.data
         nq = self.model.nq
         nv = self.model.nv
         if not init_state[:nq].shape == old_state.qpos.shape:  # check joint positions dimension
@@ -283,16 +277,9 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
         if not init_state[nq : nq + nv].shape == old_state.qvel.shape:  # check joint velocities dimension
             raise pyrado.ShapeErr(given=init_state[nq : nq + nv], expected_match=old_state.qvel)
-        new_state = mujoco_py.MjSimState(
-            # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
-            old_state.time,
-            init_state[:nq],
-            init_state[nq : nq + nv],
-            old_state.act,
-            old_state.udd_state,
-        )
-        self.sim.set_state(new_state)
-        self.sim.forward()
+        self.data.qpos[:] = np.copy(init_state[:nq])
+        self.data.qvel[:] = np.copy(init_state[nq : nq + nv])
+        mujoco.mj_forward(self.model, self.data)
 
         # Return an observation
         return self.observe(self.state)
@@ -342,14 +329,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             if mode.video:
                 if self.viewer is None:
                     # Create viewer if not existent (see 'human' mode of OpenAI Gym's MujocoEnv)
-                    self.viewer = mujoco_py.MjViewer(self.sim)
-
-                    # Adjust window size and position to custom values
-                    import glfw
-
-                    glfw.make_context_current(self.viewer.window)
-                    glfw.set_window_size(self.viewer.window, 1280, 720)
-                    glfw.set_window_pos(self.viewer.window, 50, 50)
+                    self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
 
                     self.configure_viewer()
-                self.viewer.render()
+                self.viewer.sync()

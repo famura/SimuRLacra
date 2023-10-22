@@ -31,6 +31,7 @@ from typing import Optional
 
 import numpy as np
 from init_args_serializer import Serializable
+import mujoco
 
 import pyrado
 from pyrado.environments.mujoco.base import MujocoSimEnv
@@ -91,7 +92,7 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
 
     @property
     def state_space(self) -> Space:
-        state_shape = np.concatenate([self.sim.data.qpos, self.sim.data.qvel]).shape
+        state_shape = np.concatenate([self.data.qpos, self.data.qvel]).shape
         return BoxSpace(-pyrado.inf, pyrado.inf, shape=state_shape)
 
     @property
@@ -123,11 +124,11 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
         return GoallessTask(self.spec, ForwardVelocityRewFcn(self._dt, idx_fwd=0, **task_args))
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
-        self.sim.data.ctrl[:] = act
-        self.sim.step()
+        self.data.ctrl[:] = act
+        mujoco.mj_step(self.model, self.data)
 
-        pos = self.sim.data.qpos.copy()
-        vel = self.sim.data.qvel.copy()
+        pos = self.data.qpos.copy()
+        vel = self.data.qvel.copy()
         self.state = np.concatenate([pos, vel])
 
         return dict()

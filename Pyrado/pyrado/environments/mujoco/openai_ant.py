@@ -29,6 +29,7 @@
 import os.path as osp
 from typing import Optional
 
+import mujoco
 import numpy as np
 from init_args_serializer import Serializable
 
@@ -98,9 +99,7 @@ class AntSim(MujocoSimEnv, Serializable):
 
     @property
     def state_space(self) -> Space:
-        state_shape = np.concatenate(
-            [self.sim.data.qpos.flat, self.sim.data.qvel.flat, self.sim.data.cfrc_ext.flat]
-        ).shape
+        state_shape = np.concatenate([self.data.qpos.flat, self.data.qvel.flat, self.data.cfrc_ext.flat]).shape
         return BoxSpace(-pyrado.inf, pyrado.inf, shape=state_shape)
 
     @property
@@ -148,11 +147,11 @@ class AntSim(MujocoSimEnv, Serializable):
         return contact_forces
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
-        self.sim.data.ctrl[:] = act
-        self.sim.step()
+        self.data.ctrl[:] = act
+        mujoco.mj_step(self.model, self.data)
 
-        pos = self.sim.data.qpos.flat.copy()
-        vel = self.sim.data.qvel.flat.copy()
+        pos = self.data.qpos.flat.copy()
+        vel = self.data.qvel.flat.copy()
         cfrc_ext = self.contact_forces.flat.copy()
 
         self.state = np.concatenate([pos, vel, cfrc_ext])

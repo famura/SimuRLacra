@@ -29,6 +29,7 @@
 import os.path as osp
 from typing import Optional
 
+import mujoco
 import numpy as np
 from init_args_serializer import Serializable
 
@@ -84,10 +85,10 @@ class HumanoidSim(MujocoSimEnv, Serializable):
 
         rest_shape = np.concatenate(
             [
-                self.sim.data.cinert.flat,
-                self.sim.data.cvel.flat,
-                self.sim.data.qfrc_actuator.flat,
-                self.sim.data.cfrc_ext.flat,
+                self.data.cinert.flat,
+                self.data.cvel.flat,
+                self.data.qfrc_actuator.flat,
+                self.data.cfrc_ext.flat,
             ]
         ).shape
         min_init_rest = -np.ones(rest_shape)
@@ -102,12 +103,12 @@ class HumanoidSim(MujocoSimEnv, Serializable):
     def state_space(self) -> Space:
         state_shape = np.concatenate(
             [
-                self.sim.data.qpos.flat,
-                self.sim.data.qvel.flat,
-                self.sim.data.cinert.flat,
-                self.sim.data.cvel.flat,
-                self.sim.data.qfrc_actuator.flat,
-                self.sim.data.cfrc_ext.flat,
+                self.data.qpos.flat,
+                self.data.qvel.flat,
+                self.data.cinert.flat,
+                self.data.cvel.flat,
+                self.data.qfrc_actuator.flat,
+                self.data.cfrc_ext.flat,
             ]
         ).shape
         return BoxSpace(-pyrado.inf, pyrado.inf, shape=state_shape)
@@ -162,15 +163,15 @@ class HumanoidSim(MujocoSimEnv, Serializable):
         return GoallessTask(self.spec, ForwardVelocityRewFcnHumanoid(self._dt, **task_args))
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
-        self.sim.data.ctrl[:] = act
-        self.sim.step()
+        self.data.ctrl[:] = act
+        mujoco.mj_step(self.model, self.data)
 
-        position = self.sim.data.qpos.flat.copy()
-        velocity = self.sim.data.qvel.flat.copy()
-        com_inertia = self.sim.data.cinert.flat.copy()
-        com_velocity = self.sim.data.cvel.flat.copy()
-        actuator_forces = self.sim.data.qfrc_actuator.flat.copy()
-        external_contact_forces = self.sim.data.cfrc_ext.flat.copy()
+        position = self.data.qpos.flat.copy()
+        velocity = self.data.qvel.flat.copy()
+        com_inertia = self.data.cinert.flat.copy()
+        com_velocity = self.data.cvel.flat.copy()
+        actuator_forces = self.data.qfrc_actuator.flat.copy()
+        external_contact_forces = self.data.cfrc_ext.flat.copy()
 
         self.state = np.concatenate(
             [

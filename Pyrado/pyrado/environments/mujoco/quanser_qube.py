@@ -30,9 +30,8 @@ import os.path as osp
 from abc import abstractmethod
 from typing import Optional
 
-import mujoco_py
+import mujoco
 import numpy as np
-import torch as to
 from init_args_serializer import Serializable
 
 import pyrado
@@ -122,19 +121,13 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         )  # act is a scalar array, causing warning on later np.array construction
 
         # Apply the torques to the robot
-        self.sim.data.ctrl[:] = torque
+        self.data.ctrl[:] = torque
 
         # Call MuJoCo
-        try:
-            self.sim.step()
-            mjsim_crashed = False
-        except mujoco_py.builder.MujocoException:
-            # When MuJoCo recognized instabilities in the simulation, it simply kills it.
-            # Instead, we want the episode to end with a failure.
-            mjsim_crashed = True
+        mujoco.mj_step(self.model, self.data)
 
-        qpos = self.sim.data.qpos.copy()
-        qvel = self.sim.data.qvel.copy()
+        qpos = self.data.qpos.copy()
+        qvel = self.data.qvel.copy()
         self.state = np.concatenate([qpos, qvel])
 
         # If state is out of bounds (this is normally checked by the task, but does not work because of the mask)
@@ -143,7 +136,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         return dict(
             qpos=qpos,
             qvel=qvel,
-            failed=mjsim_crashed or state_oob,
+            failed=state_oob,
         )
 
     def observe(self, state: np.ndarray) -> np.ndarray:
