@@ -403,19 +403,11 @@ class SelfPacedDomainParam(DomainParam):
         :param init_cov_factor: scaling of the randomizer's variance to get the init variance; defaults to `1/100`
         :return: the self-paced domain parameter
         """
-        (
-            name,
-            target_mean,
-            target_cov_flat,
-            init_mean,
-            init_cov_flat,
-        ) = (
-            [],
-            [],
-            [],
-            [],
-            [],
-        )
+        name = []
+        target_mean = []
+        target_cov_flat = []
+        init_mean = []
+        init_cov_flat = []
         for domain_param in domain_randomizer.domain_params:
             if not isinstance(domain_param, NormalDomainParam):
                 raise pyrado.TypeErr(

@@ -190,6 +190,10 @@ def draw_heatmap(
     :return: handles to the heat map and the color bar figures (`None` if not existent)
     """
     if isinstance(data, pd.DataFrame):
+        if not data.index.is_numeric():
+            raise pyrado.TypeErr(given=data.index, msg="expected numeric index")
+        if not data.index.is_numeric():
+            raise pyrado.TypeErr(given=data.columns, msg="expected numeric index")
         # Extract the data
         x = data.columns
         y = data.index
