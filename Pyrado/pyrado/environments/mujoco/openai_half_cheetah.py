@@ -29,9 +29,9 @@
 import os.path as osp
 from typing import Optional
 
+import mujoco
 import numpy as np
 from init_args_serializer import Serializable
-import mujoco
 
 import pyrado
 from pyrado.environments.mujoco.base import MujocoSimEnv
