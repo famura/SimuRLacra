@@ -124,7 +124,10 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         self.data.ctrl[:] = torque
 
         # Call MuJoCo
-        mujoco.mj_step(self.model, self.data)
+        try:
+            mujoco.mj_step(self.model, self.data)
+        except mujoco.FatalError:
+            mjsim_crashed = True
 
         qpos = self.data.qpos.copy()
         qvel = self.data.qvel.copy()
@@ -136,7 +139,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         return dict(
             qpos=qpos,
             qvel=qvel,
-            failed=state_oob,
+            failed=mjsim_crashed or state_oob,
         )
 
     def observe(self, state: np.ndarray) -> np.ndarray:
