@@ -21,6 +21,7 @@ jobs:
           tags: simurlacra:test
           cache-from: type=registry,ref=simurlacra:test
           cache-to: type=inline
+          load: true
           build-args: |
             OPTION=${{ matrix.flavor }}
       - name: Execute tests
