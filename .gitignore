@@ -93,3 +93,6 @@ MUJOCO_LOG.*
 ### sbi-logs
 Pyrado/sbi-logs/
 Pyrado/tests/sbi-logs/
+
+### pre-commit local/symlink
+.pre-commit-config.yaml

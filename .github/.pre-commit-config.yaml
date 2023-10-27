@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pycqa/isort
-    rev: 5.8.0
+    rev: 5.12.0
     hooks:
       - id: isort
         name: isort (python)
@@ -11,7 +11,6 @@ repos:
         name: isort (pyi)
         types: [pyi]
   - repo: https://github.com/psf/black
-    rev: 20.8b1
+    rev: 23.10.0
     hooks:
       - id: black
-        language_version: python3.7
