@@ -285,7 +285,6 @@ def downloadAndExtract(url, destdir, archiveContentPath=None):
             # Taken from https://stackoverflow.com/a/43094365
             def members(ml):
                 subfolder = osp.normpath(archiveContentPath)
-                len(subfolder)
                 for member in ml:
                     # Skip directories in zip
                     isdir = getattr(member, "is_dir", None)
