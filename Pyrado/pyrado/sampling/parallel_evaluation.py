@@ -106,7 +106,9 @@ def eval_domain_params(
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
         # we set the sub seed to zero since every run will have its personal sub sub seed
-        return pool.run_map(functools.partial(_ps_run_one_domain_param, eval=True, seed=seed, sub_seed=0), params, pb)
+        return pool.run_map(
+            functools.partial(_ps_run_one_domain_param, eval=True, seed=seed, sub_seed=0), list(enumerate(params)), pb
+        )
 
 
 def eval_nominal_domain(
@@ -128,7 +130,7 @@ def eval_nominal_domain(
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(functools.partial(_ps_run_one_init_state, eval=True), init_states, pb)
+        return pool.run_map(functools.partial(_ps_run_one_init_state, eval=True), list(enumerate(init_states)), pb)
 
 
 def eval_randomized_domain(
@@ -152,7 +154,7 @@ def eval_randomized_domain(
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(functools.partial(_ps_run_one_init_state, eval=True), init_states, pb)
+        return pool.run_map(functools.partial(_ps_run_one_init_state, eval=True), list(enumerate(init_states)), pb)
 
 
 def eval_domain_params_with_segmentwise_reset(

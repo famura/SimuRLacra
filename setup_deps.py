@@ -40,8 +40,6 @@ import tempfile
 import zipfile
 from urllib.request import urlretrieve
 
-import yaml
-
 
 # Get the project's root directory
 project_dir = osp.dirname(osp.abspath(__file__))
@@ -137,11 +135,6 @@ required_packages = [
     "python3-distutils",  # necessary for installing PyTorch
 ]
 # using --headless: conda install -c conda-forge bullet freetype libglu freeglut mesalib lapack
-
-required_packages_mujocopy = [
-    "libglew-dev",
-    "libosmesa6-dev",
-]
 
 env_vars = {
     # Global cmake prefix path
@@ -292,7 +285,6 @@ def downloadAndExtract(url, destdir, archiveContentPath=None):
             # Taken from https://stackoverflow.com/a/43094365
             def members(ml):
                 subfolder = osp.normpath(archiveContentPath)
-                l = len(subfolder)
                 for member in ml:
                     # Skip directories in zip
                     isdir = getattr(member, "is_dir", None)
@@ -386,7 +378,7 @@ def setup_dep_libraries():
     quiet = [] if not CI else ["-qq"]
     sp.check_call(["sudo", "apt-get"] + quiet + ["update", "-y"])
     # Install dependencies
-    sp.check_call(["sudo", "apt-get"] + quiet + ["install", "-y"] + required_packages + required_packages_mujocopy)
+    sp.check_call(["sudo", "apt-get"] + quiet + ["install", "-y"] + required_packages)
 
 
 def setup_wm5():
@@ -553,20 +545,15 @@ def setup_render_pipeline():
     sp.check_call([sys.executable, "setup.py"], cwd=osp.join(project_dir, "thirdParty", "RenderPipeline"))
 
 
-def setup_mujoco_py():
-    # Set up mujoco-py (doing it via pip caused problems on some machines)
-    sp.check_call([sys.executable, "setup.py", "install"], cwd=osp.join(project_dir, "thirdParty", "mujoco-py"))
-
-
 def setup_pytorch_based():
     # Locally build PyTorch>=1.7.0 requires dataclasses (does not harm when using pytorch from pip)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "dataclasses"])
     # Set up GPyTorch without touching the PyTorch installation (requires scikit-learn which requires threadpoolctl)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl"])
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "scikit-learn"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "gpytorch"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "gpytorch"])
     # Set up BoTorch without touching the PyTorch installation (requires gpytorch)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "botorch"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "botorch"])
     # Set up Pyro without touching the PyTorch installation (requires opt-einsum)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "opt-einsum"])
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-api"])
@@ -675,13 +662,12 @@ def setup_wo_rcs_wo_pytorch():
     print("\nStarting Option Red Velvet Setup\n")
     # Rcs will still be downloaded since it is a submodule
     setup_wam()  # ignoring the meshes used in RcsPySim
-    setup_mujoco_py()
     if not CI:
         setup_pyrado()
         if not args.headless:
             setup_render_pipeline()
     setup_pytorch_based()
-    print("\nWAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
+    print("\nWAM meshes, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
 
 
 def setup_wo_rcs_w_pytorch():
@@ -689,16 +675,12 @@ def setup_wo_rcs_w_pytorch():
     # Rcs will still be downloaded since it is a submodule
     setup_pytorch()
     setup_wam()  # ignoring the meshes used in RcsPySim
-    setup_mujoco_py()
     if not CI:
         setup_pyrado()
         if not args.headless:
             setup_render_pipeline()
     setup_pytorch_based()
-    print(
-        "\nPyTorch, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are "
-        "set up!\n"
-    )
+    print("\nPyTorch, WAM meshes, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are " "set up!\n")
 
 
 def setup_w_rcs_wo_pytorch():
@@ -712,14 +694,13 @@ def setup_w_rcs_wo_pytorch():
     if not CI:
         setup_rcspysim()
     setup_meshes()
-    setup_mujoco_py()
     if not CI:
         setup_pyrado()
         if not args.headless:
             setup_render_pipeline()
     setup_pytorch_based()
     print(
-        "\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro "
+        "\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes and Pyrado (with GPyTorch, BoTorch, and Pyro "
         "using the --no-deps flag) are set up!\n"
     )
 
@@ -734,14 +715,13 @@ def setup_w_rcs_w_pytorch():
     if not CI:
         setup_rcspysim()
     setup_meshes()
-    setup_mujoco_py()
     if not CI:
         setup_pyrado()
         if not args.headless:
             setup_render_pipeline()
     setup_pytorch_based()
     print(
-        "\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and "
+        "\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, Pyrado (with GPyTorch, BoTorch, and "
         "Pyro using the --no-deps flag) are set up!\n"
     )
 

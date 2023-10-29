@@ -10,9 +10,6 @@
 [submodule "thirdParty/catch2"]
 	path = thirdParty/catch2
 	url = https://github.com/catchorg/Catch2.git
-[submodule "thirdParty/mujoco-py"]
-	path = thirdParty/mujoco-py
-	url = https://github.com/openai/mujoco-py.git
 [submodule "thirdParty/RenderPipeline"]
 	path = thirdParty/RenderPipeline
 	url = https://github.com/famura/RenderPipeline.git

@@ -393,6 +393,43 @@ class SelfPacedDomainParam(DomainParam):
             clip_up=clip_up,
         )
 
+    @staticmethod
+    def from_domain_randomizer(domain_randomizer, *, target_cov_factor=1.0, init_cov_factor=1 / 100):
+        """
+        Creates a self-paced domain parameter having the same initial and target mean and target variance given by the domain randomizer's variance (scaled by `target_cov_factor`). The initial variance is also given by the domain randomizer's variance (scaled by `init_cov_factor`).
+
+        :param domain_randomizer: randomizer to grab the data from
+        :param target_cov_factor: scaling of the randomizer's variance to get the target variance; defaults to `1`
+        :param init_cov_factor: scaling of the randomizer's variance to get the init variance; defaults to `1/100`
+        :return: the self-paced domain parameter
+        """
+        name = []
+        target_mean = []
+        target_cov_flat = []
+        init_mean = []
+        init_cov_flat = []
+        for domain_param in domain_randomizer.domain_params:
+            if not isinstance(domain_param, NormalDomainParam):
+                raise pyrado.TypeErr(
+                    given=domain_param,
+                    expected_type=NormalDomainParam,
+                    msg="each domain_param must be a NormalDomainParam",
+                )
+            name.append(domain_param.name)
+            target_mean.append(domain_param.mean)
+            target_cov_flat.append(target_cov_factor * domain_param.std**2)
+            init_mean.append(domain_param.mean)
+            init_cov_flat.append(init_cov_factor * domain_param.std**2)
+        return SelfPacedDomainParam(
+            name=name,
+            target_mean=to.tensor(target_mean),
+            target_cov_flat=to.tensor(target_cov_flat),
+            init_mean=to.tensor(init_mean),
+            init_cov_flat=to.tensor(init_cov_flat),
+            clip_lo=-pyrado.inf,
+            clip_up=+pyrado.inf,
+        )
+
     @property
     def target_distr(self) -> MultivariateNormal:
         """Get the target distribution."""
@@ -412,6 +449,17 @@ class SelfPacedDomainParam(DomainParam):
     def context_cov(self) -> to.Tensor:
         """Get the current covariance matrix."""
         return self.context_cov_chol @ self.context_cov_chol.T
+
+    def info(self) -> dict:
+        return {
+            "name": self.name,
+            "target_mean": self.target_mean,
+            "target_cov_chol": self.target_cov_chol,
+            "init_mean": self.init_mean,
+            "init_cov_chol": self.init_cov_chol,
+            "clip_lo": self.clip_lo,
+            "clip_up": self.clip_up,
+        }
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
         """

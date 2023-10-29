@@ -33,14 +33,29 @@ import pytest
 import torch as to
 from tests.conftest import m_needs_bullet, m_needs_mujoco
 
+import pyrado
 from pyrado.domain_randomization.domain_parameter import (
     BernoulliDomainParam,
     MultivariateNormalDomainParam,
     NormalDomainParam,
+    SelfPacedDomainParam,
     UniformDomainParam,
 )
+from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import param_grid
 from pyrado.environments.sim_base import SimEnv
+
+
+def assert_is_close(param, info_expected):
+    info_actual = param.info()
+    assert list(sorted(info_actual.keys())) == list(sorted(info_expected.keys()))
+    for key, expected in info_expected.items():
+        if key in ["name", "clip_lo", "clip_up"]:
+            assert info_actual[key] == expected
+        else:
+            assert to.allclose(
+                info_actual[key], expected
+            ), f"key: {key}, actual: {info_actual[key]}, expected: {expected}"
 
 
 @pytest.mark.parametrize(
@@ -64,6 +79,42 @@ def test_domain_param(dp, num_samples):
     s = dp.sample(num_samples)
     assert isinstance(s, list)
     assert len(s) == num_samples
+
+
+def test_self_paced_domain_param_make_broadening():
+    param = SelfPacedDomainParam.make_broadening(["a"], [1.0], 0.0004, 0.04)
+    assert_is_close(
+        param,
+        {
+            "name": ["a"],
+            "target_mean": to.tensor([1.0]).double(),
+            "target_cov_chol": to.tensor([0.2]).double(),
+            "init_mean": to.tensor([1.0]).double(),
+            "init_cov_chol": to.tensor([0.02]).double(),
+            "clip_lo": -pyrado.inf,
+            "clip_up": pyrado.inf,
+        },
+    )
+
+
+def test_self_paced_domain_param_from_domain_randomizer():
+    param = SelfPacedDomainParam.from_domain_randomizer(
+        DomainRandomizer(NormalDomainParam(name="a", mean=1.0, std=1.0)),
+        init_cov_factor=0.0004,
+        target_cov_factor=0.04,
+    )
+    assert_is_close(
+        param,
+        {
+            "name": ["a"],
+            "target_mean": to.tensor([1.0]).double(),
+            "target_cov_chol": to.tensor([0.2]).double(),
+            "init_mean": to.tensor([1.0]).double(),
+            "init_cov_chol": to.tensor([0.02]).double(),
+            "clip_lo": -pyrado.inf,
+            "clip_up": pyrado.inf,
+        },
+    )
 
 
 def test_randomizer(default_randomizer):
