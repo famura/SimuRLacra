@@ -60,13 +60,105 @@
 <li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">mujoco</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#base">base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#openai-ant">openai_ant</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#openai-half-cheetah">openai_half_cheetah</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#openai-hopper">openai_hopper</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#openai-humanoid">openai_humanoid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#quanser-qube">quanser_qube</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#wam-base">wam_base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.mujoco.base">base</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.act_space"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.act_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.configure_viewer"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.configure_viewer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.domain_param"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.domain_param</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.init_space"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.init_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.obs_space"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.obs_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.render"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.render()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.reset"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.state_space"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.state_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.step"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv.task"><code class="docutils literal notranslate"><span class="pre">MujocoSimEnv.task</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.mujoco.openai_ant">openai_ant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.openai_ant.AntSim"><code class="docutils literal notranslate"><span class="pre">AntSim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_ant.AntSim.act_space"><code class="docutils literal notranslate"><span class="pre">AntSim.act_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_ant.AntSim.contact_forces"><code class="docutils literal notranslate"><span class="pre">AntSim.contact_forces</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_ant.AntSim.get_nominal_domain_param"><code class="docutils literal notranslate"><span class="pre">AntSim.get_nominal_domain_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_ant.AntSim.name"><code class="docutils literal notranslate"><span class="pre">AntSim.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_ant.AntSim.obs_space"><code class="docutils literal notranslate"><span class="pre">AntSim.obs_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_ant.AntSim.observe"><code class="docutils literal notranslate"><span class="pre">AntSim.observe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_ant.AntSim.state_space"><code class="docutils literal notranslate"><span class="pre">AntSim.state_space</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.mujoco.openai_half_cheetah">openai_half_cheetah</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim"><code class="docutils literal notranslate"><span class="pre">HalfCheetahSim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.act_space"><code class="docutils literal notranslate"><span class="pre">HalfCheetahSim.act_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.get_nominal_domain_param"><code class="docutils literal notranslate"><span class="pre">HalfCheetahSim.get_nominal_domain_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.name"><code class="docutils literal notranslate"><span class="pre">HalfCheetahSim.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.obs_space"><code class="docutils literal notranslate"><span class="pre">HalfCheetahSim.obs_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.observe"><code class="docutils literal notranslate"><span class="pre">HalfCheetahSim.observe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.state_space"><code class="docutils literal notranslate"><span class="pre">HalfCheetahSim.state_space</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.mujoco.openai_hopper">openai_hopper</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.openai_hopper.HopperSim"><code class="docutils literal notranslate"><span class="pre">HopperSim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.act_space"><code class="docutils literal notranslate"><span class="pre">HopperSim.act_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.get_nominal_domain_param"><code class="docutils literal notranslate"><span class="pre">HopperSim.get_nominal_domain_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.name"><code class="docutils literal notranslate"><span class="pre">HopperSim.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.obs_space"><code class="docutils literal notranslate"><span class="pre">HopperSim.obs_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.observe"><code class="docutils literal notranslate"><span class="pre">HopperSim.observe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.state_space"><code class="docutils literal notranslate"><span class="pre">HopperSim.state_space</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.mujoco.openai_humanoid">openai_humanoid</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim"><code class="docutils literal notranslate"><span class="pre">HumanoidSim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.act_space"><code class="docutils literal notranslate"><span class="pre">HumanoidSim.act_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.get_nominal_domain_param"><code class="docutils literal notranslate"><span class="pre">HumanoidSim.get_nominal_domain_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.name"><code class="docutils literal notranslate"><span class="pre">HumanoidSim.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.obs_space"><code class="docutils literal notranslate"><span class="pre">HumanoidSim.obs_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.observe"><code class="docutils literal notranslate"><span class="pre">HumanoidSim.observe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.state_space"><code class="docutils literal notranslate"><span class="pre">HumanoidSim.state_space</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.mujoco.quanser_qube">quanser_qube</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim"><code class="docutils literal notranslate"><span class="pre">QQubeMjSim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim.act_space"><code class="docutils literal notranslate"><span class="pre">QQubeMjSim.act_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim.get_nominal_domain_param"><code class="docutils literal notranslate"><span class="pre">QQubeMjSim.get_nominal_domain_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim.obs_space"><code class="docutils literal notranslate"><span class="pre">QQubeMjSim.obs_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim.observe"><code class="docutils literal notranslate"><span class="pre">QQubeMjSim.observe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim"><code class="docutils literal notranslate"><span class="pre">QQubeStabMjSim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.init_space"><code class="docutils literal notranslate"><span class="pre">QQubeStabMjSim.init_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.name"><code class="docutils literal notranslate"><span class="pre">QQubeStabMjSim.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.state_space"><code class="docutils literal notranslate"><span class="pre">QQubeStabMjSim.state_space</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim"><code class="docutils literal notranslate"><span class="pre">QQubeSwingUpMjSim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.init_space"><code class="docutils literal notranslate"><span class="pre">QQubeSwingUpMjSim.init_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.name"><code class="docutils literal notranslate"><span class="pre">QQubeSwingUpMjSim.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.state_space"><code class="docutils literal notranslate"><span class="pre">QQubeSwingUpMjSim.state_space</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.mujoco.wam_base">wam_base</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyrado.environments.mujoco.wam_base.WAMSim"><code class="docutils literal notranslate"><span class="pre">WAMSim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.wam_base.WAMSim.act_space"><code class="docutils literal notranslate"><span class="pre">WAMSim.act_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.wam_base.WAMSim.get_nominal_domain_param"><code class="docutils literal notranslate"><span class="pre">WAMSim.get_nominal_domain_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.wam_base.WAMSim.num_dof"><code class="docutils literal notranslate"><span class="pre">WAMSim.num_dof</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.wam_base.WAMSim.obs_space"><code class="docutils literal notranslate"><span class="pre">WAMSim.obs_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.wam_base.WAMSim.state_space"><code class="docutils literal notranslate"><span class="pre">WAMSim.state_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.environments.mujoco.wam_base.WAMSim.torque_space"><code class="docutils literal notranslate"><span class="pre">WAMSim.torque_space</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#wam-bic">wam_bic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#wam-jsc">wam_jsc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.mujoco">Module contents</a></li>
@@ -152,26 +244,685 @@
              
   <section id="mujoco">
 <h1>mujoco<a class="headerlink" href="#mujoco" title="Permalink to this heading"></a></h1>
-<section id="base">
-<h2>base<a class="headerlink" href="#base" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.environments.mujoco.base">
+<span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.environments.mujoco.base" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MujocoSimEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/base.html#MujocoSimEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>Base class for MuJoCo environments.
+Uses Serializable to facilitate proper serialization.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/mujoco/mujoco_env.py">https://github.com/openai/gym/blob/master/gym/envs/mujoco/mujoco_env.py</a></p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_path</strong> – path to the MuJoCo xml model config file</p></li>
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction, e.g <cite>dict(fwd_rew_weight=1.)</cite></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.act_space">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.act_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.configure_viewer">
+<span class="sig-name descname"><span class="pre">configure_viewer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/base.html#MujocoSimEnv.configure_viewer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.configure_viewer" title="Permalink to this definition"></a></dt>
+<dd><p>Configure the camera when the viewer is initialized. You need to set <cite>self.camera_config</cite> before.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.domain_param">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">domain_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy dict.
+The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
+(e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
+but there might also be additional parameters that depend on the domain parameters.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.init_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.init_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the initial state space.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.obs_space">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.obs_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">RenderMode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">RenderMode(text=False,</span> <span class="pre">video=False,</span> <span class="pre">render=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/base.html#MujocoSimEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.render" title="Permalink to this definition"></a></dt>
+<dd><p>Visualize one time step of the simulation.
+The base version prints to console when the state exceeds its boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
+<li><p><strong>render_step</strong> – interval for rendering</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/base.html#MujocoSimEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
+<li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
+<dd class="field-even"><p>initial observation of the state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.state_space">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.state_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/base.html#MujocoSimEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.step" title="Permalink to this definition"></a></dt>
+<dd><p>Perform one time step of the simulation or on the real-world device.
+When a terminal condition is met, the reset function is called.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
+</dd>
+<dt class="field-even">Return obs<span class="colon">:</span></dt>
+<dd class="field-even"><p>current observation of the environment</p>
+</dd>
+<dt class="field-odd">Return reward<span class="colon">:</span></dt>
+<dd class="field-odd"><p>reward depending on the selected reward function</p>
+</dd>
+<dt class="field-even">Return done<span class="colon">:</span></dt>
+<dd class="field-even"><p>indicates whether the episode has ended</p>
+</dd>
+<dt class="field-odd">Return env_info<span class="colon">:</span></dt>
+<dd class="field-odd"><p>contains diagnostic information about the environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.base.MujocoSimEnv.task">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="tasks.html#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><span class="pre">Task</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.base.MujocoSimEnv.task" title="Permalink to this definition"></a></dt>
+<dd><p>Get the task describing what the agent should do in the environment.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="openai-ant">
-<h2>openai_ant<a class="headerlink" href="#openai-ant" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.environments.mujoco.openai_ant">
+<span id="openai-ant"></span><h2>openai_ant<a class="headerlink" href="#module-pyrado.environments.mujoco.openai_ant" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_ant.AntSim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AntSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_ant.html#AntSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_ant.AntSim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv" title="pyrado.environments.mujoco.base.MujocoSimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">MujocoSimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>The Ant (v3) MuJoCo simulation environment where a four-legged creature walks as fast as possible.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The OpenAI Gym variant considers this task solved at a reward over 6000
+(<a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/__init__.py">https://github.com/openai/gym/blob/master/gym/envs/__init__.py</a>).</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/mujoco/ant_v3.py">https://github.com/openai/gym/blob/master/gym/envs/mujoco/ant_v3.py</a></p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction, e.g <cite>dict(fwd_rew_weight=1.)</cite></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_ant.AntSim.act_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_ant.AntSim.act_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_ant.AntSim.contact_forces">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contact_forces</span></span><a class="headerlink" href="#pyrado.environments.mujoco.openai_ant.AntSim.contact_forces" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_ant.AntSim.get_nominal_domain_param">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_ant.html#AntSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_ant.AntSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_ant.AntSim.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ant'</span></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_ant.AntSim.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_ant.AntSim.obs_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_ant.AntSim.obs_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_ant.AntSim.observe">
+<span class="sig-name descname"><span class="pre">observe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_ant.html#AntSim.observe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_ant.AntSim.observe" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the (noise-free) observation from the current state.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method should be overwritten if the environment has a distinct observation space.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>observation perceived to the agent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_ant.AntSim.state_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_ant.AntSim.state_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="openai-half-cheetah">
-<h2>openai_half_cheetah<a class="headerlink" href="#openai-half-cheetah" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.environments.mujoco.openai_half_cheetah">
+<span id="openai-half-cheetah"></span><h2>openai_half_cheetah<a class="headerlink" href="#module-pyrado.environments.mujoco.openai_half_cheetah" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HalfCheetahSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_half_cheetah.html#HalfCheetahSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv" title="pyrado.environments.mujoco.base.MujocoSimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">MujocoSimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>The Half-Cheetah (v3) MuJoCo simulation environment where a planar cheetah-like robot tries to run forward.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The OpenAI Gym variant considers this task solved at a reward over 4800
+(<a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/__init__.py">https://github.com/openai/gym/blob/master/gym/envs/__init__.py</a>).</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/mujoco/half_cheetah_v3.py">https://github.com/openai/gym/blob/master/gym/envs/mujoco/half_cheetah_v3.py</a></p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction, e.g <cite>dict(fwd_rew_weight=1.)</cite></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.act_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.act_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.get_nominal_domain_param">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_half_cheetah.html#HalfCheetahSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cth'</span></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.obs_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.obs_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.observe">
+<span class="sig-name descname"><span class="pre">observe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_half_cheetah.html#HalfCheetahSim.observe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.observe" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the (noise-free) observation from the current state.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method should be overwritten if the environment has a distinct observation space.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>observation perceived to the agent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.state_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_half_cheetah.HalfCheetahSim.state_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="openai-hopper">
-<h2>openai_hopper<a class="headerlink" href="#openai-hopper" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.environments.mujoco.openai_hopper">
+<span id="openai-hopper"></span><h2>openai_hopper<a class="headerlink" href="#module-pyrado.environments.mujoco.openai_hopper" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_hopper.HopperSim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HopperSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_hopper.html#HopperSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_hopper.HopperSim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv" title="pyrado.environments.mujoco.base.MujocoSimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">MujocoSimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>The Hopper (v3) MuJoCo simulation environment where a planar simplified one-legged robot tries to run forward.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The OpenAI Gym variant considers this task solved at a reward over 3800
+(<a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/__init__.py">https://github.com/openai/gym/blob/master/gym/envs/__init__.py</a>).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In contrast to the OpenAI Gym MoJoCo environments, Pyrado enables the randomization of the hoppers “healthy”
+state range. Moreover, the state space is constrained to the this part of the state space. In the original
+environment, the <cite>terminate_when_unhealthy</cite> is <cite>True</cite> by default.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] <a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/mujoco/hopper_v3.py">https://github.com/openai/gym/blob/master/gym/envs/mujoco/hopper_v3.py</a></p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction, e.g <cite>dict(fwd_rew_weight=1.)</cite></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_hopper.HopperSim.act_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.act_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_hopper.HopperSim.get_nominal_domain_param">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_hopper.html#HopperSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_hopper.HopperSim.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hop'</span></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_hopper.HopperSim.obs_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.obs_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_hopper.HopperSim.observe">
+<span class="sig-name descname"><span class="pre">observe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_hopper.html#HopperSim.observe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.observe" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the (noise-free) observation from the current state.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method should be overwritten if the environment has a distinct observation space.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>observation perceived to the agent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_hopper.HopperSim.state_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_hopper.HopperSim.state_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="openai-humanoid">
-<h2>openai_humanoid<a class="headerlink" href="#openai-humanoid" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.environments.mujoco.openai_humanoid">
+<span id="openai-humanoid"></span><h2>openai_humanoid<a class="headerlink" href="#module-pyrado.environments.mujoco.openai_humanoid" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_humanoid.HumanoidSim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HumanoidSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_humanoid.html#HumanoidSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv" title="pyrado.environments.mujoco.base.MujocoSimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">MujocoSimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>The Humanoid (v3) MuJoCo simulation environment where a humanoid robot tries to run forward.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] <a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/mujoco/humanoid_v3.py">https://github.com/openai/gym/blob/master/gym/envs/mujoco/humanoid_v3.py</a></p>
+</div>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction, e.g <cite>dict(fwd_rew_weight=1.)</cite></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_humanoid.HumanoidSim.act_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.act_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_humanoid.HumanoidSim.get_nominal_domain_param">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_humanoid.html#HumanoidSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_humanoid.HumanoidSim.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hum'</span></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_humanoid.HumanoidSim.obs_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.obs_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_humanoid.HumanoidSim.observe">
+<span class="sig-name descname"><span class="pre">observe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/openai_humanoid.html#HumanoidSim.observe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.observe" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the (noise-free) observation from the current state.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method should be overwritten if the environment has a distinct observation space.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>observation perceived to the agent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.openai_humanoid.HumanoidSim.state_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.openai_humanoid.HumanoidSim.state_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="quanser-qube">
-<h2>quanser_qube<a class="headerlink" href="#quanser-qube" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.environments.mujoco.quanser_qube">
+<span id="quanser-qube"></span><h2>quanser_qube<a class="headerlink" href="#module-pyrado.environments.mujoco.quanser_qube" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeMjSim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QQubeMjSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/quanser_qube.html#QQubeMjSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv" title="pyrado.environments.mujoco.base.MujocoSimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">MujocoSimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeMjSim.act_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim.act_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeMjSim.get_nominal_domain_param">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/quanser_qube.html#QQubeMjSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeMjSim.obs_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim.obs_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeMjSim.observe">
+<span class="sig-name descname"><span class="pre">observe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/quanser_qube.html#QQubeMjSim.observe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim.observe" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the (noise-free) observation from the current state.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method should be overwritten if the environment has a distinct observation space.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>observation perceived to the agent</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QQubeStabMjSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/quanser_qube.html#QQubeStabMjSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim" title="pyrado.environments.mujoco.quanser_qube.QQubeMjSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">QQubeMjSim</span></code></a></p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.init_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.init_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the initial state space.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'qq-mj-st'</span></em><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.state_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeStabMjSim.state_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QQubeSwingUpMjSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/quanser_qube.html#QQubeSwingUpMjSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.mujoco.quanser_qube.QQubeMjSim" title="pyrado.environments.mujoco.quanser_qube.QQubeMjSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">QQubeMjSim</span></code></a></p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.init_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.init_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the initial state space.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'qq-mj-su'</span></em><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.state_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.quanser_qube.QQubeSwingUpMjSim.state_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="wam-base">
-<h2>wam_base<a class="headerlink" href="#wam-base" title="Permalink to this heading"></a></h2>
+<section id="module-pyrado.environments.mujoco.wam_base">
+<span id="wam-base"></span><h2>wam_base<a class="headerlink" href="#module-pyrado.environments.mujoco.wam_base" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.wam_base.WAMSim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WAMSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_dof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/mujoco/wam_base.html#WAMSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.wam_base.WAMSim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.mujoco.base.MujocoSimEnv" title="pyrado.environments.mujoco.base.MujocoSimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">MujocoSimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
+<p>Base class for WAM robotic arm from Barrett technologies</p>
+<p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_dof</strong> – number of degrees of freedom (4 or 7), depending on which Barrett WAM setup being used</p></li>
+<li><p><strong>model_path</strong> – path to the MuJoCo xml model config file</p></li>
+<li><p><strong>frame_skip</strong> – number of simulation frames for which the same action is held, results in a multiplier of
+the time step size <cite>dt</cite></p></li>
+<li><p><strong>dt</strong> – by default the time step size is the one from the mujoco config file multiplied by the number of
+frame skips (legacy from OpenAI environments). By passing an explicit <cite>dt</cite> value, this can be
+overwritten. Possible use case if if you know that you recorded a trajectory with a specific <cite>dt</cite>.</p></li>
+<li><p><strong>max_steps</strong> – max number of simulation time steps</p></li>
+<li><p><strong>task_args</strong> – arguments for the task construction</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.wam_base.WAMSim.act_space">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">act_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.wam_base.WAMSim.act_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.wam_base.WAMSim.get_nominal_domain_param">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_dof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/environments/mujoco/wam_base.html#WAMSim.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.mujoco.wam_base.WAMSim.get_nominal_domain_param" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.wam_base.WAMSim.num_dof">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_dof</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.environments.mujoco.wam_base.WAMSim.num_dof" title="Permalink to this definition"></a></dt>
+<dd><p>Get the number of degrees of freedom.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.wam_base.WAMSim.obs_space">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.wam_base.WAMSim.obs_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.wam_base.WAMSim.state_space">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.wam_base.WAMSim.state_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.environments.mujoco.wam_base.WAMSim.torque_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">torque_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">Space</span></a></em><a class="headerlink" href="#pyrado.environments.mujoco.wam_base.WAMSim.torque_space" title="Permalink to this definition"></a></dt>
+<dd><p>Get the space of joint torques.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="wam-bic">
 <h2>wam_bic<a class="headerlink" href="#wam-bic" title="Permalink to this heading"></a></h2>

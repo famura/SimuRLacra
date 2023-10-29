@@ -167,7 +167,7 @@
 
 <span class="kn">import</span> <span class="nn">os.path</span>
 <span class="kn">from</span> <span class="nn">csv</span> <span class="kn">import</span> <span class="n">DictWriter</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
@@ -422,6 +422,16 @@
         <span class="c1"># Forward to subroutine</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">target_mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">subrtn_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RolloutSavingWrapper</span><span class="p">:</span>
+        <span class="c1"># It is checked in the constructor that the sampler is a RolloutSavingWrapper.</span>
+        <span class="c1"># noinspection PyTypeChecker</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sampler</span>
+
 <div class="viewcode-block" id="SPDR.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.spdr.SPDR.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform a step of SPDR. This includes training the subroutine and updating the context distribution accordingly.</span>
@@ -429,30 +439,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
 
-        <span class="n">context_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">context_mean</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
-        <span class="n">context_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">context_cov</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
-        <span class="n">context_cov_chol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">context_cov_chol</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
-        <span class="n">target_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">target_mean</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
-        <span class="n">target_cov_chol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">target_cov_chol</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
-
         <span class="c1"># Add these keys to the logger as dummy values.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;sprl number of particles&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr constraint kl&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr constraint performance&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr objective&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_a_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">param_b_idx</span><span class="p">,</span> <span class="n">param_b_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;context cov for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">--</span><span class="si">{</span><span class="n">param_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">context_cov</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_b_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;context cov_chol for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">--</span><span class="si">{</span><span class="n">param_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="n">context_cov_chol</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_b_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="n">param_a_name</span> <span class="o">==</span> <span class="n">param_b_name</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;context mean for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">context_mean</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-                    <span class="k">break</span>
-
-        <span class="n">dim</span> <span class="o">=</span> <span class="n">context_mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_context_distribution</span><span class="p">()</span>
 
         <span class="c1"># If we are in the first iteration and have a bad performance,</span>
         <span class="c1"># we want to completely reset the policy if training is unsuccessful</span>
@@ -463,155 +455,70 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_train_subroutine_and_evaluate_perf</span>
         <span class="p">)(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">reset_policy</span><span class="p">)</span>
 
-        <span class="c1"># Update distribution</span>
-        <span class="n">previous_distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="p">(</span><span class="n">context_mean</span><span class="p">,</span> <span class="n">context_cov_chol</span><span class="p">)</span>
-        <span class="n">target_distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="p">(</span><span class="n">target_mean</span><span class="p">,</span> <span class="n">target_cov_chol</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">get_domain_param_value</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-            <span class="n">domain_param_dict</span> <span class="o">=</span> <span class="n">ro</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span>
-            <span class="n">untransformed_param_name</span> <span class="o">=</span> <span class="n">param_name</span> <span class="o">+</span> <span class="n">DomainParamTransform</span><span class="o">.</span><span class="n">UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX</span>
-            <span class="k">if</span> <span class="n">untransformed_param_name</span> <span class="ow">in</span> <span class="n">domain_param_dict</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">domain_param_dict</span><span class="p">[</span><span class="n">untransformed_param_name</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">domain_param_dict</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span>
-
-        <span class="n">rollouts_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sampler</span><span class="p">()</span><span class="o">.</span><span class="n">rollouts</span>
-        <span class="n">contexts</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">get_domain_param_value</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span> <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">name</span>
-            <span class="p">],</span>
-            <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="n">contexts_old_log_prob</span> <span class="o">=</span> <span class="n">previous_distribution</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">contexts</span><span class="o">.</span><span class="n">double</span><span class="p">())</span>
-        <span class="c1"># kl_divergence = to.distributions.kl_divergence(previous_distribution.distribution, target_distribution.distribution)</span>
-
-        <span class="n">values</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">])</span>
-
-        <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">def</span> <span class="nf">kl_constraint_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Compute the constraint for the KL-divergence between current and proposed distribution.&quot;&quot;&quot;</span>
-            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-            <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">kl_divergence</span><span class="p">(</span>
-                <span class="n">previous_distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">distribution</span><span class="o">.</span><span class="n">distribution</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="n">kl_divergence</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-
-        <span class="k">def</span> <span class="nf">kl_constraint_fn_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Compute the derivative for the KL-constraint (used for scipy optimizer).&quot;&quot;&quot;</span>
-            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-            <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">kl_divergence</span><span class="p">(</span>
-                <span class="n">previous_distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">distribution</span><span class="o">.</span><span class="n">distribution</span>
-            <span class="p">)</span>
-            <span class="n">grads</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">kl_divergence</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">parameters</span><span class="p">()))</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grads</span><span class="p">])</span>
-
-        <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">NonlinearConstraint</span><span class="p">(</span>
-                <span class="n">fun</span><span class="o">=</span><span class="n">kl_constraint_fn</span><span class="p">,</span>
-                <span class="n">lb</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-                <span class="n">ub</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kl_constraints_ub</span><span class="p">,</span>
-                <span class="n">jac</span><span class="o">=</span><span class="n">kl_constraint_fn_prime</span><span class="p">,</span>
-                <span class="c1"># keep_feasible=True,</span>
-            <span class="p">)</span>
+        <span class="n">previous_distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">context_mean</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">context_cov_chol</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">target_distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">target_mean</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">target_cov_chol</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
         <span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">performance_constraint_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Compute the constraint for the expected performance under the proposed distribution.&quot;&quot;&quot;</span>
-            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-            <span class="n">performance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_expected_performance</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">contexts</span><span class="p">,</span> <span class="n">contexts_old_log_prob</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">performance</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">proposal_rollouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_proposal_rollouts</span><span class="p">()</span>
+        <span class="n">contexts</span><span class="p">,</span> <span class="n">contexts_old_log_prob</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_particles</span><span class="p">(</span><span class="n">proposal_rollouts</span><span class="p">,</span> <span class="n">previous_distribution</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">performance_constraint_fn_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Compute the derivative for the performance-constraint (used for scipy optimizer).&quot;&quot;&quot;</span>
-            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-            <span class="n">performance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_expected_performance</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">contexts</span><span class="p">,</span> <span class="n">contexts_old_log_prob</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
-            <span class="n">grads</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">performance</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">parameters</span><span class="p">()))</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grads</span><span class="p">])</span>
-
-        <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">NonlinearConstraint</span><span class="p">(</span>
-                <span class="n">fun</span><span class="o">=</span><span class="n">performance_constraint_fn</span><span class="p">,</span>
-                <span class="n">lb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_performance_lower_bound</span><span class="p">,</span>
-                <span class="n">ub</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-                <span class="n">jac</span><span class="o">=</span><span class="n">performance_constraint_fn_prime</span><span class="p">,</span>
-                <span class="c1"># keep_feasible=True,</span>
-            <span class="p">)</span>
+        <span class="c1"># Define the SPRL optimization problem</span>
+        <span class="n">kl_constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_kl_constraint</span><span class="p">(</span><span class="n">previous_distribution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kl_constraints_ub</span><span class="p">)</span>
+        <span class="n">performance_constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_performance_constraint</span><span class="p">(</span>
+            <span class="n">contexts</span><span class="p">,</span> <span class="n">contexts_old_log_prob</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_performance_lower_bound</span>
         <span class="p">)</span>
-
-        <span class="c1"># # Clip the bounds of the new variance either if the applied covariance transformation does not ensure</span>
-        <span class="c1"># # non-negativity or when the KL threshold has been crossed.</span>
-        <span class="c1"># bounds = None</span>
-        <span class="c1"># x0, _, x0_cov_indices = previous_distribution.get_stacked()</span>
-        <span class="c1"># if self._cov_transformation.ensures_non_negativity():</span>
-        <span class="c1">#     lower_bound = -np.inf * np.ones_like(x0)</span>
-        <span class="c1">#     lower_bound_is_inf = True</span>
-        <span class="c1"># else:</span>
-        <span class="c1">#     lower_bound = np.zeros_like(x0)</span>
-        <span class="c1">#     lower_bound_is_inf = False</span>
-        <span class="c1"># if self._kl_threshold != -np.inf and (self._kl_threshold &lt; kl_divergence):</span>
-        <span class="c1">#     if x0_cov_indices is not None and self._var_lower_bound is not None:</span>
-        <span class="c1">#         # Further clip the x values if a standard deviation lower bound was set.</span>
-        <span class="c1">#         lower_bound[dim:] = self._var_lower_bound</span>
-        <span class="c1">#         lower_bound_is_inf = False</span>
-        <span class="c1"># if not lower_bound_is_inf:</span>
-        <span class="c1">#     # Only set the bounds if the lower bound is not negative infinity. Makes it easier for the optimizer.</span>
-        <span class="c1">#     upper_bound = np.ones_like(x0) * np.inf</span>
-        <span class="c1">#     bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)</span>
-        <span class="c1">#     x0 = np.clip(x0, bounds.lb, bounds.ub)</span>
-
-        <span class="c1"># We now optimize based on the kl-divergence between target and context distribution by minimizing it</span>
-        <span class="k">def</span> <span class="nf">objective_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Tries to find the minimum kl divergence between the current and the update distribution, which</span>
-<span class="sd">            still satisfies the minimum update constraint and the performance constraint.&quot;&quot;&quot;</span>
-            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-            <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">kl_divergence</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">target_distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">)</span>
-            <span class="n">grads</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">kl_divergence</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">parameters</span><span class="p">()))</span>
-
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="n">kl_divergence</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grads</span><span class="p">]),</span>
-            <span class="p">)</span>
-
+        <span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">kl_constraint</span><span class="p">,</span> <span class="n">performance_constraint</span><span class="p">]</span>
+        <span class="n">objective_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_objective_fn</span><span class="p">(</span><span class="n">target_distribution</span><span class="p">)</span>
         <span class="n">x0</span> <span class="o">=</span> <span class="n">previous_distribution</span><span class="o">.</span><span class="n">get_stacked</span><span class="p">()</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing SPDR update.&quot;</span><span class="p">)</span>
-        <span class="c1"># noinspection PyTypeChecker</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
-            <span class="n">objective_fn</span><span class="p">,</span>
-            <span class="n">x0</span><span class="p">,</span>
+        <span class="n">minimize_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">fun</span><span class="o">=</span><span class="n">objective_fn</span><span class="p">,</span>
+            <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
             <span class="n">method</span><span class="o">=</span><span class="s2">&quot;trust-constr&quot;</span><span class="p">,</span>
             <span class="n">jac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
             <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;gtol&quot;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="s2">&quot;xtol&quot;</span><span class="p">:</span> <span class="mf">1e-6</span><span class="p">},</span>
             <span class="c1"># bounds=bounds,</span>
         <span class="p">)</span>
-        <span class="n">new_x</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
-            <span class="c1"># If optimization process was not a success</span>
-            <span class="n">old_f</span> <span class="o">=</span> <span class="n">objective_fn</span><span class="p">(</span><span class="n">previous_distribution</span><span class="o">.</span><span class="n">get_stacked</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">constraints_satisfied</span> <span class="o">=</span> <span class="nb">all</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lb</span> <span class="o">&lt;=</span> <span class="n">const</span><span class="o">.</span><span class="n">fun</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">const</span><span class="o">.</span><span class="n">ub</span> <span class="k">for</span> <span class="n">const</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">))</span>
 
-            <span class="c1"># std_ok = bounds is None or (np.all(bounds.lb &lt;= result.x)) and np.all(result.x &lt;= bounds.ub)</span>
-            <span class="n">std_ok</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing SPDR update.&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="o">**</span><span class="n">minimize_args</span><span class="p">)</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">constraints_satisfied</span> <span class="ow">and</span> <span class="n">std_ok</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">old_f</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Update unsuccessful, keeping old values spl parameters.&quot;</span><span class="p">)</span>
-                <span class="n">new_x</span> <span class="o">=</span> <span class="n">x0</span>
+            <span class="c1"># Reset parameters if optimization was not successful</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+                <span class="c1"># If optimization process was not a success</span>
+                <span class="n">old_f</span> <span class="o">=</span> <span class="n">objective_fn</span><span class="p">(</span><span class="n">previous_distribution</span><span class="o">.</span><span class="n">get_stacked</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">constraints_satisfied</span> <span class="o">=</span> <span class="nb">all</span><span class="p">((</span><span class="n">const</span><span class="o">.</span><span class="n">lb</span> <span class="o">&lt;=</span> <span class="n">const</span><span class="o">.</span><span class="n">fun</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">const</span><span class="o">.</span><span class="n">ub</span> <span class="k">for</span> <span class="n">const</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_adapt_parameters</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">new_x</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr constraint kl&quot;</span><span class="p">,</span> <span class="n">kl_constraint_fn</span><span class="p">(</span><span class="n">new_x</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr constraint performance&quot;</span><span class="p">,</span> <span class="n">performance_constraint_fn</span><span class="p">(</span><span class="n">new_x</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr objective&quot;</span><span class="p">,</span> <span class="n">objective_fn</span><span class="p">(</span><span class="n">new_x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span></div>
+                <span class="c1"># std_ok = bounds is None or (np.all(bounds.lb &lt;= result.x)) and np.all(result.x &lt;= bounds.ub)</span>
+                <span class="n">std_ok</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="n">update_successful</span> <span class="o">=</span> <span class="n">constraints_satisfied</span> <span class="ow">and</span> <span class="n">std_ok</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">old_f</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">update_successful</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Update unsuccessful, keeping old SPDR parameters.&quot;</span><span class="p">)</span>
+                    <span class="n">new_x</span> <span class="o">=</span> <span class="n">x0</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Update failed with error, keeping old SPDR parameters.&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="n">x0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adapt_parameters</span><span class="p">(</span><span class="n">new_x</span><span class="p">)</span>
+
+        <span class="c1"># we can&#39;t use the stored values here as new_x might not be result.x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr constraint kl&quot;</span><span class="p">,</span> <span class="n">kl_constraint</span><span class="o">.</span><span class="n">fun</span><span class="p">(</span><span class="n">new_x</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr constraint performance&quot;</span><span class="p">,</span> <span class="n">performance_constraint</span><span class="o">.</span><span class="n">fun</span><span class="p">(</span><span class="n">new_x</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;spdr objective&quot;</span><span class="p">,</span> <span class="n">objective_fn</span><span class="p">(</span><span class="n">new_x</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="SPDR.reset"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.spdr.SPDR.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Forward to subroutine</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_get_sampler</span><span class="p">()</span><span class="o">.</span><span class="n">reset_rollouts</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sampler</span><span class="o">.</span><span class="n">reset_rollouts</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SPDR.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.spdr.SPDR.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_get_sampler</span><span class="p">()</span><span class="o">.</span><span class="n">reset_rollouts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sampler</span><span class="o">.</span><span class="n">reset_rollouts</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -630,6 +537,117 @@
 
         <span class="k">return</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span></div>
 
+    <span class="k">def</span> <span class="nf">_make_objective_fn</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">target_distribution</span><span class="p">:</span> <span class="n">MultivariateNormalWrapper</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+        <span class="k">def</span> <span class="nf">objective_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Tries to find the minimum kl divergence between the current and the update distribution, which</span>
+<span class="sd">            still satisfies the minimum update constraint and the performance constraint.&quot;&quot;&quot;</span>
+            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">kl_divergence</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">target_distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">)</span>
+            <span class="n">grads</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">kl_divergence</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">parameters</span><span class="p">()))</span>
+
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">kl_divergence</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grads</span><span class="p">]),</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">objective_fn</span>
+
+    <span class="k">def</span> <span class="nf">_make_kl_constraint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">previous_distribution</span><span class="p">:</span> <span class="n">MultivariateNormalWrapper</span><span class="p">,</span> <span class="n">kl_constraint_ub</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NonlinearConstraint</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">kl_constraint_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Compute the constraint for the KL-divergence between current and proposed distribution.&quot;&quot;&quot;</span>
+            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">kl_divergence</span><span class="p">(</span>
+                <span class="n">previous_distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">distribution</span><span class="o">.</span><span class="n">distribution</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">kl_divergence</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">kl_constraint_fn_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Compute the derivative for the KL-constraint (used for scipy optimizer).&quot;&quot;&quot;</span>
+            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">kl_divergence</span><span class="p">(</span>
+                <span class="n">previous_distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">distribution</span><span class="o">.</span><span class="n">distribution</span>
+            <span class="p">)</span>
+            <span class="n">grads</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">kl_divergence</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">parameters</span><span class="p">()))</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grads</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">NonlinearConstraint</span><span class="p">(</span>
+            <span class="n">fun</span><span class="o">=</span><span class="n">kl_constraint_fn</span><span class="p">,</span>
+            <span class="n">lb</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="n">ub</span><span class="o">=</span><span class="n">kl_constraint_ub</span><span class="p">,</span>
+            <span class="n">jac</span><span class="o">=</span><span class="n">kl_constraint_fn_prime</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_performance_constraint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">contexts_old_log_prob</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">performance_lower_bound</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NonlinearConstraint</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">performance_constraint_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Compute the constraint for the expected performance under the proposed distribution.&quot;&quot;&quot;</span>
+            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">performance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_expected_performance</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">contexts</span><span class="p">,</span> <span class="n">contexts_old_log_prob</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">performance</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">performance_constraint_fn_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Compute the derivative for the performance-constraint (used for scipy optimizer).&quot;&quot;&quot;</span>
+            <span class="n">distribution</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">performance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_expected_performance</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">contexts</span><span class="p">,</span> <span class="n">contexts_old_log_prob</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+            <span class="n">grads</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">performance</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">parameters</span><span class="p">()))</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grads</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">NonlinearConstraint</span><span class="p">(</span>
+            <span class="n">fun</span><span class="o">=</span><span class="n">performance_constraint_fn</span><span class="p">,</span>
+            <span class="n">lb</span><span class="o">=</span><span class="n">performance_lower_bound</span><span class="p">,</span>
+            <span class="n">ub</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="n">jac</span><span class="o">=</span><span class="n">performance_constraint_fn_prime</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_log_context_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">context_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">context_mean</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+        <span class="n">context_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">context_cov</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+        <span class="n">context_cov_chol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">context_cov_chol</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_a_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">param_b_idx</span><span class="p">,</span> <span class="n">param_b_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;context cov for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">--</span><span class="si">{</span><span class="n">param_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">context_cov</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_b_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;context cov_chol for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">--</span><span class="si">{</span><span class="n">param_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">context_cov_chol</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">,</span> <span class="n">param_b_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">param_a_name</span> <span class="o">==</span> <span class="n">param_b_name</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;context mean for </span><span class="si">{</span><span class="n">param_a_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">context_mean</span><span class="p">[</span><span class="n">param_a_idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+                    <span class="k">break</span>
+
+    <span class="k">def</span> <span class="nf">_sample_proposal_rollouts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sampler</span><span class="o">.</span><span class="n">rollouts</span>
+
+    <span class="k">def</span> <span class="nf">_extract_particles</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">rollouts_all</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]],</span> <span class="n">distribution</span><span class="p">:</span> <span class="n">MultivariateNormalWrapper</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="k">def</span> <span class="nf">get_domain_param_value</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <span class="n">domain_param_dict</span> <span class="o">=</span> <span class="n">ro</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span>
+            <span class="n">untransformed_param_name</span> <span class="o">=</span> <span class="n">param_name</span> <span class="o">+</span> <span class="n">DomainParamTransform</span><span class="o">.</span><span class="n">UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX</span>
+            <span class="k">if</span> <span class="n">untransformed_param_name</span> <span class="ow">in</span> <span class="n">domain_param_dict</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">domain_param_dict</span><span class="p">[</span><span class="n">untransformed_param_name</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">domain_param_dict</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span>
+
+        <span class="n">contexts</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">get_domain_param_value</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span> <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">],</span>
+            <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;sprl number of particles&quot;</span><span class="p">,</span> <span class="n">contexts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">contexts_log_prob</span> <span class="o">=</span> <span class="n">distribution</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">contexts</span><span class="o">.</span><span class="n">double</span><span class="p">())</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">contexts</span><span class="p">,</span> <span class="n">contexts_log_prob</span><span class="p">,</span> <span class="n">values</span>
+
+    <span class="c1"># noinspection PyMethodMayBeStatic</span>
     <span class="k">def</span> <span class="nf">_compute_expected_performance</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="p">:</span> <span class="n">MultivariateNormalWrapper</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">old_log_prop</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
@@ -637,10 +655,10 @@
         <span class="n">context_ratio</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">distribution</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="o">-</span> <span class="n">old_log_prop</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">context_ratio</span> <span class="o">*</span> <span class="n">values</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_adapt_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_adapt_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the parameters of the distribution based on the result of</span>
 <span class="sd">        the optimization step and the general algorithm settings.&quot;&quot;&quot;</span>
-        <span class="n">context_distr</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">context_distr</span> <span class="o">=</span> <span class="n">MultivariateNormalWrapper</span><span class="o">.</span><span class="n">from_stacked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="s2">&quot;context_mean&quot;</span><span class="p">,</span> <span class="n">context_distr</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="s2">&quot;context_cov_chol&quot;</span><span class="p">,</span> <span class="n">context_distr</span><span class="o">.</span><span class="n">cov_chol</span><span class="p">)</span>
 
@@ -659,13 +677,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
-        <span class="n">rollouts_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sampler</span><span class="p">()</span><span class="o">.</span><span class="n">rollouts</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">([[</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]])</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_get_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RolloutSavingWrapper</span><span class="p">:</span>
-        <span class="c1"># It is checked in the constructor that the sampler is a RolloutSavingWrapper.</span>
-        <span class="c1"># noinspection PyTypeChecker</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sampler</span></div>
+        <span class="n">rollouts_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sampler</span><span class="o">.</span><span class="n">rollouts</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">([[</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]])</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

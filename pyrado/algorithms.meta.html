@@ -198,12 +198,14 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR"><code class="docutils literal notranslate"><span class="pre">SPDR</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR.dim"><code class="docutils literal notranslate"><span class="pre">SPDR.dim</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR.load_snapshot"><code class="docutils literal notranslate"><span class="pre">SPDR.load_snapshot()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR.name"><code class="docutils literal notranslate"><span class="pre">SPDR.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR.reset"><code class="docutils literal notranslate"><span class="pre">SPDR.reset()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR.sample_count"><code class="docutils literal notranslate"><span class="pre">SPDR.sample_count</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR.save_snapshot"><code class="docutils literal notranslate"><span class="pre">SPDR.save_snapshot()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR.step"><code class="docutils literal notranslate"><span class="pre">SPDR.step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.SPDR.subrtn_sampler"><code class="docutils literal notranslate"><span class="pre">SPDR.subrtn_sampler</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#pyrado.algorithms.meta.spdr.ravel_tril_elements"><code class="docutils literal notranslate"><span class="pre">ravel_tril_elements()</span></code></a></li>
@@ -1319,6 +1321,11 @@ training attempt of the subroutine should be reattempted</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.spdr.SPDR.dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyrado.algorithms.meta.spdr.SPDR.dim" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.algorithms.meta.spdr.SPDR.load_snapshot">
 <span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">Policy</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/spdr.html#SPDR.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.spdr.SPDR.load_snapshot" title="Permalink to this definition"></a></dt>
@@ -1376,6 +1383,11 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dd><p>Perform a step of SPDR. This includes training the subroutine and updating the context distribution accordingly.
 For a description of the parameters see <cite>pyrado.algorithms.base.Algorithm.step</cite>.</p>
 </dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.spdr.SPDR.subrtn_sampler">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subrtn_sampler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="algorithms.html#pyrado.algorithms.utils.RolloutSavingWrapper" title="pyrado.algorithms.utils.RolloutSavingWrapper"><span class="pre">RolloutSavingWrapper</span></a></em><a class="headerlink" href="#pyrado.algorithms.meta.spdr.SPDR.subrtn_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

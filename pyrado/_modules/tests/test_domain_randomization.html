@@ -171,14 +171,29 @@
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_mujoco</span>
 
+<span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BernoulliDomainParam</span><span class="p">,</span>
     <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span>
     <span class="n">NormalDomainParam</span><span class="p">,</span>
+    <span class="n">SelfPacedDomainParam</span><span class="p">,</span>
     <span class="n">UniformDomainParam</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">param_grid</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+
+
+<div class="viewcode-block" id="assert_is_close"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.assert_is_close">[docs]</a><span class="k">def</span> <span class="nf">assert_is_close</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">info_expected</span><span class="p">):</span>
+    <span class="n">info_actual</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">info_actual</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">info_expected</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="n">info_expected</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;clip_lo&quot;</span><span class="p">,</span> <span class="s2">&quot;clip_up&quot;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">info_actual</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">expected</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">to</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                <span class="n">info_actual</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">expected</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, actual: </span><span class="si">{</span><span class="n">info_actual</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">, expected: </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 <div class="viewcode-block" id="test_domain_param"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.test_domain_param">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -202,6 +217,42 @@
     <span class="n">s</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_samples</span></div>
+
+
+<div class="viewcode-block" id="test_self_paced_domain_param_make_broadening"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.test_self_paced_domain_param_make_broadening">[docs]</a><span class="k">def</span> <span class="nf">test_self_paced_domain_param_make_broadening</span><span class="p">():</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="n">SelfPacedDomainParam</span><span class="o">.</span><span class="n">make_broadening</span><span class="p">([</span><span class="s2">&quot;a&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="mf">0.0004</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">)</span>
+    <span class="n">assert_is_close</span><span class="p">(</span>
+        <span class="n">param</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;target_mean&quot;</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span>
+            <span class="s2">&quot;target_cov_chol&quot;</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.2</span><span class="p">])</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span>
+            <span class="s2">&quot;init_mean&quot;</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span>
+            <span class="s2">&quot;init_cov_chol&quot;</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.02</span><span class="p">])</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span>
+            <span class="s2">&quot;clip_lo&quot;</span><span class="p">:</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="s2">&quot;clip_up&quot;</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_self_paced_domain_param_from_domain_randomizer"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.test_self_paced_domain_param_from_domain_randomizer">[docs]</a><span class="k">def</span> <span class="nf">test_self_paced_domain_param_from_domain_randomizer</span><span class="p">():</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="n">SelfPacedDomainParam</span><span class="o">.</span><span class="n">from_domain_randomizer</span><span class="p">(</span>
+        <span class="n">DomainRandomizer</span><span class="p">(</span><span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)),</span>
+        <span class="n">init_cov_factor</span><span class="o">=</span><span class="mf">0.0004</span><span class="p">,</span>
+        <span class="n">target_cov_factor</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">assert_is_close</span><span class="p">(</span>
+        <span class="n">param</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;target_mean&quot;</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span>
+            <span class="s2">&quot;target_cov_chol&quot;</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.2</span><span class="p">])</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span>
+            <span class="s2">&quot;init_mean&quot;</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span>
+            <span class="s2">&quot;init_cov_chol&quot;</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.02</span><span class="p">])</span><span class="o">.</span><span class="n">double</span><span class="p">(),</span>
+            <span class="s2">&quot;clip_lo&quot;</span><span class="p">:</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="s2">&quot;clip_up&quot;</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_randomizer"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.test_randomizer">[docs]</a><span class="k">def</span> <span class="nf">test_randomizer</span><span class="p">(</span><span class="n">default_randomizer</span><span class="p">):</span>

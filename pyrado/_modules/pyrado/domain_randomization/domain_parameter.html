@@ -532,6 +532,43 @@
             <span class="n">clip_up</span><span class="o">=</span><span class="n">clip_up</span><span class="p">,</span>
         <span class="p">)</span></div>
 
+<div class="viewcode-block" id="SelfPacedDomainParam.from_domain_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.from_domain_randomizer">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_domain_randomizer</span><span class="p">(</span><span class="n">domain_randomizer</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target_cov_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">init_cov_factor</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a self-paced domain parameter having the same initial and target mean and target variance given by the domain randomizer&#39;s variance (scaled by `target_cov_factor`). The initial variance is also given by the domain randomizer&#39;s variance (scaled by `init_cov_factor`).</span>
+
+<span class="sd">        :param domain_randomizer: randomizer to grab the data from</span>
+<span class="sd">        :param target_cov_factor: scaling of the randomizer&#39;s variance to get the target variance; defaults to `1`</span>
+<span class="sd">        :param init_cov_factor: scaling of the randomizer&#39;s variance to get the init variance; defaults to `1/100`</span>
+<span class="sd">        :return: the self-paced domain parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">target_mean</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">target_cov_flat</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">init_mean</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">init_cov_flat</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">domain_param</span> <span class="ow">in</span> <span class="n">domain_randomizer</span><span class="o">.</span><span class="n">domain_params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain_param</span><span class="p">,</span> <span class="n">NormalDomainParam</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span>
+                    <span class="n">given</span><span class="o">=</span><span class="n">domain_param</span><span class="p">,</span>
+                    <span class="n">expected_type</span><span class="o">=</span><span class="n">NormalDomainParam</span><span class="p">,</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;each domain_param must be a NormalDomainParam&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain_param</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">target_mean</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain_param</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+            <span class="n">target_cov_flat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_cov_factor</span> <span class="o">*</span> <span class="n">domain_param</span><span class="o">.</span><span class="n">std</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">init_mean</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain_param</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+            <span class="n">init_cov_flat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">init_cov_factor</span> <span class="o">*</span> <span class="n">domain_param</span><span class="o">.</span><span class="n">std</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SelfPacedDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">target_mean</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">target_mean</span><span class="p">),</span>
+            <span class="n">target_cov_flat</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">target_cov_flat</span><span class="p">),</span>
+            <span class="n">init_mean</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">init_mean</span><span class="p">),</span>
+            <span class="n">init_cov_flat</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">init_cov_flat</span><span class="p">),</span>
+            <span class="n">clip_lo</span><span class="o">=-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="n">clip_up</span><span class="o">=+</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">target_distr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultivariateNormal</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the target distribution.&quot;&quot;&quot;</span>
@@ -551,6 +588,17 @@
     <span class="k">def</span> <span class="nf">context_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the current covariance matrix.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_cov_chol</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_cov_chol</span><span class="o">.</span><span class="n">T</span>
+
+<div class="viewcode-block" id="SelfPacedDomainParam.info"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;target_mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_mean</span><span class="p">,</span>
+            <span class="s2">&quot;target_cov_chol&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cov_chol</span><span class="p">,</span>
+            <span class="s2">&quot;init_mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_mean</span><span class="p">,</span>
+            <span class="s2">&quot;init_cov_chol&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_cov_chol</span><span class="p">,</span>
+            <span class="s2">&quot;clip_lo&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_lo</span><span class="p">,</span>
+            <span class="s2">&quot;clip_up&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_up</span><span class="p">,</span>
+        <span class="p">}</span></div>
 
 <div class="viewcode-block" id="SelfPacedDomainParam.adapt"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

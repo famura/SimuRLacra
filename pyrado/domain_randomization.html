@@ -132,7 +132,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.adapt"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.adapt()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.context_cov"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.context_cov</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.context_distr"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.context_distr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.from_domain_randomizer"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.from_domain_randomizer()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.get_field_names"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.get_field_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.info"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.make_broadening"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.make_broadening()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.sample"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.sample()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.target_cov"><code class="docutils literal notranslate"><span class="pre">SelfPacedDomainParam.target_cov</span></code></a></li>
@@ -869,10 +871,33 @@ the number of samples</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.from_domain_randomizer">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_domain_randomizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_randomizer</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_cov_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_cov_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#SelfPacedDomainParam.from_domain_randomizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.from_domain_randomizer" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a self-paced domain parameter having the same initial and target mean and target variance given by the domain randomizer’s variance (scaled by <cite>target_cov_factor</cite>). The initial variance is also given by the domain randomizer’s variance (scaled by <cite>init_cov_factor</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>domain_randomizer</strong> – randomizer to grab the data from</p></li>
+<li><p><strong>target_cov_factor</strong> – scaling of the randomizer’s variance to get the target variance; defaults to <cite>1</cite></p></li>
+<li><p><strong>init_cov_factor</strong> – scaling of the randomizer’s variance to get the init variance; defaults to <cite>1/100</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the self-paced domain parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.get_field_names">
 <span class="sig-name descname"><span class="pre">get_field_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#SelfPacedDomainParam.get_field_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.get_field_names" title="Permalink to this definition"></a></dt>
 <dd><p>Get union of all hyper-parameters of all domain parameter distributions.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#SelfPacedDomainParam.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.info" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.make_broadening">
