@@ -139,7 +139,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         return dict(
             qpos=qpos,
             qvel=qvel,
-            failed=mjsim_crashed or state_oob,
+            failed=state_oob,
         )
 
     def observe(self, state: np.ndarray) -> np.ndarray:
