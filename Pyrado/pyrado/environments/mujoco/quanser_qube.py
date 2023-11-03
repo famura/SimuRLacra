@@ -124,7 +124,10 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         self.data.ctrl[:] = torque
 
         # Call MuJoCo
-        mujoco.mj_step(self.model, self.data)
+        try:
+            mujoco.mj_step(self.model, self.data)
+        except mujoco.FatalError:
+            mjsim_crashed = True
 
         qpos = self.data.qpos.copy()
         qvel = self.data.qvel.copy()
