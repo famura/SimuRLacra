@@ -12,10 +12,18 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - name: Build Image
-        run: |
-          docker pull simurlacra/simurlacra:sacher
-          docker build . -t simurlacra:test --build-arg OPTION=sacher
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: simurlacra:test
+          cache-from: type=registry,ref=simurlacra:test
+          cache-to: type=inline
+          load: true
+          build-args: |
+            OPTION=${{ matrix.flavor }}
       - name: Execute tests
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
