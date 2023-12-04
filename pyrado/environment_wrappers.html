@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>environment_wrappers &mdash; Pyrado 0.7.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -412,7 +414,7 @@ This noise is independent for the potentially applied action-based exploration s
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AdversarialDynamicsWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialDynamicsWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
-<p>” Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL)</p>
+<p>“ Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL)</p>
 <p>Constructor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -475,7 +477,7 @@ env_info: contains diagnostic information about the environment</p>
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AdversarialObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialObservationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
-<p>” Wrapper to apply adversarial perturbations to the observations (used in ARPL)</p>
+<p>“ Wrapper to apply adversarial perturbations to the observations (used in ARPL)</p>
 <p>Constructor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -515,7 +517,7 @@ env_info: contains diagnostic information about the environment</p>
 <dt class="sig sig-object py" id="pyrado.environment_wrappers.adversarial.AdversarialStateWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AdversarialStateWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env:</span> <span class="pre">~pyrado.environments.base.Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy:</span> <span class="pre">~pyrado.policies.base.Policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps:</span> <span class="pre">&lt;module</span> <span class="pre">'numpy.core.numeric'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/numpy/core/numeric.py'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">torch_observation:</span> <span class="pre">~typing.Optional[~typing.Callable]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/adversarial.html#AdversarialStateWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.adversarial.AdversarialStateWrapper" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.adversarial.AdversarialWrapper" title="pyrado.environment_wrappers.adversarial.AdversarialWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdversarialWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Serializable</span></code></p>
-<p>” Wrapper to apply adversarial perturbations to the state (used in ARPL)</p>
+<p>“ Wrapper to apply adversarial perturbations to the state (used in ARPL)</p>
 <p>Constructor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
