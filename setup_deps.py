@@ -218,7 +218,6 @@ rcspysim_cmake_vars = {
     "PYBIND11_PYTHON_VERSION": "3.7",
     "SETUP_PYTHON_DEVEL": "ON",
     "Rcs_DIR": rcs_build_dir,
-    "USE_LIBTORCH": uselibtorch,  # use the manually build PyTorch from thirdParty/pytorch
     # Do NOT set CMAKE_PREFIX_PATH here, it will get overridden later on.
 }
 
@@ -551,9 +550,9 @@ def setup_pytorch_based():
     # Set up GPyTorch without touching the PyTorch installation (requires scikit-learn which requires threadpoolctl)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl"])
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "scikit-learn"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "gpytorch"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "gpytorch"])
     # Set up BoTorch without touching the PyTorch installation (requires gpytorch)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "botorch"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "botorch"])
     # Set up Pyro without touching the PyTorch installation (requires opt-einsum)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "opt-einsum"])
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-api"])
