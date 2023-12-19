@@ -560,7 +560,7 @@ def setup_pytorch_based():
     # Set up SBI without touching the PyTorch installation (requires Pyro and pyknos which requires nflows)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "nflows"])
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyknos"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "sbi"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "sbi==0.12.0"])  # 0.18 is the last version before arviz
     # Downgrade to avoid the incompatibility with cliff (whatever cliff is)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "prettytable==0.7.2"])
 
