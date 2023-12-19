@@ -15,7 +15,7 @@ The focus is on robotics tasks with mostly continuous control.
 It features __randomizable simulations__ written __in standalone Python__ (no license required) as well as simulations driven by the physics engines __Bullet__ (no license required), __Vortex__ (license required), __or MuJoCo__ (license required).
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)](https://famura.github.io/SimuRLacra/)
+[![Documentation](https://img.shields.io/badge/docs-informational)](https://famura.github.io/SimuRLacra/)
 [![codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![isort](https://img.shields.io/badge/imports-isort-green)](https://pycqa.github.io/isort/)
 <!-- [![codecov](https://codecov.io/gh/famura/SimuRLacra/branch/master/graph/badge.svg)](https://codecov.io/gh/famura/SimuRLacra) -->
